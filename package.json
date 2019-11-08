@@ -1,0 +1,21 @@
+{
+  "name": "electronTest",
+  "version": "1.0.0",
+  "main": "main.js",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "postinstall": "electron-rebuild",
+    "electron-rebuild": "electron-rebuild"
+  },
+  "devDependencies": {
+    "electron": "^7.1.0",
+    "electron-rebuild": "^1.8.6"
+  },
+  "dependencies": {
+    "electron-log": "^3.0.9",
+    "express": "^4.17.1",
+    "node-expat": "^2.3.18",
+    "xml2json": "^0.11.2"
+  }
+}
