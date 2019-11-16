@@ -5,6 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
+    "test": "node src/testMatchmaker.js",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild"
   },
@@ -15,7 +16,7 @@
   "dependencies": {
     "electron-log": "^3.0.9",
     "express": "^4.17.1",
-    "node-expat": "^2.3.18",
-    "xml2json": "^0.11.2"
+    "node-expat": "2.3.18",
+    "xml2json": "0.11.2"
   }
 }
