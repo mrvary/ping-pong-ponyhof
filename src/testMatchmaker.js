@@ -7,4 +7,8 @@ const json = JSON.parse(data);
 // init matchmaker with player data
 let players = json.tournament.competition.players.player;
 
-const matchmaker = Matchmaker(players);
+const matchmaker = new Matchmaker(players);
+
+matchmaker.log();
+matchmaker.drawFirstRound();
+matchmaker.log();
