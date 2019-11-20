@@ -1,82 +1,91 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8" />
-    <title>best app everr</title>
-    <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
-    <!-- <meta
+
+<head>
+  <meta charset="UTF-8" />
+  <title>best app everr</title>
+  <!-- https://electronjs.org/docs/tutorial/security#csp-meta-tag -->
+  <!-- <meta
       http-equiv="Content-Security-Policy"
       content="script-src 'self' 'unsafe-inline';"
     /> -->
 
-    <link rel="stylesheet" href="main.css" />
-  </head>
-  <body>
-    <h1>yo</h1>
-    <button class="button" id="server">start server</button>
-    <button class="button" id="xml-import">import XML</button>
-    <button class="button" onclick="window.close()">close</button>
-    <script>
-      const express = require("express");
-      const { dialog } = require("electron").remote;
-      const log = require("electron-log");
-      const fs = require("fs");
-      const parser = require("xml2json");
-      const Matchmaker = require("./src/matchmaker");
+  <link rel="stylesheet" href="main.css" />
+</head>
 
-      let server;
-      let players = [];
+<body>
+  <h1>yo</h1>
+  <button class="button" id="server">start server</button>
+  <button class="button" id="xml-import">import XML</button>
+  <button class="button" onclick="simulateTournament()" id="xml-import">simulateTournament</button>
+  <button class="button" onclick="window.close()">close</button>
+  <script>
+    const express = require("express");
+    const { dialog } = require("electron").remote;
+    const log = require("electron-log");
+    const fs = require("fs");
+    const parser = require("xml2json");
+    const Matchmaker = require("./src/matchmaker");
 
-      const serverButton = document.getElementById("server");
+    let server;
+    let players = [];
 
-      function startServer() {
-        const app = express();
-        const PORT = 3000;
+    const serverButton = document.getElementById("server");
 
-        app.get("/", (req, res) => {
-          if (players.length > 0) {
-            res.send(players);
-            return;
-          }
-          res.send("no players yet");
-        });
+    function startServer() {
+      const app = express();
+      const PORT = 3000;
 
-        serverButton.classList.add("server-running");
-        serverButton.textContent = "stop server";
-        server = app.listen(PORT, () => log.info(`Running on port: ${PORT}`));
-      }
-
-      function stopServer() {
-        serverButton.classList.remove("server-running");
-        serverButton.textContent = "start server";
-        server.close();
-      }
-
-      function openXML() {
-        dialog
-          .showOpenDialog({
-            properties: ["openFile"],
-            filters: [{ name: "XML", extensions: ["xml"] }]
-          })
-          .then(result => {
-            const content = fs.readFileSync(result.filePaths[0]);
-
-            const json = JSON.parse(parser.toJson(content), {
-              reversible: false
-            });
-
-            const matchmaker = Matchmaker(players);
-            debugger;
-          });
-      }
-
-      serverButton.addEventListener("click", () => {
-        serverButton.classList.contains("server-running")
-          ? stopServer()
-          : startServer();
+      app.get("/", (req, res) => {
+        if (players.length > 0) {
+          res.send(players);
+          return;
+        }
+        res.send("no players yet");
       });
 
-      document.getElementById("xml-import").addEventListener("click", openXML);
-    </script>
-  </body>
+      serverButton.classList.add("server-running");
+      serverButton.textContent = "stop server";
+      server = app.listen(PORT, () => log.info(`Running on port: ${PORT}`));
+    }
+
+    function stopServer() {
+      serverButton.classList.remove("server-running");
+      serverButton.textContent = "start server";
+      server.close();
+    }
+
+    function simulateTournament() {
+      var simulation = require("./src/testMatchmaker.js");
+    }
+
+
+    function openXML() {
+      dialog
+        .showOpenDialog({
+          properties: ["openFile"],
+          filters: [{ name: "XML", extensions: ["xml"] }]
+        })
+        .then(result => {
+          const content = fs.readFileSync(result.filePaths[0]);
+
+          const json = JSON.parse(parser.toJson(content), {
+            reversible: false
+          });
+
+          const matchmaker = Matchmaker(players);
+          debugger;
+        });
+    }
+
+    serverButton.addEventListener("click", () => {
+      serverButton.classList.contains("server-running")
+        ? stopServer()
+        : startServer();
+    });
+
+    document.getElementById("xml-import").addEventListener("click", openXML);
+  </script>
+</body>
+
 </html>
