@@ -1,16 +1,23 @@
 const { app, BrowserWindow } = require("electron");
 
+//if true -> opens electron app fullscreen 
+//           and with developer console opened
+const developerMode = true;
+
 let win;
 
 function createWindow() {
   win = new BrowserWindow({
     width: 800,
     height: 600,
+    fullscreen:developerMode,
     webPreferences: {
       nodeIntegration: true
     }
   });
-
+  if(developerMode){
+    win.webContents.openDevTools();
+  }
   win.loadFile("index.html");
 
   win.on("closed", () => {
