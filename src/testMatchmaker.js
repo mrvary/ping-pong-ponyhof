@@ -9,6 +9,6 @@ let players = json.tournament.competition.players.player;
 
 const matchmaker = new Matchmaker(players);
 
-matchmaker.log();
+//matchmaker.log();
 matchmaker.drawFirstRound();
 matchmaker.log();
