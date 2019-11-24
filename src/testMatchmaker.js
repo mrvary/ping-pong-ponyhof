@@ -11,4 +11,5 @@ const matchmaker = new Matchmaker(players);
 
 //matchmaker.log();
 matchmaker.drawFirstRound();
+matchmaker.simulateRound();
 matchmaker.log();
