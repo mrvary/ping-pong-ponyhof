@@ -44,6 +44,8 @@ function startExpressServer() {
     if (!webServer) {
         log.info("Could not start web server");
     }
+
+    electron.shell.openExternal(`http://localhost:${PORT}/players`);
 }
 
 function createWindow() {
