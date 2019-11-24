@@ -13,68 +13,8 @@
   </head>
   <body>
     <h1>yo</h1>
-    <button class="button" id="server">start server</button>
     <button class="button" id="xml-import">import XML</button>
     <button class="button" onclick="window.close()">close</button>
-    <script>
-      const express = require("express");
-      const { dialog } = require("electron").remote;
-      const log = require("electron-log");
-      const fs = require("fs");
-      const parser = require("xml2json");
-
-      let server;
-      let players = [];
-
-      const serverButton = document.getElementById("server");
-
-      function startServer() {
-        const app = express();
-        const PORT = 3000;
-
-        app.get("/", (req, res) => {
-          if (players.length > 0) {
-            res.send(players);
-            return;
-          }
-          res.send("no players yet");
-        });
-
-        serverButton.classList.add("server-running");
-        serverButton.textContent = "stop server";
-        server = app.listen(PORT, () => log.info(`Running on port: ${PORT}`));
-      }
-
-      function stopServer() {
-        serverButton.classList.remove("server-running");
-        serverButton.textContent = "start server";
-        server.close();
-      }
-
-      function openXML() {
-        dialog
-          .showOpenDialog({
-            properties: ["openFile"],
-            filters: [{ name: "XML", extensions: ["xml"] }]
-          })
-          .then(result => {
-            const content = fs.readFileSync(result.filePaths[0]);
-
-            const json = JSON.parse(parser.toJson(content), {
-              reversible: false
-            });
-
-            players = json.tournament.competition.players.player;
-          });
-      }
-
-      serverButton.addEventListener("click", () => {
-        serverButton.classList.contains("server-running")
-          ? stopServer()
-          : startServer();
-      });
-
-      document.getElementById("xml-import").addEventListener("click", openXML);
-    </script>
+    <script src="index.js"></script>
   </body>
 </html>
