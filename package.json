@@ -5,12 +5,15 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
+    "start-dev": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild"
   },
   "devDependencies": {
+    "cross-env": "^6.0.3",
     "electron": "^7.1.0",
-    "electron-rebuild": "^1.8.6"
+    "electron-rebuild": "^1.8.6",
+    "nodemon": "^2.0.1"
   },
   "dependencies": {
     "electron-log": "^3.0.9",
