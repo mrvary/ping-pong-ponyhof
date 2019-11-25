@@ -5,7 +5,8 @@ const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const dialog = electron.dialog;
 
-const express = require("express");
+const express = require('express');
+const socket = require('socket.io');
 const http = require("http");
 
 const path = require("path");
@@ -14,19 +15,21 @@ const fs = require("fs");
 
 const parser = require("xml2json");
 
+const PORT = 3000;
+
 let win;
 let webServer;
 
 let players = [];
 
 function startExpressServer() {
-    const PORT = 3000;
-
+    // App setup
     const serverApp = express();
-    serverApp.set('port', PORT);
-    serverApp.get('/', (request, response) => {
-        response.send('Hello World');
-    });
+
+    // Static files
+    serverApp.use(express.static(path.join(__dirname, 'client')));
+
+    // Define Routes
     serverApp.get('/players', (request, response) => {
         if (players.length > 0) {
             response.send(players);
@@ -36,6 +39,7 @@ function startExpressServer() {
         response.send('not players yet');
     });
 
+    // Create web server
     webServer = http.createServer(serverApp);
     webServer.listen(PORT, () => {
         log.info(`Server is running on port ${PORT}`);
@@ -45,7 +49,11 @@ function startExpressServer() {
         log.info("Could not start web server");
     }
 
-    electron.shell.openExternal(`http://localhost:${PORT}/players`);
+    // Socket setup
+    const io = socket(webServer);
+    io.on('connection', (socket) => {
+        log.info('a user connected', socket.id);
+    });
 }
 
 function createWindow() {
@@ -68,6 +76,10 @@ function createWindow() {
         win = null;
     });
 }
+
+ipc.on('open-client', (event) => {
+    electron.shell.openExternal(`http://localhost:${PORT}`);
+});
 
 ipc.on('open-import-dialog', (event) => {
     dialog
