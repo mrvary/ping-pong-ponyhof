@@ -86,6 +86,10 @@ ipc.on("open-client", event => {
   electron.shell.openExternal(`http://localhost:${PORT}`);
 });
 
+ipc.on("close-application", event => {
+  win.close();
+});
+
 ipc.on("open-import-dialog", event => {
   dialog
     .showOpenDialog({
