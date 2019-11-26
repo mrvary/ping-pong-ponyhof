@@ -1,9 +1,8 @@
 import React from "react";
 import "./App.css";
-import electron from "electron";
 import log from "electron-log";
 
-const ipc = electron.ipcRenderer;
+const ipc = window.require('electron').ipcRenderer;
 
 function App() {
   ipc.on("opened-import-dialog", (event, players) => {
@@ -11,8 +10,8 @@ function App() {
   });
 
   return (
-    <div className="App">
-      <header className="App-header">
+    <div>
+      <header>
         <h1>yo</h1>
         <button
           class="button"
@@ -31,7 +30,7 @@ function App() {
         <button
           class="button"
           id="close"
-          onclick={() => ipc.send("close-application")}
+          onClick={() => ipc.send("close-application")}
         >
           close
         </button>

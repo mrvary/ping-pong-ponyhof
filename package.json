@@ -1,11 +1,11 @@
 {
   "name": "ping-pong-ponyhof",
   "version": "1.0.0",
-  "main": "public/main.js",
+  "main": "main.js",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "start-dev": "concurrently \"cross-env BROWSER=none yarn start-application\" \"wait-on http://localhost:3000 && electron . \" ",
+    "start-dev": "concurrently \"cross-env BROWSER=none yarn start-application\" \"wait-on http://localhost:3000 && electron . \"",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild",
     "start-client": "cd ./client/ && yarn start",

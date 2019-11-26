@@ -1,10 +1,10 @@
 const electron = require("electron");
 const log = require("electron-log");
+const isDev = require("electron-is-dev");
 const app = electron.app;
 const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const dialog = electron.dialog;
-const isDev = require("electron-is-dev");
 
 const express = require("express");
 const socket = require("socket.io");
