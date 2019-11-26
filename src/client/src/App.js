@@ -9,7 +9,7 @@ function App() {
     <div className="App">
       <h1>Woo, you see me!</h1>
       <div id="output"></div>
-      <button id="send">Say yo</button>
+      <button id="send">Say yo yo</button>
 
       <script src="/socket.io/socket.io.js"></script>
     </div>

@@ -27,7 +27,7 @@ function startExpressServer() {
   const serverApp = express();
 
   // Static files
-  serverApp.use(express.static(path.join(__dirname, "client", "build")));
+  //   serverApp.use(express.static(path.join(__dirname, "client", "build")));
 
   // Define Routes
   serverApp.get("/players", (request, response) => {
@@ -37,6 +37,10 @@ function startExpressServer() {
     }
 
     response.send("not players yet.");
+  });
+
+  serverApp.get("/", (request, response) => {
+    response.redirect("http://localhost:3000");
   });
 
   // Create web server

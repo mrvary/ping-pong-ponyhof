@@ -5,11 +5,12 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "start-dev": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
+    "start-dev": "concurrently \"cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"\" \"cd ./src/client/ && yarn start\"",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild"
   },
   "devDependencies": {
+    "concurrently": "^5.0.0",
     "cross-env": "^6.0.3",
     "electron": "^7.1.0",
     "electron-rebuild": "^1.8.6",
