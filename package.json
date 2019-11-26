@@ -4,7 +4,7 @@
   "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env ELECTRON_IS_DEV=1 electron .",
+    "start": "cross-env ELECTRON_IS_DEV=0 electron .",
     "start-dev": "concurrently \"cross-env BROWSER=none yarn start-application\" \"cross-env BROWSER=none yarn start-client\" \"wait-on http://localhost:3000 http://localhost:8000 && electron . \"",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild",

@@ -1,7 +1,8 @@
 import React from "react";
 import "./App.css";
-import log from "electron-log";
+//import log from "electron-log";
 
+const log = window.require('electron-log');
 const ipc = window.require('electron').ipcRenderer;
 
 function App() {
