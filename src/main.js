@@ -27,7 +27,7 @@ function startExpressServer() {
   const serverApp = express();
 
   // Static files
-  serverApp.use(express.static(path.join(__dirname, "client")));
+  serverApp.use(express.static(path.join(__dirname, "client", "build")));
 
   // Define Routes
   serverApp.get("/players", (request, response) => {
