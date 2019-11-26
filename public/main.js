@@ -4,6 +4,7 @@ const app = electron.app;
 const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const dialog = electron.dialog;
+const isDev = require("electron-is-dev");
 
 const express = require("express");
 const socket = require("socket.io");
@@ -70,11 +71,9 @@ function createWindow() {
   });
 
   win.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "./frontend/index.html"),
-      protocol: "file",
-      slashes: true
-    })
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "../build/index.html")}`
   );
 
   win.on("closed", () => {
