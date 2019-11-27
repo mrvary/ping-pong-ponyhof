@@ -1,3 +1,4 @@
+const server = require("./backend/server");
 const electron = require("electron");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -6,12 +7,7 @@ const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const dialog = electron.dialog;
 
-const express = require("express");
-const socket = require("socket.io");
-const http = require("http");
-
 const path = require("path");
-const url = require("url");
 const fs = require("fs");
 
 const parser = require("xml2json");
@@ -22,45 +18,6 @@ let win;
 let webServer;
 
 let players = [];
-
-function startExpressServer() {
-  // App setup
-  const serverApp = express();
-
-  // Define Routes
-  serverApp.get("/players", (request, response) => {
-    if (players.length > 0) {
-      response.send(players);
-      return;
-    }
-
-    response.send("not players yet.");
-  });
-
-  if (isDev) {
-    serverApp.get("/", (request, response) => {
-      response.redirect("http://localhost:8000");
-    });
-  } else {
-    serverApp.use(express.static(path.join(__dirname, "client", "build")));
-  }
-
-  // Create web server
-  webServer = http.createServer(serverApp);
-  webServer.listen(PORT, () => {
-    log.info(`Server is running on port ${PORT}`);
-  });
-
-  if (!webServer) {
-    log.info("Could not start web server");
-  }
-
-  // Socket setup
-  const io = socket(webServer);
-  io.on("connection", socket => {
-    log.info("a user connected", socket.id);
-  });
-}
 
 function createWindow() {
   win = new BrowserWindow({
@@ -108,7 +65,7 @@ ipc.on("open-import-dialog", event => {
 });
 
 app.on("ready", () => {
-  startExpressServer();
+  server.createServer();
   createWindow();
 });
 
