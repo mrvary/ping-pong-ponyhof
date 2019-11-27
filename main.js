@@ -1,5 +1,6 @@
 const electron = require("electron");
 const log = require("electron-log");
+const isDev = require("electron-is-dev");
 const app = electron.app;
 const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
@@ -26,9 +27,6 @@ function startExpressServer() {
   // App setup
   const serverApp = express();
 
-  // Static files
-  //   serverApp.use(express.static(path.join(__dirname, "client", "build")));
-
   // Define Routes
   serverApp.get("/players", (request, response) => {
     if (players.length > 0) {
@@ -39,9 +37,13 @@ function startExpressServer() {
     response.send("not players yet.");
   });
 
-  serverApp.get("/", (request, response) => {
-    response.redirect("http://localhost:3000");
-  });
+  if (isDev) {
+    serverApp.get("/", (request, response) => {
+      response.redirect("http://localhost:8000");
+    });
+  } else {
+    serverApp.use(express.static(path.join(__dirname, "client", "build")));
+  }
 
   // Create web server
   webServer = http.createServer(serverApp);
@@ -70,11 +72,9 @@ function createWindow() {
   });
 
   win.loadURL(
-    url.format({
-      pathname: path.join(__dirname, "./frontend/index.html"),
-      protocol: "file",
-      slashes: true
-    })
+    isDev
+      ? "http://localhost:3000"
+      : `file://${path.join(__dirname, "build", "index.html")}`
   );
 
   win.on("closed", () => {

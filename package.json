@@ -1,25 +1,49 @@
 {
-  "name": "electronTest",
+  "name": "ping-pong-ponyhof",
   "version": "1.0.0",
-  "main": "src/main.js",
+  "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "start": "electron .",
-    "start-dev": "concurrently \"cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"\" \"cd ./src/client/ && yarn start\"",
+    "start": "cross-env ELECTRON_IS_DEV=0 electron .",
+    "start-dev": "concurrently \"cross-env BROWSER=none yarn start-application\" \"cross-env BROWSER=none yarn start-client\" \"wait-on http://localhost:3000 http://localhost:8000 && electron . \"",
     "postinstall": "electron-rebuild",
-    "electron-rebuild": "electron-rebuild"
+    "electron-rebuild": "electron-rebuild",
+    "start-client": "cd ./client/ && yarn start",
+    "start-application": "react-scripts start",
+    "build-application": "react-scripts build"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.3",
     "electron": "^7.1.0",
+    "electron-builder": "^21.2.0",
     "electron-rebuild": "^1.8.6",
-    "nodemon": "^2.0.1"
+    "nodemon": "^2.0.1",
+    "wait-on": "^3.3.0"
   },
   "dependencies": {
+    "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
     "express": "^4.17.1",
     "node-expat": "^2.3.18",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "^3.2.0",
     "socket.io": "^2.3.0",
     "xml2json": "^0.11.2"
   }
