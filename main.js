@@ -34,6 +34,10 @@ function createWindow() {
       : `file://${path.join(__dirname, "build", "index.html")}`
   );
 
+  if (isDev) {
+    win.webContents.openDevTools();
+  }
+
   win.on("closed", () => {
     win = null;
   });
