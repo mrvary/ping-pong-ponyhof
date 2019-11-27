@@ -31,6 +31,8 @@ function createServer() {
   io.on("connection", socket => {
     log.info("a user connected", socket.id);
   });
+
+  return server;
 }
 
 module.exports = {

@@ -65,7 +65,7 @@ ipc.on("open-import-dialog", event => {
 });
 
 app.on("ready", () => {
-  server.createServer();
+  webServer = server.createServer();
   createWindow();
 });
 
