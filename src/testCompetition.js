@@ -7,14 +7,12 @@ const json = JSON.parse(data);
 // init matchmaker with player data
 let players = json.tournament.competition.players.player;
 
-debugger;
-  // reduce the players size for ease of debugging - just for testing right now
-  const AMOUNT_OF_TOURNAMENT_PARTICIPANTS = 12;
-  for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
+// reduce the players size for ease of debugging - just for testing right now
+const AMOUNT_OF_TOURNAMENT_PARTICIPANTS = 12;
+for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
     players.pop();
-  }
+}
 
-debugger;
 
 const competition = new Competition(players);
 
