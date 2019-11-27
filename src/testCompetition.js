@@ -17,6 +17,6 @@ for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
 const competition = new Competition(players);
 
 //matchmaker.log();
-competition.drawFirstRound();
+competition.drawNextRound();
 competition.simulateRound();
 competition.log();
