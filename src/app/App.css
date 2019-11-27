@@ -6,20 +6,51 @@ h2 {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+.ausrichtungcheck{
+  display: flex;
+  justify-content: center;
+}
 
-.button {
+
+.button-game {
+  width: 150vh;
+  height: 7vh;
   background: white;
-  border: none;
+  border: 1px solid black;  
+  font-size: 3vh;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-content: flex-end;  
+  margin: 1vh 0vh;
+}
+
+.button-delete {
+  width: 20vh;
+  height: 7vh;
+  background: white;
+  border: 1px solid black;  
+  font-size: 2vh;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+  margin: 1vh 0vh;
+}
+
+.list-background{
+  background: white;
   color: black;
-  padding: 16px 32px;
+  padding: 1vh 1vh;
   text-align: center;
   display: block;
-  font-size: 16px;
   margin: 20px auto;
   cursor: pointer;
   text-decoration: none;
-  text-transform: uppercase;
   box-shadow: 0 5px #666;
+  box-sizing: border-box;
+
 }
 
 .button:hover {
@@ -42,4 +73,10 @@ h2 {
 .server-running:hover {
   color: var(--anti-color);
   background-color: white;
+}
+
+ul{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
