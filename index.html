@@ -25,7 +25,7 @@
     const log = require("electron-log");
     const fs = require("fs");
     const parser = require("xml2json");
-    const Matchmaker = require("./src/matchmaker");
+    const Competition = require("./src/competition");
 
     let server;
     let players = [];
@@ -73,7 +73,7 @@
             reversible: false
           });
 
-          const matchmaker = Matchmaker(players);
+          const competition = Competition(players);
           debugger;
         });
     }
