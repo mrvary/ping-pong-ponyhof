@@ -1,0 +1,12 @@
+# IntelliJ project files
+.idea
+*.iml
+
+# VS Code files
+.vscode/
+
+# Dependency directories
+node_modules/
+
+# no build folder
+build/
