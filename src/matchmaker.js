@@ -1,7 +1,9 @@
+const Logger = require("./logger.js");
+
 class Matchmaker {
   constructor(participants) {
     this.players = initPlayers(participants);
-
+    this.logger = Logger;
     // reduce the players size for ease of debugging
     const AMOUNT_OF_TOURNAMENT_PARTICIPANTS = 9;
     for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
@@ -10,6 +12,11 @@ class Matchmaker {
     }
     this.rounds = [];
     this.matchId = 1;
+  }
+
+  drawRound(){
+
+    
   }
 
   drawFirstRound() {
@@ -111,13 +118,8 @@ class Matchmaker {
 
   }
 
-  // log players and rounds
   log() {
-    console.log("Players ----------------");
-    this.players.map(p => console.log(p));
-
-    console.log("Rounds ----------------");
-    this.rounds.map(r => console.log(r));
+    this.logger.log(this);
   }
 
   drawNextRound() {
