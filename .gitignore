@@ -8,5 +8,6 @@
 # Dependency directories
 node_modules/
 
-# no build folder
+# folders
 build/
+dist/
