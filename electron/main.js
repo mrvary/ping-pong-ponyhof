@@ -46,7 +46,7 @@ function startExpressServer() {
       response.redirect(clientUrl);
     });
   } else {
-    serverApp.use(express.static(path.join(__dirname, "client", "build")));
+    serverApp.use(express.static(path.join(__dirname, "../client/build")));
   }
 
   // Create web server
@@ -71,11 +71,12 @@ function createWindow() {
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true
+      nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js")
     }
   });
 
-  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "build", "index.html")}`
+  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "../build/index.html")}`
   win.loadURL(startUrl);
 
   win.on("closed", () => {

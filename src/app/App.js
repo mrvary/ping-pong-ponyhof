@@ -1,12 +1,11 @@
 import React from "react";
 import "./App.css";
-//import log from "electron-log";
 
-const log = window.require('electron-log');
-const ipc = window.require('electron').ipcRenderer;
+const log = window.log;
+const ipcRenderer = window.ipcRenderer;
 
 function App() {
-  ipc.on("opened-import-dialog", (event, players) => {
+  ipcRenderer.on("opened-import-dialog", (event, players) => {
     log.info(players);
   });
 
@@ -17,21 +16,21 @@ function App() {
         <button
           class="button"
           id="openClient"
-          onClick={() => ipc.send("open-client")}
+          onClick={() => ipcRenderer.send("open-client")}
         >
           Open Client
         </button>
         <button
           class="button"
           id="xml-import"
-          onClick={() => ipc.send("open-import-dialog")}
+          onClick={() => ipcRenderer.send("open-import-dialog")}
         >
           import XML
         </button>
         <button
           class="button"
           id="close"
-          onClick={() => ipc.send("close-application")}
+          onClick={() => ipcRenderer.send("close-application")}
         >
           close
         </button>

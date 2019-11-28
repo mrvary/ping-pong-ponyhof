@@ -1,8 +1,9 @@
 {
   "name": "ping-pong-ponyhof",
+  "productName": "TTRace",
   "version": "1.0.0",
   "homepage": "./",
-  "main": "main.js",
+  "main": "electron/main.js",
   "license": "MIT",
   "scripts": {
     "start": "yarn react-app-build && yarn react-client-build && yarn electron-start",
