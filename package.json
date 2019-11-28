@@ -5,9 +5,9 @@
   "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "start": "yarn run react-app-build && yarn run react-client-build && yarn run electron-start",
-    "start-dev": "cross-env BROWSER=none concurrently --kill-others \"yarn:react-app-start\" \"yarn:react-client-start\" \"wait-on http://localhost:3000 http://localhost:8000 && yarn run electron-start-dev\"",
-    "electron-start": "electron .",
+    "start": "yarn react-app-build && yarn react-client-build && yarn electron-start",
+    "start-dev": "cross-env BROWSER=none concurrently --kill-others \"yarn:react-app-start\" \"yarn:react-client-start\" \"wait-on http://localhost:3000 http://localhost:3001 && yarn run electron-start-dev\"",
+    "electron-start": "cross-env ELECTRON_IS_DEV=0 electron .",
     "electron-start-dev": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
     "electron-rebuild": "electron-rebuild",
     "react-app-start": "react-scripts start",
