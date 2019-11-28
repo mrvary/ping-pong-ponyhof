@@ -19,7 +19,6 @@ const fs = require("fs");
 const parser = require("xml2json");
 
 // Start script
-const APP_PORT = normalizePort(process.env.PORT);
 const SERVER_PORT = normalizePort(process.env.SERVER_PORT);
 
 let win;
@@ -43,7 +42,8 @@ function startExpressServer() {
 
   if (isDev) {
     serverApp.get("/", (request, response) => {
-      response.redirect("http://localhost:8000");
+      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
+      response.redirect(clientUrl);
     });
   } else {
     serverApp.use(express.static(path.join(__dirname, "client", "build")));
@@ -75,12 +75,8 @@ function createWindow() {
     }
   });
 
-  win.loadURL(
-    isDev
-      ? `http://localhost:${APP_PORT}`
-      : `file://${path.join(__dirname, "build", "index.html")}`
-  );
-  console.log("Environment: ", isDev ? "dev" : "prod");
+  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "build", "index.html")}`
+  win.loadURL(startUrl);
 
   win.on("closed", () => {
     win = null;
