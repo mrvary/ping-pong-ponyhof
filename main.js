@@ -1,3 +1,6 @@
+require("dotenv").config();
+require("electron-reload");
+
 const electron = require("electron");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -11,12 +14,13 @@ const socket = require("socket.io");
 const http = require("http");
 
 const path = require("path");
-const url = require("url");
 const fs = require("fs");
 
 const parser = require("xml2json");
 
-const PORT = 4000;
+// Start script
+const APP_PORT = normalizePort(process.env.PORT);
+const SERVER_PORT = normalizePort(process.env.SERVER_PORT);
 
 let win;
 let webServer;
@@ -47,8 +51,8 @@ function startExpressServer() {
 
   // Create web server
   webServer = http.createServer(serverApp);
-  webServer.listen(PORT, () => {
-    log.info(`Server is running on port ${PORT}`);
+  webServer.listen(SERVER_PORT, () => {
+    log.info(`Server is running on port ${SERVER_PORT}`);
   });
 
   if (!webServer) {
@@ -73,17 +77,32 @@ function createWindow() {
 
   win.loadURL(
     isDev
-      ? "http://localhost:3000"
+      ? `http://localhost:${APP_PORT}`
       : `file://${path.join(__dirname, "build", "index.html")}`
   );
+  console.log("Environment: ", isDev ? "dev" : "prod");
 
   win.on("closed", () => {
     win = null;
   });
 }
 
+function normalizePort(value) {
+  var port = parseInt(value, 10);
+
+  if (isNaN(port)) {
+    return value;
+  }
+
+  if (port >= 0) {
+    return port;
+  }
+
+  return false;
+}
+
 ipc.on("open-client", event => {
-  electron.shell.openExternal(`http://localhost:${PORT}`);
+  electron.shell.openExternal(`http://localhost:${SERVER_PORT}`);
 });
 
 ipc.on("close-application", event => {
