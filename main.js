@@ -133,7 +133,10 @@ app.on("ready", () => {
 
 app.on("before-quit", () => {
   log.info("gracefully shutting down...");
-  webServer.kill();
+  if (webServer) {
+    webServer.kill();
+    webServer = null;
+  }
 });
 
 // app.on("window-all-closed", () => {
