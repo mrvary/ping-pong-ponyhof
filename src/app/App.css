@@ -9,35 +9,42 @@ h2 {
 .ausrichtungcheck{
   display: flex;
   justify-content: center;
+  border: 1px solid black;
+  margin: 1vh 0vh;
+  border-radius: 2vh;
+  background: white;
+
 }
 
-
 .button-game {
+  border: none;
   width: 150vh;
   height: 7vh;
-  background: white;
-  border: 1px solid black;  
+  background: none;
   font-size: 3vh;
   cursor: pointer;
   text-decoration: none;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  align-content: flex-end;  
-  margin: 1vh 0vh;
+  align-content: flex-end;
 }
 
 .button-delete {
+  border: none;
+  background: none;
+  border-left: 0.3vh solid black;
   width: 20vh;
   height: 7vh;
-  background: white;
-  border: 1px solid black;  
   font-size: 2vh;
   cursor: pointer;
   text-decoration: none;
   box-sizing: border-box;
-  margin: 1vh 0vh;
 }
+
+
+
+
 
 .list-background{
   background: white;
@@ -50,9 +57,7 @@ h2 {
   text-decoration: none;
   box-shadow: 0 5px #666;
   box-sizing: border-box;
-
 }
-
 .button:hover {
   color: var(--main-color);
   background-color: white;

@@ -21,6 +21,8 @@ const ipc = window.require('electron').ipcRenderer;
           close
         </button>
       */
+
+
 function App() {
   ipc.on("opened-import-dialog", (event, players) => {
     log.info(players);
@@ -33,13 +35,14 @@ function App() {
       </header>        
         <ul>
           <li className="ausrichtungcheck">
-            
             <button className="button-game">Spiele</button>
+            <rect className="button-game"/>
             <button className="button-delete">Löschen</button>
             
           </li>
           <li className="ausrichtungcheck">
             <button className="button-game">Spiele</button>
+            <rect className="button-game"/>
             <button className="button-delete">Löschen</button>
             
           </li>
