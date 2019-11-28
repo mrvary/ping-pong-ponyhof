@@ -1,13 +1,10 @@
 require("dotenv").config();
 require("electron-reload");
 
-const electron = require("electron");
+const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
+const { channels } = require("../src/shared/channels");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
-const app = electron.app;
-const ipc = electron.ipcMain;
-const BrowserWindow = electron.BrowserWindow;
-const dialog = electron.dialog;
 
 const express = require("express");
 const socket = require("socket.io");
@@ -42,7 +39,7 @@ function startExpressServer() {
 
   if (isDev) {
     serverApp.get("/", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
+      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
       response.redirect(clientUrl);
     });
   } else {
@@ -76,7 +73,9 @@ function createWindow() {
     }
   });
 
-  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "../build/index.html")}`
+  const startUrl =
+    process.env.ELECTRON_START_URL ||
+    `file://${path.join(__dirname, "../build/index.html")}`;
   win.loadURL(startUrl);
 
   win.on("closed", () => {
@@ -97,31 +96,6 @@ function normalizePort(value) {
 
   return false;
 }
-
-ipc.on("open-client", event => {
-  electron.shell.openExternal(`http://localhost:${SERVER_PORT}`);
-});
-
-ipc.on("close-application", event => {
-  win.close();
-});
-
-ipc.on("open-import-dialog", event => {
-  dialog
-    .showOpenDialog({
-      properties: ["openFile"],
-      filters: [{ name: "XML", extensions: ["xml"] }]
-    })
-    .then(result => {
-      const content = fs.readFileSync(result.filePaths[0]);
-      const json = JSON.parse(parser.toJson(content), {
-        reversible: false
-      });
-
-      players = json.tournament.competition.players.player;
-      event.sender.send("opened-import-dialog", players);
-    });
-});
 
 app.on("ready", () => {
   startExpressServer();
@@ -149,5 +123,35 @@ app.on("activate", () => {
   // dock icon is clicked and there are no other windows open.
   if (win === null) {
     createWindow();
+  }
+});
+
+ipcMain.on(channels.OPEN_CLIENT, event => {
+  shell.openExternal(`http://localhost:${SERVER_PORT}`);
+});
+
+ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
+  dialog
+    .showOpenDialog({
+      properties: ["openFile"],
+      filters: [{ name: "XML", extensions: ["xml"] }]
+    })
+    .then(result => {
+      const content = fs.readFileSync(result.filePaths[0]);
+      const json = JSON.parse(parser.toJson(content), {
+        reversible: false
+      });
+
+      players = json.tournament.competition.players.player;
+      event.sender.send(channels.OPEN_IMPORT_DIALOG, {
+        players: players
+      });
+    });
+});
+
+ipcMain.on(channels.APP_CLOSE, event => {
+  if (win !== null) {
+    win.close();
+    win = null;
   }
 });

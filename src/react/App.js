@@ -1,14 +1,19 @@
 import React from "react";
+import { channels } from "../shared/channels";
 import "./App.css";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
 function App() {
-  ipcRenderer.on("opened-import-dialog", (event, players) => {
-    log.info(players);
-  });
-
+  const openXML = () => {
+    ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
+    ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
+      const { players } = args;
+      log.info(players);
+    });
+  };
+  
   return (
     <div>
       <header>
@@ -16,21 +21,21 @@ function App() {
         <button
           class="button"
           id="openClient"
-          onClick={() => ipcRenderer.send("open-client")}
+          onClick={() => ipcRenderer.send(channels.OPEN_CLIENT)}
         >
           Open Client
         </button>
         <button
           class="button"
           id="xml-import"
-          onClick={() => ipcRenderer.send("open-import-dialog")}
+          onClick={() => openXML()}
         >
           import XML
         </button>
         <button
           class="button"
           id="close"
-          onClick={() => ipcRenderer.send("close-application")}
+          onClick={() => ipcRenderer.send(channels.APP_CLOSE)}
         >
           close
         </button>
