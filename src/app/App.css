@@ -42,8 +42,22 @@ h2 {
   box-sizing: border-box;
 }
 
+.button-game:hover {
+  color: var(--main-color);
+}
+.button-delete:hover {
+  color: var(--main-color);
+}
 
-
+.button-game:focus {
+  outline: 0;
+}
+.button-delete:focus {
+  outline: 0;
+}
+.button-game:active {
+  transform: translateY(0.3vh);
+}
 
 
 .list-background{
@@ -58,19 +72,6 @@ h2 {
   box-shadow: 0 5px #666;
   box-sizing: border-box;
 }
-.button:hover {
-  color: var(--main-color);
-  background-color: white;
-}
-
-.button:focus {
-  outline: 0;
-}
-.button:active {
-  box-shadow: 0 2px #666;
-  transform: translateY(4px);
-}
-
 .server-running {
   background: var(--anti-color);
 }
