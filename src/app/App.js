@@ -15,57 +15,51 @@ const ipc = window.require('electron').ipcRenderer;
         >
           import XML
         </button>
-        <button
-          className="button-game"
-          id="close"
-          onClick={() => ipc.send("close-application")}
-        >
-          close
-        </button>
-      */
-
+*/
+var gamesListe = ["23.7.2019","11.8.2019","7.9.2019","22.9.2019", "2.10.2019", "21.11.2019"]
 
 function refresh(){
   ReactDOM.render(<App/>, 
   document.getElementById('root'))
 }
-function liste(games){
-    var list =[];
-    for (var i = 0; i<games.length; i++){
-      list.push(listElement(i,games));
-    }
-    return list;
+
+function liste(){
+  var htmlList =[];
+  for (var i = 0; i<gamesListe.length; i++){
+    htmlList.push(listElement(i));
+  }
+  return htmlList;
 }
-function listElement(i,games){
-    return(
-      <li className="ausrichtungcheck">
-        <button className="button-game">Spiel vom {games[i]}</button>
-        <rect className="button-game"/>
-        <button className="button-delete" >Löschen</button>
-      </li>
-    )
+
+function listElement(i){
+  return(
+    <li className="ausrichtungcheck">
+      <button className="button-game">Spiel vom {gamesListe[i]}</button>
+      <div className="button-game"/>
+      <button className="button-delete" onClick={(e) => removeFromList(gamesListe[i], e)}>Löschen</button>
+    </li>
+  )
 }
-/*onClick={removeFromList(i,games)}
-function removeFromList(i,games){
-    games.splice( games.indexOf(i,1));
-    refresh();
+
+function removeFromList(elem){
+  gamesListe.splice( gamesListe.indexOf(elem),1);
+  refresh();
 }
-*/
+
+
 function App() {
+  
   ipc.on("opened-import-dialog", (event, players) => {
     log.info(players);
   });
-  var games = ["22.9.2019","2.10.2019","21.11.2019"]
-  
-  
-
   return (
+    
     <div>
       <header>
         <h1>PingPongPonyhof</h1>
       </header> 
       <ul>
-        {liste(games)}
+        {liste()}
       </ul>
     </div>
   );
