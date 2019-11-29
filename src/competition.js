@@ -13,6 +13,7 @@ class Competition {
     this.matchId = 1;
   }
 
+  //these functions are not even necessary - it can be called directly
   drawNextRound(){
     this.drawer.drawNextRound(this);
   }
