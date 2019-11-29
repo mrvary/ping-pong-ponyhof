@@ -143,17 +143,5 @@ function sortBy(players, selector) {
   });
 }
 
-function add(a, b) {
-
-  if(a == 7){
-    return 3;
-  }
-  return a + b;
-};
-
-
-
-
 
 module.exports.drawNextRound = drawNextRound;
-module.exports.add = add;
