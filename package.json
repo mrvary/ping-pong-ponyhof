@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "start": "electron .",
-    "test": "node src/testMatchmaker.js",
+    "test": "jest",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild"
   },
