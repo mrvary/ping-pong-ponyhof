@@ -11,6 +11,7 @@ const socket = require("socket.io");
 const http = require("http");
 
 const path = require("path");
+const url = require("url");
 const fs = require("fs");
 
 const parser = require("xml2json");
@@ -18,13 +19,12 @@ const parser = require("xml2json");
 // Start script
 const SERVER_PORT = 4000;
 
-let win;
+let mainWindow;
 let webServer;
 
 let players = [];
 
 function startExpressServer() {
-  // App setup
   const serverApp = express();
 
   // Define Routes
@@ -37,13 +37,19 @@ function startExpressServer() {
     response.send("not players yet.");
   });
 
-  if (isDev) {
-    serverApp.get("/", (request, response) => {
+  if (!isDev) {
+    // Serve the static files from the React app
+    serverApp.use(express.static(path.join(__dirname, "../client/build")));
+
+    // Handles any requests that don't match the ones above
+    serverApp.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../server/build/index.html"));
+    });
+  } else {
+    serverApp.get("*", (request, response) => {
       const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
       response.redirect(clientUrl);
     });
-  } else {
-    serverApp.use(express.static(path.join(__dirname, "client", "build")));
   }
 
   // Create web server
@@ -64,7 +70,16 @@ function startExpressServer() {
 }
 
 function createWindow() {
-  win = new BrowserWindow({
+  // important for deployment -> delete sub path "build" 
+  // -> https://stackoverflow.com/questions/41130993/electron-not-allowed-to-load-local-resource
+  const startUrl =
+    process.env.ELECTRON_START_URL ||
+    url.format({
+      pathname: path.join(__dirname, "../build/index.html"),
+      protocol: "file:",
+      slashes: true
+    });
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -72,14 +87,9 @@ function createWindow() {
       preload: path.join(__dirname, "preload.js")
     }
   });
-
-  const startUrl =
-    process.env.ELECTRON_START_URL ||
-    `file://${path.join(__dirname, "../build/index.html")}`;
-  win.loadURL(startUrl);
-
-  win.on("closed", () => {
-    win = null;
+  mainWindow.loadURL(startUrl);
+  mainWindow.on("closed", () => {
+    mainWindow = null;
   });
 }
 
@@ -89,8 +99,8 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
-  log.info("gracefully shutting down...");
   if (webServer) {
+    log.info("gracefully shutting down...");
     webServer.kill();
     webServer = null;
   }
@@ -107,7 +117,7 @@ app.on("before-quit", () => {
 app.on("activate", () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (win === null) {
+  if (mainWindow === null) {
     createWindow();
   }
 });
@@ -136,8 +146,8 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
 });
 
 ipcMain.on(channels.APP_CLOSE, event => {
-  if (win !== null) {
-    win.close();
-    win = null;
+  if (mainWindow !== null) {
+    mainWindow.close();
+    mainWindow = null;
   }
 });
