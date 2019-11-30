@@ -19,7 +19,7 @@ const fs = require("fs");
 const parser = require("xml2json");
 
 // Start script
-const SERVER_PORT = normalizePort(process.env.SERVER_PORT);
+const SERVER_PORT = 4000;
 
 let win;
 let webServer;
@@ -81,20 +81,6 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
-}
-
-function normalizePort(value) {
-  var port = parseInt(value, 10);
-
-  if (isNaN(port)) {
-    return value;
-  }
-
-  if (port >= 0) {
-    return port;
-  }
-
-  return false;
 }
 
 ipc.on("open-client", event => {
