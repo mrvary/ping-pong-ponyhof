@@ -16,7 +16,7 @@ const fs = require("fs");
 const parser = require("xml2json");
 
 // Start script
-const SERVER_PORT = normalizePort(process.env.SERVER_PORT);
+const SERVER_PORT = 4000;
 
 let win;
 let webServer;
@@ -39,11 +39,11 @@ function startExpressServer() {
 
   if (isDev) {
     serverApp.get("/", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
+      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
       response.redirect(clientUrl);
     });
   } else {
-    serverApp.use(express.static(path.join(__dirname, "../client/build")));
+    serverApp.use(express.static(path.join(__dirname, "client", "build")));
   }
 
   // Create web server
@@ -81,20 +81,6 @@ function createWindow() {
   win.on("closed", () => {
     win = null;
   });
-}
-
-function normalizePort(value) {
-  var port = parseInt(value, 10);
-
-  if (isNaN(port)) {
-    return value;
-  }
-
-  if (port >= 0) {
-    return port;
-  }
-
-  return false;
 }
 
 app.on("ready", () => {
