@@ -5,10 +5,12 @@ function log(competition) {
 
   console.log("Rounds ----------------");
   competition.rounds.map(r => console.log(r));
+  console.log("-------------------------------");
+
 }
 
 function logRanking(competition) {
-  console.log("Ranking After Round "+competition.rounds.length+" ----------");
+  console.log("Ranking After Round "+competition.rounds.length);
 
   var sortedPlayers = sortBy(competition.players, "gamesWon");
 
@@ -41,6 +43,21 @@ function logRanking(competition) {
     if(playersWithSameGamesWon.length != 0)
     console.log(groupToString(playersWithSameGamesWon));
   });
+  console.log("-------------------------------");
+
+}
+
+// format -> (AnzahlSiege) Spieler1Name  3 - 2  Spieler2Name (AnzahlSiege)
+function logLatestRound(competition){
+  let latestRound = competition.rounds[competition.rounds.length-1];
+  console.log("Match Ergebnisse von Runde ",competition.rounds.length);
+
+  latestRound.forEach(match => {
+    var p1 = "("+ match.player1.gamesWon+")"+match.player1.lastname +" "+match.result[0];
+    var p2 = match.result[1]+"  "+match.player2.lastname + " ("+ match.player2.gamesWon+")";
+    console.log(p1+" - "+p2);
+  });
+  console.log("-------------------------------");
 }
 
 function groupToString(playersWithSameGamesWon) {
@@ -62,5 +79,6 @@ function sortBy(players, selector) {
 
 module.exports.log = log;
 module.exports.logRanking = logRanking;
+module.exports.logLatestRound = logLatestRound;
 
 

@@ -26,6 +26,10 @@ class Competition {
     this.logger.log(this);
   }
 
+  logLatestRound(){
+    this.logger.logLatestRound(this);
+  }
+
 }
 
 function initPlayers(players) {

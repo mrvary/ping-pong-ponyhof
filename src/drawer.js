@@ -55,6 +55,7 @@ function drawFirstRound(competition) {
       player1: choosenBetterPlayer,
       player2: choosenWorsePlayer,
       round: 1,
+      result:[],
       sets: [],
       freeTicket: false
     };
@@ -75,6 +76,7 @@ function drawFirstRound(competition) {
       player1: topPlayers[0],
       player2: null,
       round: 1,
+      result:[],
       sets: [],
       freeTicket: true
     };
@@ -159,6 +161,7 @@ function drawSecondRound(competition) {
       player1: choosenBetterPlayer,
       player2: choosenWorsePlayer,
       round: competition.rounds.length+1,
+      result:[],
       sets: [],
       freeTicket: false
     };
@@ -176,6 +179,7 @@ function drawSecondRound(competition) {
       player1: updatedPlayers[0],
       player2: null,
       round: competition.rounds.length+1,
+      result:[],
       sets: [],
       freeTicket: true
     };
