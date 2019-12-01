@@ -51,7 +51,7 @@ function drawFirstRound(competition) {
     });
 
     let match = {
-      id: competition.matchId,
+      id: competition.matchId++,
       player1: choosenBetterPlayer,
       player2: choosenWorsePlayer,
       round: 1,
@@ -59,8 +59,6 @@ function drawFirstRound(competition) {
       freeTicket: false
     };
     matches.push(match);
-
-    competition.matchId++;
 
   }//end while
 
@@ -73,7 +71,7 @@ function drawFirstRound(competition) {
     });
 
     let match = {
-      id: competition.matchId,
+      id: competition.matchId++,
       player1: topPlayers[0],
       player2: null,
       round: 1,
@@ -93,46 +91,99 @@ function drawSecondRound(competition) {
   /*OLD CODE START-------------------
   
   var doLoopCounter = 0;
-      var success = false;
+  var success = false;
       ranking = [];
   
       do {
-          doLoopCounter++;
+        doLoopCounter++;
           var error = false;
-  
+          
           ranking = getRanking(standing);
-  
+          
           for (var i = 0; i < standing.length; i = i + 2) {
-              if (!checkIfCanPlayVsEachOther(ranking[i], ranking[i + 1])) {
-                  error = true;
-              }
+            if (!checkIfCanPlayVsEachOther(ranking[i], ranking[i + 1])) {
+              error = true;
+            }
           }
-  
+          
           if (error == false) {
-              success = true;
+            success = true;
           }
-      } while (error == true && doLoopCounter < 500);
-  
-      var drawResultBasic = {
+        } while (error == true && doLoopCounter < 500);
+        
+        var drawResultBasic = {
           "doLoopCounter": doLoopCounter
-      }
-  
-      if (success) {
+        }
+        
+        if (success) {
           drawResultBasic.success = true;
           drawResultBasic.playerlist = ranking;
-      } else {
+        } else {
           drawResultBasic.success = false;
-      }
-      return drawResultBasic;
-  
-  OLD CODE END---------------
-  */
+        }
+        return drawResultBasic;
+        
+        OLD CODE END---------------
+        */
 
 
   // competition.players = updatedPlayers;
   // competition.rounds.push(matches);
+  let matches = [];
+  let updatedPlayers = [];
+  let players = [];
 
+  competition.players.forEach(element => {
+    //call by value
+    players.push(element);
+  });
+ 
+  let sortedPlayers = sortBy(players, ["gamesWon"]);
 
+  while (sortedPlayers.length >= 2) {
+    var choosenBetterPlayer = sortedPlayers.shift();
+    var choosenWorsePlayer = sortedPlayers.shift();
+
+    updatedPlayers.push({
+      ...choosenBetterPlayer,
+      matchesIds: choosenBetterPlayer.matchesIds.concat(competition.matchId)
+    });
+
+    updatedPlayers.push({
+      ...choosenWorsePlayer,
+      matchesIds: choosenWorsePlayer.matchesIds.concat(competition.matchId)
+    });
+
+    let match = {
+      id: competition.matchId++,
+      player1: choosenBetterPlayer,
+      player2: choosenWorsePlayer,
+      round: competition.rounds.length+1,
+      sets: [],
+      freeTicket: false
+    };
+    matches.push(match);
+  }
+
+  if(sortedPlayers.length == 1){
+    updatedPlayers.push({
+      ...sortedPlayers[0],
+      matchesIds: sortedPlayers[0].matchesIds.concat(competition.matchId)
+    });
+
+    let match = {
+      id: competition.matchId++,
+      player1: updatedPlayers[0],
+      player2: null,
+      round: competition.rounds.length+1,
+      sets: [],
+      freeTicket: true
+    };
+    matches.push(match);
+  }
+
+  competition.players = updatedPlayers;
+  competition.rounds.push(matches);
 
 }
 

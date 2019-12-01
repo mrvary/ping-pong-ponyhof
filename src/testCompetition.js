@@ -8,7 +8,7 @@ const json = JSON.parse(data);
 let players = json.tournament.competition.players.player;
 
 // reduce the players size for ease of debugging - just for testing right now
-const AMOUNT_OF_TOURNAMENT_PARTICIPANTS = 5;
+const AMOUNT_OF_TOURNAMENT_PARTICIPANTS = 4;
 for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
     players.pop();
 }
@@ -16,7 +16,13 @@ for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
 
 const competition = new Competition(players);
 
-competition.drawNextRound();
-competition.simulateRound();
-competition.log();
-competition.logger.logRanking(competition);
+var ROUNDS_TO_SIMULATE = 6;
+
+for(var i = 0 ; i < ROUNDS_TO_SIMULATE ;i++){
+    
+    competition.drawNextRound();
+    competition.simulateRound();
+    competition.log();
+    competition.logger.logRanking(competition);
+}
+debugger;

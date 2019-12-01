@@ -8,15 +8,16 @@ function log(competition) {
 }
 
 function logRanking(competition) {
-  console.log("Ranking----------");
+  console.log("Ranking After Round "+competition.rounds.length+" ----------");
 
   var sortedPlayers = sortBy(competition.players, "gamesWon");
 
+  //ranking contains multiple playersWithSameAmountOfGamesWon Arrays
   var ranking = [];
 
   /*
-    if round 1 is over there are 2 grups of players (0 gamesWon and 1 gamesWon)
-    if round 2 is over there are 3 grups of players (0 gamesWon and 1 gamesWon and 2 gamesWon)
+    if round 1 is over there are 2 grups of players (0|1 gamesWon )
+    if round 2 is over there are 3 grups of players (0|1|2 gameWon)
     ...
   */
   for (var i = 0; i < competition.rounds.length + 1; i++) {
@@ -33,8 +34,11 @@ function logRanking(competition) {
   
   //reverser ranking in order that 0 point players are at the bottom of the log
   ranking.reverse();
+  
   ranking.forEach(playersWithSameGamesWon => {
-    //if there is a group there must be a player at [0] to get the gamesWon
+    //if there is a group there must be a player at [0] to get the gamesWon  <--- wrong, can be empty..
+    //solution 
+    if(playersWithSameGamesWon.length != 0)
     console.log(groupToString(playersWithSameGamesWon));
   });
 }
