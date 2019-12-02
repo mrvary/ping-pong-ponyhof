@@ -1,4 +1,7 @@
-const server = require("./backend/server");
+
+require("dotenv").config();
+require("electron-reload");
+
 const electron = require("electron");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -7,12 +10,12 @@ const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const dialog = electron.dialog;
 
+const server = require("./backend/server");
+
 const path = require("path");
 const fs = require("fs");
 
 const parser = require("xml2json");
-
-const PORT = 4000;
 
 let win;
 let webServer;
@@ -28,11 +31,8 @@ function createWindow() {
     }
   });
 
-  win.loadURL(
-    isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "build", "index.html")}`
-  );
+  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "build", "index.html")}`
+  win.loadURL(startUrl);
 
   if (isDev) {
     win.webContents.openDevTools();
@@ -44,7 +44,7 @@ function createWindow() {
 }
 
 ipc.on("open-client", event => {
-  electron.shell.openExternal(`http://localhost:${PORT}`);
+  electron.shell.openExternal(`http://localhost:${SERVER_PORT}`);
 });
 
 ipc.on("close-application", event => {
@@ -75,7 +75,10 @@ app.on("ready", () => {
 
 app.on("before-quit", () => {
   log.info("gracefully shutting down...");
-  webServer.kill();
+  if (webServer) {
+    webServer.kill();
+    webServer = null;
+  }
 });
 
 // app.on("window-all-closed", () => {

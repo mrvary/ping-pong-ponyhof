@@ -1,16 +1,21 @@
 {
   "name": "ping-pong-ponyhof",
   "version": "1.0.0",
+  "homepage": "./",
   "main": "main.js",
   "license": "MIT",
   "scripts": {
-    "start": "cross-env ELECTRON_IS_DEV=0 electron .",
-    "start-dev": "concurrently \"cross-env BROWSER=none yarn start-application\" \"cross-env BROWSER=none yarn start-client\" \"wait-on http://localhost:3000 http://localhost:8000 && electron . \"",
-    "postinstall": "electron-rebuild",
+    "start": "yarn react-app-build && yarn react-client-build && yarn electron-start",
+    "start-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel",
+    "start-dev-parallel": "cross-env BROWSER=none concurrently --kill-others \"yarn:react-app-start\" \"yarn:react-client-start\" \"wait-on ${ELECTRON_START_URL} ${CLIENT_START_URL} && yarn electron-start-dev\"",
+    "electron-start": "cross-env ELECTRON_IS_DEV=0 electron .",
+    "electron-start-dev": "cross-env NODE_ENV=dev nodemon --exec \"\"electron .\"\"",
     "electron-rebuild": "electron-rebuild",
-    "start-client": "cd ./client/ && yarn start",
-    "start-application": "react-scripts start",
-    "build-application": "react-scripts build"
+    "react-app-start": "cross-env PORT=3000 react-scripts start",
+    "react-app-build": "react-scripts build",
+    "react-client-start": "cd client && cross-env PORT=3001 yarn start",
+    "react-client-build": "cd client && yarn build",
+    "postinstall": "electron-rebuild"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -30,9 +35,11 @@
   "devDependencies": {
     "concurrently": "^5.0.0",
     "cross-env": "^6.0.3",
+    "dotenv": "^8.2.0",
     "electron": "^7.1.0",
     "electron-builder": "^21.2.0",
     "electron-rebuild": "^1.8.6",
+    "electron-reload": "^1.5.0",
     "nodemon": "^2.0.1",
     "wait-on": "^3.3.0"
   },
