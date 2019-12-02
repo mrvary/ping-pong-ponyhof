@@ -1,3 +1,6 @@
+require("dotenv").config();
+require("electron-reload");
+
 const electron = require("electron");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
@@ -11,12 +14,12 @@ const socket = require("socket.io");
 const http = require("http");
 
 const path = require("path");
-const url = require("url");
 const fs = require("fs");
 
 const parser = require("xml2json");
 
-const PORT = 4000;
+// Start script
+const SERVER_PORT = 4000;
 
 let win;
 let webServer;
@@ -39,7 +42,8 @@ function startExpressServer() {
 
   if (isDev) {
     serverApp.get("/", (request, response) => {
-      response.redirect("http://localhost:8000");
+      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
+      response.redirect(clientUrl);
     });
   } else {
     serverApp.use(express.static(path.join(__dirname, "client", "build")));
@@ -47,8 +51,8 @@ function startExpressServer() {
 
   // Create web server
   webServer = http.createServer(serverApp);
-  webServer.listen(PORT, () => {
-    log.info(`Server is running on port ${PORT}`);
+  webServer.listen(SERVER_PORT, () => {
+    log.info(`Server is running on port ${SERVER_PORT}`);
   });
 
   if (!webServer) {
@@ -71,11 +75,8 @@ function createWindow() {
     }
   });
 
-  win.loadURL(
-    isDev
-      ? "http://localhost:3000"
-      : `file://${path.join(__dirname, "build", "index.html")}`
-  );
+  const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "build", "index.html")}`
+  win.loadURL(startUrl);
 
   win.on("closed", () => {
     win = null;
@@ -83,7 +84,7 @@ function createWindow() {
 }
 
 ipc.on("open-client", event => {
-  electron.shell.openExternal(`http://localhost:${PORT}`);
+  electron.shell.openExternal(`http://localhost:${SERVER_PORT}`);
 });
 
 ipc.on("close-application", event => {
@@ -114,7 +115,10 @@ app.on("ready", () => {
 
 app.on("before-quit", () => {
   log.info("gracefully shutting down...");
-  webServer.kill();
+  if (webServer) {
+    webServer.kill();
+    webServer = null;
+  }
 });
 
 // app.on("window-all-closed", () => {
