@@ -19,7 +19,9 @@
     "build-react-client": "cd client && yarn build",
     "reset-electron": "cross-env \"rm -rf build/src && rm -rf build/electron && rm -rf build/client\"",
     "preelectron-pack": "yarn build",
-    "electron-pack": "electron-builder build --win -c.extraMetadata.main=build/electron/main.js --publish never"
+    "electron-pack": "electron-builder build --win -c.extraMetadata.main=build/electron/main.js --publish never",
+    "postinstall": "electron-rebuild",
+    "electron-rebuild": "electron-rebuild"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -41,6 +43,7 @@
     "cross-env": "^6.0.3",
     "electron": "^7.1.0",
     "electron-builder": "^21.2.0",
+    "electron-rebuild": "^1.8.8",
     "nodemon": "^2.0.1",
     "wait-on": "^3.3.0"
   },
