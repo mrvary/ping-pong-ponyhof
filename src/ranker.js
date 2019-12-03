@@ -1,13 +1,13 @@
 function generateRanking(comepetition) {
   console.log("IN generate Ranking");
-  var ranking = [];
+  let ranking = [];
 
   /*
     better solution?
     i need this because i cant forEach every player 
     while already being in a forEach of the players
     */
-  var dummyData = [];
+  let dummyData = [];
   comepetition.players.forEach(p => {
     let dummy = {
       id: p.id,
@@ -37,9 +37,9 @@ function generateRanking(comepetition) {
 
     //go trough all the matches played and collect all the information needed for the FE
     matchesInvolved.forEach(match => {
-      var opponentName = "";
-      var ownSets = "";
-      var opponentSets = "";
+      let opponentName = "";
+      let ownSets = "";
+      let opponentSets = "";
 
       if (match.player1.id === player.id) {
         opponentIds.push(match.player2.id);
@@ -74,9 +74,9 @@ function generateRanking(comepetition) {
     //calculate new ttr --> description at the end of script
     opponentTTR.forEach(ttr => {
       //calc Pa for each opponent
-      var exp = (ttr - player.qttr) / 150;
-      var n = 1 + Math.pow(10, exp);
-      var Pa = 1 / n;
+      let exp = (ttr - player.qttr) / 150;
+      let n = 1 + Math.pow(10, exp);
+      let Pa = 1 / n;
       Pa = parseFloat(Pa.toFixed(3));
 
       ttrDifference += (1 - Pa) * 16;

@@ -27,15 +27,15 @@ function simulateRound(competition) {
   has to be refactored in future probably when we change the ways we save sets
 */
 function createRandomMatchResult(match) {
-  var setResults = [];
+  let setResults = [];
 
-  var setsA = 0;
-  var setsB = 0;
+  let setsA = 0;
+  let setsB = 0;
 
   //TODO - remove the +1 - need to be fixed in getWinnerId func first
   do {
     //create Random result from 1-15
-    var setResult = Math.floor(Math.random() * 16) + 1;
+    let setResult = Math.floor(Math.random() * 16) + 1;
 
     //decide on random wich player wins
     if (Math.floor(Math.random() * 2) === 0) {
@@ -58,8 +58,8 @@ function getWinnerIdOfAGame(match) {
     return match.player1.id;
   }
 
-  var setsA = 0;
-  var setsB = 0;
+  let setsA = 0;
+  let setsB = 0;
 
   //go through all sets and count sets won
   match.sets.forEach(e => {

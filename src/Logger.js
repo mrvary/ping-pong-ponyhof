@@ -15,7 +15,7 @@ function logRanking(competition) {
   );
 
   ranking.forEach(player => {
-    var matchesString = "   ";
+    let matchesString = "   ";
     player.matches.forEach(match => {
       matchesString +=
         match.opponentName.substring(0, 7) +
@@ -53,10 +53,10 @@ function logRanking(competition) {
 function logGamesWonGroups(competition) {
   console.log("Groups After Round " + competition.rounds.length);
 
-  var sortedPlayers = sortBy(competition.players, "gamesWon");
+  let sortedPlayers = sortBy(competition.players, "gamesWon");
 
   //ranking contains multiple playersWithSameAmountOfGamesWon Arrays
-  var ranking = [];
+  let ranking = [];
 
   /*
     if round 1 is over there are 2 grups of players (0|1 gamesWon )
@@ -64,7 +64,7 @@ function logGamesWonGroups(competition) {
     ...
   */
   for (var i = 0; i < competition.rounds.length + 1; i++) {
-    var playersWithSameAmountOfGamesWon = [];
+    let playersWithSameAmountOfGamesWon = [];
 
     //group players that have the same gamesWon togehter in array ranking
     sortedPlayers.forEach(player => {
@@ -92,14 +92,14 @@ function logLatestRound(competition) {
   console.log("Match Ergebnisse von Runde ", competition.rounds.length);
 
   latestRound.forEach(match => {
-    var p1 =
+    let p1 =
       "(" +
       match.player1.gamesWon +
       ")" +
       match.player1.lastname +
       " " +
       match.result[0];
-    var p2 =
+    let p2 =
       match.result[1] +
       "  " +
       match.player2.lastname +
@@ -112,7 +112,7 @@ function logLatestRound(competition) {
 }
 
 function groupToString(playersWithSameGamesWon) {
-  var string = "";
+  let string = "";
   string += playersWithSameGamesWon[0].gamesWon + " Siege Spieler -> ";
   playersWithSameGamesWon.forEach(player => {
     string += player.lastname + " ";

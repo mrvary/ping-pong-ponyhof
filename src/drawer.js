@@ -92,13 +92,13 @@ function drawFirstRound(competition) {
 function drawSecondRound(competition) {
   /*OLD CODE START-------------------
   
-  var doLoopCounter = 0;
-  var success = false;
+  let doLoopCounter = 0;
+  let success = false;
       ranking = [];
   
       do {
         doLoopCounter++;
-          var error = false;
+          let error = false;
           
           ranking = getRanking(standing);
           
@@ -113,7 +113,7 @@ function drawSecondRound(competition) {
           }
         } while (error === true && doLoopCounter < 500);
         
-        var drawResultBasic = {
+        let drawResultBasic = {
           "doLoopCounter": doLoopCounter
         }
         
@@ -143,8 +143,8 @@ function drawSecondRound(competition) {
   let sortedPlayers = sortBy(players, ["gamesWon"]);
 
   while (sortedPlayers.length >= 2) {
-    var choosenBetterPlayer = sortedPlayers.shift();
-    var choosenWorsePlayer = sortedPlayers.shift();
+    let choosenBetterPlayer = sortedPlayers.shift();
+    let choosenWorsePlayer = sortedPlayers.shift();
 
     updatedPlayers.push({
       ...choosenBetterPlayer,
