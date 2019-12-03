@@ -1,42 +1,54 @@
 function log(competition) {
-
   console.log("Players ----------------");
   competition.players.map(p => console.log(p));
 
   console.log("Rounds ----------------");
   competition.rounds.map(r => console.log(r));
   console.log("-------------------------------");
-
 }
 
 function logRanking(competition) {
   console.log("ttt");
   let ranking = competition.ranking;
-  console.log("Platz \t Name \t\tS:N\t\tBHZ\t\tTTR-Start\tTTR-Aktuell\t\tTTR-Veränderung\t|\t1.Runde\t\t\t2.Runde\t\t\t3.Runde\t\t\t4.Runde\t\t\t5.Runde\t\t\t6.Runde");
+  console.log(
+    "Platz \t Name \t\tS:N\t\tBHZ\t\tTTR-Start\tTTR-Aktuell\t\tTTR-Veränderung\t|\t1.Runde\t\t\t2.Runde\t\t\t3.Runde\t\t\t4.Runde\t\t\t5.Runde\t\t\t6.Runde"
+  );
 
   ranking.forEach(player => {
-
     var matchesString = "   ";
-    player.matches.forEach(match =>{
-      matchesString+=match.opponentName.substring(0, 7)+" "+match.ownSets+":"+match.opponentSets+"\t\t";
+    player.matches.forEach(match => {
+      matchesString +=
+        match.opponentName.substring(0, 7) +
+        " " +
+        match.ownSets +
+        ":" +
+        match.opponentSets +
+        "\t\t";
     });
 
-    console.log(player.place + " \t\t" +
-      player.lastname.substring(0, 7) + "\t\t" +
-      player.gamesWon + ":" + player.gamesLost + "\t\t" +
-      player.bhz + "\t\t" +
-      player.qttr + "\t\t" +
-      player.ttr_now + "\t\t\t" +
-      player.ttr_diff + "\t\t\t\t|"+
-      matchesString
-
+    console.log(
+      player.place +
+        " \t\t" +
+        player.lastname.substring(0, 7) +
+        "\t\t" +
+        player.gamesWon +
+        ":" +
+        player.gamesLost +
+        "\t\t" +
+        player.bhz +
+        "\t\t" +
+        player.qttr +
+        "\t\t" +
+        player.ttr_now +
+        "\t\t\t" +
+        player.ttr_diff +
+        "\t\t\t\t|" +
+        matchesString
     );
-  })
+  });
 
   debugger;
-
 }
-
 
 function logGamesWonGroups(competition) {
   console.log("Groups After Round " + competition.rounds.length);
@@ -56,8 +68,7 @@ function logGamesWonGroups(competition) {
 
     //group players that have the same gamesWon togehter in array ranking
     sortedPlayers.forEach(player => {
-      if (player.gamesWon == i)
-        playersWithSameAmountOfGamesWon.push(player);
+      if (player.gamesWon === i) playersWithSameAmountOfGamesWon.push(player);
     });
     //This is call by value (right?)
     ranking.push(playersWithSameAmountOfGamesWon);
@@ -68,12 +79,11 @@ function logGamesWonGroups(competition) {
 
   ranking.forEach(playersWithSameGamesWon => {
     //if there is a group there must be a player at [0] to get the gamesWon  <--- wrong, can be empty..
-    //solution 
-    if (playersWithSameGamesWon.length != 0)
+    //solution
+    if (playersWithSameGamesWon.length !== 0)
       console.log(groupToString(playersWithSameGamesWon));
   });
   console.log("-------------------------------");
-
 }
 
 // format -> (AnzahlSiege) Spieler1Name  3 - 2  Spieler2Name (AnzahlSiege)
@@ -82,8 +92,20 @@ function logLatestRound(competition) {
   console.log("Match Ergebnisse von Runde ", competition.rounds.length);
 
   latestRound.forEach(match => {
-    var p1 = "(" + match.player1.gamesWon + ")" + match.player1.lastname + " " + match.result[0];
-    var p2 = match.result[1] + "  " + match.player2.lastname + " (" + match.player2.gamesWon + ")";
+    var p1 =
+      "(" +
+      match.player1.gamesWon +
+      ")" +
+      match.player1.lastname +
+      " " +
+      match.result[0];
+    var p2 =
+      match.result[1] +
+      "  " +
+      match.player2.lastname +
+      " (" +
+      match.player2.gamesWon +
+      ")";
     console.log(p1 + " - " + p2);
   });
   console.log("-------------------------------");
@@ -91,13 +113,12 @@ function logLatestRound(competition) {
 
 function groupToString(playersWithSameGamesWon) {
   var string = "";
-  string += playersWithSameGamesWon[0].gamesWon + " Siege Spieler -> "
+  string += playersWithSameGamesWon[0].gamesWon + " Siege Spieler -> ";
   playersWithSameGamesWon.forEach(player => {
     string += player.lastname + " ";
   });
   return string;
 }
-
 
 //TODO how to sort multiple parameter -> gameswon -> bhz -> ttr
 function sortBy(players, selector) {
@@ -110,5 +131,3 @@ module.exports.log = log;
 module.exports.logGamesWonGroups = logGamesWonGroups;
 module.exports.logLatestRound = logLatestRound;
 module.exports.logRanking = logRanking;
-
-

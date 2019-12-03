@@ -1,129 +1,122 @@
 function generateRanking(comepetition) {
-    console.log("IN generate Ranking");
-    var ranking = [];
+  console.log("IN generate Ranking");
+  var ranking = [];
 
-    /*
+  /*
     better solution?
     i need this because i cant forEach every player 
     while already being in a forEach of the players
     */
-    var dummyData = [];
-    comepetition.players.forEach(p => {
-        let dummy = {
-            id: p.id,
-            gamesWon: p.gamesWon,
-            qttr: p.qttr
+  var dummyData = [];
+  comepetition.players.forEach(p => {
+    let dummy = {
+      id: p.id,
+      gamesWon: p.gamesWon,
+      qttr: p.qttr
+    };
+    dummyData.push(dummy);
+  });
+
+  //geiler Code....4x forEach gg
+  comepetition.players.forEach(player => {
+    let matchesInvolved = [];
+    let opponentIds = [];
+    let opponentTTR = [];
+    let matchesSummary = [];
+    let bhz = 0;
+    let ttrDifference = 0;
+
+    //get all matches this player was envolved
+    player.matchesIds.forEach(id => {
+      comepetition.rounds.forEach(round => {
+        round.forEach(match => {
+          if (match.id === id) matchesInvolved.push(match);
+        });
+      });
+    });
+
+    //go trough all the matches played and collect all the information needed for the FE
+    matchesInvolved.forEach(match => {
+      var opponentName = "";
+      var ownSets = "";
+      var opponentSets = "";
+
+      if (match.player1.id === player.id) {
+        opponentIds.push(match.player2.id);
+        opponentName = match.player2.lastname;
+        ownSets = match.result[0];
+        opponentSets = match.result[1];
+      } else {
+        opponentIds.push(match.player1.id);
+        opponentName = match.player1.lastname;
+        ownSets = match.result[1];
+        opponentSets = match.result[0];
+      }
+
+      let matchSummary = {
+        round: match.round,
+        opponentName: opponentName,
+        ownSets: ownSets,
+        opponentSets: opponentSets
+      };
+      matchesSummary.push(matchSummary);
+    });
+    //calculate bhz
+    opponentIds.forEach(opponentId => {
+      dummyData.forEach(dummyP => {
+        if (opponentId === dummyP.id) {
+          bhz += dummyP.gamesWon;
+          opponentTTR.push(dummyP.qttr);
         }
-        dummyData.push(dummy);
+      });
     });
 
-    //geiler Code....4x forEach gg
-    comepetition.players.forEach(player => {
+    //calculate new ttr --> description at the end of script
+    opponentTTR.forEach(ttr => {
+      //calc Pa for each opponent
+      var exp = (ttr - player.qttr) / 150;
+      var n = 1 + Math.pow(10, exp);
+      var Pa = 1 / n;
+      Pa = parseFloat(Pa.toFixed(3));
 
-        let matchesInvolved = [];
-        let opponentIds = [];
-        let opponentTTR = [];
-        let matchesSummary = [];
-        let bhz = 0;
-        let ttrDifference = 0;
-
-        //get all matches this player was envolved
-        player.matchesIds.forEach(id => {
-            comepetition.rounds.forEach(round => {
-                round.forEach(match => {
-                    if (match.id == id)
-                        matchesInvolved.push(match);
-                })
-            })
-        })
-
-        //go trough all the matches played and collect all the information needed for the FE
-        matchesInvolved.forEach(match => {
-            var opponentName = "";
-            var ownSets = "";
-            var opponentSets = "";
-
-            if (match.player1.id == player.id) {
-                opponentIds.push(match.player2.id);
-                opponentName = match.player2.lastname;
-                ownSets = match.result[0];
-                opponentSets = match.result[1];
-
-            } else {
-                opponentIds.push(match.player1.id);
-                opponentName = match.player1.lastname;
-                ownSets = match.result[1];
-                opponentSets = match.result[0];
-
-            }
-
-            let matchSummary = {
-                round: match.round,
-                opponentName: opponentName,
-                ownSets: ownSets,
-                opponentSets: opponentSets
-            }
-            matchesSummary.push(matchSummary);
-
-        })
-        //calculate bhz
-        opponentIds.forEach(opponentId => {
-            dummyData.forEach(dummyP => {
-                if (opponentId == dummyP.id) {
-                    bhz += dummyP.gamesWon;
-                    opponentTTR.push(dummyP.qttr);
-                }
-            })
-        });
-
-        //calculate new ttr --> description at the end of script
-        opponentTTR.forEach(ttr => {
-            //calc Pa for each opponent
-            var exp = (ttr - player.qttr) / 150;
-            var n = 1 + Math.pow(10, exp);
-            var Pa = 1 / n;
-            Pa = parseFloat(Pa.toFixed(3));
-
-            ttrDifference += (1 - Pa) * 16;
-        });
-        ttrDifference = Math.round(ttrDifference - (opponentTTR.length - player.gamesWon) * 16);
-
-        ranking.push({
-            place: 0,
-            lastname: player.lastname,
-            gamesWon: player.gamesWon,
-            gamesLost: matchesInvolved.length - player.gamesWon,
-            bhz: bhz,
-            qttr: player.qttr,
-            ttr_beginn: player.qttr,
-            ttr_now: parseInt(player.qttr)+ttrDifference,
-            ttr_diff: ttrDifference,
-            matches: matchesSummary
-        });
-
-
+      ttrDifference += (1 - Pa) * 16;
     });
+    ttrDifference = Math.round(
+      ttrDifference - (opponentTTR.length - player.gamesWon) * 16
+    );
 
-
-    ranking.sort(function (p1, p2) {
-        // Sort by gamesWon
-        if (p1.gamesWon > p2.gamesWon) return -1;
-        if (p1.gamesWon < p2.gamesWon) return 1;
-
-        // If gamesWon is the same
-        // -> sort for bhz
-        if (p1.bhz > p2.bhz) return -1;
-        if (p1.bhz < p2.bhz) return 1;
-
-        //TODO
-        // if same bhz - sort for direkter Vergleich
-
-        //if no direkter Vergleich 
-        //-> schlechterer qttr hat höheren Platz
-    
+    ranking.push({
+      place: 0,
+      lastname: player.lastname,
+      gamesWon: player.gamesWon,
+      gamesLost: matchesInvolved.length - player.gamesWon,
+      bhz: bhz,
+      qttr: player.qttr,
+      ttr_beginn: player.qttr,
+      ttr_now: parseInt(player.qttr) + ttrDifference,
+      ttr_diff: ttrDifference,
+      matches: matchesSummary
     });
+  });
 
-    comepetition.ranking = ranking;
+  ranking.sort(function(p1, p2) {
+    // Sort by gamesWon
+    if (p1.gamesWon > p2.gamesWon) return -1;
+    if (p1.gamesWon < p2.gamesWon) return 1;
+
+    // If gamesWon is the same
+    // -> sort for bhz
+    if (p1.bhz > p2.bhz) return -1;
+    if (p1.bhz < p2.bhz) return 1;
+
+    //TODO
+    // if same bhz - sort for direkter Vergleich
+
+    //if no direkter Vergleich
+    //-> schlechterer qttr hat höheren Platz
+  });
+
+  comepetition.ranking = ranking;
 }
 
 /* Für mehr Details der ttr berechnung --> https://www.tt-spin.de/ttr-rechner/
@@ -151,6 +144,5 @@ ES GIBT NOCH EIN PAAR WEITERE AUSNAHMEN -> TODO in Zukunft
 --> Jetzt wird einfach über all die Erwachsenen Konstante K =16 genommen
    
 */
-
 
 module.exports.generateRanking = generateRanking;

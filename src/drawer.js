@@ -1,14 +1,11 @@
 function drawNextRound(competition) {
-
-  //in rounds are the already drawed matches - when tournament starts this is empty(.length == 0)
-  if (competition.rounds.length == 0) {
-    drawFirstRound(competition)
+  //in rounds are the already drawed matches - when tournament starts this is empty(.length === 0)
+  if (competition.rounds.length === 0) {
+    drawFirstRound(competition);
   } else {
-    drawSecondRound(competition)
+    drawSecondRound(competition);
   }
-
 }
-
 
 /*@author Daniel
   Auslosung für Runde 1 ist anders
@@ -29,16 +26,22 @@ function drawFirstRound(competition) {
   let updatedPlayers = [];
 
   let topPlayers = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
-  let bottomPlayers = sortedPlayers.slice(Math.ceil(sortedPlayers.length / 2), sortedPlayers.length);
+  let bottomPlayers = sortedPlayers.slice(
+    Math.ceil(sortedPlayers.length / 2),
+    sortedPlayers.length
+  );
 
-
-  while (bottomPlayers.length != 0) {
-    const choosenBetterPlayer = topPlayers[Math.floor(Math.random() * topPlayers.length)];
-    const choosenWorsePlayer = bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
+  while (bottomPlayers.length !== 0) {
+    const choosenBetterPlayer =
+      topPlayers[Math.floor(Math.random() * topPlayers.length)];
+    const choosenWorsePlayer =
+      bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
 
     //remove choosenPlayer out of top- and bottomPlayers
     topPlayers = topPlayers.filter(player => player !== choosenBetterPlayer);
-    bottomPlayers = bottomPlayers.filter(player => player !== choosenWorsePlayer);
+    bottomPlayers = bottomPlayers.filter(
+      player => player !== choosenWorsePlayer
+    );
 
     updatedPlayers.push({
       ...choosenBetterPlayer,
@@ -60,12 +63,10 @@ function drawFirstRound(competition) {
       freeTicket: false
     };
     matches.push(match);
-
-  }//end while
+  } //end while
 
   //check for ungeradeTN -- create freilos Spiel
-  if (topPlayers.length == 1) {
-
+  if (topPlayers.length === 1) {
     updatedPlayers.push({
       ...topPlayers[0],
       matchesIds: topPlayers[0].matchesIds.concat(competition.matchId)
@@ -87,9 +88,8 @@ function drawFirstRound(competition) {
   competition.rounds.push(matches);
 }
 
-//gl hf 
+//gl hf
 function drawSecondRound(competition) {
-
   /*OLD CODE START-------------------
   
   var doLoopCounter = 0;
@@ -108,10 +108,10 @@ function drawSecondRound(competition) {
             }
           }
           
-          if (error == false) {
+          if (error === false) {
             success = true;
           }
-        } while (error == true && doLoopCounter < 500);
+        } while (error === true && doLoopCounter < 500);
         
         var drawResultBasic = {
           "doLoopCounter": doLoopCounter
@@ -127,7 +127,6 @@ function drawSecondRound(competition) {
         
         OLD CODE END---------------
         */
-
 
   // competition.players = updatedPlayers;
   // competition.rounds.push(matches);
@@ -169,7 +168,7 @@ function drawSecondRound(competition) {
     matches.push(match);
   }
 
-  if (sortedPlayers.length == 1) {
+  if (sortedPlayers.length === 1) {
     updatedPlayers.push({
       ...sortedPlayers[0],
       matchesIds: sortedPlayers[0].matchesIds.concat(competition.matchId)
@@ -189,9 +188,7 @@ function drawSecondRound(competition) {
 
   competition.players = updatedPlayers;
   competition.rounds.push(matches);
-
 }
-
 
 function sortBy(players, selector) {
   return players.sort((playerA, playerB) => {
@@ -206,6 +203,5 @@ function shuffle(e) {
   }
   return e;
 }
-
 
 module.exports.drawNextRound = drawNextRound;
