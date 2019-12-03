@@ -1,6 +1,8 @@
 const Logger = require("./logger.js");
 const Drawer = require("./drawer.js");
 const Simulator = require("./matchSimulator.js");
+const Ranker = require("./ranker.js");
+
 
 
 class Competition {
@@ -8,8 +10,10 @@ class Competition {
     this.players = initPlayers(participants);
     this.logger = Logger;
     this.drawer = Drawer;
+    this.ranker = Ranker;
     this.simulator = Simulator;
     this.rounds = [];
+    this.ranking = [];
     this.matchId = 1;
   }
 
@@ -30,6 +34,14 @@ class Competition {
     this.logger.logLatestRound(this);
   }
 
+  logRanking(){
+    this.logger.logRanking(this);
+  }
+
+  generateRanking(){
+    this.ranker.generateRanking(this);
+  }
+
 }
 
 function initPlayers(players) {
@@ -46,7 +58,7 @@ function initPlayers(players) {
       clubname,
       gamesWon: 0,
       matchesIds: [],
-      ttr,
+      qttr: ttr,
       active: true
     };
   });

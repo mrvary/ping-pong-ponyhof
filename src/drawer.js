@@ -24,7 +24,7 @@ function drawNextRound(competition) {
   so ist dieses dennoch zu werten 
 */
 function drawFirstRound(competition) {
-  let sortedPlayers = sortBy(competition.players, ["ttr"]);
+  let sortedPlayers = sortBy(competition.players, ["qttr"]);
   let matches = [];
   let updatedPlayers = [];
 
@@ -55,7 +55,7 @@ function drawFirstRound(competition) {
       player1: choosenBetterPlayer,
       player2: choosenWorsePlayer,
       round: 1,
-      result:[],
+      result: [],
       sets: [],
       freeTicket: false
     };
@@ -76,7 +76,7 @@ function drawFirstRound(competition) {
       player1: topPlayers[0],
       player2: null,
       round: 1,
-      result:[],
+      result: [],
       sets: [],
       freeTicket: true
     };
@@ -139,7 +139,8 @@ function drawSecondRound(competition) {
     //call by value
     players.push(element);
   });
- 
+
+  players = shuffle(players);
   let sortedPlayers = sortBy(players, ["gamesWon"]);
 
   while (sortedPlayers.length >= 2) {
@@ -160,15 +161,15 @@ function drawSecondRound(competition) {
       id: competition.matchId++,
       player1: choosenBetterPlayer,
       player2: choosenWorsePlayer,
-      round: competition.rounds.length+1,
-      result:[],
+      round: competition.rounds.length + 1,
+      result: [],
       sets: [],
       freeTicket: false
     };
     matches.push(match);
   }
 
-  if(sortedPlayers.length == 1){
+  if (sortedPlayers.length == 1) {
     updatedPlayers.push({
       ...sortedPlayers[0],
       matchesIds: sortedPlayers[0].matchesIds.concat(competition.matchId)
@@ -178,8 +179,8 @@ function drawSecondRound(competition) {
       id: competition.matchId++,
       player1: updatedPlayers[0],
       player2: null,
-      round: competition.rounds.length+1,
-      result:[],
+      round: competition.rounds.length + 1,
+      result: [],
       sets: [],
       freeTicket: true
     };
@@ -196,6 +197,14 @@ function sortBy(players, selector) {
   return players.sort((playerA, playerB) => {
     return playerB[selector] - playerA[selector];
   });
+}
+
+function shuffle(e) {
+  for (let i = e.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [e[i], e[j]] = [e[j], e[i]];
+  }
+  return e;
 }
 
 

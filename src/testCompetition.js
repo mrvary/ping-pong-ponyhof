@@ -15,7 +15,7 @@ for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
 
 const competition = new Competition(players);
 
-var ROUNDS_TO_SIMULATE = 6;
+var ROUNDS_TO_SIMULATE = 100;
 
 for (var i = 0; i < ROUNDS_TO_SIMULATE; i++) {
 
@@ -23,7 +23,12 @@ for (var i = 0; i < ROUNDS_TO_SIMULATE; i++) {
     competition.simulateRound();
     //competition.log();
     competition.logLatestRound()
-    competition.logger.logRanking(competition);
+    competition.logger.logGamesWonGroups(competition);
+
+    if(i == 98){
+        competition.generateRanking();
+        competition.logRanking();
+    }
 
 
 }
