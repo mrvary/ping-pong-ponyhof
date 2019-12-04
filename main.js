@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 require("electron-reload");
 
@@ -9,62 +10,17 @@ const ipc = electron.ipcMain;
 const BrowserWindow = electron.BrowserWindow;
 const dialog = electron.dialog;
 
-const express = require("express");
-const socket = require("socket.io");
-const http = require("http");
+const server = require("./backend/server");
 
 const path = require("path");
 const fs = require("fs");
 
 const parser = require("xml2json");
 
-// Start script
-const SERVER_PORT = 4000;
-
 let win;
 let webServer;
 
 let players = [];
-
-function startExpressServer() {
-  // App setup
-  const serverApp = express();
-
-  // Define Routes
-  serverApp.get("/players", (request, response) => {
-    if (players.length > 0) {
-      response.send(players);
-      return;
-    }
-
-    response.send("not players yet.");
-  });
-
-  if (isDev) {
-    serverApp.get("/", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
-      response.redirect(clientUrl);
-    });
-  } else {
-    serverApp.use(express.static(path.join(__dirname, "client", "build")));
-  }
-
-  // Create web server
-  webServer = http.createServer(serverApp);
-  webServer.listen(SERVER_PORT, () => {
-    log.info(`Server is running on port ${SERVER_PORT}`);
-  });
-
-  if (!webServer) {
-    log.info("Could not start web server");
-  }
-
-  // Socket setup
-  const io = socket(webServer);
-  io.on("connection", socket => {
-    log.info("a user connected", socket.id);
-  });
-}
 
 function createWindow() {
   win = new BrowserWindow({
@@ -77,6 +33,10 @@ function createWindow() {
 
   const startUrl = process.env.ELECTRON_START_URL || `file://${path.join(__dirname, "build", "index.html")}`
   win.loadURL(startUrl);
+
+  if (isDev) {
+    win.webContents.openDevTools();
+  }
 
   win.on("closed", () => {
     win = null;
@@ -109,7 +69,7 @@ ipc.on("open-import-dialog", event => {
 });
 
 app.on("ready", () => {
-  startExpressServer();
+  webServer = server.createServer();
   createWindow();
 });
 
