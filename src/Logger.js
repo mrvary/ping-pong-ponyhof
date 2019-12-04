@@ -46,8 +46,7 @@ function logRanking(competition) {
         matchesString
     );
   });
-
-  debugger;
+  
 }
 
 function logGamesWonGroups(competition) {

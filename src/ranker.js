@@ -116,6 +116,12 @@ function generateRanking(comepetition) {
     //-> schlechterer qttr hat höheren Platz
   });
 
+  //now after the ranking is sorted
+  //we can init the place by the position in ranking
+  for(var i = 0 ; i < ranking.length ; i++){
+    ranking[i].place = i+1;
+  }
+
   comepetition.ranking = ranking;
 }
 
