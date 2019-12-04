@@ -1,17 +1,21 @@
-require("dotenv").config();
-require("electron-reload");
-
+// electron dependencies
 const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
-const { channels } = require("../src/shared/channels");
+require("electron-reload");
 const log = require("electron-log");
 const isDev = require("electron-is-dev");
 
+// server dependencies
 const server = require("../backend/server");
 
+// frontend dependencies
+const { channels } = require("../src/shared/channels");
+
+// node dependencies
 const path = require("path");
 const url = require("url");
 const fs = require("fs");
 
+// external package dependencies
 const parser = require("xml2json");
 
 let mainWindow;
@@ -78,7 +82,7 @@ app.on("activate", () => {
 });
 
 ipcMain.on(channels.OPEN_CLIENT, event => {
-  shell.openExternal(`http://localhost:4000`);
+  shell.openExternal(`http://localhost:${server.SERVER_PORT}`);
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
