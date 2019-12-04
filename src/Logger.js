@@ -28,27 +28,30 @@ function logRanking(competition) {
 
     console.log(
       player.place +
-        " \t\t" +
-        player.lastname.substring(0, 7) +
-        "\t\t" +
-        player.gamesWon +
-        ":" +
-        player.gamesLost +
-        "\t\t" +
-        player.bhz +
-        "\t\t" +
-        player.qttr +
-        "\t\t" +
-        player.ttr_now +
-        "\t\t\t" +
-        player.ttr_diff +
-        "\t\t\t\t|" +
-        matchesString
+      " \t\t" +
+      player.lastname.substring(0, 7) +
+      "\t\t" +
+      player.gamesWon +
+      ":" +
+      player.gamesLost +
+      "\t\t" +
+      player.bhz +
+      "\t\t" +
+      player.qttr +
+      "\t\t" +
+      player.ttr_now +
+      "\t\t\t" +
+      player.ttr_diff +
+      "\t\t\t\t|" +
+      matchesString
     );
   });
-  
+
 }
 
+//TODO this has to be in Drawer
+// is needed for testing probably 
+// I need to create these different groups for the drawing
 function logGamesWonGroups(competition) {
   console.log("Groups After Round " + competition.rounds.length);
 
@@ -119,7 +122,7 @@ function groupToString(playersWithSameGamesWon) {
   return string;
 }
 
-//TODO how to sort multiple parameter -> gameswon -> bhz -> ttr
+
 function sortBy(players, selector) {
   return players.sort((playerA, playerB) => {
     return playerB[selector] - playerA[selector];

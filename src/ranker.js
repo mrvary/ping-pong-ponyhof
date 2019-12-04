@@ -72,6 +72,17 @@ function generateRanking(comepetition) {
     });
 
     //calculate new ttr --> description at the end of script
+
+    /*
+    TODO this is wrong as I see at this RL sample
+    ME -> ttr 1666
+    opponent 1 -> 1512
+    opponent 2 -> 1512 
+ 
+    -> for each game seperatly I get 1 point
+    --> but for both together I should get 3 and not just 2
+    */
+
     opponentTTR.forEach(ttr => {
       //calc Pa for each opponent
       let exp = (ttr - player.qttr) / 150;

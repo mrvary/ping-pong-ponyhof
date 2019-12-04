@@ -9,12 +9,7 @@ function drawNextRound(competition) {
 
 /*@author Daniel
   Auslosung für Runde 1 ist anders
-  teile alle TN in obere Hälfte(topPlayers) und untere Hälfte(bottomPlayers)
-  wenn TN-Anzahl ungerade dann soll der mittlere Spieler in die stärkere Hälfte
 
-  hole einen zufälligen Spieler aus der oberen und unteren Hälfte und matche diese zusammen
-  lösche die beiden Spieler aus dem pool der verfügbaren Spieler
-  bei ungerader TN-Anzahl hat so ein zufälliger topPlayer ein freilos
 
   Eine Aufgabe eines Spielers sollte hier noch nicht vorhanden sein
   -> gibt dieser sofort nach der Aulosung bzw Ausrufe der Spiele auf
@@ -25,12 +20,18 @@ function drawFirstRound(competition) {
   let matches = [];
   let updatedPlayers = [];
 
+  //teile alle TN in obere Hälfte(topPlayers) und untere Hälfte(bottomPlayers)
+  //wenn TN-Anzahl ungerade dann soll der mittlere Spieler in die stärkere Hälfte
   let topPlayers = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
   let bottomPlayers = sortedPlayers.slice(
     Math.ceil(sortedPlayers.length / 2),
     sortedPlayers.length
   );
 
+  /*
+  hole einen zufälligen Spieler aus der oberen und unteren Hälfte und matche diese zusammen
+  lösche die beiden Spieler aus dem pool der verfügbaren Spieler (top/bottom -Players)
+  */
   while (bottomPlayers.length !== 0) {
     const choosenBetterPlayer =
       topPlayers[Math.floor(Math.random() * topPlayers.length)];
@@ -65,7 +66,7 @@ function drawFirstRound(competition) {
     matches.push(match);
   } //end while
 
-  //check for ungeradeTN -- create freilos Spiel
+  //check for ungeradeTN -- create freilos Spiel for the one player left in topPlayers
   if (topPlayers.length === 1) {
     updatedPlayers.push({
       ...topPlayers[0],
@@ -196,6 +197,7 @@ function sortBy(players, selector) {
   });
 }
 
+//randomize the position of the elements within an array
 function shuffle(e) {
   for (let i = e.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

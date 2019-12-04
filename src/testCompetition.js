@@ -24,7 +24,7 @@ for (var i = 0; i < ROUNDS_TO_SIMULATE; i++) {
   competition.logLatestRound();
   competition.logger.logGamesWonGroups(competition);
 
-  if (i === 5) {
+  if (i == 5) {
     competition.generateRanking();
     competition.logRanking();
   }

@@ -3,8 +3,6 @@ const Drawer = require("./drawer.js");
 const Simulator = require("./matchSimulator.js");
 const Ranker = require("./ranker.js");
 
-
-
 class Competition {
   constructor(participants) {
     this.players = initPlayers(participants);
@@ -17,29 +15,29 @@ class Competition {
     this.matchId = 1;
   }
 
-  //these functions are not even necessary - it can be called directly
-  drawNextRound(){
+  //these functions are not even necessary - it can be called directly -> Java Style
+  drawNextRound() {
     this.drawer.drawNextRound(this);
   }
-  
+
   simulateRound() {
     this.simulator.simulateRound(this);
+  }
+
+  generateRanking() {
+    this.ranker.generateRanking(this);
   }
 
   log() {
     this.logger.log(this);
   }
 
-  logLatestRound(){
+  logLatestRound() {
     this.logger.logLatestRound(this);
   }
 
-  logRanking(){
+  logRanking() {
     this.logger.logRanking(this);
-  }
-
-  generateRanking(){
-    this.ranker.generateRanking(this);
   }
 
 }
