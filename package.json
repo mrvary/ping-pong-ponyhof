@@ -5,6 +5,10 @@
   "homepage": "./",
   "main": "electron/main.js",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrvary/ping-pong-ponyhof.git"
+  },
   "scripts": {
     "start": "yarn build && yarn start-electron",
     "start-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel",
