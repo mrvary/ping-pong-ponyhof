@@ -19,21 +19,21 @@ function App() {
       <header>
         <h1>yo</h1>
         <button
-          class="button"
+          className="button"
           id="openClient"
           onClick={() => ipcRenderer.send(channels.OPEN_CLIENT)}
         >
           Open Client
         </button>
         <button
-          class="button"
+          className="button"
           id="xml-import"
           onClick={() => openXML()}
         >
           import XML
         </button>
         <button
-          class="button"
+          className="button"
           id="close"
           onClick={() => ipcRenderer.send(channels.APP_CLOSE)}
         >
