@@ -10,3 +10,6 @@ node_modules/
 
 # no build folder
 build/
+
+# systemfiles
+.DS_Store
