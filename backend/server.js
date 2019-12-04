@@ -9,12 +9,19 @@ const PORT = 4000;
 function createServer() {
   const serverApp = express();
 
-  if (isDev) {
-    serverApp.get("/", (request, response) => {
-      response.redirect("http://localhost:8000");
+  if (!isDev) {
+    // Serve the static files from the React app
+    serverApp.use(express.static(path.join(__dirname, "../client/build")));
+
+    // Handles any requests that don't match the ones above
+    serverApp.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../server/build/index.html"));
     });
   } else {
-    serverApp.use(express.static(path.join(__dirname, "client", "build")));
+    serverApp.get("*", (request, response) => {
+      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
+      response.redirect(clientUrl);
+    });
   }
 
   // Create web server
