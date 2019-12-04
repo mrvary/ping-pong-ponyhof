@@ -15,7 +15,7 @@ function createServer() {
 
     // Handles any requests that don't match the ones above
     serverApp.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../server/build/index.html"));
+      res.sendFile(path.join(__dirname, "../client/build/index.html"));
     });
   } else {
     serverApp.get("*", (request, response) => {
