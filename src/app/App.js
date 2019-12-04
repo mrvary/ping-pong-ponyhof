@@ -1,6 +1,8 @@
 import React from "react";
 import "./App.css";
 import ReactDOM from "react-dom";
+import 'bulma/css/bulma.css';
+
 
 //import logo from ;
 //import log from "electron-log";
