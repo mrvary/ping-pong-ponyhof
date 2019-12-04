@@ -78,7 +78,7 @@ app.on("activate", () => {
 });
 
 ipcMain.on(channels.OPEN_CLIENT, event => {
-  shell.openExternal(`http://localhost:4000`);
+  shell.openExternal(`http://localhost:${server.SERVER_PORT}`);
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {

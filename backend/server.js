@@ -19,7 +19,7 @@ function createServer() {
     });
   } else {
     serverApp.get("*", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001'
+      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001';
       response.redirect(clientUrl);
     });
   }
@@ -43,5 +43,6 @@ function createServer() {
 }
 
 module.exports = {
+  SERVER_PORT: PORT,
   createServer
 };
