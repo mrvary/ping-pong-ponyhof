@@ -1,5 +1,4 @@
 const express = require("express");
-const socket = require("socket.io");
 const isDev = require("electron-is-dev");
 const path = require("path");
 const log = require("electron-log");
@@ -32,12 +31,6 @@ function createServer() {
   if (!server) {
     log.info("Could not start web server");
   }
-
-  // Socket setup
-  const io = socket(server);
-  io.on("connection", socket => {
-    log.info("a user connected", socket.id);
-  });
 
   return server;
 }
