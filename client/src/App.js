@@ -2,32 +2,12 @@ import React, { useState } from "react";
 import "./App.css";
 import io from "socket.io-client";
 
-function ConnectionStatus({ connected }) {
-  const value = connected ? "connected" : "disconnected";
-  return <div>Connection Status: {value}</div>;
-}
+import Login from "./components/Login";
+import ConnectionStatus from "./components/ConnectionStatus";
+import WaitForRound from "./components/WaitForRound";
 
-function TableNumber({
-  connected,
-  tableNumber,
-  sendTableNumber,
-  tableNumberChanged
-}) {
-  if (connected) {
-    return null;
-  }
-
-  return (
-    <div className="login">
-      table number:
-      <input type="number" value={tableNumber} onChange={tableNumberChanged} />
-      <button onClick={sendTableNumber}>Anmelden</button>
-    </div>
-  );
-}
-
-function Message({ connected, message, sendMessage, messageChanged }) {
-  if (!connected) {
+function Message({ matchStarted, message, sendMessage, messageChanged }) {
+  if (!matchStarted) {
     return null;
   }
 
@@ -48,6 +28,7 @@ function Message({ connected, message, sendMessage, messageChanged }) {
 function App() {
   const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
+  const [matchStarted, setMatchStarted] = useState(false);
   const [tableNumber, setTableNumber] = useState(1);
   const [message, setMessage] = useState("");
 
@@ -65,6 +46,12 @@ function App() {
   const sendMessage = event => {
     event.preventDefault();
     socket.emit("new-message", message);
+    setMessage('');
+    setMatchStarted(false)
+
+    setTimeout(() => {
+      setMatchStarted(true);
+    }, 3000);
   };
 
   const handleMessageChange = event => {
@@ -73,14 +60,21 @@ function App() {
 
   if (!socket) {
     const connection = io("http://localhost:4000");
+
     connection.on("login", data => {
       console.log(data.deviceNumber);
       setConnected(true);
+
+      setTimeout(() => {
+        setMatchStarted(true);
+      }, 3000);
     });
+
     connection.on("login-error", data => {
       const { tableNumber } = data;
       alert(`a device with the table number ${tableNumber} is connected`);
     });
+
     setSocket(connection);
   }
 
@@ -88,14 +82,15 @@ function App() {
     <div>
       <h1>TTRace</h1>
       <ConnectionStatus connected={connected} />
-      <TableNumber
+      <Login
         connected={connected}
         tableNumber={tableNumber}
         sendTableNumber={sendTableNumber}
         tableNumberChanged={handleTableNumberChange}
       />
+      <WaitForRound connected={connected} matchStarted={matchStarted} />
       <Message
-        connected={connected}
+        matchStarted={matchStarted}
         message={message}
         sendMessage={sendMessage}
         messageChanged={handleMessageChange}
