@@ -38,17 +38,51 @@ class App extends React.Component{
 
   render (){
     return (
-    <div>
-      <header>
-        <h1>PingPongPonyhof</h1>
-      </header> 
+    
+     
+<body >
+
+
+<section class="hero is-medium is-primary is-bold">
+       <div class="hero-body">
+       <div class="container has-text-centered">
+
+         <h1 class="title">
+           PingPongPonyhof
+         </h1>
+        </div>
+       </div>
+      </section>
+
+  
+     <section class="section">
       {this.aktuellesSpiel()}
+      </section>
+
+      <section class="section">
       <h3>Alten Spiele</h3>
       <ul>
         {this.liste()}
       </ul>
-    </div>
+      </section>
+      
+
+      <section class="section">
+      <footer class="footer">
+        <div class="content has-text-centered">
+          <p>
+            <strong>PingPongPonyhof</strong> by coolest guys ever. 
+          </p>
+        </div>
+      </footer>
+      </section>
+
+      </body>
+
+
+
     );
+
   }
 
   liste(){
@@ -64,7 +98,7 @@ class App extends React.Component{
       <li className="ausrichtungcheck">
         <button className="button-game">Spiel vom {this.gamesListe[i]}</button>
         <div className="button-game"/>
-        <button className="delete button-delete" onClick={(e) => this.removeFromList(this.gamesListe[i], i, e)}>Löschen</button>
+        <button className="button-delete" onClick={(e) => this.removeFromList(this.gamesListe[i], i, e)}>Löschen</button>
       </li>
     )
   }
@@ -83,7 +117,7 @@ class App extends React.Component{
           <li className="ausrichtungcheck">
             <button className="button-game">Spiel vom {this.gamesListe[0]}</button>
             <div className="button-game"/>
-             <button className="delete button-delete" onClick={(e) => this.removeFromList(this.gamesListe[0], 0, e )}>Löschen</button>
+             <button className="button-delete" onClick={(e) => this.removeFromList(this.gamesListe[0], 0, e )}>Löschen</button>
           </li>
         </div>
       )

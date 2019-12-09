@@ -1,18 +1,16 @@
+.h3{
+  padding: 10vh;
+  margin: 3vh;
+}
 
-h2 {
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+body{
+  background-color: #F4F4F4;
 }
 
 .ausrichtungcheck{
   display: flex;
   justify-content: center;
-  border: 1px solid black;
-  margin: 1vh 0vh;
+  margin: 1vh 4vh;
   border-radius: 2vh;
   background: white;
 }
@@ -28,27 +26,26 @@ h2 {
   box-sizing: border-box;
 }
 
-.delete.button-delete {
+.button-delete {
   width: 20vh;
   height: 7vh;
   
   float: left;
   border: none;
   background: none;
-  border-left: 0.3vh solid black;
-  
-  font-size: 2vh;
+  border-left: 0.01vh solid #F4F4F4;
+  color: #4D4D4D;
+  font-size: 1.5vh;
   cursor: pointer;
-  text-decoration: none;
   box-sizing: border-box;
   
 }
 
 .button-game:hover {
-  color: var(--main-color);
+  color: #4D4D4D;
 }
 .button-delete:hover {
-  color: var(--main-color);
+  color:  black;
 }
 
 .button-game:focus {
@@ -61,19 +58,6 @@ h2 {
   transform: translateY(0.3vh);
 }
 
-
-.list-background{
-  background: white;
-  color: black;
-  padding: 1vh 1vh;
-  text-align: center;
-  display: block;
-  margin: 20px auto;
-  cursor: pointer;
-  text-decoration: none;
-  box-shadow: 0 5px #666;
-  box-sizing: border-box;
-}
 .server-running {
   background: var(--anti-color);
 }
@@ -87,3 +71,5 @@ ul{
   padding: 0;
   margin: 0;
 }
+
+
