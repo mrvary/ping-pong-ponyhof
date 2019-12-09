@@ -8,6 +8,7 @@ const path = require("path");
 
 const PORT = 4000;
 let deviceNumbers = new Map();
+let io = null;
 
 function createServer() {
   const serverApp = express();
@@ -37,7 +38,7 @@ function createServer() {
   }
 
   // socket io setup
-  const io = socket(server);
+  io = socket(server);
 
   // event fired every time a new client connects:
   io.on("connection", client => {
@@ -79,7 +80,15 @@ function createServer() {
   return server;
 }
 
+function sendBroadcast(eventName) {
+  if (io) {
+    io.sockets.emit(eventName);
+    console.log('server start round')
+  }
+}
+
 module.exports = {
   SERVER_PORT: PORT,
-  createServer
+  createServer,
+  sendBroadcast
 };

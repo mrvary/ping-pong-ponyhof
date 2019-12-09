@@ -48,10 +48,6 @@ function App() {
     socket.emit("new-message", message);
     setMessage('');
     setMatchStarted(false)
-
-    setTimeout(() => {
-      setMatchStarted(true);
-    }, 3000);
   };
 
   const handleMessageChange = event => {
@@ -65,9 +61,9 @@ function App() {
       console.log(data.deviceNumber);
       setConnected(true);
 
-      setTimeout(() => {
+      connection.on('start-round', data => {
         setMatchStarted(true);
-      }, 3000);
+      })
     });
 
     connection.on("login-error", data => {

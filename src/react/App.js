@@ -27,6 +27,13 @@ function App() {
         </button>
         <button
           className="button"
+          id="startRound"
+          onClick={() => ipcRenderer.send(channels.START_ROUND)}
+        >
+          Start Round
+        </button>
+        <button
+          className="button"
           id="xml-import"
           onClick={() => openXML()}
         >
