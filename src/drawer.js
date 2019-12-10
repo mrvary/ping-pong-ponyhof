@@ -3,7 +3,7 @@ function drawNextRound(competition) {
   if (competition.rounds.length === 0) {
     drawFirstRound(competition);
   } else {
-    drawTestF(competition);
+   // drawTestF(competition);
     drawSecondRound(competition);
   }
 }
@@ -90,66 +90,16 @@ function drawFirstRound(competition) {
 }
 
 
-function drawTestF(competition) {
-  console.log("-------TETSTTSSs---------------");
 
-  //ranking contains multiple playersWithSameAmountOfGamesWon Arrays
-  //!!THIS IS STILL CALL BY REFERENCE
-  let gamesWonGroups = createGamesWonGroups(competition.players, competition.rounds.length);
-  printGroups(gamesWonGroups);
-
-  
-
-  debugger;
+ /*@author Daniel
+  try different type of drawings first
 
 
-}
 
 
-//gl hf
+  */
 function drawSecondRound(competition) {
-  /*OLD CODE START-------------------
-  
-  let doLoopCounter = 0;
-  let success = false;
-      ranking = [];
-  
-      do {
-        doLoopCounter++;
-          let error = false;
-          
-          ranking = getRanking(standing);
-          
-          for (var i = 0; i < standing.length; i = i + 2) {
-            if (!checkIfCanPlayVsEachOther(ranking[i], ranking[i + 1])) {
-              error = true;
-            }
-          }
-          
-          if (error === false) {
-            success = true;
-          }
-        } while (error === true && doLoopCounter < 500);
-        
-        let drawResultBasic = {
-          "doLoopCounter": doLoopCounter
-        }
-        
-        if (success) {
-          drawResultBasic.success = true;
-          drawResultBasic.playerlist = ranking;
-        } else {
-          drawResultBasic.success = false;
-        }
-        return drawResultBasic;
-        
-        OLD CODE END---------------
-        */
-
-  // competition.players = updatedPlayers;
-  // competition.rounds.push(matches);
-  let matches = [];
-  let updatedPlayers = [];
+ 
   let players = [];
 
   competition.players.forEach(element => {
@@ -160,9 +110,18 @@ function drawSecondRound(competition) {
   players = shuffle(players);
   let sortedPlayers = sortBy(players, ["gamesWon"]);
 
-  while (sortedPlayers.length >= 2) {
-    let choosenBetterPlayer = sortedPlayers.shift();
-    let choosenWorsePlayer = sortedPlayers.shift();
+  createMatches(sortedPlayers,competition);
+
+  debugger;
+}
+
+function createMatches(playerList, competition){
+  let matches = [];
+  let updatedPlayers = [];
+
+  while (playerList.length >= 2) {
+    let choosenBetterPlayer = playerList.shift();
+    let choosenWorsePlayer = playerList.shift();
 
     updatedPlayers.push({
       ...choosenBetterPlayer,
@@ -186,10 +145,11 @@ function drawSecondRound(competition) {
     matches.push(match);
   }
 
-  if (sortedPlayers.length === 1) {
+  //case of ungeradeTN = freilosSpiel
+  if (playerList.length === 1) {
     updatedPlayers.push({
-      ...sortedPlayers[0],
-      matchesIds: sortedPlayers[0].matchesIds.concat(competition.matchId)
+      ...playerList[0],
+      matchesIds: playerList[0].matchesIds.concat(competition.matchId)
     });
 
     let match = {
@@ -203,9 +163,27 @@ function drawSecondRound(competition) {
     };
     matches.push(match);
   }
-
   competition.players = updatedPlayers;
   competition.rounds.push(matches);
+
+}
+
+
+function drawTestF(competition) {
+  console.log("-------TETSTTSSs---------------");
+
+  //ranking contains multiple playersWithSameAmountOfGamesWon Arrays
+  //!!THIS IS STILL CALL BY REFERENCE
+  let gamesWonGroups = createGamesWonGroups(competition.players, competition.rounds.length);
+  printGroups(gamesWonGroups);
+
+
+  if (competition.rounds.length === 4) {
+    debugger;
+
+  }
+
+
 }
 
 //sort our playerArray by gamesWon f.ex

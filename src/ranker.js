@@ -1,5 +1,4 @@
 function generateRanking(comepetition) {
-  console.log("IN generate Ranking");
   let ranking = [];
 
   /*
