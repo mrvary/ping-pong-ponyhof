@@ -3,7 +3,7 @@ function drawNextRound(competition) {
   if (competition.rounds.length === 0) {
     drawFirstRound(competition);
   } else {
-   // drawTestF(competition);
+    // drawTestF(competition);
     drawSecondRound(competition);
   }
 }
@@ -16,9 +16,8 @@ function drawNextRound(competition) {
   so ist dieses dennoch zu werten 
 */
 function drawFirstRound(competition) {
+  let playerList = [];
   let sortedPlayers = sortBy(competition.players, ["qttr"]);
-  let matches = [];
-  let updatedPlayers = [];
 
   //teile alle TN in obere Hälfte(topPlayers) und untere Hälfte(bottomPlayers)
   //wenn TN-Anzahl ungerade dann soll der mittlere Spieler in die stärkere Hälfte
@@ -33,73 +32,40 @@ function drawFirstRound(competition) {
   lösche die beiden Spieler aus dem pool der verfügbaren Spieler (top/bottom -Players)
   */
   while (bottomPlayers.length !== 0) {
+    //get random player from each list
     const choosenBetterPlayer =
       topPlayers[Math.floor(Math.random() * topPlayers.length)];
     const choosenWorsePlayer =
       bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
 
     //remove choosenPlayer out of top- and bottomPlayers
-    topPlayers = topPlayers.filter(player => player !== choosenBetterPlayer);
+    topPlayers = topPlayers.filter(
+      player => player !== choosenBetterPlayer);
     bottomPlayers = bottomPlayers.filter(
       player => player !== choosenWorsePlayer
     );
 
-    updatedPlayers.push({
-      ...choosenBetterPlayer,
-      matchesIds: choosenBetterPlayer.matchesIds.concat(competition.matchId)
-    });
+    playerList.push(choosenBetterPlayer);
+    playerList.push(choosenWorsePlayer);
 
-    updatedPlayers.push({
-      ...choosenWorsePlayer,
-      matchesIds: choosenWorsePlayer.matchesIds.concat(competition.matchId)
-    });
-
-    let match = {
-      id: competition.matchId++,
-      player1: choosenBetterPlayer,
-      player2: choosenWorsePlayer,
-      round: 1,
-      result: [],
-      sets: [],
-      freeTicket: false
-    };
-    matches.push(match);
-  } //end while
-
-  //check for ungeradeTN -- create freilos Spiel for the one player left in topPlayers
-  if (topPlayers.length === 1) {
-    updatedPlayers.push({
-      ...topPlayers[0],
-      matchesIds: topPlayers[0].matchesIds.concat(competition.matchId)
-    });
-
-    let match = {
-      id: competition.matchId++,
-      player1: topPlayers[0],
-      player2: null,
-      round: 1,
-      result: [],
-      sets: [],
-      freeTicket: true
-    };
-    matches.push(match);
   }
 
-  competition.players = updatedPlayers;
-  competition.rounds.push(matches);
+  //check for ungeradeTN -- this will be the last player in playerList
+  if (topPlayers.length === 1) {
+    playerList.push(topPlayers[0])
+  };
+
+  createMatches(playerList, competition);
 }
 
 
-
- /*@author Daniel
-  try different type of drawings first
-
+/*@author Daniel
+ try different type of drawings first
 
 
-
-  */
+ */
 function drawSecondRound(competition) {
- 
+
   let players = [];
 
   competition.players.forEach(element => {
@@ -110,12 +76,12 @@ function drawSecondRound(competition) {
   players = shuffle(players);
   let sortedPlayers = sortBy(players, ["gamesWon"]);
 
-  createMatches(sortedPlayers,competition);
+  createMatches(sortedPlayers, competition);
 
   debugger;
 }
 
-function createMatches(playerList, competition){
+function createMatches(playerList, competition) {
   let matches = [];
   let updatedPlayers = [];
 
