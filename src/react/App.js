@@ -1,13 +1,17 @@
 import React from "react";
 import "./App.css";
 import "bulma/css/bulma.css";
+import Popup from "./Popup";
+
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      showPopup: false,
       gamesListe: [],
-      laufendesSpiel: true
+      laufendesSpiel: true,
+      lastinterakted: 0
     };
   }
 
@@ -20,6 +24,12 @@ class App extends React.Component {
     "21.11.2019"
   ];
   laufendesSpiel = true;
+
+  togglePopup(){
+    this.setState({
+      showPopup: !this.state.showPopup
+    });
+  }
 
   render() {
     return (
@@ -49,19 +59,29 @@ class App extends React.Component {
         <div className="button-game" />
         <button
           className="delete button-delete"
-          onClick={e => this.removeFromList(this.gamesListe[i], i, e)}
-        >
-          Löschen
+          onClick={this.togglePopup.bind(this)}>
+            Löschen
         </button>
+        {this.state.showPopup ? 
+          <Popup 
+            titleText='Willst du dieses Spiel wirklich löschen?' 
+            justClosePopup={this.togglePopup.bind(this)}
+            deleteAndClose={this.removeFromList.bind(this)}
+          />
+          
+          : null
+        }
       </li>
     );
   }
-
-  removeFromList(elem, position) {
+  //{e => this.removeFromList(this.gamesListe[i], i, e)}
+  removeFromList(position) {
+    position = this.lastinterakted;
+    this.togglePopup();
     if (position === 0) {
       this.laufendesSpiel = false;
     }
-    this.setState(this.gamesListe.splice(this.gamesListe.indexOf(elem), 1));
+    this.setState(this.gamesListe.splice(this.gamesListe.indexOf(this.gamesListe[position]), 1));
   }
 
   aktuellesSpiel() {
@@ -76,10 +96,17 @@ class App extends React.Component {
             <div className="button-game" />
             <button
               className="delete button-delete"
-              onClick={e => this.removeFromList(this.gamesListe[0], 0, e)}
-            >
+              onClick={this.togglePopup.bind(this)}>
               Löschen
             </button>
+              {this.state.showPopup ? 
+              <Popup 
+                titleText='Willst du dieses Spiel wirklich löschen?' 
+                justClosePopup={this.togglePopup.bind(this)}
+                deleteAndClose={this.removeFromList.bind(this)}
+              />
+              : null     //onClick={e => this.removeFromList(this.gamesListe[0], 0, e)}
+              }
           </li>
         </div>
       );
@@ -88,3 +115,4 @@ class App extends React.Component {
 }
 
 export default App;
+
