@@ -3,13 +3,13 @@ function drawNextRound(competition) {
   if (competition.rounds.length === 0) {
     drawFirstRound(competition);
   } else {
+    drawTestF(competition);
     drawSecondRound(competition);
   }
 }
 
 /*@author Daniel
   Auslosung für Runde 1 ist anders
-
 
   Eine Aufgabe eines Spielers sollte hier noch nicht vorhanden sein
   -> gibt dieser sofort nach der Aulosung bzw Ausrufe der Spiele auf
@@ -88,6 +88,23 @@ function drawFirstRound(competition) {
   competition.players = updatedPlayers;
   competition.rounds.push(matches);
 }
+
+
+function drawTestF(competition) {
+  console.log("-------TETSTTSSs---------------");
+
+  //ranking contains multiple playersWithSameAmountOfGamesWon Arrays
+  //!!THIS IS STILL CALL BY REFERENCE
+  let gamesWonGroups = createGamesWonGroups(competition.players, competition.rounds.length);
+  printGroups(gamesWonGroups);
+
+  
+
+  debugger;
+
+
+}
+
 
 //gl hf
 function drawSecondRound(competition) {
@@ -191,6 +208,7 @@ function drawSecondRound(competition) {
   competition.rounds.push(matches);
 }
 
+//sort our playerArray by gamesWon f.ex
 function sortBy(players, selector) {
   return players.sort((playerA, playerB) => {
     return playerB[selector] - playerA[selector];
@@ -205,5 +223,44 @@ function shuffle(e) {
   }
   return e;
 }
+
+function createGamesWonGroups(allPlayers, roundNr) {
+  /*
+    if round 1 is over there are 2 grups of players (0|1 gamesWon )
+    if round 2 is over there are 3 grups of players (0|1|2 gameWon)
+    ...
+  */
+
+  let groups = [];
+  for (var i = 0; i < roundNr + 1; i++) {
+    let playersWithSameAmountOfGamesWon = [];
+
+    allPlayers.forEach(player => {
+      if (player.gamesWon === i) playersWithSameAmountOfGamesWon.push(player);
+    });
+    groups.push(playersWithSameAmountOfGamesWon);
+  }
+  //reverser ranking in order that 0 point players are at the bottom of the log
+  groups.reverse();
+
+  return groups;
+}
+
+
+function printGroups(gamesWonGroups) {
+  gamesWonGroups.forEach(group => {
+
+    if (group.length !== 0) {
+      let string = group[0].gamesWon + " Siege Spieler -> ";
+
+      group.forEach(player => {
+        string += player.lastname + " ";
+      });
+
+      console.log(string);
+    }
+  });
+}
+
 
 module.exports.drawNextRound = drawNextRound;
