@@ -70,15 +70,23 @@ function drawSecondRound(competition) {
 
   competition.players.forEach(element => {
     //call by value
-    players.push(element);
+    players.push({
+      ...element
+    });
   });
+debugger;
+  
+ //schaue ob array a und b ein gemeinsames Element haben
+ //kann benutzt werden um zu schauen ob sie
+ //bereits gegeneinander gespielt haben
+ //a.some(e => b.includes(e))
+ 
 
   players = shuffle(players);
   let sortedPlayers = sortBy(players, ["gamesWon"]);
 
   createMatches(sortedPlayers, competition);
 
-  debugger;
 }
 
 function createMatches(playerList, competition) {
