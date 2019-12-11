@@ -27,6 +27,8 @@ function drawFirstRound(competition) {
     sortedPlayers.length
   );
 
+  debugger;
+
   /*
   hole einen zufälligen Spieler aus der oberen und unteren Hälfte und matche diese zusammen
   lösche die beiden Spieler aus dem pool der verfügbaren Spieler (top/bottom -Players)
@@ -74,7 +76,6 @@ function drawSecondRound(competition) {
       ...element
     });
   });
-debugger;
   
  //schaue ob array a und b ein gemeinsames Element haben
  //kann benutzt werden um zu schauen ob sie
@@ -123,7 +124,8 @@ function createMatches(playerList, competition) {
   if (playerList.length === 1) {
     updatedPlayers.push({
       ...playerList[0],
-      matchesIds: playerList[0].matchesIds.concat(competition.matchId)
+      matchesIds: playerList[0].matchesIds.concat(competition.matchId),
+      freeTicketGame: true
     });
 
     let match = {
