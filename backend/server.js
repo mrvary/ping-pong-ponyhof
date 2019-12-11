@@ -17,12 +17,12 @@ let connectedClients = new Map();
 const findInMap = (map, val) => {
   for (let [k, v] of map) {
     if (v === val) {
-      return true
+      return true;
     }
   }
 
   return false;
-}
+};
 
 function createServer() {
   let server = setupExpressApp();
