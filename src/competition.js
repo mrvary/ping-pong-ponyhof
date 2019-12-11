@@ -57,7 +57,8 @@ function initPlayers(players) {
       gamesWon: 0,
       matchesIds: [],
       qttr: ttr,
-      active: true
+      active: true,
+      freeTicketGame: false
     };
   });
 }

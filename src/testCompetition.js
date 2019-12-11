@@ -20,13 +20,11 @@ var ROUNDS_TO_SIMULATE = 6;
 for (var i = 0; i < ROUNDS_TO_SIMULATE; i++) {
   competition.drawNextRound();
   competition.simulateRound();
+  competition.generateRanking();
+
   //competition.log();
   competition.logLatestRound();
-  competition.logger.logGamesWonGroups(competition);
-
-  if (i == 5) {
-    competition.generateRanking();
-    competition.logRanking();
-  }
+  competition.logRanking();
+  debugger;
 }
 debugger;
