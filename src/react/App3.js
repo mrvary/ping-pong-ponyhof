@@ -5,22 +5,50 @@ import ReactDOM from "react-dom";
 import React, { useState } from "react";
 import { statement } from "@babel/template";
 
-const refresh = () => {
-  ReactDOM.render(<App />, document.getElementById("root"));
-};
+//const refresh = () => {
+//  ReactDOM.render(<App />, document.getElementById("root"));
+// };
 
-const Header = props => {
+//Header im Hintergrund sollte eigentlich Bild sein aber kann nicht auf assets
+//zugreifen
+const HeaderPicture = props => {
   return (
-    <section className="hero is-medium is-primary is-bold">
-      <div className="hero-body">
-        <div className="container has-text-centered">
-          <h1 className="title">{props.title}</h1>
-        </div>
+    <section className="heroSize">
+      <div className="justifyHeader">
+        <HeaderBox />
+        <strong className="titleHeader">{props.title}</strong>
       </div>
     </section>
   );
 };
 
+//Header Box mit Tunier anlegen und XML hochladen
+const HeaderBox = () => {
+  return (
+    <div className="containerBox">
+      <p className="text">Neues Turnier anlegen</p>
+      <UploadXML />
+      <UploadButton />
+    </div>
+  );
+};
+//Upload Fenster
+const UploadXML = () => {
+  return (
+    <button className="button-upload-xml">
+      Lade hier deine XML Datei hoch!
+    </button>
+  );
+};
+
+//Button zum uploaden
+const UploadButton = () => {
+  return <button className="button-upload">Loslegen</button>;
+};
+
+//Liste der "Buttons" mit Löschen Button
+//Löschen Button funktioniert nicht
+//Angabe der Tunierart fehlt
 const ButtonZeile = probs => {
   const datum = probs.datum;
   const löschen = probs.löschen;
@@ -43,8 +71,8 @@ const ButtonListe = probs => {
 
   const Delete = id => {
     if (id === 0) {
+      liste.splice(liste.indexOf(id), 1);
     }
-    liste.splice(liste.indexOf(id), 1);
   };
 
   var htmlList = [];
@@ -55,6 +83,8 @@ const ButtonListe = probs => {
   }
   return htmlList;
 };
+
+//Footer
 
 const Footer = probs => {
   return (
@@ -80,7 +110,7 @@ const App = () => {
 
   return (
     <div>
-      <Header title="PingPongPonyhof" />
+      <HeaderPicture title="PingPongPonyhof" />
       <ButtonListe liste={gamesListe} />
       <Footer title="PingPongPonyhof" />
     </div>
