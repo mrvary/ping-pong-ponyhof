@@ -1,13 +1,13 @@
-.h3{
+.h3 {
   padding: 10vh;
   margin: 3vh;
 }
 
-body{
-  background-color: #F4F4F4;
+body {
+  background-color: #f4f4f4;
 }
 
-.ausrichtungcheck{
+.ausrichtungcheck {
   display: flex;
   justify-content: center;
   margin: 1vh 4vh;
@@ -29,23 +29,22 @@ body{
 .button-delete {
   width: 20vh;
   height: 7vh;
-  
+
   float: left;
   border: none;
   background: none;
-  border-left: 0.01vh solid #F4F4F4;
-  color: #4D4D4D;
+  border-left: 0.01vh solid #f4f4f4;
+  color: #4d4d4d;
   font-size: 1.5vh;
   cursor: pointer;
   box-sizing: border-box;
-  
 }
 
 .button-game:hover {
-  color: #4D4D4D;
+  color: #4d4d4d;
 }
 .button-delete:hover {
-  color:  black;
+  color: black;
 }
 
 .button-game:focus {
@@ -66,10 +65,8 @@ body{
   background-color: white;
 }
 
-ul{
+ul {
   list-style-type: none;
   padding: 0;
   margin: 0;
 }
-
-
