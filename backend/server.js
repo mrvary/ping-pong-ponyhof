@@ -14,6 +14,16 @@ const MAX_AMOUNT_TABLE = 3;
 let serverSocket = null;
 let connectedClients = new Map();
 
+const findInMap = (map, val) => {
+  for (let [k, v] of map) {
+    if (v === val) {
+      return true
+    }
+  }
+
+  return false;
+}
+
 function createServer() {
   let server = setupExpressApp();
   if (!server) {
@@ -72,14 +82,13 @@ function setupSocketIO(server) {
       }
 
       // verify if a client is already connected to a table
-      const keyExists = connectedClients.has(tableNumber);
-      if (keyExists) {
+      if (findInMap(connectedClients, tableNumber)) {
         clientSocket.emit(clientChannels.LOGIN_ERROR, data);
         return;
       }
 
       // add client to connection list
-      connectedClients.set(tableNumber, clientSocket.id);
+      connectedClients.set(clientSocket.id, tableNumber);
       addedDevice = true;
       console.info(
         `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
@@ -97,7 +106,7 @@ function setupSocketIO(server) {
     // event fired when a client disconnects, remove it from the list
     clientSocket.on(clientChannels.DISCONNECT, data => {
       if (addedDevice) {
-        connectedClients.delete(1);
+        connectedClients.delete(clientSocket.id);
         console.info(`Client logout [id=${clientSocket.id}]`);
       }
       console.log(`Client gone [id=${clientSocket.id}]`);
