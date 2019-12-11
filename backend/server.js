@@ -9,12 +9,13 @@ const log = require("electron-log");
 const path = require("path");
 
 const PORT = 4000;
+const MAX_AMOUNT_TABLE = 3;
+
 let serverSocket = null;
 let connectedClients = new Map();
 
 function createServer() {
   let server = setupExpressApp();
-
   if (!server) {
     log.info("Could not start web server");
     return null;
@@ -29,29 +30,30 @@ function setupExpressApp() {
   // create a express application
   const serverApp = express();
 
-  if (!isDev) {
-    // Serve the static files from the React app
+  if (isDev) {
+    // redirect to the development server of the react client app
+    serverApp.get("*", (request, response) => {
+      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
+      response.redirect(clientUrl);
+    });
+  } else {
+    // Serve the static files from the react client app
     serverApp.use(express.static(path.join(__dirname, "../client/build")));
 
     // Handles any requests that don't match the ones above
     serverApp.get("*", (req, res) => {
       res.sendFile(path.join(__dirname, "../client/build/index.html"));
     });
-  } else {
-    serverApp.get("*", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
-      response.redirect(clientUrl);
-    });
   }
 
-  // Create web server
+  // start web server
   return serverApp.listen(PORT, () => {
     log.info(`Server is running on port ${PORT}`);
   });
 }
 
 function setupSocketIO(server) {
-  // open server socket 
+  // open server socket
   serverSocket = io(server);
 
   // event fired every time a new client connects (Browser window was opened)
@@ -63,7 +65,13 @@ function setupSocketIO(server) {
     clientSocket.on(clientChannels.LOGIN_TABLE, data => {
       const { tableNumber } = data;
 
-      // verify if a client is already connected to a table 
+      // verify if max amount of connected devices/table is reached
+      if (connectedClients.size === MAX_AMOUNT_TABLE) {
+        clientSocket.emit(clientChannels.LOGIN_ERROR, data);
+        return;
+      }
+
+      // verify if a client is already connected to a table
       const keyExists = connectedClients.has(tableNumber);
       if (keyExists) {
         clientSocket.emit(clientChannels.LOGIN_ERROR, data);
@@ -73,7 +81,9 @@ function setupSocketIO(server) {
       // add client to connection list
       connectedClients.set(tableNumber, clientSocket.id);
       addedDevice = true;
-      console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
+      console.info(
+        `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
+      );
 
       // send data to client
       clientSocket.emit(clientChannels.LOGIN_TABLE, data);
@@ -85,7 +95,7 @@ function setupSocketIO(server) {
     });
 
     // event fired when a client disconnects, remove it from the list
-    clientSocket.on(clientChannels.DISCONNECT, (data) => {
+    clientSocket.on(clientChannels.DISCONNECT, data => {
       if (addedDevice) {
         connectedClients.delete(1);
         console.info(`Client logout [id=${clientSocket.id}]`);
@@ -99,11 +109,11 @@ function sendStartRoundBroadcast() {
   sendBroadcast(clientChannels.START_ROUND);
 }
 
-// this method is used to submit a broadcast event to all clients 
+// this method is used to submit a broadcast event to all clients
 function sendBroadcast(eventName) {
   if (serverSocket) {
     serverSocket.sockets.emit(eventName);
-    console.log(`server emit broadcast: ${eventName}`)
+    console.log(`server emit broadcast: ${eventName}`);
   }
 }
 

@@ -75,7 +75,7 @@ function App() {
 
     connection.on(clientChannels.LOGIN_ERROR, data => {
       const { tableNumber } = data;
-      alert(`a device with the table number ${tableNumber} is connected`);
+      alert(`A device is already connected with the table ${tableNumber} or all slots are busy`);
     });
 
     setSocket(connection);
