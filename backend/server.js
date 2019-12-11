@@ -68,7 +68,7 @@ function setupSocketIO(server) {
 
   // event fired every time a new client connects (Browser window was opened)
   serverSocket.on(clientChannels.CONNECTION, clientSocket => {
-    var addedDevice = false;
+    let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
 
     // event fired every time a client sends a table number
