@@ -11,10 +11,10 @@ const refresh = () => {
 
 const Header = props => {
   return (
-    <section class="hero is-medium is-primary is-bold">
-      <div class="hero-body">
-        <div class="container has-text-centered">
-          <h1 class="title">{props.title}</h1>
+    <section className="hero is-medium is-primary is-bold">
+      <div className="hero-body">
+        <div className="container has-text-centered">
+          <h1 className="title">{props.title}</h1>
         </div>
       </div>
     </section>
@@ -59,7 +59,7 @@ const ButtonListe = probs => {
 const Footer = probs => {
   return (
     <footer class="footer">
-      <div class="content has-text-centered">
+      <div className="content has-text-centered">
         <p>
           <strong>{probs.title}</strong> by coolest guys ever.
         </p>
