@@ -1,5 +1,5 @@
 const express = require("express");
-const socket = require("socket.io");
+const io = require("socket.io");
 
 const isDev = require("electron-is-dev");
 const log = require("electron-log");
@@ -7,8 +7,8 @@ const log = require("electron-log");
 const path = require("path");
 
 const PORT = 4000;
-let deviceNumbers = new Map();
-let io = null;
+let serverSocket = null;
+let connectedClients = new Map();
 
 function createServer() {
   const serverApp = express();
@@ -35,51 +35,60 @@ function createServer() {
 
   if (!server) {
     log.info("Could not start web server");
+    return null;
   }
 
-  // socket io setup
-  io = socket(server);
-
-  // event fired every time a new client connects:
-  io.on("connection", client => {
-    console.info(`Client connected [id=${client.id}]`);
-    var addedDevice = false;
-
-    client.on("add-device", data => {
-      const { tableNumber } = data;
-
-      const keyExists = deviceNumbers.has(tableNumber);
-      if (keyExists) {
-        client.emit("login-error", data);
-        return;
-      }
-
-      deviceNumbers.set(tableNumber, client.id);
-      addedDevice = true;
-      console.info(`Client login [id=${client.id}] [table=${tableNumber}]`);
-
-      client.emit("login", data);
-    });
-
-    // Funktion, die darauf reagiert, wenn ein Benutzer eine Nachricht schickt
-    client.on("new-message", data => {
-      // Sende die Nachricht an alle Clients
-      console.log(`${client.username} -> ${data}`);
-    });
-
-    // when socket disconnects, remove it from the list
-    client.on("disconnect", (data) => {
-      if (addedDevice) {
-        deviceNumbers.delete(1);
-        console.info(`Client logout [id=${client.id}]`);
-      }
-      console.log(`Client gone [id=${client.id}]`);
-    });
-  });
+  setupSocketIO(server);
 
   return server;
 }
 
+function setupSocketIO(server) {
+  // open server socket 
+  serverSocket = io(server);
+
+  // event fired every time a new client connects (Browser window was opened)
+  serverSocket.on("connection", clientSocket => {
+    var addedDevice = false;
+    console.info(`Client connected [id=${clientSocket.id}]`);
+
+    // event fired every time a client sends a table number
+    clientSocket.on("add-device", data => {
+      const { tableNumber } = data;
+
+      // verify if a client is already connected to a table 
+      const keyExists = connectedClients.has(tableNumber);
+      if (keyExists) {
+        clientSocket.emit("login-error", data);
+        return;
+      }
+
+      // add client to connection list
+      connectedClients.set(tableNumber, clientSocket.id);
+      addedDevice = true;
+      console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
+
+      // send data to client
+      clientSocket.emit("login", data);
+    });
+
+    // event fired when the client sends a message
+    clientSocket.on("new-message", data => {
+      console.log(`${clientSocket.id} -> ${data}`);
+    });
+
+    // event fired when a client disconnects, remove it from the list
+    clientSocket.on("disconnect", (data) => {
+      if (addedDevice) {
+        connectedClients.delete(1);
+        console.info(`Client logout [id=${clientSocket.id}]`);
+      }
+      console.log(`Client gone [id=${clientSocket.id}]`);
+    });
+  });
+}
+
+// this method is used to submit a broadcast event to all clients 
 function sendBroadcast(eventName) {
   if (io) {
     io.sockets.emit(eventName);
