@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import "./App.css";
-import io from "socket.io-client";
 
+// import shared
+import io from "socket.io-client";
+import { clientChannels } from "../shared/client-channels";
+
+// import components
 import Login from "./components/Login";
 import ConnectionStatus from "./components/ConnectionStatus";
 import WaitForRound from "./components/WaitForRound";
 
+// temporarily inside here
 function Message({ matchStarted, message, sendMessage, messageChanged }) {
   if (!matchStarted) {
     return null;
@@ -26,6 +31,8 @@ function Message({ matchStarted, message, sendMessage, messageChanged }) {
 }
 
 function App() {
+  const BASE_URL = "http://localhost:4000";
+
   const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
   const [matchStarted, setMatchStarted] = useState(false);
@@ -35,7 +42,7 @@ function App() {
   const sendTableNumber = event => {
     event.preventDefault();
     if (tableNumber >= 1) {
-      socket.emit("add-device", { tableNumber });
+      socket.emit(clientChannels.LOGIN_TABLE, { tableNumber });
     }
   };
 
@@ -45,7 +52,7 @@ function App() {
 
   const sendMessage = event => {
     event.preventDefault();
-    socket.emit("new-message", message);
+    socket.emit(clientChannels.SEND_MESSAGE, message);
     setMessage('');
     setMatchStarted(false)
   };
@@ -55,18 +62,18 @@ function App() {
   };
 
   if (!socket) {
-    const connection = io("http://localhost:4000");
+    const connection = io(BASE_URL);
 
-    connection.on("login", data => {
+    connection.on(clientChannels.LOGIN_TABLE, data => {
       console.log(data.deviceNumber);
       setConnected(true);
 
-      connection.on('start-round', data => {
+      connection.on(clientChannels.START_ROUND, data => {
         setMatchStarted(true);
       })
     });
 
-    connection.on("login-error", data => {
+    connection.on(clientChannels.LOGIN_ERROR, data => {
       const { tableNumber } = data;
       alert(`a device with the table number ${tableNumber} is connected`);
     });

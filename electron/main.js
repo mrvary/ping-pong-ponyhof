@@ -86,7 +86,7 @@ ipcMain.on(channels.OPEN_CLIENT, event => {
 });
 
 ipcMain.on(channels.START_ROUND, event => {
-  server.sendBroadcast('start-round');
+  server.sendStartRoundBroadcast();
 })
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
