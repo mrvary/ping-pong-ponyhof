@@ -2,7 +2,7 @@ body {
   background-color: #f4f4f4;
 }
 
-.ausrichtungcheck {
+.button-list {
   display: flex;
   justify-content: center;
   margin: 1vh 4vh;
@@ -24,7 +24,6 @@ body {
 .button-delete {
   width: 20vh;
   height: 7vh;
-
   float: left;
   border: none;
   background: none;
@@ -35,13 +34,13 @@ body {
   box-sizing: border-box;
 }
 
-.justifyHeader {
+.header-box-container {
   display: flex;
   justify-content: space-around;
   flex-direction: row-reverse;
 }
 
-.containerBox {
+.container-box {
   width: 40vh;
   height: 50vh;
   border: none;
@@ -78,13 +77,13 @@ body {
   margin: 1.5vh 0vh;
 }
 
-.heroSize {
+.hero-size {
   height: 70vh;
-  background-image: url(/assets/1572780516.jpg);
+  background-image: url('../assets/header_background.jpg');
   background-color: #84afce;
 }
 
-.titleHeader {
+.title-header {
   margin: 20vh 10vh;
   font-size: 6vh;
   color: white;
@@ -136,10 +135,4 @@ body {
 .server-running:hover {
   color: var(--anti-color);
   background-color: white;
-}
-
-ul {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
 }

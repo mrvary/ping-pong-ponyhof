@@ -1,18 +1,14 @@
 import './App.css';
 import React, { useState } from 'react';
 
-//const refresh = () => {
-//  ReactDOM.render(<App />, document.getElementById("root"));
-// };
-
 //Header im Hintergrund sollte eigentlich Bild sein aber kann nicht auf assets
 //zugreifen
 const HeaderPicture = props => {
   return (
-    <section className="heroSize">
-      <div className="justifyHeader">
+    <section className="hero-size">
+      <div className="header-box-container">
         <HeaderBox />
-        <strong className="titleHeader">{props.title}</strong>
+        <strong className="title-header">{props.title}</strong>
       </div>
     </section>
   );
@@ -21,7 +17,7 @@ const HeaderPicture = props => {
 //Header Box mit Tunier anlegen und XML hochladen
 const HeaderBox = () => {
   return (
-    <div className="containerBox">
+    <div className="container-box">
       <p className="text">Neues Turnier anlegen</p>
       <UploadXML />
       <UploadButton />
@@ -51,7 +47,7 @@ const ButtonZeile = probs => {
   const id = probs.id;
 
   return (
-    <li className="ausrichtungcheck">
+    <li className="button-list">
       <button className="button-game">Spiel vom {datum}</button>
       <div className="button-game" />
       <button className="button-delete" onClick={() => löschen(id)}>
@@ -84,8 +80,8 @@ const ButtonListe = probs => {
 
 const Footer = probs => {
   return (
-    <footer class="footer">
-      <div className="content has-text-centered">
+    <footer>
+      <div>
         <p>
           <strong>{probs.title}</strong> by coolest guys ever.
         </p>
