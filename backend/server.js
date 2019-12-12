@@ -1,15 +1,16 @@
-const express = require("express");
+const express = require('express');
 
-const io = require("socket.io");
-const { clientChannels } = require("../client/src/shared/client-channels");
+const io = require('socket.io');
+const { clientChannels } = require('../client/src/shared/client-channels');
 
-const isDev = require("electron-is-dev");
-const log = require("electron-log");
+const isDev = require('electron-is-dev');
+const log = require('electron-log');
 
-const path = require("path");
+const path = require('path');
 
 const PORT = 4000;
-const MAX_AMOUNT_TABLE = 3;
+const MAX_AMOUNT_TABLE = 4;
+const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let serverSocket = null;
 let connectedClients = new Map();
@@ -27,7 +28,7 @@ const findInMap = (map, val) => {
 function createServer() {
   let server = setupExpressApp();
   if (!server) {
-    log.info("Could not start web server");
+    log.info('Could not start web server');
     return null;
   }
 
@@ -42,17 +43,17 @@ function setupExpressApp() {
 
   if (isDev) {
     // redirect to the development server of the react client app
-    serverApp.get("*", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
+    serverApp.get('*', (request, response) => {
+      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001';
       response.redirect(clientUrl);
     });
   } else {
     // Serve the static files from the react client app
-    serverApp.use(express.static(path.join(__dirname, "../client/build")));
+    serverApp.use(express.static(path.join(__dirname, '../client/build')));
 
     // Handles any requests that don't match the ones above
-    serverApp.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../client/build/index.html"));
+    serverApp.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, '../client/build/index.html'));
     });
   }
 
@@ -70,6 +71,8 @@ function setupSocketIO(server) {
   serverSocket.on(clientChannels.CONNECTION, clientSocket => {
     let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
+
+    clientSocket.emit(clientChannels.AVAILABLE_TABLES, availableTables());
 
     // event fired every time a client sends a table number
     clientSocket.on(clientChannels.LOGIN_TABLE, data => {
@@ -124,6 +127,20 @@ function sendBroadcast(eventName) {
     serverSocket.sockets.emit(eventName);
     console.log(`server emit broadcast: ${eventName}`);
   }
+}
+
+function availableTables() {
+  const takenTables = Array.from(connectedClients.values()).map(x =>
+    parseInt(x, 10)
+  );
+  const availableTables = ALL_POTENTIAL_TABLES.filter(
+    key => !takenTables.includes(key)
+  );
+  return availableTables;
+}
+
+function range(start, exclusiveEnd) {
+  return [...Array(exclusiveEnd).keys()].slice(start);
 }
 
 module.exports = {
