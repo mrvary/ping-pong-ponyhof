@@ -6,11 +6,11 @@ import dummyPlayers from '../assets/players';
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const Header = ({ importXML, title }) => {
+const Header = ({ importXML, title, startCompetition }) => {
   return (
     <section className="hero-size">
       <div className="header-box-container">
-        <HeaderBox importXML={importXML} />
+        <HeaderBox importXML={importXML} startCompetition={startCompetition} />
         <strong className="title-header">{title}</strong>
       </div>
     </section>
@@ -18,12 +18,12 @@ const Header = ({ importXML, title }) => {
 };
 
 //Header Box mit Tunier anlegen und XML hochladen
-const HeaderBox = ({ importXML }) => {
+const HeaderBox = ({ importXML, startCompetition }) => {
   return (
     <div className="container-box">
       <p className="text">Neues Turnier anlegen</p>
       <UploadXML importXML={importXML} />
-      <StartCompetitionButton />
+      <StartCompetitionButton startCompetition={startCompetition} />
     </div>
   );
 };
@@ -31,15 +31,19 @@ const HeaderBox = ({ importXML }) => {
 //Upload Fenster
 const UploadXML = ({ importXML }) => {
   return (
-    <button className="button-upload-xml" onClick={() => importXML()}>
+    <button className="button-upload-xml" onClick={importXML}>
       Lade hier deine XML Datei hoch!
     </button>
   );
 };
 
 //Button zum uploaden
-const StartCompetitionButton = () => {
-  return <button className="start-competition-button">Loslegen</button>;
+const StartCompetitionButton = ({ startCompetition }) => {
+  return (
+    <button className="start-competition-button" onClick={startCompetition}>
+      Loslegen
+    </button>
+  );
 };
 
 //Liste der "Buttons" mit Löschen Button
@@ -90,6 +94,7 @@ const App = () => {
     { id: 5, date: '21.11.2019' }
   ]);
   const [players, setPlayers] = useState([]);
+  const [currentId, setCurrentId] = useState(games.length + 1);
 
   // use this function when the app is running in electron
   const importXML = () => {
@@ -110,9 +115,21 @@ const App = () => {
     setGames(games.filter(game => game.id !== id));
   };
 
+  const startCompetition = () => {
+    if (players.length > 0) {
+      const date = new Date();
+      setGames(games.concat([{ id: currentId, date: date.toDateString() }]));
+      setCurrentId(currentId + 1);
+    }
+  };
+
   return (
     <div>
-      <Header title="PingPongPonyhof" importXML={importXMLFrontend} />
+      <Header
+        title="PingPongPonyhof"
+        importXML={importXMLFrontend}
+        startCompetition={startCompetition}
+      />
       <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
       <div>
