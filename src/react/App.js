@@ -1,117 +1,116 @@
-import React from "react";
-import "./App.css";
-import Popup from "./Popup";
+import './App.css';
+import React, { useState } from 'react';
 
+//const refresh = () => {
+//  ReactDOM.render(<App />, document.getElementById("root"));
+// };
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      showPopup: false,
-      gamesListe: [],
-      laufendesSpiel: true,
-      lastinterakted: 0
-    };
-  }
-
-  gamesListe = [
-    "23.7.2019",
-    "11.8.2019",
-    "7.9.2019",
-    "22.9.2019",
-    "2.10.2019",
-    "21.11.2019"
-  ];
-  laufendesSpiel = true;
-
-  togglePopup(){
-    this.setState({
-      showPopup: !this.state.showPopup
-    });
-  }
-
-  render() {
-    return (
-      <div>
-        <header>
-          <h1>PingPongPonyhof</h1>
-        </header>
-        {this.aktuellesSpiel()}
-        <h3>Alten Spiele</h3>
-        <ul>{this.liste()}</ul>
+//Header im Hintergrund sollte eigentlich Bild sein aber kann nicht auf assets
+//zugreifen
+const HeaderPicture = props => {
+  return (
+    <section className="heroSize">
+      <div className="justifyHeader">
+        <HeaderBox />
+        <strong className="titleHeader">{props.title}</strong>
       </div>
+    </section>
+  );
+};
+
+//Header Box mit Tunier anlegen und XML hochladen
+const HeaderBox = () => {
+  return (
+    <div className="containerBox">
+      <p className="text">Neues Turnier anlegen</p>
+      <UploadXML />
+      <UploadButton />
+    </div>
+  );
+};
+//Upload Fenster
+const UploadXML = () => {
+  return (
+    <button className="button-upload-xml">
+      Lade hier deine XML Datei hoch!
+    </button>
+  );
+};
+
+//Button zum uploaden
+const UploadButton = () => {
+  return <button className="button-upload">Loslegen</button>;
+};
+
+//Liste der "Buttons" mit Löschen Button
+//Löschen Button funktioniert nicht
+//Angabe der Tunierart fehlt
+const ButtonZeile = probs => {
+  const datum = probs.datum;
+  const löschen = probs.löschen;
+  const id = probs.id;
+
+  return (
+    <li className="ausrichtungcheck">
+      <button className="button-game">Spiel vom {datum}</button>
+      <div className="button-game" />
+      <button className="button-delete" onClick={() => löschen(id)}>
+        Löschen
+      </button>
+    </li>
+  );
+};
+
+const ButtonListe = probs => {
+  //const [liste] = useState(0);
+  const liste = probs.liste;
+
+  const Delete = id => {
+    if (id === 0) {
+      liste.splice(liste.indexOf(id), 1);
+    }
+  };
+
+  var htmlList = [];
+  for (var i = 1; i < liste.length; i++) {
+    htmlList.push(
+      <ButtonZeile datum={liste[i]} id={i} löschen={Delete.bind(this)} />
     );
   }
+  return htmlList;
+};
 
-  liste() {
-    var htmlList = [];
-    for (var i = 1; i < this.gamesListe.length; i++) {
-      htmlList.push(this.listElement(i));
-    }
-    return htmlList;
-  }
+//Footer
 
-  listElement(i) {
-    return (
-      <li className="ausrichtungcheck">
-        <button className="button-game">Spiel vom {this.gamesListe[i]}</button>
-        <div className="button-game" />
-        <button
-          className="delete button-delete"
-          onClick={this.togglePopup.bind(this)}>
-            Löschen
-        </button>
-        {this.state.showPopup ? 
-          <Popup 
-            titleText='Willst du dieses Spiel wirklich löschen?' 
-            justClosePopup={this.togglePopup.bind(this)}
-            deleteAndClose={this.removeFromList.bind(this)}
-          />
-          
-          : null
-        }
-      </li>
-    );
-  }
-  //{e => this.removeFromList(this.gamesListe[i], i, e)}
-  removeFromList(position) {
-    position = this.lastinterakted;
-    this.togglePopup();
-    if (position === 0) {
-      this.laufendesSpiel = false;
-    }
-    this.setState(this.gamesListe.splice(this.gamesListe.indexOf(this.gamesListe[position]), 1));
-  }
+const Footer = probs => {
+  return (
+    <footer class="footer">
+      <div className="content has-text-centered">
+        <p>
+          <strong>{probs.title}</strong> by coolest guys ever.
+        </p>
+      </div>
+    </footer>
+  );
+};
 
-  aktuellesSpiel() {
-    if (this.laufendesSpiel === true) {
-      return (
-        <div>
-          <h3>Aktuelles Spiel</h3>
-          <li className="ausrichtungcheck">
-            <button className="button-game">
-              Spiel vom {this.gamesListe[0]}
-            </button>
-            <div className="button-game" />
-            <button
-              className="delete button-delete"
-              onClick={this.togglePopup.bind(this)}>
-              Löschen
-            </button>
-              {this.state.showPopup ? 
-              <Popup 
-                titleText='Willst du dieses Spiel wirklich löschen?' 
-                justClosePopup={this.togglePopup.bind(this)}
-                deleteAndClose={this.removeFromList.bind(this)}
-              />
-              : null     //onClick={e => this.removeFromList(this.gamesListe[0], 0, e)}
-              }
-          </li>
-        </div>
-      );
-    }
-  }
-}
+const App = () => {
+  var gamesListe = [
+    '23.7.2019',
+    '11.8.2019',
+    '7.9.2019',
+    '22.9.2019',
+    '2.10.2019',
+    '21.11.2019'
+  ];
+
+  return (
+    <div>
+      <HeaderPicture title="PingPongPonyhof" />
+      <ButtonListe liste={gamesListe} />
+      <Footer title="PingPongPonyhof" />
+    </div>
+  );
+};
 
 export default App;
-
