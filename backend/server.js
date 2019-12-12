@@ -82,6 +82,7 @@ function setupSocketIO(server) {
 
       // add client to connection list
       connectedClients.set(clientSocket.id, tableNumber);
+      sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
       addedDevice = true;
       console.info(
         `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
@@ -100,6 +101,7 @@ function setupSocketIO(server) {
     clientSocket.on(clientChannels.DISCONNECT, data => {
       if (addedDevice) {
         connectedClients.delete(clientSocket.id);
+        sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
         console.info(`Client logout [id=${clientSocket.id}]`);
       }
       console.log(`Client gone [id=${clientSocket.id}]`);
@@ -112,10 +114,11 @@ function sendStartRoundBroadcast() {
 }
 
 // this method is used to submit a broadcast event to all clients
-function sendBroadcast(eventName) {
+function sendBroadcast(eventName, data) {
   if (serverSocket) {
-    serverSocket.sockets.emit(eventName);
+    serverSocket.sockets.emit(eventName, data);
     console.log(`server emit broadcast: ${eventName}`);
+    console.log(`--- data was ${data}`);
   }
 }
 
