@@ -1,32 +1,37 @@
 import './App.css';
 import React, { useState } from 'react';
+import { channels } from '../shared/channels';
+import dummyPlayers from '../assets/players';
 
-const HeaderPicture = props => {
+const log = window.log;
+const ipcRenderer = window.ipcRenderer;
+
+const Header = ({ importXML, title }) => {
   return (
     <section className="hero-size">
       <div className="header-box-container">
-        <HeaderBox />
-        <strong className="title-header">{props.title}</strong>
+        <HeaderBox importXML={importXML} />
+        <strong className="title-header">{title}</strong>
       </div>
     </section>
   );
 };
 
 //Header Box mit Tunier anlegen und XML hochladen
-const HeaderBox = () => {
+const HeaderBox = ({ importXML }) => {
   return (
     <div className="container-box">
       <p className="text">Neues Turnier anlegen</p>
-      <UploadXML />
+      <UploadXML importXML={importXML} />
       <StartCompetitionButton />
     </div>
   );
 };
 
 //Upload Fenster
-const UploadXML = () => {
+const UploadXML = ({ importXML }) => {
   return (
-    <button className="button-upload-xml">
+    <button className="button-upload-xml" onClick={() => importXML()}>
       Lade hier deine XML Datei hoch!
     </button>
   );
@@ -84,6 +89,20 @@ const App = () => {
     { id: 4, date: '2.10.2019' },
     { id: 5, date: '21.11.2019' }
   ]);
+  const [players, setPlayers] = useState([]);
+
+  const importXML = () => {
+    ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
+    ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
+      const { players } = args;
+      log.info(players);
+      setPlayers(players);
+    });
+  };
+
+  const importXMLFrontend = () => {
+    setPlayers(dummyPlayers);
+  };
 
   const deleteGame = id => {
     setGames(games.filter(game => game.id !== id));
@@ -91,9 +110,17 @@ const App = () => {
 
   return (
     <div>
-      <HeaderPicture title="PingPongPonyhof" />
+      <Header title="PingPongPonyhof" importXML={importXMLFrontend} />
       <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
+      <div>
+        {players.map(({ person, id }) => (
+          <p key={id}>
+            {person.firstname} {person.lastname}{' '}
+            {person.ttr > 1400 ? '🍑' : '💩'}
+          </p>
+        ))}
+      </div>
     </div>
   );
 };
