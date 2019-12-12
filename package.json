@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
+    "bulma": "^0.8.0",
     "electron-is-dev": "^1.1.0",
     "electron-log": "^3.0.9",
     "electron-reload": "^1.5.0",
