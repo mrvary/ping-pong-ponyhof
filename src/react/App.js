@@ -91,6 +91,7 @@ const App = () => {
   ]);
   const [players, setPlayers] = useState([]);
 
+  // use this function when the app is running in electron
   const importXML = () => {
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
     ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
@@ -100,6 +101,7 @@ const App = () => {
     });
   };
 
+  // fake backend data for browser
   const importXMLFrontend = () => {
     setPlayers(dummyPlayers);
   };
