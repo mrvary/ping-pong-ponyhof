@@ -85,6 +85,10 @@ ipcMain.on(channels.OPEN_CLIENT, event => {
   shell.openExternal(`http://localhost:${server.SERVER_PORT}`);
 });
 
+ipcMain.on(channels.START_ROUND, event => {
+  server.sendStartRoundBroadcast();
+})
+
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
   dialog
     .showOpenDialog({
