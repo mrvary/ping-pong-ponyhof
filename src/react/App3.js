@@ -1,9 +1,5 @@
-//import React from "react";
-import "./App.css";
-import "bulma/css/bulma.css";
-import ReactDOM from "react-dom";
-import React, { useState } from "react";
-import { statement } from "@babel/template";
+import './App.css';
+import React, { useState } from 'react';
 
 //const refresh = () => {
 //  ReactDOM.render(<App />, document.getElementById("root"));
@@ -100,12 +96,12 @@ const Footer = probs => {
 
 const App = () => {
   var gamesListe = [
-    "23.7.2019",
-    "11.8.2019",
-    "7.9.2019",
-    "22.9.2019",
-    "2.10.2019",
-    "21.11.2019"
+    '23.7.2019',
+    '11.8.2019',
+    '7.9.2019',
+    '22.9.2019',
+    '2.10.2019',
+    '21.11.2019'
   ];
 
   return (
