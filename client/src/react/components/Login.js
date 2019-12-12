@@ -22,10 +22,9 @@ function Login({
           <option value="3" />
           <option value="4" />
         </datalist>
-        <label for="login-input-field" className="login-text">
+        <label htmlFor="login-input-field" className="login-text">
           Tischnummer
         </label>
-        <break />
         <select
           className="login-select"
           onChange={tableNumberChanged}
