@@ -1,5 +1,5 @@
 const {
-  createPlayer,
+  _createPlayer,
   createPlayersFromJSON
 } = require('../../src/matchmaker/competition');
 const { inputPlayers, tournamentJSON } = require('./competition.test.data');
@@ -18,7 +18,7 @@ const EXPECTED_PLAYER = {
 
 describe('createPlayer()', () => {
   test('returns the correct object', () => {
-    const createdPlayer = createPlayer(inputPlayers[0]);
+    const createdPlayer = _createPlayer(inputPlayers[0]);
 
     expect(createdPlayer).toEqual(EXPECTED_PLAYER);
   });
