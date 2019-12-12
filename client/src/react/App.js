@@ -82,7 +82,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="client-container">
       <h1>TTRace</h1>
       <ConnectionStatus connected={connected} />
       <Login
