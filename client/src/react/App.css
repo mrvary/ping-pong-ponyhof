@@ -1,5 +1,8 @@
-.App {
-  text-align: center;
+:root {
+  --main-bg-color: #f4f4f4;
+  --primary-color: #bad;
+  --secondary-color: #faceff;
+  --text-color: white;
 }
 
 .App-logo {
