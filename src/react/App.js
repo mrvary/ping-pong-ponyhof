@@ -40,69 +40,59 @@ const StartCompetitionButton = () => {
 //Liste der "Buttons" mit Löschen Button
 //Löschen Button funktioniert nicht
 //Angabe der Tunierart fehlt
-const ButtonZeile = probs => {
-  const datum = probs.datum;
-  const löschen = probs.löschen;
-  const id = probs.id;
+const ButtonRow = props => {
+  const {
+    game: { id, date },
+    deleteGame
+  } = props;
 
   return (
-    <li className="button-list">
-      <button className="button-game">Spiel vom {datum}</button>
+    <div className="button-list">
+      <button className="button-game">Spiel vom {date}</button>
       <div className="button-game" />
-      <button className="button-delete" onClick={() => löschen(id)}>
+      <button className="button-delete" onClick={() => deleteGame(id)}>
         Löschen
       </button>
-    </li>
+    </div>
   );
 };
 
-const ButtonListe = probs => {
-  //const [liste] = useState(0);
-  const liste = probs.liste;
+const ButtonList = props => {
+  const { games, deleteGame } = props;
 
-  const Delete = id => {
-    if (id === 0) {
-      liste.splice(liste.indexOf(id), 1);
-    }
-  };
-
-  var htmlList = [];
-  for (var i = 1; i < liste.length; i++) {
-    htmlList.push(
-      <ButtonZeile datum={liste[i]} id={i} löschen={Delete.bind(this)} />
-    );
-  }
-  return htmlList;
+  return games.map(game => (
+    <ButtonRow key={game.id} game={game} deleteGame={deleteGame} />
+  ));
 };
 
-//Footer
-
-const Footer = probs => {
+const Footer = ({ title }) => {
   return (
     <footer>
-      <div>
-        <p>
-          <strong>{probs.title}</strong> by coolest guys ever.
-        </p>
-      </div>
+      <p>
+        <strong>{title}</strong> by coolest guys ever.
+      </p>
     </footer>
   );
 };
 
 const App = () => {
-  var gamesListe = [
-    '23.7.2019',
-    '11.8.2019',
-    '7.9.2019',
-    '22.9.2019',
-    '2.10.2019',
-    '21.11.2019'
-  ];
+  const [games, setGames] = useState([
+    { id: 0, date: '23.7.2019' },
+    { id: 1, date: '11.8.2019' },
+    { id: 2, date: '7.9.2019' },
+    { id: 3, date: '22.9.2019' },
+    { id: 4, date: '2.10.2019' },
+    { id: 5, date: '21.11.2019' }
+  ]);
+
+  const deleteGame = id => {
+    setGames(games.filter(game => game.id !== id));
+  };
 
   return (
     <div>
       <HeaderPicture title="PingPongPonyhof" />
-      <ButtonListe liste={gamesListe} />
+      <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
     </div>
   );
