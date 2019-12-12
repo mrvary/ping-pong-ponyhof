@@ -6,6 +6,8 @@ import dummyPlayers from '../assets/players';
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
+const USE_BROWSER = true;
+
 const Header = ({ importXML, title, startCompetition }) => {
   return (
     <section className="hero-size">
@@ -96,19 +98,19 @@ const App = () => {
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
 
-  // use this function when the app is running in electron
   const importXML = () => {
+    // fake backend data for browser
+    if (USE_BROWSER) {
+      setPlayers(dummyPlayers);
+      return;
+    }
+
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
     ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
       const { players } = args;
       log.info(players);
       setPlayers(players);
     });
-  };
-
-  // fake backend data for browser
-  const importXMLFrontend = () => {
-    setPlayers(dummyPlayers);
   };
 
   const deleteGame = id => {
@@ -127,7 +129,7 @@ const App = () => {
     <div>
       <Header
         title="PingPongPonyhof"
-        importXML={importXMLFrontend}
+        importXML={importXML}
         startCompetition={startCompetition}
       />
       <ButtonList games={games} deleteGame={deleteGame} />
@@ -140,6 +142,18 @@ const App = () => {
           </p>
         ))}
       </div>
+      <button
+        className="button"
+        id="startRound"
+        onClick={() => {
+          if (USE_BROWSER) {
+            return;
+          }
+          ipcRenderer.send(channels.START_ROUND);
+        }}
+      >
+        start round
+      </button>
     </div>
   );
 };
