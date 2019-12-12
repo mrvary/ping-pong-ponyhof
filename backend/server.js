@@ -15,16 +15,6 @@ const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 let serverSocket = null;
 let connectedClients = new Map();
 
-const findInMap = (map, val) => {
-  for (let [k, v] of map) {
-    if (v === val) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
 function createServer() {
   let server = setupExpressApp();
   if (!server) {
@@ -85,7 +75,7 @@ function setupSocketIO(server) {
       }
 
       // verify if a client is already connected to a table
-      if (findInMap(connectedClients, tableNumber)) {
+      if (connectedClients.has(tableNumber)) {
         clientSocket.emit(clientChannels.LOGIN_ERROR, data);
         return;
       }
