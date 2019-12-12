@@ -1,4 +1,4 @@
-function createPlayers(json) {
+function createPlayersFromJSON(json) {
   // players are deeply nested in the input json
   const players = json.tournament.competition.players.player;
 
@@ -24,5 +24,6 @@ function createPlayer(dataFromJSON) {
 }
 
 module.exports = {
-  createPlayer
+  createPlayer,
+  createPlayersFromJSON
 };
