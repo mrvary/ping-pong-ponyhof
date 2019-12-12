@@ -1,8 +1,6 @@
 import './App.css';
 import React, { useState } from 'react';
 
-//Header im Hintergrund sollte eigentlich Bild sein aber kann nicht auf assets
-//zugreifen
 const HeaderPicture = props => {
   return (
     <section className="hero-size">
@@ -20,10 +18,11 @@ const HeaderBox = () => {
     <div className="container-box">
       <p className="text">Neues Turnier anlegen</p>
       <UploadXML />
-      <UploadButton />
+      <StartCompetitionButton />
     </div>
   );
 };
+
 //Upload Fenster
 const UploadXML = () => {
   return (
@@ -34,8 +33,8 @@ const UploadXML = () => {
 };
 
 //Button zum uploaden
-const UploadButton = () => {
-  return <button className="button-upload">Loslegen</button>;
+const StartCompetitionButton = () => {
+  return <button className="start-competition-button">Loslegen</button>;
 };
 
 //Liste der "Buttons" mit Löschen Button
