@@ -62,6 +62,7 @@ function setupSocketIO(server) {
     let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
 
+    // send available tables
     clientSocket.emit(clientChannels.AVAILABLE_TABLES, availableTables());
 
     // event fired every time a client sends a table number
@@ -80,7 +81,7 @@ function setupSocketIO(server) {
         return;
       }
 
-      // add client to connection list
+      // add client to connection list, update available tables
       connectedClients.set(clientSocket.id, tableNumber);
       sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
       addedDevice = true;
