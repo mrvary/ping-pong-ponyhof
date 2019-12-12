@@ -6,7 +6,7 @@ function createPlayers(json) {
 }
 
 function createPlayer(dataFromJSON) {
-  const { id, person } = player;
+  const { id, person } = dataFromJSON;
   const { firstname, lastname, ttr } = person;
   const clubname = person['club-name'];
 
@@ -16,8 +16,8 @@ function createPlayer(dataFromJSON) {
     lastname,
     clubname,
     gamesWon: 0,
-    matchesIds: [],
-    qttr: ttr,
+    matchIds: [],
+    qttr: parseInt(ttr, 10),
     active: true,
     hasFreeTicket: false
   };

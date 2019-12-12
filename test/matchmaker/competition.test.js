@@ -1,6 +1,22 @@
 const { createPlayer } = require('../../src/matchmaker/competition');
-const { inputData } = require('./competition.test.data');
+const { inputPlayers } = require('./competition.test.data');
 
-test('creates a player from input data', () => {
-  expect(2).toBe(2);
+describe('the create player function', () => {
+  test('creates the expected player object', () => {
+    const expectedPlayer = {
+      id: 'PLAYER1',
+      firstname: 'Gerhard',
+      lastname: 'Acker',
+      clubname: 'ESV SF Neuaubing',
+      gamesWon: 0,
+      matchIds: [],
+      qttr: 1415,
+      active: true,
+      hasFreeTicket: false
+    };
+
+    const createdPlayer = createPlayer(inputPlayers[0]);
+
+    expect(createdPlayer).toEqual(expectedPlayer);
+  });
 });
