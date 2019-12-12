@@ -5,7 +5,8 @@ function Login({
   connected,
   tableNumber,
   sendTableNumber,
-  tableNumberChanged
+  tableNumberChanged,
+  availableTables
 }) {
   if (connected) {
     return null;
@@ -25,15 +26,20 @@ function Login({
           Tischnummer
         </label>
         <break />
-        <input
-          className="login-input"
-          name="login-input-field"
-          type="number"
-          min="0"
-          list="table-numbers"
-          value={tableNumber}
+        <select
+          className="login-select"
           onChange={tableNumberChanged}
-        />
+          value={tableNumber}
+        >
+          {availableTables.map(n => {
+            const number = parseInt(n, 10);
+            return (
+              <option key={number} value={number}>
+                {number}
+              </option>
+            );
+          })}
+        </select>
         <button className="login-button" onClick={sendTableNumber}>
           OK
         </button>

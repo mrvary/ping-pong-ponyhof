@@ -88,6 +88,7 @@ function App() {
       <h1>TTRace</h1>
       <ConnectionStatus connected={connected} />
       <Login
+        availableTables={[1, 2, 3]}
         connected={connected}
         tableNumber={tableNumber}
         sendTableNumber={sendTableNumber}

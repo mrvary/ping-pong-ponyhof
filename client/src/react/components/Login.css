@@ -12,7 +12,7 @@
   flex-flow: row wrap;
 }
 
-.login-input {
+.login-select {
   width: 40px;
   height: 40px;
   display: inline-block;
@@ -21,12 +21,12 @@
   margin: 20px;
 }
 
-input[type='number']::-webkit-inner-spin-button,
-input[type='number']::-webkit-outer-spin-button {
+select,
+select {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  margin: 0;
+  text-align-last: center;
 }
 
 .login-button {
