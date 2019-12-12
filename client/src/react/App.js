@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import "./App.css";
+import React, { useState } from 'react';
+import './App.css';
 
 // import shared
-import io from "socket.io-client";
-import { clientChannels } from "../shared/client-channels";
+import io from 'socket.io-client';
+import { clientChannels } from '../shared/client-channels';
 
 // import components
-import Login from "./components/Login";
-import ConnectionStatus from "./components/ConnectionStatus";
-import WaitForRound from "./components/WaitForRound";
+import Login from './components/Login';
+import ConnectionStatus from './components/ConnectionStatus';
+import WaitForRound from './components/WaitForRound';
 
 // temporarily inside here
 function Message({ matchStarted, message, sendMessage, messageChanged }) {
@@ -31,13 +31,13 @@ function Message({ matchStarted, message, sendMessage, messageChanged }) {
 }
 
 function App() {
-  const BASE_URL = "http://localhost:4000";
+  const BASE_URL = 'http://localhost:4000';
 
   const [socket, setSocket] = useState(null);
   const [connected, setConnected] = useState(false);
   const [matchStarted, setMatchStarted] = useState(false);
   const [tableNumber, setTableNumber] = useState(1);
-  const [message, setMessage] = useState("");
+  const [message, setMessage] = useState('');
 
   const sendTableNumber = event => {
     event.preventDefault();
@@ -54,7 +54,7 @@ function App() {
     event.preventDefault();
     socket.emit(clientChannels.SEND_MESSAGE, message);
     setMessage('');
-    setMatchStarted(false)
+    setMatchStarted(false);
   };
 
   const handleMessageChange = event => {
@@ -70,12 +70,14 @@ function App() {
 
       connection.on(clientChannels.START_ROUND, data => {
         setMatchStarted(true);
-      })
+      });
     });
 
     connection.on(clientChannels.LOGIN_ERROR, data => {
       const { tableNumber } = data;
-      alert(`A device is already connected with the table ${tableNumber} or all slots are busy`);
+      alert(
+        `A device is already connected with the table ${tableNumber} or all slots are busy`
+      );
     });
 
     setSocket(connection);
