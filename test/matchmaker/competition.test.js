@@ -140,3 +140,8 @@ describe('_pairPlayers()', () => {
 
   test.todo('contains one of the top and one of the bottom players when even');
 });
+
+describe('_createFreeTicketGame()', () => {
+  test.todo('updates matchId and round on player');
+  test.todo('sets freeTicket = true on returned match');
+});

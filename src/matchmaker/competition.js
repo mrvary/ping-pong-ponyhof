@@ -38,6 +38,24 @@ function drawFirstRound({ players, matches }) {
   return { players, pairings };
 }
 
+function _createFreeTicketGame({ player, matchId, round }) {
+  const updatedPlayer = {
+    ...player,
+    matchIds: player.matchIds.concat(matchId)
+  };
+
+  const freeTicketMatch = {
+    id: matchId,
+    player1: player,
+    round,
+    result: [],
+    sets: [],
+    freeTicket: true
+  };
+
+  return { match: freeTicketMatch, player: updatedPlayer };
+}
+
 function _pairPlayers({ top, bottom }) {
   let bottomPlayers = bottom;
   let topPlayers = top;
@@ -55,7 +73,7 @@ function _pairPlayers({ top, bottom }) {
       player => player !== randomBottomPlayer
     );
 
-    pairings.push({ playerA: randomTopPlayer, playerB: randomBottomPlayer });
+    pairings.push({ player1: randomTopPlayer, player2: randomBottomPlayer });
   }
 
   // will be undefined for an even number of players
