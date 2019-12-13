@@ -1,12 +1,12 @@
-const express = require('express');
+const express = require("express");
 
-const io = require('socket.io');
-const { clientChannels } = require('../client/src/shared/client-channels');
+const io = require("socket.io");
+const { clientChannels } = require("../client/src/shared/client-channels");
 
-const isDev = require('electron-is-dev');
-const log = require('electron-log');
+const isDev = require("electron-is-dev");
+const log = require("electron-log");
 
-const path = require('path');
+const path = require("path");
 
 const PORT = 4000;
 const MAX_AMOUNT_TABLE = 4;
@@ -18,7 +18,7 @@ let connectedClients = new Map();
 function createServer() {
   let server = setupExpressApp();
   if (!server) {
-    log.info('Could not start web server');
+    log.info("Could not start web server");
     return null;
   }
 
@@ -33,17 +33,17 @@ function setupExpressApp() {
 
   if (isDev) {
     // redirect to the development server of the react client app
-    serverApp.get('*', (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001';
+    serverApp.get("*", (request, response) => {
+      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
       response.redirect(clientUrl);
     });
   } else {
     // Serve the static files from the react client app
-    serverApp.use(express.static(path.join(__dirname, '../client/build')));
+    serverApp.use(express.static(path.join(__dirname, "../client/build")));
 
     // Handles any requests that don't match the ones above
-    serverApp.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/build/index.html'));
+    serverApp.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "../client/build/index.html"));
     });
   }
 
@@ -76,7 +76,7 @@ function setupSocketIO(server) {
       }
 
       // verify if a client is already connected to a table
-      if (connectedClients.has(tableNumber)) {
+      if (mapHasValue(connectedClients, tableNumber)) {
         clientSocket.emit(clientChannels.LOGIN_ERROR, data);
         return;
       }
@@ -108,6 +108,11 @@ function setupSocketIO(server) {
       console.log(`Client gone [id=${clientSocket.id}]`);
     });
   });
+}
+
+function mapHasValue(inputMap, searchedValue) {
+  const values = Array.from(inputMap.entries());
+  return values.some(([_, value]) => value === searchedValue);
 }
 
 function sendStartRoundBroadcast() {
