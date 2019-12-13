@@ -1,5 +1,6 @@
 const {
   _createPlayer,
+  _pairPlayers,
   _shuffle,
   _sortPlayersBy,
   _separateTopFromBottomPlayers,
@@ -98,4 +99,44 @@ describe('_shuffle()', () => {
     expect(a.length).toBe(4);
     expect(a).toEqual(expect.arrayContaining([1, 2, 3, 4]));
   });
+});
+
+describe('_pairPlayers()', () => {
+  const evenNumberOfPlayers = cleanedUpPlayers
+    .map(player => ({ ...player, qttr: player.qttr + 100 }))
+    .concat(cleanedUpPlayers);
+
+  const evenTopAndBottomPlayers = _separateTopFromBottomPlayers(
+    evenNumberOfPlayers
+  );
+  const evenPairedPlayers = _pairPlayers(evenTopAndBottomPlayers);
+
+  test('returns no unmatched player when even', () => {
+    const { unmatchedPlayer } = evenPairedPlayers;
+    expect(unmatchedPlayer).toBeUndefined();
+  });
+
+  test('has the correct length when even', () => {
+    const { pairings } = evenPairedPlayers;
+    expect(pairings.length).toBe(evenNumberOfPlayers.length / 2);
+  });
+
+  test.todo('contains one of the top and one of the bottom players when even');
+
+  const oddNumberOfPlayers = cleanedUpPlayers;
+  const oddTopAndBottomPlayers = _separateTopFromBottomPlayers(
+    oddNumberOfPlayers
+  );
+  const oddPairedPlayers = _pairPlayers(oddTopAndBottomPlayers);
+  test('returns on unmatched player when odd', () => {
+    const { unmatchedPlayer } = oddPairedPlayers;
+    expect(unmatchedPlayer).not.toBeUndefined();
+  });
+
+  test('has the correct length when odd', () => {
+    const { pairings } = oddPairedPlayers;
+    expect(pairings.length).toBe(Math.floor(oddNumberOfPlayers.length / 2));
+  });
+
+  test.todo('contains one of the top and one of the bottom players when even');
 });

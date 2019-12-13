@@ -33,9 +33,35 @@ function drawFirstRound({ players, matches }) {
   const { top, bottom } = _separateTopFromBottomPlayers(sortedPlayers);
 
   // 3. pair players together
-  const pairings = _pairPlayers({ top, bottom });
+  const { pairings, unmatchedPlayer } = _pairPlayers({ top, bottom });
 
   return { players, pairings };
+}
+
+function _pairPlayers({ top, bottom }) {
+  let bottomPlayers = bottom;
+  let topPlayers = top;
+  let pairings = [];
+
+  while (bottomPlayers.length !== 0) {
+    const randomTopPlayer =
+      topPlayers[Math.floor(Math.random() * topPlayers.length)];
+    const randomBottomPlayer =
+      bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
+
+    //remove chosen players
+    topPlayers = topPlayers.filter(player => player !== randomTopPlayer);
+    bottomPlayers = bottomPlayers.filter(
+      player => player !== randomBottomPlayer
+    );
+
+    pairings.push({ playerA: randomTopPlayer, playerB: randomBottomPlayer });
+  }
+
+  // will be undefined for an even number of players
+  const unmatchedPlayer = topPlayers[0];
+
+  return { pairings, unmatchedPlayer };
 }
 
 function _separateTopFromBottomPlayers(players) {
@@ -66,6 +92,7 @@ function _shuffle(array) {
 module.exports = {
   _createPlayer,
   createPlayersFromJSON,
+  _pairPlayers,
   _sortPlayersBy,
   _separateTopFromBottomPlayers,
   _shuffle
