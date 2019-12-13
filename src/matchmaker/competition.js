@@ -29,6 +29,14 @@ function drawFirstRound({ players, matches }) {
   return { players, matches };
 }
 
+function _separateTopFromBottomPlayers(players) {
+  const sortedPlayers = _sortPlayersBy(players, 'qttr');
+  const top = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
+  const bottom = sortedPlayers.slice(Math.ceil(sortedPlayers.length / 2));
+
+  return { top, bottom };
+}
+
 // UTILITY FUNCTIONS
 function _sortPlayersBy(players, selector) {
   return players.sort((playerA, playerB) => {
@@ -39,5 +47,6 @@ function _sortPlayersBy(players, selector) {
 module.exports = {
   _createPlayer,
   createPlayersFromJSON,
-  _sortPlayersBy
+  _sortPlayersBy,
+  _separateTopFromBottomPlayers
 };
