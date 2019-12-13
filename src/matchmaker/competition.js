@@ -136,6 +136,7 @@ function _shuffle(array) {
 module.exports = {
   _createPlayer,
   createPlayersFromJSON,
+  drawFirstRound,
   _pairPlayers,
   _sortPlayersBy,
   _separateTopFromBottomPlayers,
