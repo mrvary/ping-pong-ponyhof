@@ -64,6 +64,42 @@ const inputPlayers = [
   }
 ];
 
+const cleanedUpPlayers = [
+  {
+    id: 'PLAYER1',
+    firstname: 'Gerhard',
+    lastname: 'Acker',
+    clubname: 'ESV SF Neuaubing',
+    gamesWon: 3,
+    matchIds: [],
+    qttr: 1415,
+    active: true,
+    hasFreeTicket: false
+  },
+  {
+    id: 'PLAYER2',
+    firstname: 'Achim',
+    lastname: 'Amthor',
+    clubname: 'SC Baldham-Vaterstetten ',
+    gamesWon: 5,
+    matchIds: [],
+    qttr: 1251,
+    active: true,
+    hasFreeTicket: false
+  },
+  {
+    id: 'PLAYER3',
+    firstname: 'Ulrich',
+    lastname: 'Dietzel',
+    clubname: 'TTC Friedberg ',
+    gamesWon: 1,
+    matchIds: [],
+    qttr: 1111,
+    active: true,
+    hasFreeTicket: false
+  }
+];
+
 const tournamentJSON = {
   tournament: {
     'end-date': '2019-05-25',
@@ -437,4 +473,4 @@ const tournamentJSON = {
   }
 };
 
-module.exports = { inputPlayers, tournamentJSON };
+module.exports = { inputPlayers, tournamentJSON, cleanedUpPlayers };
