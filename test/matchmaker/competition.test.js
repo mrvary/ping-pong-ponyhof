@@ -1,6 +1,7 @@
 const {
   _createPlayer,
   _sortPlayersBy,
+  _separateTopFromBottomPlayers,
   createPlayersFromJSON
 } = require('../../src/matchmaker/competition');
 
@@ -47,9 +48,37 @@ describe('sortPlayersBy()', () => {
     expect(p1.qttr).toBeGreaterThanOrEqual(p2.qttr);
     expect(p2.qttr).toBeGreaterThanOrEqual(p3.qttr);
   });
-  test.only('sorts players by games won (ascending)', () => {
+
+  test('sorts players by games won (ascending)', () => {
     const [p1, p2, p3] = _sortPlayersBy(cleanedUpPlayers, 'gamesWon');
     expect(p1.gamesWon).toBeGreaterThanOrEqual(p2.gamesWon);
     expect(p2.gamesWon).toBeGreaterThanOrEqual(p3.gamesWon);
+  });
+});
+
+describe('_separateTopFromBottomPlayers()', () => {
+  const evenNumberOfPlayers = cleanedUpPlayers
+    .map(player => ({ ...player, qttr: player.qttr + 100 }))
+    .concat(cleanedUpPlayers);
+
+  test('splits an even list in half', () => {
+    const { top, bottom } = _separateTopFromBottomPlayers(evenNumberOfPlayers);
+    expect(top.length).toBe(bottom.length);
+  });
+
+  test('keeps the sorting by qttr', () => {
+    const { top, bottom } = _separateTopFromBottomPlayers(evenNumberOfPlayers);
+
+    top.forEach(topPlayer => {
+      for (let bottomPlayer of bottom) {
+        expect(topPlayer.qttr).toBeGreaterThanOrEqual(bottomPlayer.qttr);
+      }
+    });
+  });
+
+  test('splits an odd list in a bigger and smaller half', () => {
+    const oddNumberOfPlayers = cleanedUpPlayers;
+    const { top, bottom } = _separateTopFromBottomPlayers(oddNumberOfPlayers);
+    expect(top.length).toBe(bottom.length + 1);
   });
 });
