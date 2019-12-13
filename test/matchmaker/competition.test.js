@@ -1,5 +1,6 @@
 const {
   _createPlayer,
+  _shuffle,
   _sortPlayersBy,
   _separateTopFromBottomPlayers,
   createPlayersFromJSON
@@ -80,5 +81,21 @@ describe('_separateTopFromBottomPlayers()', () => {
     const oddNumberOfPlayers = cleanedUpPlayers;
     const { top, bottom } = _separateTopFromBottomPlayers(oddNumberOfPlayers);
     expect(top.length).toBe(bottom.length + 1);
+  });
+});
+
+describe('_shuffle()', () => {
+  const a = _shuffle([1, 2, 3, 4]);
+  const b = _shuffle([1, 2, 3, 4]);
+  const c = _shuffle([1, 2, 3, 4]);
+  test('shuffles an input array', () => {
+    expect(a).not.toEqual(b);
+    expect(b).not.toEqual(c);
+    expect(a).not.toEqual(c);
+  });
+
+  test('still contains all elements', () => {
+    expect(a.length).toBe(4);
+    expect(a).toEqual(expect.arrayContaining([1, 2, 3, 4]));
   });
 });

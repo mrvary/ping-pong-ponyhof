@@ -53,9 +53,20 @@ function _sortPlayersBy(players, selector) {
   });
 }
 
+function _shuffle(array) {
+  const TIMES = array.length;
+  for (let i = 0; i < TIMES; i++) {
+    const first = Math.floor(Math.random() * array.length);
+    const second = Math.floor(Math.random() * array.length);
+    [array[first], array[second]] = [array[second], array[first]];
+  }
+  return array;
+}
+
 module.exports = {
   _createPlayer,
   createPlayersFromJSON,
   _sortPlayersBy,
-  _separateTopFromBottomPlayers
+  _separateTopFromBottomPlayers,
+  _shuffle
 };
