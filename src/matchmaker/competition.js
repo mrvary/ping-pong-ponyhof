@@ -1,3 +1,4 @@
+// INIT
 function createPlayersFromJSON(json) {
   // players are deeply nested in the input json
   const players = json.tournament.competition.players.player;
@@ -23,7 +24,20 @@ function _createPlayer(dataFromJSON) {
   };
 }
 
+// DRAW ROUNDS
+function drawFirstRound({ players, matches }) {
+  return { players, matches };
+}
+
+// UTILITY FUNCTIONS
+function _sortPlayersBy(players, selector) {
+  return players.sort((playerA, playerB) => {
+    return playerB[selector] - playerA[selector];
+  });
+}
+
 module.exports = {
   _createPlayer,
-  createPlayersFromJSON
+  createPlayersFromJSON,
+  _sortPlayersBy
 };
