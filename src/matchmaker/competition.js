@@ -76,10 +76,12 @@ function _pairPlayers({ top, bottom }) {
     pairings.push({ player1: randomTopPlayer, player2: randomBottomPlayer });
   }
 
-  // will be undefined for an even number of players
-  const unmatchedPlayer = topPlayers[0];
+  // pair last player when odd number of players
+  if (topPlayers[0]) {
+    pairings.push({ player1: topPlayers[0] });
+  }
 
-  return { pairings, unmatchedPlayer };
+  return pairings;
 }
 
 function _separateTopFromBottomPlayers(players) {

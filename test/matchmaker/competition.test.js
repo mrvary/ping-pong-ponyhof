@@ -117,8 +117,7 @@ describe('_pairPlayers()', () => {
   });
 
   test('has the correct length when even', () => {
-    const { pairings } = evenPairedPlayers;
-    expect(pairings.length).toBe(evenNumberOfPlayers.length / 2);
+    expect(evenPairedPlayers.length).toBe(evenNumberOfPlayers.length / 2);
   });
 
   test.todo('contains one of the top and one of the bottom players when even');
@@ -129,13 +128,15 @@ describe('_pairPlayers()', () => {
   );
   const oddPairedPlayers = _pairPlayers(oddTopAndBottomPlayers);
   test('returns on unmatched player when odd', () => {
-    const { unmatchedPlayer } = oddPairedPlayers;
-    expect(unmatchedPlayer).not.toBeUndefined();
+    const singlePairing = oddPairedPlayers[oddPairedPlayers.length - 1];
+    expect(singlePairing.player1).not.toBeUndefined();
+    expect(singlePairing.player2).toBeUndefined();
   });
 
   test('has the correct length when odd', () => {
-    const { pairings } = oddPairedPlayers;
-    expect(pairings.length).toBe(Math.floor(oddNumberOfPlayers.length / 2));
+    expect(oddPairedPlayers.length).toBe(
+      Math.ceil(oddNumberOfPlayers.length / 2)
+    );
   });
 
   test.todo('contains one of the top and one of the bottom players when even');
