@@ -26,7 +26,16 @@ function _createPlayer(dataFromJSON) {
 
 // DRAW ROUNDS
 function drawFirstRound({ players, matches }) {
-  return { players, matches };
+  // 1. sort players by qttr
+  const sortedPlayers = _sortPlayersBy(players, 'qttr');
+
+  // 2. separate top and bottom players
+  const { top, bottom } = _separateTopFromBottomPlayers(sortedPlayers);
+
+  // 3. pair players together
+  const pairings = _pairPlayers({ top, bottom });
+
+  return { players, pairings };
 }
 
 function _separateTopFromBottomPlayers(players) {
