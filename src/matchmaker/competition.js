@@ -9,7 +9,7 @@ function createPlayersFromJSON(json) {
 function _createPlayer(dataFromJSON) {
   const { id, person } = dataFromJSON;
   const { firstname, lastname, ttr } = person;
-  const clubname = person['club-name'];
+  const clubname = person["club-name"];
 
   return {
     id,
@@ -25,9 +25,19 @@ function _createPlayer(dataFromJSON) {
 }
 
 // DRAW ROUNDS
-function drawFirstRound({ players, matches }) {
+function drawRound({ players }) {
+  const isLaterRound = players[0].matchIds.length > 0;
+
+  if (!isLaterRound) {
+    return _drawLaterRound(players);
+  }
+
+  return _drawFirstRound(players);
+}
+
+function _drawFirstRound({ players }) {
   // 1. sort players by qttr
-  const sortedPlayers = _sortPlayersBy(players, 'qttr');
+  const sortedPlayers = _sortPlayersBy(players, "qttr");
 
   // 2. separate top and bottom players
   const { top, bottom } = _separateTopFromBottomPlayers(sortedPlayers);
@@ -38,8 +48,12 @@ function drawFirstRound({ players, matches }) {
   // 4. create matches
   const newMatches = _createMatches(pairings);
 
-  return { players, pairings };
+  // -> update players?
+
+  return { players, matches: newMatches };
 }
+
+function _drawLaterRound({ players }) {}
 
 function _createMatches({ pairings }) {
   let matches = [];
@@ -109,7 +123,7 @@ function _pairPlayers({ top, bottom }) {
 }
 
 function _separateTopFromBottomPlayers(players) {
-  const sortedPlayers = _sortPlayersBy(players, 'qttr');
+  const sortedPlayers = _sortPlayersBy(players, "qttr");
   const top = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
   const bottom = sortedPlayers.slice(Math.ceil(sortedPlayers.length / 2));
 
@@ -134,9 +148,14 @@ function _shuffle(array) {
 }
 
 module.exports = {
-  _createPlayer,
+  // pubic
   createPlayersFromJSON,
-  drawFirstRound,
+  drawRound,
+
+  // private
+  _createPlayer,
+  _drawFirstRound,
+  _drawLaterRound,
   _pairPlayers,
   _sortPlayersBy,
   _separateTopFromBottomPlayers,
