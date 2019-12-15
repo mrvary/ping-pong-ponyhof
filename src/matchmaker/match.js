@@ -3,7 +3,7 @@ function createMatches({ pairings }) {
 
   let matches = [];
   while (remainingPairings) {
-    const match = _createMatch(remainingPairings.shift());
+    const match = createMatch(remainingPairings.shift());
     matches.push(match);
   }
 
