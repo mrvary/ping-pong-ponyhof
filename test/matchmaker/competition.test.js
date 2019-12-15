@@ -1,23 +1,25 @@
+const {} = require("../../src/matchmaker/competition");
+
 const {
-  _createPlayer,
-  _pairPlayers,
-  _shuffle,
-  _sortPlayersBy,
-  _separateTopFromBottomPlayers,
+  createPlayer,
+  pairPlayers,
+  shuffle,
+  sortPlayersBy,
+  separateTopFromBottomPlayers,
   createPlayersFromJSON
-} = require('../../src/matchmaker/competition');
+} = require("../../src/matchmaker/player");
 
 const {
   inputPlayers,
   cleanedUpPlayers,
   tournamentJSON
-} = require('./competition.test.data');
+} = require("./competition.test.data");
 
 const EXPECTED_PLAYER = {
-  id: 'PLAYER1',
-  firstname: 'Gerhard',
-  lastname: 'Acker',
-  clubname: 'ESV SF Neuaubing',
+  id: "PLAYER1",
+  firstname: "Gerhard",
+  lastname: "Acker",
+  clubname: "ESV SF Neuaubing",
   gamesWon: 0,
   matchIds: [],
   qttr: 1415,
@@ -25,51 +27,51 @@ const EXPECTED_PLAYER = {
   hasFreeTicket: false
 };
 
-describe('createPlayer()', () => {
-  test('returns the correct object', () => {
-    const createdPlayer = _createPlayer(inputPlayers[0]);
+describe("createPlayer()", () => {
+  test("returns the correct object", () => {
+    const createdPlayer = createPlayer(inputPlayers[0]);
 
     expect(createdPlayer).toEqual(EXPECTED_PLAYER);
   });
 });
 
-describe('createPlayers()', () => {
+describe("createPlayers()", () => {
   const players = createPlayersFromJSON(tournamentJSON);
-  test('returns a list of players', () => {
+  test("returns a list of players", () => {
     expect(players).toHaveLength(16);
   });
 
-  test('with correct player objects', () => {
+  test("with correct player objects", () => {
     expect(players[0]).toEqual(EXPECTED_PLAYER);
   });
 });
 
-describe('sortPlayersBy()', () => {
-  test('sorts players by qttr (ascending)', () => {
-    const [p1, p2, p3] = _sortPlayersBy(cleanedUpPlayers, 'qttr');
+describe("sortPlayersBy()", () => {
+  test("sorts players by qttr (ascending)", () => {
+    const [p1, p2, p3] = sortPlayersBy(cleanedUpPlayers, "qttr");
     expect(p1.qttr).toBeGreaterThanOrEqual(p2.qttr);
     expect(p2.qttr).toBeGreaterThanOrEqual(p3.qttr);
   });
 
-  test('sorts players by games won (ascending)', () => {
-    const [p1, p2, p3] = _sortPlayersBy(cleanedUpPlayers, 'gamesWon');
+  test("sorts players by games won (ascending)", () => {
+    const [p1, p2, p3] = sortPlayersBy(cleanedUpPlayers, "gamesWon");
     expect(p1.gamesWon).toBeGreaterThanOrEqual(p2.gamesWon);
     expect(p2.gamesWon).toBeGreaterThanOrEqual(p3.gamesWon);
   });
 });
 
-describe('_separateTopFromBottomPlayers()', () => {
+describe("separateTopFromBottomPlayers()", () => {
   const evenNumberOfPlayers = cleanedUpPlayers
     .map(player => ({ ...player, qttr: player.qttr + 100 }))
     .concat(cleanedUpPlayers);
 
-  test('splits an even list in half', () => {
-    const { top, bottom } = _separateTopFromBottomPlayers(evenNumberOfPlayers);
+  test("splits an even list in half", () => {
+    const { top, bottom } = separateTopFromBottomPlayers(evenNumberOfPlayers);
     expect(top.length).toBe(bottom.length);
   });
 
-  test('keeps the sorting by qttr', () => {
-    const { top, bottom } = _separateTopFromBottomPlayers(evenNumberOfPlayers);
+  test("keeps the sorting by qttr", () => {
+    const { top, bottom } = separateTopFromBottomPlayers(evenNumberOfPlayers);
 
     top.forEach(topPlayer => {
       for (let bottomPlayer of bottom) {
@@ -78,71 +80,74 @@ describe('_separateTopFromBottomPlayers()', () => {
     });
   });
 
-  test('splits an odd list in a bigger and smaller half', () => {
+  test("splits an odd list in a bigger and smaller half", () => {
     const oddNumberOfPlayers = cleanedUpPlayers;
-    const { top, bottom } = _separateTopFromBottomPlayers(oddNumberOfPlayers);
+    const { top, bottom } = separateTopFromBottomPlayers(oddNumberOfPlayers);
     expect(top.length).toBe(bottom.length + 1);
   });
 });
 
-describe('_shuffle()', () => {
-  const a = _shuffle([1, 2, 3, 4]);
-  const b = _shuffle([1, 2, 3, 4]);
-  const c = _shuffle([1, 2, 3, 4]);
-  test('shuffles an input array', () => {
+describe("shuffle()", () => {
+  const a = shuffle([1, 2, 3, 4]);
+  const b = shuffle([1, 2, 3, 4]);
+  const c = shuffle([1, 2, 3, 4]);
+  test("shuffles an input array", () => {
     expect(a).not.toEqual(b);
     expect(b).not.toEqual(c);
     expect(a).not.toEqual(c);
   });
 
-  test('still contains all elements', () => {
+  test("still contains all elements", () => {
     expect(a.length).toBe(4);
     expect(a).toEqual(expect.arrayContaining([1, 2, 3, 4]));
   });
 });
 
-describe('_pairPlayers()', () => {
+describe("pairPlayers()", () => {
   const evenNumberOfPlayers = cleanedUpPlayers
     .map(player => ({ ...player, qttr: player.qttr + 100 }))
     .concat(cleanedUpPlayers);
 
-  const evenTopAndBottomPlayers = _separateTopFromBottomPlayers(
+  const evenTopAndBottomPlayers = separateTopFromBottomPlayers(
     evenNumberOfPlayers
   );
-  const evenPairedPlayers = _pairPlayers(evenTopAndBottomPlayers);
+  const evenPairedPlayers = pairPlayers(evenTopAndBottomPlayers);
 
-  test('returns no unmatched player when even', () => {
+  test("returns no unmatched player when even", () => {
     const { unmatchedPlayer } = evenPairedPlayers;
     expect(unmatchedPlayer).toBeUndefined();
   });
 
-  test('has the correct length when even', () => {
+  test("has the correct length when even", () => {
     expect(evenPairedPlayers.length).toBe(evenNumberOfPlayers.length / 2);
   });
 
-  test.todo('contains one of the top and one of the bottom players when even');
+  test.todo("contains one of the top and one of the bottom players when even");
 
   const oddNumberOfPlayers = cleanedUpPlayers;
-  const oddTopAndBottomPlayers = _separateTopFromBottomPlayers(
+  const oddTopAndBottomPlayers = separateTopFromBottomPlayers(
     oddNumberOfPlayers
   );
-  const oddPairedPlayers = _pairPlayers(oddTopAndBottomPlayers);
-  test('returns on unmatched player when odd', () => {
+  const oddPairedPlayers = pairPlayers(oddTopAndBottomPlayers);
+  test("returns on unmatched player when odd", () => {
     const singlePairing = oddPairedPlayers[oddPairedPlayers.length - 1];
     expect(singlePairing.player1).not.toBeUndefined();
     expect(singlePairing.player2).toBeUndefined();
   });
 
-  test('has the correct length when odd', () => {
+  test("has the correct length when odd", () => {
     expect(oddPairedPlayers.length).toBe(
       Math.ceil(oddNumberOfPlayers.length / 2)
     );
   });
 
-  test.todo('contains one of the top and one of the bottom players when even');
+  test.todo("contains one of the top and one of the bottom players when even");
 });
 
-describe('_createMatch', () => {
-  test.todo('yada ydad');
-  test.todo('usw usf');
+describe("createMatch", () => {
+  test.todo("creates an array of matches from an array of pairings");
+});
+
+describe("updatePlayers()", () => {
+  test.todo("returns an array of all players from an array of matches");
 });
