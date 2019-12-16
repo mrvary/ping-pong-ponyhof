@@ -9,20 +9,11 @@ const log = require("electron-log");
 const path = require("path");
 
 const PORT = 4000;
-const MAX_AMOUNT_TABLE = 3;
+const MAX_AMOUNT_TABLE = 4;
+const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let serverSocket = null;
 let connectedClients = new Map();
-
-const findInMap = (map, val) => {
-  for (let [k, v] of map) {
-    if (v === val) {
-      return true;
-    }
-  }
-
-  return false;
-};
 
 function createServer() {
   let server = setupExpressApp();
@@ -71,6 +62,9 @@ function setupSocketIO(server) {
     let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
 
+    // send available tables
+    clientSocket.emit(clientChannels.AVAILABLE_TABLES, availableTables());
+
     // event fired every time a client sends a table number
     clientSocket.on(clientChannels.LOGIN_TABLE, data => {
       const { tableNumber } = data;
@@ -82,13 +76,14 @@ function setupSocketIO(server) {
       }
 
       // verify if a client is already connected to a table
-      if (findInMap(connectedClients, tableNumber)) {
+      if (mapHasValue(connectedClients, tableNumber)) {
         clientSocket.emit(clientChannels.LOGIN_ERROR, data);
         return;
       }
 
-      // add client to connection list
+      // add client to connection list, update available tables
       connectedClients.set(clientSocket.id, tableNumber);
+      sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
       addedDevice = true;
       console.info(
         `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
@@ -107,6 +102,7 @@ function setupSocketIO(server) {
     clientSocket.on(clientChannels.DISCONNECT, data => {
       if (addedDevice) {
         connectedClients.delete(clientSocket.id);
+        sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
         console.info(`Client logout [id=${clientSocket.id}]`);
       }
       console.log(`Client gone [id=${clientSocket.id}]`);
@@ -114,16 +110,36 @@ function setupSocketIO(server) {
   });
 }
 
+function mapHasValue(inputMap, searchedValue) {
+  const values = Array.from(inputMap.entries());
+  return values.some(([_, value]) => value === searchedValue);
+}
+
 function sendStartRoundBroadcast() {
   sendBroadcast(clientChannels.START_ROUND);
 }
 
 // this method is used to submit a broadcast event to all clients
-function sendBroadcast(eventName) {
+function sendBroadcast(eventName, data) {
   if (serverSocket) {
-    serverSocket.sockets.emit(eventName);
+    serverSocket.sockets.emit(eventName, data);
     console.log(`server emit broadcast: ${eventName}`);
+    console.log(`--- data was ${data}`);
   }
+}
+
+function availableTables() {
+  const takenTables = Array.from(connectedClients.values()).map(x =>
+    parseInt(x, 10)
+  );
+  const availableTables = ALL_POTENTIAL_TABLES.filter(
+    key => !takenTables.includes(key)
+  );
+  return availableTables;
+}
+
+function range(start, exclusiveEnd) {
+  return [...Array(exclusiveEnd).keys()].slice(start);
 }
 
 module.exports = {

@@ -38,6 +38,7 @@ function App() {
   const [matchStarted, setMatchStarted] = useState(false);
   const [tableNumber, setTableNumber] = useState(1);
   const [message, setMessage] = useState('');
+  const [availableTables, setAvailableTables] = useState([]);
 
   const sendTableNumber = event => {
     event.preventDefault();
@@ -64,6 +65,11 @@ function App() {
   if (!socket) {
     const connection = io(BASE_URL);
 
+    connection.on(clientChannels.AVAILABLE_TABLES, tables => {
+      console.log(tables);
+      setAvailableTables(tables);
+    });
+
     connection.on(clientChannels.LOGIN_TABLE, data => {
       console.log(data.deviceNumber);
       setConnected(true);
@@ -88,7 +94,7 @@ function App() {
       <h1>TTRace</h1>
       <ConnectionStatus connected={connected} />
       <Login
-        availableTables={[1, 2, 3]}
+        availableTables={availableTables}
         connected={connected}
         tableNumber={tableNumber}
         sendTableNumber={sendTableNumber}
