@@ -1,19 +1,22 @@
+// node dependencies
+const path = require('path');
+const url = require('url');
+const fs = require('fs');
+
 // electron dependencies
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
-require('electron-reload')(__dirname);
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
+
+require('electron-reload')(__dirname, {
+  electron: path.join(__dirname, '../node_modules/.bin/electron')
+});
 
 // server dependencies
 const server = require('../backend/server');
 
 // frontend dependencies
 const { channels } = require('../src/shared/channels');
-
-// node dependencies
-const path = require('path');
-const url = require('url');
-const fs = require('fs');
 
 // external package dependencies
 const parser = require('xml2json');
@@ -24,7 +27,7 @@ let webServer;
 let players = [];
 
 function createMainWindow() {
-  // create the browser window
+  // create the browser window ...
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
@@ -34,7 +37,7 @@ function createMainWindow() {
     }
   });
 
-  // load the content url
+  // ...and load the index.html of the app
   const startUrl =
     process.env.ELECTRON_START_URL ||
     url.format({
@@ -56,14 +59,18 @@ function createMainWindow() {
     .then(name => console.log(`Added Extension:  ${name}`))
     .catch(err => console.log('An error occurred: ', err));
 
+  // Open the DevTools
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
 
-  // set event handler for the window
+  // Emitted when the window is closed.
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // set custom menu
+  require('./menu/main-menu');
 }
 
 app.on('ready', () => {
@@ -93,10 +100,6 @@ app.on('activate', () => {
   if (mainWindow === null) {
     createMainWindow();
   }
-});
-
-ipcMain.on(channels.OPEN_CLIENT, event => {
-  shell.openExternal(`http://localhost:${server.SERVER_PORT}`);
 });
 
 ipcMain.on(channels.START_ROUND, event => {
