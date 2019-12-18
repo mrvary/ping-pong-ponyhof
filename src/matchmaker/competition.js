@@ -19,19 +19,16 @@ function drawRound({ players }) {
 }
 
 function drawFirstRound({ players }) {
-  // 1. sort players by qttr
-  const sortedPlayers = sortPlayersBy(players, "qttr");
-
-  // 2. separate top and bottom players
+  // 1. separate top and bottom players
   const { top, bottom } = separateTopFromBottomPlayers(sortedPlayers);
 
-  // 3. pair players together
+  // 2. pair players together
   const pairings = pairPlayers({ top, bottom });
 
-  // 4. create matches
+  // 3. create matches
   const newMatches = createMatches(pairings);
 
-  // 5. update players
+  // 4. update players
   const newPlayers = updatePlayers(newMatches);
 
   return { players: newPlayers, matches: newMatches };
