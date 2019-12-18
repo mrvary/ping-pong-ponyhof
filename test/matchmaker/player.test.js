@@ -97,7 +97,7 @@ describe("shuffle()", () => {
   });
 
   test("still contains all elements", () => {
-    expect(a.length).toBe(4);
+    expect(a.length).toBe(6);
     expect(a).toEqual(expect.arrayContaining([1, 2, 3, 4]));
   });
 });
