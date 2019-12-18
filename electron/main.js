@@ -1,18 +1,17 @@
 // node dependencies
 const path = require('path');
-const url = require('url');
 const fs = require('fs');
 
 // electron dependencies
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
+const config = require('./config');
+const menu = require('./menu/main-menu');
 
 require('electron-reload')(__dirname, {
   electron: path.join(__dirname, '../node_modules/.bin/electron')
 });
-
-const config = require('./config');
 
 // server dependencies
 const server = require('../backend/server');
@@ -39,17 +38,8 @@ function createMainWindow() {
     }
   });
 
-  // ...and load the index.html of the app
-  const startUrl =
-    process.env.ELECTRON_START_URL ||
-    url.format({
-      // important for deployment -> delete sub path "build"
-      // -> https://stackoverflow.com/questions/41130993/electron-not-allowed-to-load-local-resource
-      pathname: path.join(__dirname, '../build/index.html'),
-      protocol: 'file:',
-      slashes: true
-    });
-  mainWindow.loadURL(startUrl);
+  // ...and load the frontend react app
+  mainWindow.loadURL(config.ELECTRON_START_URL);
 
   // react dev tools for electron
   const {
@@ -71,14 +61,19 @@ function createMainWindow() {
     mainWindow = null;
   });
 
-  // set custom menu
-  require('./menu/main-menu');
+  // set custom application menu
+  Menu.setApplicationMenu(menu);
 }
 
 app.on('ready', () => {
   // start web server
   const port = config.SERVER_PORT;
   webServer = server.createServer(port);
+
+  if (!webServer) {
+    log.info('Could not start web server');
+    return;
+  }
 
   // open the main window
   createMainWindow();
@@ -129,11 +124,4 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
         players: players
       });
     });
-});
-
-ipcMain.on(channels.APP_CLOSE, event => {
-  if (mainWindow !== null) {
-    mainWindow.close();
-    mainWindow = null;
-  }
 });

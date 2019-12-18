@@ -1,12 +1,12 @@
-const express = require('express');
+const app = require('./app');
+const http = require('http');
 
-const io = require('socket.io');
-const { clientChannels } = require('../client/src/shared/client-channels');
-
-const isDev = require('electron-is-dev');
+// electron dependencies
 const log = require('electron-log');
 
-const path = require('path');
+// communication dependecies
+const io = require('socket.io');
+const { clientChannels } = require('../client/src/shared/client-channels');
 
 const MAX_AMOUNT_TABLE = 4;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
@@ -15,39 +15,10 @@ let serverSocket = null;
 let connectedClients = new Map();
 
 function createServer(port) {
-  let server = setupExpressApp(port);
-  if (!server) {
-    log.info('Could not start web server');
-    return null;
-  }
-
+  const server = http.createServer(app);
   setupSocketIO(server);
 
-  return server;
-}
-
-function setupExpressApp(port) {
-  // create a express application
-  const serverApp = express();
-
-  if (isDev) {
-    // redirect to the development server of the react client app
-    serverApp.get('*', (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || 'http://localhost:3001';
-      response.redirect(clientUrl);
-    });
-  } else {
-    // Serve the static files from the react client app
-    serverApp.use(express.static(path.join(__dirname, '../client/build')));
-
-    // Handles any requests that don't match the ones above
-    serverApp.get('*', (req, res) => {
-      res.sendFile(path.join(__dirname, '../client/build/index.html'));
-    });
-  }
-
-  // start web server
-  return serverApp.listen(port, () => {
+  return server.listen(port, () => {
     log.info(`Server is running on port ${port}`);
   });
 }

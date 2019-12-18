@@ -1,4 +1,5 @@
 const { app, Menu, shell } = require('electron');
+const config = require('../config');
 
 // Event handler
 const reload = (item, focusedWindow) => {
@@ -10,8 +11,8 @@ const toggleDevTools = (item, focusedWindow) => {
 };
 
 const openClient = () => {
-  shell.openExternal('http://localhost:4000');
-}
+  shell.openExternal(`http://localhost:${config.SERVER_PORT}`);
+};
 
 // main menu template
 const template = [
@@ -135,5 +136,4 @@ const template = [
   }
 ];
 
-const menu = Menu.buildFromTemplate(template);
-Menu.setApplicationMenu(menu);
+module.exports = Menu.buildFromTemplate(template);
