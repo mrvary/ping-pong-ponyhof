@@ -128,7 +128,7 @@ function generateRanking(comepetition) {
 
   //now after the ranking is sorted
   //we can init the place by the position in ranking
-  for(var i = 0 ; i < ranking.length ; i++){
+  for(let i = 0 ; i < ranking.length ; i++){
     ranking[i].place = i+1;
   }
 

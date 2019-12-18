@@ -3,7 +3,6 @@ function drawNextRound(competition) {
   if (competition.rounds.length === 0) {
     drawFirstRound(competition);
   } else {
-    // drawTestF(competition);
     drawSecondRound(competition);
   }
 }
@@ -26,8 +25,6 @@ function drawFirstRound(competition) {
     Math.ceil(sortedPlayers.length / 2),
     sortedPlayers.length
   );
-
-  debugger;
 
   /*
   hole einen zufälligen Spieler aus der oberen und unteren Hälfte und matche diese zusammen
@@ -60,12 +57,6 @@ function drawFirstRound(competition) {
   createMatches(playerList, competition);
 }
 
-
-/*@author Daniel
- try different type of drawings first
-
-
- */
 function drawSecondRound(competition) {
 
   let players = [];
@@ -145,23 +136,6 @@ function createMatches(playerList, competition) {
 }
 
 
-function drawTestF(competition) {
-  console.log("-------TETSTTSSs---------------");
-
-  //ranking contains multiple playersWithSameAmountOfGamesWon Arrays
-  //!!THIS IS STILL CALL BY REFERENCE
-  let gamesWonGroups = createGamesWonGroups(competition.players, competition.rounds.length);
-  printGroups(gamesWonGroups);
-
-
-  if (competition.rounds.length === 4) {
-    debugger;
-
-  }
-
-
-}
-
 //sort our playerArray by gamesWon f.ex
 function sortBy(players, selector) {
   return players.sort((playerA, playerB) => {
@@ -186,7 +160,7 @@ function createGamesWonGroups(allPlayers, roundNr) {
   */
 
   let groups = [];
-  for (var i = 0; i < roundNr + 1; i++) {
+  for (let i = 0; i < roundNr + 1; i++) {
     let playersWithSameAmountOfGamesWon = [];
 
     allPlayers.forEach(player => {
