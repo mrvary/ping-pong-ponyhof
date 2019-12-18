@@ -10,11 +10,11 @@ function logRanking(competition) {
   let ranking = competition.ranking;
   console.log("---------Ranking after Round " + competition.rounds.length + " --------")
   console.log(
-    "Platz \t Name \t\tS:N\t\tBHZ\t\tTTR-Start\tTTR-Aktuell\t\tTTR-Veränderung\t|\t1.Runde\t\t\t2.Runde\t\t\t3.Runde\t\t\t4.Runde\t\t\t5.Runde\t\t\t6.Runde"
+    "Platz \t Name \t\tS:N\tBHZ\tTTR-Start\tTTR-Aktuell\tTTR-Diff\t|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde"
   );
 
   ranking.forEach(player => {
-    let matchesString = "   ";
+    let matchesString = "";
     player.matches.forEach(match => {
       matchesString +=
         match.opponentName.substring(0, 7) +
@@ -22,26 +22,26 @@ function logRanking(competition) {
         match.ownSets +
         ":" +
         match.opponentSets +
-        "\t\t";
+        "\t";
     });
 
     console.log(
       player.place +
-      " \t\t" +
+      "\t" +
       player.lastname.substring(0, 7) +
       "\t\t" +
       player.gamesWon +
       ":" +
       player.gamesLost +
-      "\t\t" +
+      "\t" +
       player.bhz +
-      "\t\t" +
+      "\t" +
       player.qttr +
       "\t\t" +
       player.ttr_now +
-      "\t\t\t" +
+      "\t\t" +
       player.ttr_diff +
-      "\t\t\t\t|" +
+      "\t\t|\t" +
       matchesString
     );
   });

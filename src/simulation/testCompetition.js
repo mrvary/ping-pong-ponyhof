@@ -15,9 +15,9 @@ for (let i = 0; i < 16 - AMOUNT_OF_TOURNAMENT_PARTICIPANTS; i++) {
 
 const competition = new Competition(players);
 
-var ROUNDS_TO_SIMULATE = 6;
+let ROUNDS_TO_SIMULATE = 6;
 
-for (var i = 0; i < ROUNDS_TO_SIMULATE; i++) {
+for (let i = 0; i < ROUNDS_TO_SIMULATE; i++) {
   competition.drawNextRound();
   competition.simulateRound();
   competition.generateRanking();
@@ -25,6 +25,4 @@ for (var i = 0; i < ROUNDS_TO_SIMULATE; i++) {
   //competition.log();
   competition.logLatestRound();
   competition.logRanking();
-  debugger;
 }
-debugger;
