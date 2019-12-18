@@ -1,6 +1,6 @@
 // electron dependencies
 const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
-require('electron-reload');
+require('electron-reload')(__dirname);
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
 
@@ -23,25 +23,29 @@ let webServer;
 
 let players = [];
 
-function createWindow() {
-  // important for deployment -> delete sub path "build"
-  // -> https://stackoverflow.com/questions/41130993/electron-not-allowed-to-load-local-resource
-  const startUrl =
-    process.env.ELECTRON_START_URL ||
-    url.format({
-      pathname: path.join(__dirname, '../build/index.html'),
-      protocol: 'file:',
-      slashes: true
-    });
+function createMainWindow() {
+  // create the browser window
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       preload: path.join(__dirname, 'preload.js')
     }
   });
+
+  // load the content url
+  const startUrl =
+    process.env.ELECTRON_START_URL ||
+    url.format({
+      // important for deployment -> delete sub path "build"
+      // -> https://stackoverflow.com/questions/41130993/electron-not-allowed-to-load-local-resource
+      pathname: path.join(__dirname, '../build/index.html'),
+      protocol: 'file:',
+      slashes: true
+    });
   mainWindow.loadURL(startUrl);
+
   // react dev tools for electron
   const {
     default: installExtension,
@@ -56,6 +60,7 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 
+  // set event handler for the window
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
@@ -63,7 +68,7 @@ function createWindow() {
 
 app.on('ready', () => {
   webServer = server.createServer();
-  createWindow();
+  createMainWindow();
 });
 
 app.on('before-quit', () => {
@@ -86,7 +91,7 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow();
+    createMainWindow();
   }
 });
 
