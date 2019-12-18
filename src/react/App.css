@@ -1,44 +1,137 @@
-h2 {
-  padding: 0;
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+body {
+  background-color: #f4f4f4;
 }
 
-.button {
+.button-list {
+  display: flex;
+  justify-content: center;
+  margin: 1vh 4vh;
+  border-radius: 2vh;
   background: white;
+}
+
+.button-game {
   border: none;
-  color: black;
-  padding: 16px 32px;
-  text-align: center;
-  display: block;
-  font-size: 16px;
-  margin: 20px auto;
+  width: 150vh;
+  height: 7vh;
+  background: none;
+  font-size: 2.5vh;
   cursor: pointer;
   text-decoration: none;
-  text-transform: uppercase;
-  box-shadow: 0 5px #666;
+  box-sizing: border-box;
 }
 
-.button:hover {
-  color: var(--main-color);
-  background-color: white;
+.button-delete {
+  width: 20vh;
+  height: 7vh;
+  float: left;
+  border: none;
+  background: none;
+  border-left: 0.01vh solid #f4f4f4;
+  color: #4d4d4d;
+  font-size: 1.5vh;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
-.button:focus {
+.header-box-container {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row-reverse;
+}
+
+.container-box {
+  width: 40vh;
+  height: 50vh;
+  border: none;
+  background: white;
+  color: #4d4d4d;
+  font-size: 2.5vh;
+  border-radius: 2vh;
+  justify-content: center;
+  margin: 10vh 4vh;
+  padding: 3vh;
+}
+
+.button-upload-xml {
+  width: 27vh;
+  height: 20vh;
+  color: #4d4d4d;
+  font-size: 2vh;
+  border: 0.3vh solid #f4f4f4;
+  background: white;
+  top: 60px;
+  border-radius: 2vh;
+  margin: 5vh 0vh;
+  padding: 2vh;
+}
+
+.start-competition-button {
+  width: 27vh;
+  height: 6.5vh;
+  color: black;
+  font-size: 2vh;
+  border: none;
+  background: #84afce;
+  border-radius: 2vh;
+  margin: 1.5vh 0vh;
+}
+
+.hero-size {
+  height: 70vh;
+  background-image: url('../assets/header_background.jpg');
+  background-color: #84afce;
+}
+
+.title-header {
+  margin: 20vh 10vh;
+  font-size: 6vh;
+  color: white;
+  justify-content: center;
+}
+
+.text {
+  margin: 1vh 2vh;
+  color: black;
+}
+
+.button-upload:hover {
+  color: #4d4d4d;
+}
+
+.button-upload:focus {
   outline: 0;
 }
-.button:active {
-  box-shadow: 0 2px #666;
-  transform: translateY(4px);
+
+.button-upload-xml:hover {
+  color: black;
+  border: 0.1vh solid #4d4d4d;
+}
+
+.button-upload-xml:focus {
+  outline: 0;
+}
+
+.button-game:hover {
+  color: #4d4d4d;
+}
+.button-delete:hover {
+  color: black;
+}
+
+.button-game:focus {
+  outline: 0;
+}
+.button-delete:focus {
+  outline: 0;
+}
+.button-game:active {
+  transform: translateY(0.3vh);
 }
 
 .server-running {
   background: var(--anti-color);
 }
-
 .server-running:hover {
   color: var(--anti-color);
   background-color: white;
