@@ -8,15 +8,14 @@ const log = require('electron-log');
 
 const path = require('path');
 
-const PORT = 4000;
 const MAX_AMOUNT_TABLE = 4;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let serverSocket = null;
 let connectedClients = new Map();
 
-function createServer() {
-  let server = setupExpressApp();
+function createServer(port) {
+  let server = setupExpressApp(port);
   if (!server) {
     log.info('Could not start web server');
     return null;
@@ -27,7 +26,7 @@ function createServer() {
   return server;
 }
 
-function setupExpressApp() {
+function setupExpressApp(port) {
   // create a express application
   const serverApp = express();
 
@@ -48,8 +47,8 @@ function setupExpressApp() {
   }
 
   // start web server
-  return serverApp.listen(PORT, () => {
-    log.info(`Server is running on port ${PORT}`);
+  return serverApp.listen(port, () => {
+    log.info(`Server is running on port ${port}`);
   });
 }
 
@@ -143,7 +142,6 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  SERVER_PORT: PORT,
   createServer,
   sendStartRoundBroadcast
 };

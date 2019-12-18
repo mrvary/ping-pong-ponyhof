@@ -4,13 +4,15 @@ const url = require('url');
 const fs = require('fs');
 
 // electron dependencies
-const { app, BrowserWindow, ipcMain, dialog, shell } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
 
 require('electron-reload')(__dirname, {
   electron: path.join(__dirname, '../node_modules/.bin/electron')
 });
+
+const config = require('./config');
 
 // server dependencies
 const server = require('../backend/server');
@@ -74,7 +76,11 @@ function createMainWindow() {
 }
 
 app.on('ready', () => {
-  webServer = server.createServer();
+  // start web server
+  const port = config.SERVER_PORT;
+  webServer = server.createServer(port);
+
+  // open the main window
   createMainWindow();
 });
 
