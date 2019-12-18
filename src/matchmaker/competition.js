@@ -20,7 +20,7 @@ function drawRound({ players }) {
 
 function drawFirstRound({ players }) {
   // 1. separate top and bottom players
-  const { top, bottom } = separateTopFromBottomPlayers(sortedPlayers);
+  const { top, bottom } = separateTopFromBottomPlayers(players);
 
   // 2. pair players together
   const pairings = pairPlayers({ top, bottom });
