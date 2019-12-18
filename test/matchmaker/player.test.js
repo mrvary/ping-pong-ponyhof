@@ -87,9 +87,9 @@ describe("separateTopFromBottomPlayers()", () => {
 
 describe("shuffle()", () => {
   // can fail, maybe test differently?
-  const a = shuffle([1, 2, 3, 4]);
-  const b = shuffle([1, 2, 3, 4]);
-  const c = shuffle([1, 2, 3, 4]);
+  const a = shuffle([1, 2, 3, 4, 5, 6]);
+  const b = shuffle([1, 2, 3, 4, 5, 6]);
+  const c = shuffle([1, 2, 3, 4, 5, 6]);
   test("shuffles an input array", () => {
     expect(a).not.toEqual(b);
     expect(b).not.toEqual(c);
