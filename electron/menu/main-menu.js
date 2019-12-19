@@ -1,5 +1,9 @@
-const { app, Menu, shell } = require('electron');
+const { app, ipcMain, Menu, shell } = require('electron');
+
 const config = require('../config');
+const uiActions = require('../actions/uiActions');
+const server = require('../../backend/server');
+const { channels } = require('../../src/shared/channels');
 
 // Event handler
 const reload = (item, focusedWindow) => {
@@ -14,13 +18,33 @@ const openClient = () => {
   shell.openExternal(`http://localhost:${config.SERVER_PORT}`);
 };
 
+const openXMLFile = () => {
+  uiActions.openXMLFile(players => {
+    console.log(players);
+
+    // notify main window
+    ipcMain.emit(channels.FILE_IMPORTED, {
+      players: players
+    });
+  });
+};
+
+const startRound = () => {
+  server.sendStartRoundBroadcast();
+};
+
 // main menu template
 const template = [
   {
     label: 'Turnier',
     submenu: [
       {
-        label: 'XML importieren'
+        label: 'XML importieren',
+        click: openXMLFile
+      },
+      {
+        label: 'Runde starten',
+        click: startRound
       }
     ]
   },
@@ -96,7 +120,7 @@ const template = [
     ]
   },
   {
-    label: 'Tools',
+    label: 'Entwickler',
     submenu: [
       {
         label: 'Entwicklertools',

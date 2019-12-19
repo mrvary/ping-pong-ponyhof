@@ -1,17 +1,18 @@
 // node dependencies
 const path = require('path');
-const fs = require('fs');
 
 // electron dependencies
-const { app, BrowserWindow, ipcMain, dialog, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const log = require('electron-log');
 const isDev = require('electron-is-dev');
-const config = require('./config');
-const menu = require('./menu/main-menu');
 
 require('electron-reload')(__dirname, {
   electron: path.join(__dirname, '../node_modules/.bin/electron')
 });
+
+const config = require('./config');
+const uiActions = require('./actions/uiActions');
+const menu = require('./menu/main-menu');
 
 // server dependencies
 const server = require('../backend/server');
@@ -19,13 +20,8 @@ const server = require('../backend/server');
 // frontend dependencies
 const { channels } = require('../src/shared/channels');
 
-// external package dependencies
-const parser = require('xml2json');
-
 let mainWindow;
 let webServer;
-
-let players = [];
 
 function createMainWindow() {
   // create the browser window ...
@@ -103,25 +99,17 @@ app.on('activate', () => {
   }
 });
 
-ipcMain.on(channels.START_ROUND, event => {
+ipcMain.on(channels.START_ROUND, () => {
   server.sendStartRoundBroadcast();
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
-  dialog
-    .showOpenDialog({
-      properties: ['openFile'],
-      filters: [{ name: 'XML', extensions: ['xml'] }]
-    })
-    .then(result => {
-      const content = fs.readFileSync(result.filePaths[0]);
-      const json = JSON.parse(parser.toJson(content), {
-        reversible: false
-      });
+  uiActions.openXMLFile(players => {
+    console.log(players);
 
-      players = json.tournament.competition.players.player;
-      event.sender.send(channels.OPEN_IMPORT_DIALOG, {
-        players: players
-      });
+    // notify main window
+    event.sender.send(channels.FILE_IMPORTED, {
+      players: players
     });
+  });
 });
