@@ -7,27 +7,12 @@ import { clientChannels } from '../shared/client-channels';
 
 // import components
 import Login from './components/Login';
-import ConnectionStatus from './components/ConnectionStatus';
 import WaitForRound from './components/WaitForRound';
-
-// temporarily inside here
-function Message({ message, sendMessage, messageChanged }) {
-  return (
-    <form className="submit" onSubmit={sendMessage}>
-      Message
-      <input
-        type="text"
-        value={message}
-        placeholder="Type here"
-        onChange={messageChanged}
-      />
-      <button type="submit">Senden</button>
-    </form>
-  );
-}
+import Match from './components/Match';
 
 function App() {
   const BASE_URL = 'http://localhost:4000';
+  const appTitle = 'TTRace';
 
   const [socket, setSocket] = useState(null);
   const [page, setPage] = useState('login');
@@ -45,6 +30,8 @@ function App() {
     if (page === 'login') {
       return (
         <Login
+          appTitle={appTitle}
+          isConnected={isConnected}
           availableTables={availableTables}
           tableNumber={tableNumber}
           sendTableNumber={sendTableNumber}
@@ -52,10 +39,12 @@ function App() {
         />
       );
     } else if (page === 'wait') {
-      return <WaitForRound />;
+      return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
     } else if (page === 'match') {
       return (
-        <Message
+        <Match
+          appTitle={appTitle}
+          isConnected={isConnected}
           message={message}
           sendMessage={sendMessage}
           messageChanged={handleMessageChange}
@@ -122,13 +111,7 @@ function App() {
     setSocket(connection);
   }
 
-  return (
-    <div className="client-container">
-      <h1>TTRace</h1>
-      <ConnectionStatus isConnected={isConnected} />
-      {content()}
-    </div>
-  );
+  return <div className="client-container">{content()}</div>;
 }
 
 export default App;

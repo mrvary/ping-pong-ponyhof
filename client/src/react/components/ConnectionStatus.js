@@ -8,7 +8,7 @@ function ConnectionStatus({ isConnected }) {
   return (
     <div className="connection">
       <div className={iconCss}></div>
-      connection
+      Verbindung
     </div>
   );
 }
