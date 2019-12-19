@@ -13,6 +13,7 @@ const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let serverSocket = null;
 let connectedClients = new Map();
+let matchStarted = false;
 
 function createServer(port) {
   const server = http.createServer(app);
@@ -32,7 +33,7 @@ function setupSocketIO(server) {
     let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
 
-    // send available tables
+    // send current server state to clients
     clientSocket.emit(clientChannels.AVAILABLE_TABLES, availableTables());
 
     // event fired every time a client sends a table number
@@ -51,16 +52,21 @@ function setupSocketIO(server) {
         return;
       }
 
-      // add client to connection list, update available tables
+      // login client
       connectedClients.set(clientSocket.id, tableNumber);
-      sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
       addedDevice = true;
       console.info(
         `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
       );
 
+      // send current server state to clients
+      sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
+
       // send data to client
-      clientSocket.emit(clientChannels.LOGIN_TABLE, data);
+      clientSocket.emit(clientChannels.LOGIN_TABLE, {
+        tableNumber: tableNumber,
+        matchStarted: matchStarted
+      });
     });
 
     // event fired when the client sends a message
@@ -72,8 +78,9 @@ function setupSocketIO(server) {
     clientSocket.on(clientChannels.DISCONNECT, data => {
       if (addedDevice) {
         connectedClients.delete(clientSocket.id);
-        sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
         console.info(`Client logout [id=${clientSocket.id}]`);
+
+        sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
       }
       console.log(`Client gone [id=${clientSocket.id}]`);
     });
@@ -86,7 +93,10 @@ function mapHasValue(inputMap, searchedValue) {
 }
 
 function sendStartRoundBroadcast() {
-  sendBroadcast(clientChannels.START_ROUND);
+  if (matchStarted) return;
+  
+  matchStarted = true;
+  sendBroadcast(clientChannels.START_ROUND, null);
 }
 
 // this method is used to submit a broadcast event to all clients

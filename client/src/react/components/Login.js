@@ -2,16 +2,11 @@ import React from 'react';
 import './Login.css';
 
 function Login({
-  connected,
   tableNumber,
   sendTableNumber,
   tableNumberChanged,
   availableTables
 }) {
-  if (connected) {
-    return null;
-  }
-
   return (
     <div className="login">
       <form className="login-form">

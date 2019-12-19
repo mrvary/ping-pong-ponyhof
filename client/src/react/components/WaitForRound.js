@@ -1,15 +1,7 @@
 import React from 'react';
 import './WaitForRound.css';
 
-function WaitForRound({ connected, matchStarted }) {
-  if (!connected) {
-    return null;
-  }
-
-  if (matchStarted) {
-    return null;
-  }
-
+function WaitForRound() {
   return (
     <div className="ball-container">
       <div className="ball"></div>

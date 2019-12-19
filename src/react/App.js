@@ -6,7 +6,7 @@ import dummyPlayers from '../assets/players';
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = true;
+const USE_BROWSER = false;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
