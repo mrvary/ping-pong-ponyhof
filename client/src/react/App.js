@@ -15,7 +15,7 @@ function App() {
   const appTitle = 'TTRace';
 
   const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState('login');
+  const [page, setPage] = useState('match');
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);

@@ -1,29 +1,15 @@
 import React from 'react';
 
-import ConnectionStatus from './ConnectionStatus';
 import Title from './Title';
+import ConnectionStatus from './ConnectionStatus';
+import ScoreBoard from './ScoreBoard';
 
-function Match({
-  appTitle,
-  isConnected,
-  message,
-  sendMessage,
-  messageChanged
-}) {
+function Match({ appTitle, isConnected }) {
   return (
     <div>
       <Title title={appTitle} />
       <ConnectionStatus isConnected={isConnected} />
-      <form className="submit" onSubmit={sendMessage}>
-        Message
-        <input
-          type="text"
-          value={message}
-          placeholder="Type here"
-          onChange={messageChanged}
-        />
-        <button type="submit">Senden</button>
-      </form>
+      <ScoreBoard />
     </div>
   );
 }
