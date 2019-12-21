@@ -1,5 +1,4 @@
 const {
-  sortPlayersBy,
   separateTopFromBottomPlayers,
   updatePlayers,
   pairPlayers
