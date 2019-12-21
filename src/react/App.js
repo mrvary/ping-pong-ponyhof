@@ -6,7 +6,7 @@ import dummyPlayers from '../assets/players';
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = true;
+const USE_BROWSER = false;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -106,7 +106,7 @@ const App = () => {
     }
 
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
-    ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
+    ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
       const { players } = args;
       log.info(players);
       setPlayers(players);
@@ -142,18 +142,6 @@ const App = () => {
           </p>
         ))}
       </div>
-      <button
-        className="button"
-        id="startRound"
-        onClick={() => {
-          if (USE_BROWSER) {
-            return;
-          }
-          ipcRenderer.send(channels.START_ROUND);
-        }}
-      >
-        start round
-      </button>
     </div>
   );
 };
