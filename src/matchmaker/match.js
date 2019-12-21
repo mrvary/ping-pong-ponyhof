@@ -15,7 +15,6 @@ function createMatches({ pairings }) {
 
 // todo: pass round and matchId
 function createMatch({ player1, player2 }) {
-  const round = player1.matchIds.length;
   const currentMatchId = matchId;
   matchId++;
 
@@ -24,7 +23,6 @@ function createMatch({ player1, player2 }) {
     const freeTicketMatch = {
       id: currentMatchId,
       player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
-      round,
       result: [],
       sets: [],
       freeTicket: true
@@ -37,7 +35,6 @@ function createMatch({ player1, player2 }) {
     id: currentMatchId,
     player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
     player2: { ...player2, matchIds: player2.matchIds.concat(matchId) },
-    round,
     result: [],
     sets: [],
     freeTicket: false
