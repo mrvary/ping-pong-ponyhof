@@ -7,38 +7,51 @@ import { clientChannels } from '../shared/client-channels';
 
 // import components
 import Login from './components/Login';
-import ConnectionStatus from './components/ConnectionStatus';
 import WaitForRound from './components/WaitForRound';
-
-// temporarily inside here
-function Message({ matchStarted, message, sendMessage, messageChanged }) {
-  if (!matchStarted) {
-    return null;
-  }
-
-  return (
-    <form className="submit" onSubmit={sendMessage}>
-      Message
-      <input
-        type="text"
-        value={message}
-        placeholder="Type here"
-        onChange={messageChanged}
-      />
-      <button type="submit">Senden</button>
-    </form>
-  );
-}
+import Match from './components/Match';
 
 function App() {
   const BASE_URL = 'http://localhost:4000';
+  const appTitle = 'TTRace';
 
   const [socket, setSocket] = useState(null);
-  const [connected, setConnected] = useState(false);
-  const [matchStarted, setMatchStarted] = useState(false);
+  const [page, setPage] = useState('login');
+  const [isConnected, setIsConnected] = useState(false);
+
+  const [availableTables, setAvailableTables] = useState([]);
   const [tableNumber, setTableNumber] = useState(1);
   const [message, setMessage] = useState('');
-  const [availableTables, setAvailableTables] = useState([]);
+
+  const toPage = page => {
+    setPage(page);
+  };
+
+  const content = () => {
+    if (page === 'login') {
+      return (
+        <Login
+          appTitle={appTitle}
+          isConnected={isConnected}
+          availableTables={availableTables}
+          tableNumber={tableNumber}
+          sendTableNumber={sendTableNumber}
+          tableNumberChanged={handleTableNumberChange}
+        />
+      );
+    } else if (page === 'wait') {
+      return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
+    } else if (page === 'match') {
+      return (
+        <Match
+          appTitle={appTitle}
+          isConnected={isConnected}
+          message={message}
+          sendMessage={sendMessage}
+          messageChanged={handleMessageChange}
+        />
+      );
+    }
+  };
 
   const sendTableNumber = event => {
     event.preventDefault();
@@ -55,7 +68,6 @@ function App() {
     event.preventDefault();
     socket.emit(clientChannels.SEND_MESSAGE, message);
     setMessage('');
-    setMatchStarted(false);
   };
 
   const handleMessageChange = event => {
@@ -67,15 +79,25 @@ function App() {
 
     connection.on(clientChannels.AVAILABLE_TABLES, tables => {
       console.log(tables);
+
       setAvailableTables(tables);
+      setTableNumber(tables[0]);
     });
 
     connection.on(clientChannels.LOGIN_TABLE, data => {
-      console.log(data.deviceNumber);
-      setConnected(true);
+      const { tableNumber, matchStarted } = data;
+      console.log(data);
+      setIsConnected(true);
 
-      connection.on(clientChannels.START_ROUND, data => {
-        setMatchStarted(true);
+      console.log('matchStart ->', matchStarted);
+      if (matchStarted) {
+        toPage('match');
+      } else {
+        toPage('wait');
+      }
+
+      connection.on(clientChannels.START_ROUND, () => {
+        toPage('match');
       });
     });
 
@@ -89,26 +111,7 @@ function App() {
     setSocket(connection);
   }
 
-  return (
-    <div className="client-container">
-      <h1>TTRace</h1>
-      <ConnectionStatus connected={connected} />
-      <Login
-        availableTables={availableTables}
-        connected={connected}
-        tableNumber={tableNumber}
-        sendTableNumber={sendTableNumber}
-        tableNumberChanged={handleTableNumberChange}
-      />
-      <WaitForRound connected={connected} matchStarted={matchStarted} />
-      <Message
-        matchStarted={matchStarted}
-        message={message}
-        sendMessage={sendMessage}
-        messageChanged={handleMessageChange}
-      />
-    </div>
-  );
+  return <div className="client-container">{content()}</div>;
 }
 
 export default App;

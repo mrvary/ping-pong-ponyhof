@@ -1,19 +1,18 @@
 import React from 'react';
 import './WaitForRound.css';
 
-function WaitForRound({ connected, matchStarted }) {
-  if (!connected) {
-    return null;
-  }
+import ConnectionStatus from './ConnectionStatus';
+import Title from './Title';
 
-  if (matchStarted) {
-    return null;
-  }
-
+function WaitForRound({appTitle, isConnected}) {
   return (
-    <div className="ball-container">
-      <div className="ball"></div>
-      <div className="shadow"></div>
+    <div>
+      <Title title={appTitle} />
+      <ConnectionStatus isConnected={isConnected} />
+      <div className="ball-container">
+        <div className="ball"></div>
+        <div className="shadow"></div>
+      </div>
     </div>
   );
 }
