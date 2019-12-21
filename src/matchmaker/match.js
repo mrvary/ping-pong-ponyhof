@@ -14,7 +14,8 @@ function createMatches({ pairings }) {
 }
 
 // todo: pass round and matchId
-function createMatch({ player1, player2 }, round) {
+function createMatch({ player1, player2 }) {
+  const round = player1.matchIds.length;
   const currentMatchId = matchId;
   matchId++;
 
