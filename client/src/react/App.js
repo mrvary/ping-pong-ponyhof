@@ -10,10 +10,20 @@ import Login from './components/Login';
 import WaitForRound from './components/WaitForRound';
 import Match from './components/Match';
 
-function App() {
-  const BASE_URL = 'http://localhost:4000';
-  const appTitle = 'TTRace';
+const appTitle = 'TTRace';
 
+// for development: the requested server is the webserver
+//                  from the electron app and not the
+//                  development server of the react app
+// for production:  the requested server is the one and only
+const isDev = true;
+const getServerURL = () => {
+  let url = isDev ? 'localhost:4000' : document.location.host;
+  console.log('Requested server: ', url);
+  return url;
+};
+
+function App() {
   const [socket, setSocket] = useState(null);
   const [page, setPage] = useState('login');
   const [isConnected, setIsConnected] = useState(false);
@@ -75,7 +85,8 @@ function App() {
   };
 
   if (!socket) {
-    const connection = io(BASE_URL);
+    const base_url = getServerURL();
+    const connection = io(base_url);
 
     connection.on(clientChannels.AVAILABLE_TABLES, tables => {
       console.log(tables);
