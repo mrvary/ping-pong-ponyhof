@@ -1,11 +1,7 @@
 const os = require('os');
 
 function getIpAddress() {
-  let ipAddress = getIpAddressByAdapterName('Ethernet');
-  if (!ipAddress) {
-    ipAddress = getIpAddressByAdapterName('WLAN');
-  }
-
+  let ipAddress = getInterfaceByName('Ethernet') || getInterfaceByName('WLAN');
   if (!ipAddress) {
     throw new Error('ip address could not be determined');
   }
@@ -13,11 +9,12 @@ function getIpAddress() {
   return ipAddress;
 }
 
-function getIpAddressByAdapterName(name) {
+function getInterfaceByName(name) {
   const ifaces = os.networkInterfaces();
-  const netInterface = Object.keys(ifaces).filter(dev => dev === name)
+  const netInterface = Object.keys(ifaces).filter(dev => dev === name);
 
   if (netInterface.length === 0) {
+    // Review: Perhaps it is better to throw an exception here
     return;
   }
 
@@ -34,4 +31,4 @@ function getIpAddressByAdapterName(name) {
 
 module.exports = {
   getIpAddress
-}
+};
