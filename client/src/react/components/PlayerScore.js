@@ -8,7 +8,7 @@ function PlayerScore({ player, score }) {
   let currentScore = score ? score : 0
 
   return (
-    <div className="btnContainer">
+    <div className="btn-container">
       <Player player={player} />
       <Score score={currentScore} />
     </div>

@@ -5,7 +5,7 @@ import MainScore from './MainScore';
 
 function ScoreBoard() {
   return (
-    <div className="boardContainer">
+    <div className="board-container">
       <h1>ScoreBoard</h1>
       <MainScore />
     </div>

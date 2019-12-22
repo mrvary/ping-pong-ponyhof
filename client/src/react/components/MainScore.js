@@ -7,7 +7,7 @@ function MainScore() {
   const players = ['Marco Goebel', 'Felix Breitenbach'];
 
   return (
-    <div className="scoreContainer">
+    <div className="score-container">
       <PlayerScore player={players[0]} />
       <div>:</div>
       <PlayerScore player={players[1]} />
