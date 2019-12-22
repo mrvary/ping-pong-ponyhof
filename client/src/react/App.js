@@ -90,11 +90,7 @@ function App() {
       setIsConnected(true);
 
       console.log('matchStart ->', matchStarted);
-      if (matchStarted) {
-        toPage('match');
-      } else {
-        toPage('wait');
-      }
+      matchStarted ? toPage('match') : toPage('wait');
 
       connection.on(clientChannels.START_ROUND, () => {
         toPage('match');
