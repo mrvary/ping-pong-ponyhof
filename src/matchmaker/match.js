@@ -1,3 +1,6 @@
+// TODO: use hash?
+let matchId = 0;
+
 function createMatches({ pairings }) {
   let remainingPairings = pairings;
 
@@ -11,25 +14,27 @@ function createMatches({ pairings }) {
 }
 
 // todo: pass round and matchId
-function createMatch({ player1, player2 }, round, matchId) {
+function createMatch({ player1, player2 }) {
+  const currentMatchId = matchId;
+  matchId++;
+
   // early return when no second player
   if (!player2) {
     const freeTicketMatch = {
-      id: matchId,
+      id: currentMatchId,
       player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
-      round,
       result: [],
       sets: [],
       freeTicket: true
     };
+    matchId++;
     return freeTicketMatch;
   }
 
   const match = {
-    id: matchId,
+    id: currentMatchId,
     player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
     player2: { ...player2, matchIds: player2.matchIds.concat(matchId) },
-    round,
     result: [],
     sets: [],
     freeTicket: false
