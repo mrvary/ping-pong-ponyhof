@@ -20,7 +20,7 @@ function getInterfaceByName(name) {
 
   let address;
   const adapter = netInterface[0];
-  ifaces[adapter].filter(details => {
+  ifaces[adapter].forEach(details => {
     if (details.family === 'IPv4' && details.internal === false) {
       address = details.address;
     }
