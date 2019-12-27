@@ -1,21 +1,15 @@
 .popup {  
     position: fixed;  
-    width: 50%;  
-    height: 50%;  
+    width: 60vh;  
+    height: 40vh;  
     top: 0;  
     left: 0;  
     right: 0;  
     bottom: 0;  
     margin: auto;  
-    background-color: rgba(0,0,0, 0.5);  
-  }  
-  .popup\_inner {  
-    position: absolute;  
-    left: 25%;  
-    right: 25%;  
-    top: 25%;  
-    bottom: 25%;  
-    margin: auto;  
-    border-radius: 20px;  
-    background: white;  
-  }
+    background-color: white;  
+    border: 0.3vh solid black;
+    border-radius: 3vh;
+    font-size: 4vh;
+    color: black
+}
