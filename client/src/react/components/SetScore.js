@@ -1,9 +1,11 @@
 import React from 'react';
 import './SetScore.css';
 
-import Score from './Score';
+function Score({ score }) {
+  return <div className="set-score__score">{score ? score : 0}</div>;
+}
 
-function SetScore({}) {
+function SetScore({score}) {
   return (
     <div>
       <div className="set-score__container">

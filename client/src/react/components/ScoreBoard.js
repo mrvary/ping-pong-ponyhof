@@ -6,10 +6,17 @@ import SetScore from './SetScore';
 
 function ScoreBoard() {
   return (
-    <div className="board-container">
+    <>
       <MainScore />
-      <SetScore />
-    </div>
+      <div className="score-board__container">
+        <SetScore />
+        <SetScore />
+        <SetScore />
+        <SetScore />
+        <SetScore />
+        <SetScore />
+      </div>
+    </>
   );
 }
 

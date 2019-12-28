@@ -3,7 +3,8 @@
   flex-flow: row wrap;
   align-items: center;
   justify-content: center;
-  width: 30%;
+  width: 400px;
+  height: 200px;
 
   font-size: 40px;
   font-weight: 600;
@@ -16,4 +17,15 @@
 
 .set-score__delimiter {
   margin: 0px 30px ;
+}
+
+.set-score__score {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  background-color: #ffffff;
+
+  font-size: 65px;
+  color: #383838;
+  text-align: center;
 }
