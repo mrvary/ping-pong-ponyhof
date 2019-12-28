@@ -1,11 +1,11 @@
 // TODO: use hash?
 let matchId = 0;
 
-function createMatches({ pairings }) {
+function createMatches(pairings) {
   let remainingPairings = pairings;
 
   let matches = [];
-  while (remainingPairings) {
+  while (remainingPairings.length > 0) {
     const match = createMatch(remainingPairings.shift());
     matches.push(match);
   }
