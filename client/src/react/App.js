@@ -19,7 +19,7 @@ function App() {
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
-  const [tableNumber, setTableNumber] = useState(1);
+  const [tableNumber, setTableNumber] = useState(0);
   const [message, setMessage] = useState('');
 
   const toPage = page => {
