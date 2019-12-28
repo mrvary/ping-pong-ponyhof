@@ -20,7 +20,6 @@ function createMatch({ player1, player2 }) {
     const freeTicketMatch = {
       id: matchId,
       player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
-      result: [],
       sets: [],
       freeTicket: true
     };
@@ -32,7 +31,6 @@ function createMatch({ player1, player2 }) {
     id: matchId,
     player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
     player2: { ...player2, matchIds: player2.matchIds.concat(matchId) },
-    result: [],
     sets: [],
     freeTicket: false
   };

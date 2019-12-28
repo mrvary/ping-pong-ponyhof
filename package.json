@@ -21,7 +21,7 @@
     "reset-electron": "cross-env \"rm -rf build/src && rm -rf build/electron && rm -rf build/client && rm -rf build/backend\"",
     "preelectron-pack": "yarn build",
     "electron-pack": "electron-builder build --win -c.extraMetadata.main=build/electron/main.js --publish never",
-    "test": "jest --verbose",
+    "test": "jest",
     "postinstall": "electron-rebuild",
     "electron-rebuild": "electron-rebuild"
   },

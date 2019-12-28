@@ -55,7 +55,6 @@ describe("createMatch", () => {
     expect(match.id).toBeDefined();
     expect(match.player1).toBeDefined();
     expect(match.player2).toBeDefined();
-    expect(match.result).toBeDefined();
     expect(match.sets).toBeDefined();
     expect(match.freeTicket).toBeDefined();
   });
