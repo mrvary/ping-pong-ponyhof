@@ -25,11 +25,11 @@ const getServerURL = () => {
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState('login');
+  const [page, setPage] = useState('match');
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
-  const [tableNumber, setTableNumber] = useState(1);
+  const [tableNumber, setTableNumber] = useState(0);
   const [message, setMessage] = useState('');
 
   const toPage = page => {
@@ -101,11 +101,7 @@ function App() {
       setIsConnected(true);
 
       console.log('matchStart ->', matchStarted);
-      if (matchStarted) {
-        toPage('match');
-      } else {
-        toPage('wait');
-      }
+      matchStarted ? toPage('match') : toPage('wait');
 
       connection.on(clientChannels.START_ROUND, () => {
         toPage('match');

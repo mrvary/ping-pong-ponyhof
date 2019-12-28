@@ -1,0 +1,12 @@
+.board-container {
+  background-color: #333333;
+  height: 780px;
+  color: #ffffffff;
+}
+
+.board-container h1 {
+  background-color: blue;
+  text-align: center;
+
+  user-select: none;
+}
