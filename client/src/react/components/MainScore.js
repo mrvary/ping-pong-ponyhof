@@ -7,9 +7,9 @@ function MainScore() {
   const players = ['Marco Goebel', 'Felix Breitenbach'];
 
   return (
-    <div className="score-container">
+    <div className="main-score__container">
       <PlayerScore player={players[0]} />
-      <div>:</div>
+      <div className="main-score__delimiter">:</div>
       <PlayerScore player={players[1]} />
     </div>
   );
