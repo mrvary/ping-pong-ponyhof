@@ -1,8 +1,24 @@
 const { createMatch, createMatches } = require("../../src/matchmaker/match");
 const { cleanedUpPlayers } = require("./player.test.data");
+const {
+  separateTopFromBottomPlayers,
+  pairPlayers
+} = require("../../src/matchmaker/player");
 
 describe("createMatches()", () => {
-  test.todo("creates an array of matches from an array of pairings");
+  const evenNumberOfPlayers = cleanedUpPlayers
+    .map(player => ({ ...player, qttr: player.qttr + 100 }))
+    .concat(cleanedUpPlayers);
+
+  const evenTopAndBottomPlayers = separateTopFromBottomPlayers(
+    evenNumberOfPlayers
+  );
+  const evenlyPairedPlayers = pairPlayers(evenTopAndBottomPlayers);
+
+  test("creates an array of matches from an array of pairings", () => {
+    console.log(evenlyPairedPlayers);
+    console.log(createMatches(evenlyPairedPlayers));
+  });
   test.todo("increments the matchId between two executions");
 });
 
