@@ -2,9 +2,8 @@ import './App.css';
 import React, { useState } from 'react';
 import { channels } from '../shared/channels';
 import dummyPlayers from '../assets/players';
-import Popup from "reactjs-popup";
-
-
+import { Modal } from 'react-bootstrap';
+import "bootstrap/dist/css/bootstrap.min.css";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -57,25 +56,45 @@ const StartCompetitionButton = ({ startCompetition }) => {
 const ButtonRow = props => {
   const {
     game: { id, date },
-    deleteGame
+    deleteGame,
   } = props;
+
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
   return (
     <div className="button-list">
       <button className="button-game">Spiel vom {date}</button>
       <div className="button-game" />
-      <Popup modal trigger={<button className="button-delete">Löschen</button>}>
-        <div className='popup'>
+      <button className="button-delete" onClick={handleShow}>Löschen</button>
+      
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          Achtung!
+        </Modal.Header>
+        <Modal.Body>
+          <div>
             <p>"Willst du dieses Spiel wirklich löschen?"</p>
-            <button onClick={() => deleteGame(id)}>löschen</button>
-        </div>
-      </Popup>
+            <button variant="secondary" onClick={() => deleteGame(id)}>Löschen</button>
+            <button variant="primary" onClick={handleClose}>Close</button>
+          </div>
+        </Modal.Body>
+        
+      </Modal>
     </div>
   );
 };
-
+/*className='popup'
+<Popup modal trigger={<button className="button-delete">Löschen</button>}>
+        <div className='popup'>
+            <p>"Willst du dieses Spiel wirklich löschen?"</p>
+            <button onClick={() => deleteGame(id)}>Löschen</button>
+        </div>
+      </Popup>
+      */
 const ButtonList = props => {
-  const { games, deleteGame } = props;
+  const { games, deleteGame} = props;
 
   return games.map(game => (
     <ButtonRow key={game.id} game={game} deleteGame={deleteGame}/>
@@ -104,6 +123,8 @@ const App = () => {
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
 
+ 
+
   const importXML = () => {
     // fake backend data for browser
     if (USE_BROWSER) {
@@ -127,7 +148,7 @@ const App = () => {
   const startCompetition = () => {
     if (players.length > 0) {
       const date = new Date();
-      setGames(games.concat([{ id: currentId, date: date.toDateString() }]));
+      setGames(games.concat([{ id: currentId, date: date.toLocaleDateString() }]));
       setCurrentId(currentId + 1);
     }
   };
