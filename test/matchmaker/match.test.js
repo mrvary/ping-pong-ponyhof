@@ -19,6 +19,10 @@ describe("createMatch", () => {
     expect(match.freeTicket).toBeDefined();
   });
 
+  test("freeTicket property is false on regular matches", () => {
+    expect(match.freeTicket).toBe(false);
+  });
+
   test("creates free ticket match, when second player doesn't exist", () => {
     const freeTicketMatch = createMatch({ player1: inputPlayer1, player2: {} });
     expect(freeTicketMatch.freeTicket).toBe(true);
@@ -26,8 +30,6 @@ describe("createMatch", () => {
 
   test("adds the matchId to player objects", () => {
     const { id, player1, player2 } = match;
-
-    console.log(player1.matchIds);
     expect(player1.matchIds).toContain(id);
     expect(player2.matchIds).toContain(id);
   });

@@ -13,7 +13,6 @@ function createMatches({ pairings }) {
   return matches;
 }
 
-// todo: pass round and matchId
 // createMatch : {player1: Player, player2: Player} -> Match
 function createMatch({ player1, player2 }) {
   // early return when no second player
