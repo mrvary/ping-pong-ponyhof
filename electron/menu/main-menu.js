@@ -1,4 +1,5 @@
 const { app, ipcMain, Menu, shell } = require('electron');
+const isDev = require('electron-is-dev');
 
 const config = require('../config');
 const uiActions = require('../actions/uiActions');
@@ -15,7 +16,13 @@ const toggleDevTools = (item, focusedWindow) => {
 };
 
 const openClient = () => {
-  shell.openExternal(`http://localhost:${config.SERVER_PORT}`);
+  const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+  shell.openExternal(url);
+};
+
+const showURL = () => {
+  const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+  uiActions.showInfoBox('URL-Info', `URL: ${url}`, null);
 };
 
 const openXMLFile = () => {
@@ -134,6 +141,10 @@ const template = [
       {
         label: 'Client öffnen',
         click: openClient
+      },
+      {
+        label: 'Server URL anzeigen',
+        click: showURL
       }
     ]
   },

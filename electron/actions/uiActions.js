@@ -25,6 +25,24 @@ function openXMLFile(callback) {
     });
 }
 
+function showInfoBox(title, message, callback) {
+  dialog
+    .showMessageBox({
+      type: 'info',
+      title: title,
+      message: message
+    })
+    .then(result => {
+      if (callback) {
+        callback(result);
+      }
+    })
+    .catch(error => {
+      console.log(error);
+    });
+}
+
 module.exports = {
-  openXMLFile
+  openXMLFile,
+  showInfoBox
 };
