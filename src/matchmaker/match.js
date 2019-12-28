@@ -20,7 +20,7 @@ function createMatch({ player1, player2 }) {
   matchId++;
 
   // early return when no second player
-  if (!player2) {
+  if (!player2.id) {
     const freeTicketMatch = {
       id: currentMatchId,
       player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
