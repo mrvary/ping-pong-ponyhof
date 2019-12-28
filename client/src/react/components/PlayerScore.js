@@ -5,12 +5,11 @@ import Player from './Player';
 import Score from './Score';
 
 function PlayerScore({ player, score }) {
-  let currentScore = score ? score : 0
 
   return (
     <div className="btn-container">
       <Player player={player} />
-      <Score score={currentScore} />
+      <Score score={score} />
     </div>
   );
 }
