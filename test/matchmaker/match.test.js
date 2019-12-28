@@ -7,8 +7,8 @@ describe("createMatches()", () => {
 });
 
 describe("createMatch", () => {
-  const [player1, player2] = cleanedUpPlayers;
-  const match = createMatch({ player1, player2 });
+  const [inputPlayer1, inputPlayer2] = cleanedUpPlayers;
+  const match = createMatch({ player1: inputPlayer1, player2: inputPlayer2 });
 
   test("creates match that has all the necessary properties", () => {
     expect(match.id).toBeDefined();
@@ -20,8 +20,15 @@ describe("createMatch", () => {
   });
 
   test("creates free ticket match, when second player doesn't exist", () => {
-    const freeTicketMatch = createMatch({ player1, player2: {} });
+    const freeTicketMatch = createMatch({ player1: inputPlayer1, player2: {} });
     expect(freeTicketMatch.freeTicket).toBe(true);
   });
-  test.todo("adds a matchId to player objects");
+
+  test("adds the matchId to player objects", () => {
+    const { id, player1, player2 } = match;
+
+    console.log(player1.matchIds);
+    expect(player1.matchIds).toContain(id);
+    expect(player2.matchIds).toContain(id);
+  });
 });
