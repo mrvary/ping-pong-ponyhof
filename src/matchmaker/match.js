@@ -2,7 +2,7 @@
 let matchId = 0;
 
 function createMatches(pairings) {
-  let remainingPairings = pairings;
+  let remainingPairings = [...pairings];
 
   let matches = [];
   while (remainingPairings.length > 0) {
