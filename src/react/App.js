@@ -1,14 +1,14 @@
-import './App.css';
+import DisplayDelete from './components/PopupDelete'
 import React, { useState } from 'react';
 import { channels } from '../shared/channels';
 import dummyPlayers from '../assets/players';
-import { Modal } from 'react-bootstrap';
-import "bootstrap/dist/css/bootstrap.min.css";
+import './App.css';
+
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = true;
+const USE_BROWSER = false;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -68,23 +68,12 @@ const ButtonRow = props => {
       <button className="button-game">Spiel vom {date}</button>
       <div className="button-game" />
       <button className="button-delete" onClick={handleShow}>Löschen</button>
-      
-      <Modal show={show} onHide={handleClose}>
-        <Modal.Header closeButton>
-          Achtung!
-        </Modal.Header>
-        <Modal.Body>
-          <div>
-            <p>"Willst du dieses Spiel wirklich löschen?"</p>
-            <button variant="secondary" onClick={() => deleteGame(id)}>Löschen</button>
-            <button variant="primary" onClick={handleClose}>Close</button>
-          </div>
-        </Modal.Body>
-        
-      </Modal>
+      <DisplayDelete show={show} handleClose={handleClose} deleteGame={deleteGame} id={id}></DisplayDelete>
+    
     </div>
   );
 };
+// alternative Modal schreibweise
 /*className='popup'
 <Popup modal trigger={<button className="button-delete">Löschen</button>}>
         <div className='popup'>
@@ -93,6 +82,7 @@ const ButtonRow = props => {
         </div>
       </Popup>
       */
+
 const ButtonList = props => {
   const { games, deleteGame} = props;
 
@@ -103,8 +93,8 @@ const ButtonList = props => {
 
 const Footer = ({ title }) => {
   return (
-    <footer>
-      <p>
+    <footer className="center">
+      <p className="footer-Line">
         <strong>{title}</strong> by coolest guys ever.
       </p>
     </footer>
@@ -144,7 +134,6 @@ const App = () => {
     setGames(games.filter(game => game.id !== id));
   };
 
-
   const startCompetition = () => {
     if (players.length > 0) {
       const date = new Date();
@@ -170,8 +159,7 @@ const App = () => {
           </p>
         ))}
       </div>
-      <button
-        className="button"
+      <div className='center'><button
         id="startRound"
         onClick={() => {
           if (USE_BROWSER) {
@@ -181,7 +169,7 @@ const App = () => {
         }}
       >
         start round
-      </button>
+      </button></div>
     </div>
   );
 };

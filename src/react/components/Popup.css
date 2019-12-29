@@ -1,0 +1,15 @@
+.popup {  
+    position: fixed;  
+    width: 60vh;  
+    height: 40vh;  
+    top: 0;  
+    left: 0;  
+    right: 0;  
+    bottom: 0;  
+    margin: auto;  
+    background-color: white;  
+    border: 0.3vh solid black;
+    border-radius: 3vh;
+    font-size: 4vh;
+    color: black
+}
