@@ -20,7 +20,7 @@ const EXPECTED_PLAYER = {
   clubname: "ESV SF Neuaubing",
   gamesWon: 0,
   matchIds: [],
-  opponentIds:[],
+  opponentIds: [],
   qttr: 1415,
   active: true,
   hasFreeTicket: false
@@ -104,8 +104,13 @@ describe("shuffle()", () => {
 });
 
 describe("pairPlayers()", () => {
+  //tests for even number of players
   const evenNumberOfPlayers = cleanedUpPlayers
-    .map(player => ({ ...player, qttr: player.qttr + 100 }))
+    .map(player => ({
+      ...player, firstname: player.firstname + " Copy",
+      id: player.id + "0", 
+      qttr: player.qttr + 100
+    }))
     .concat(cleanedUpPlayers);
 
   const evenTopAndBottomPlayers = separateTopFromBottomPlayers(
@@ -122,8 +127,17 @@ describe("pairPlayers()", () => {
     expect(evenPairedPlayers.length).toBe(evenNumberOfPlayers.length / 2);
   });
 
-  test.todo("contains one of the top and one of the bottom players when even");
+  test("contains one of the top and one of the bottom players when even", () =>{
 
+    evenPairedPlayers.forEach(pair =>{      
+      expect(evenTopAndBottomPlayers.top).toContain(pair.player1)
+      expect(evenTopAndBottomPlayers.bottom).toContain(pair.player2)
+    })
+
+
+  });
+
+  //tests for odd number of players
   const oddNumberOfPlayers = cleanedUpPlayers;
   const oddTopAndBottomPlayers = separateTopFromBottomPlayers(
     oddNumberOfPlayers
@@ -141,7 +155,6 @@ describe("pairPlayers()", () => {
     );
   });
 
-  test.todo("contains one of the top and one of the bottom players when even");
 });
 
 describe("updatePlayers()", () => {
