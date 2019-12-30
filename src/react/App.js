@@ -1,14 +1,13 @@
-import PopupDelete from './components/PopupDelete'
-import React, { useState } from 'react';
-import { channels } from '../shared/channels';
-import dummyPlayers from '../assets/players';
-import './App.css';
-
+import PopupDelete from "./components/PopupDelete";
+import React, { useState } from "react";
+import { channels } from "../shared/channels";
+import dummyPlayers from "../assets/players";
+import "./App.css";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = true;
+const USE_BROWSER = false;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -56,7 +55,7 @@ const StartCompetitionButton = ({ startCompetition }) => {
 const ButtonRow = props => {
   const {
     game: { id, date },
-    deleteGame,
+    deleteGame
   } = props;
 
   const [show, setShow] = useState(false);
@@ -67,9 +66,15 @@ const ButtonRow = props => {
     <div className="button-list">
       <button className="button-game">Spiel vom {date}</button>
       <div className="button-game" />
-      <button className="button-delete" onClick={handleShow}>Löschen</button>
-      <PopupDelete show={show} handleClose={handleClose} deleteGame={deleteGame} id={id}></PopupDelete>
-    
+      <button className="button-delete" onClick={handleShow}>
+        Löschen
+      </button>
+      <PopupDelete
+        show={show}
+        handleClose={handleClose}
+        deleteGame={deleteGame}
+        id={id}
+      ></PopupDelete>
     </div>
   );
 };
@@ -84,10 +89,10 @@ const ButtonRow = props => {
       */
 
 const ButtonList = props => {
-  const { games, deleteGame} = props;
+  const { games, deleteGame } = props;
 
   return games.map(game => (
-    <ButtonRow key={game.id} game={game} deleteGame={deleteGame}/>
+    <ButtonRow key={game.id} game={game} deleteGame={deleteGame} />
   ));
 };
 
@@ -103,17 +108,15 @@ const Footer = ({ title }) => {
 
 const App = () => {
   const [games, setGames] = useState([
-    { id: 0, date: '23.7.2019' },
-    { id: 1, date: '11.8.2019' },
-    { id: 2, date: '7.9.2019' },
-    { id: 3, date: '22.9.2019' },
-    { id: 4, date: '2.10.2019' },
-    { id: 5, date: '21.11.2019' }
+    { id: 0, date: "23.7.2019" },
+    { id: 1, date: "11.8.2019" },
+    { id: 2, date: "7.9.2019" },
+    { id: 3, date: "22.9.2019" },
+    { id: 4, date: "2.10.2019" },
+    { id: 5, date: "21.11.2019" }
   ]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
-
- 
 
   const importXML = () => {
     // fake backend data for browser
@@ -123,7 +126,7 @@ const App = () => {
     }
 
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
-    ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
+    ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
       const { players } = args;
       log.info(players);
       setPlayers(players);
@@ -137,7 +140,9 @@ const App = () => {
   const startCompetition = () => {
     if (players.length > 0) {
       const date = new Date();
-      setGames(games.concat([{ id: currentId, date: date.toLocaleDateString() }]));
+      setGames(
+        games.concat([{ id: currentId, date: date.toLocaleDateString() }])
+      );
       setCurrentId(currentId + 1);
     }
   };
@@ -149,27 +154,29 @@ const App = () => {
         importXML={importXML}
         startCompetition={startCompetition}
       />
-      <ButtonList games={games} deleteGame={deleteGame}/>
+      <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
       <div>
         {players.map(({ person, id }) => (
           <p key={id}>
-            {person.firstname} {person.lastname}{' '}
-            {person.ttr > 1400 ? '🍑' : '💩'}
+            {person.firstname} {person.lastname}{" "}
+            {person.ttr > 1400 ? "🍑" : "💩"}
           </p>
         ))}
       </div>
-      <div className='center'><button
-        id="startRound"
-        onClick={() => {
-          if (USE_BROWSER) {
-            return;
-          }
-          ipcRenderer.send(channels.START_ROUND);
-        }}
-      >
-        start round
-      </button></div>
+      <div className="center">
+        <button
+          id="startRound"
+          onClick={() => {
+            if (USE_BROWSER) {
+              return;
+            }
+            ipcRenderer.send(channels.START_ROUND);
+          }}
+        >
+          start round
+        </button>
+      </div>
     </div>
   );
 };

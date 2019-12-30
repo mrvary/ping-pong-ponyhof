@@ -1,65 +1,83 @@
+// node dependencies
+const path = require('path');
+
 // electron dependencies
-const { app, BrowserWindow, ipcMain, dialog, shell } = require("electron");
-require("electron-reload");
-const log = require("electron-log");
-const isDev = require("electron-is-dev");
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
+const log = require('electron-log');
+const isDev = require('electron-is-dev');
+
+require('electron-reload')(__dirname, {
+  electron: path.join(__dirname, '../node_modules/.bin/electron')
+});
+
+const config = require('./config');
+const uiActions = require('./actions/uiActions');
+const menu = require('./menu/main-menu');
 
 // server dependencies
-const server = require("../backend/server");
+const server = require('../backend/server');
 
 // frontend dependencies
-const { channels } = require("../src/shared/channels");
-
-// node dependencies
-const path = require("path");
-const url = require("url");
-const fs = require("fs");
-
-// external package dependencies
-const parser = require("xml2json");
+const { channels } = require('../src/shared/channels');
 
 let mainWindow;
 let webServer;
 
-let players = [];
-
-function createWindow() {
-  // important for deployment -> delete sub path "build"
-  // -> https://stackoverflow.com/questions/41130993/electron-not-allowed-to-load-local-resource
-  const startUrl =
-    process.env.ELECTRON_START_URL ||
-    url.format({
-      pathname: path.join(__dirname, "../build/index.html"),
-      protocol: "file:",
-      slashes: true
-    });
+function createMainWindow() {
+  // create the browser window ...
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
-      nodeIntegration: true,
-      preload: path.join(__dirname, "preload.js")
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
-  mainWindow.loadURL(startUrl);
 
+  // ...and load the frontend react app
+  mainWindow.loadURL(config.ELECTRON_START_URL);
+
+  // react dev tools for electron
+  const {
+    default: installExtension,
+    REACT_DEVELOPER_TOOLS
+  } = require('electron-devtools-installer');
+
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then(name => console.log(`Added Extension:  ${name}`))
+    .catch(err => console.log('An error occurred: ', err));
+
+  // Open the DevTools
   if (isDev) {
     mainWindow.webContents.openDevTools();
   }
 
-  mainWindow.on("closed", () => {
+  // Emitted when the window is closed.
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  // set custom application menu
+  Menu.setApplicationMenu(menu);
 }
 
-app.on("ready", () => {
-  webServer = server.createServer();
-  createWindow();
+app.on('ready', () => {
+  // start web server
+  const port = config.SERVER_PORT;
+  webServer = server.createServer(port);
+
+  if (!webServer) {
+    log.info('Could not start web server');
+    return;
+  }
+
+  // open the main window
+  createMainWindow();
 });
 
-app.on("before-quit", () => {
+app.on('before-quit', () => {
   if (webServer) {
-    log.info("gracefully shutting down...");
+    log.info('gracefully shutting down...');
     webServer.kill();
     webServer = null;
   }
@@ -73,44 +91,25 @@ app.on("before-quit", () => {
 //   }
 // });
 
-app.on("activate", () => {
+app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
-    createWindow();
+    createMainWindow();
   }
 });
 
-ipcMain.on(channels.OPEN_CLIENT, event => {
-  shell.openExternal(`http://localhost:${server.SERVER_PORT}`);
-});
-
-ipcMain.on(channels.START_ROUND, event => {
+ipcMain.on(channels.START_ROUND, () => {
   server.sendStartRoundBroadcast();
-})
+});
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
-  dialog
-    .showOpenDialog({
-      properties: ["openFile"],
-      filters: [{ name: "XML", extensions: ["xml"] }]
-    })
-    .then(result => {
-      const content = fs.readFileSync(result.filePaths[0]);
-      const json = JSON.parse(parser.toJson(content), {
-        reversible: false
-      });
+  uiActions.openXMLFile(players => {
+    console.log(players);
 
-      players = json.tournament.competition.players.player;
-      event.sender.send(channels.OPEN_IMPORT_DIALOG, {
-        players: players
-      });
+    // notify main window
+    event.sender.send(channels.FILE_IMPORTED, {
+      players: players
     });
-});
-
-ipcMain.on(channels.APP_CLOSE, event => {
-  if (mainWindow !== null) {
-    mainWindow.close();
-    mainWindow = null;
-  }
+  });
 });

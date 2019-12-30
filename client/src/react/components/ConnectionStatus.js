@@ -1,8 +1,16 @@
-import React from "react";
+import React from 'react';
+import './ConnectionStatus.css';
 
-function ConnectionStatus({ connected }) {
-  const value = connected ? "connected" : "disconnected";
-  return <div>Connection Status: {value}</div>;
+function ConnectionStatus({ isConnected }) {
+  const iconCss = isConnected
+    ? 'connection-icon connection-icon__connected'
+    : 'connection-icon connection-icon__disconnected';
+  return (
+    <div className="connection">
+      <div className={iconCss}></div>
+      Verbindung
+    </div>
+  );
 }
 
 export default ConnectionStatus;
