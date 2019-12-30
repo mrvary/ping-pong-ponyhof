@@ -20,7 +20,6 @@ const Header = ({ importXML, title, startCompetition }) => {
   );
 };
 
-//Header Box mit Tunier anlegen und XML hochladen
 const HeaderBox = ({ importXML, startCompetition }) => {
   return (
     <div className="container-box">
@@ -31,7 +30,6 @@ const HeaderBox = ({ importXML, startCompetition }) => {
   );
 };
 
-//Upload Fenster
 const UploadXML = ({ importXML }) => {
   return (
     <button className="button-upload-xml" onClick={importXML}>
@@ -40,7 +38,6 @@ const UploadXML = ({ importXML }) => {
   );
 };
 
-//Button zum uploaden
 const StartCompetitionButton = ({ startCompetition }) => {
   return (
     <button className="start-competition-button" onClick={startCompetition}>
@@ -49,9 +46,7 @@ const StartCompetitionButton = ({ startCompetition }) => {
   );
 };
 
-//Liste der "Buttons" mit Löschen Button
-//Löschen Button funktioniert nicht
-//Angabe der Tunierart fehlt
+//  TODO: Angabe der Tunierart fehlt
 const ButtonRow = props => {
   const {
     game: { id, date },
@@ -78,15 +73,6 @@ const ButtonRow = props => {
     </div>
   );
 };
-// alternative Modal schreibweise
-/*className='popup'
-<Popup modal trigger={<button className="button-delete">Löschen</button>}>
-        <div className='popup'>
-            <p>"Willst du dieses Spiel wirklich löschen?"</p>
-            <button onClick={() => deleteGame(id)}>Löschen</button>
-        </div>
-      </Popup>
-      */
 
 const ButtonList = props => {
   const { games, deleteGame } = props;

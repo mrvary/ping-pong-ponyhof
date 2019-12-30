@@ -13,13 +13,11 @@ function PopupDelete ({show,handleClose,deleteGame,id}){
             <Modal.Body>
                 <div>
                     <p>Willst du dieses Spiel wirklich löschen?</p>
-                    <button variant="secondary" onClick={() => deleteGame(id)}>Löschen</button>
+                    <button onClick={() => deleteGame(id)}>Löschen</button>
                 </div>
             </Modal.Body>
         </Modal>
     )
 }
-/*close button
-<button variant="primary" onClick={handleClose}>Close</button>
-*/
+
 export default PopupDelete;
