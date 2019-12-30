@@ -20,6 +20,7 @@ const EXPECTED_PLAYER = {
   clubname: "ESV SF Neuaubing",
   gamesWon: 0,
   matchIds: [],
+  opponentIds:[],
   qttr: 1415,
   active: true,
   hasFreeTicket: false
