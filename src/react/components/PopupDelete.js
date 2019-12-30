@@ -3,7 +3,7 @@ import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
-function DisplayDelete ({show,handleClose,deleteGame,id}){
+function PopupDelete ({show,handleClose,deleteGame,id}){
 
     return (
         <Modal show={show} onHide={handleClose}>
@@ -22,4 +22,4 @@ function DisplayDelete ({show,handleClose,deleteGame,id}){
 /*close button
 <button variant="primary" onClick={handleClose}>Close</button>
 */
-export default DisplayDelete;
+export default PopupDelete;

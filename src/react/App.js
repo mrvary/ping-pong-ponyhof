@@ -1,4 +1,4 @@
-import DisplayDelete from './components/PopupDelete'
+import PopupDelete from './components/PopupDelete'
 import React, { useState } from 'react';
 import { channels } from '../shared/channels';
 import dummyPlayers from '../assets/players';
@@ -8,7 +8,7 @@ import './App.css';
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = false;
+const USE_BROWSER = true;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -68,7 +68,7 @@ const ButtonRow = props => {
       <button className="button-game">Spiel vom {date}</button>
       <div className="button-game" />
       <button className="button-delete" onClick={handleShow}>Löschen</button>
-      <DisplayDelete show={show} handleClose={handleClose} deleteGame={deleteGame} id={id}></DisplayDelete>
+      <PopupDelete show={show} handleClose={handleClose} deleteGame={deleteGame} id={id}></PopupDelete>
     
     </div>
   );
