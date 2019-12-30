@@ -2,13 +2,21 @@ import React from 'react';
 import './ScoreBoard.css';
 
 import MainScore from './MainScore';
+import SetScore from './SetScore';
 
 function ScoreBoard() {
   return (
-    <div className="board-container">
-      <h1>ScoreBoard</h1>
+    <>
       <MainScore />
-    </div>
+      <div className="score-board__container">
+        <SetScore />
+        <SetScore />
+        <SetScore />
+        <SetScore />
+        <SetScore />
+        <SetScore />
+      </div>
+    </>
   );
 }
 

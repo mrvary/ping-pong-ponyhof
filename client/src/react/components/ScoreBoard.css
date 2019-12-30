@@ -1,12 +1,7 @@
-.board-container {
-  background-color: #333333;
-  height: 780px;
+.score-board__container {
+  display: flex;
+  justify-content: space-around;
+  flex-flow: row wrap;
+  flex-direction: row;
   color: #ffffffff;
-}
-
-.board-container h1 {
-  background-color: blue;
-  text-align: center;
-
-  user-select: none;
 }
