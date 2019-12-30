@@ -2,6 +2,22 @@ body {
   background-color: #f4f4f4;
 }
 
+.popup {  
+  position: fixed;  
+  width: 60vh;  
+  height: 40vh;  
+  top: 0;  
+  left: 0;  
+  right: 0;  
+  bottom: 0;  
+  margin: auto;  
+  background-color: white;  
+  border: 0.3vh solid black;
+  border-radius: 3vh;
+  font-size: 4vh;
+  color: black
+}
+
 .button-list {
   display: flex;
   justify-content: center;
@@ -41,16 +57,19 @@ body {
 }
 
 .container-box {
-  width: 40vh;
+  width: 35vh;
   height: 50vh;
   border: none;
   background: white;
   color: #4d4d4d;
   font-size: 2.5vh;
   border-radius: 2vh;
-  justify-content: center;
   margin: 10vh 4vh;
-  padding: 3vh;
+  padding: 3vh;  
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .button-upload-xml {
@@ -135,4 +154,10 @@ body {
 .server-running:hover {
   color: var(--anti-color);
   background-color: white;
+}
+
+.center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
