@@ -1,7 +1,7 @@
 import React from 'react';
 import './MainScore.css';
 
-import PlayerScore from './PlayerScore';
+import PlayerScore from '../PlayerScore/PlayerScore';
 
 function MainScore() {
   const players = ['Marco Goebel', 'Felix Breitenbach'];

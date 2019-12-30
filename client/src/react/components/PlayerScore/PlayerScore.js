@@ -1,7 +1,7 @@
 import React from 'react';
 import './PlayerScore.css';
 
-import Player from './Player';
+import Player from '../Player/Player';
 
 function Score({ score }) {
   return <div className="player-score__score">{score ? score : 0}</div>;

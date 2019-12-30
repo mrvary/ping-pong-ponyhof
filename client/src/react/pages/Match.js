@@ -1,8 +1,8 @@
 import React from 'react';
 
-import Title from './Title';
-import ConnectionStatus from './ConnectionStatus';
-import ScoreBoard from './ScoreBoard';
+import Title from '../components/Title';
+import ConnectionStatus from '../components/ConnectionStatus/ConnectionStatus';
+import ScoreBoard from '../components/ScoreBoard/ScoreBoard';
 
 function Match({ appTitle, isConnected }) {
   return (
