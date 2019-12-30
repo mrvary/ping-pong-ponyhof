@@ -19,6 +19,7 @@ function createPlayer(dataFromJSON) {
     clubname,
     gamesWon: 0,
     matchIds: [],
+    opponentIds:[],
     qttr: parseInt(ttr, 10),
     active: true,
     hasFreeTicket: false
