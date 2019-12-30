@@ -8,7 +8,7 @@ const match = {
   id: 0,
   player1: {
     id: 'PLAYER20',
-    firstname: 'Achim Copy',
+    firstname: 'Achim',
     lastname: 'Amthor',
     clubname: 'SC Baldham-Vaterstetten',
     gamesWon: 5,
@@ -28,8 +28,13 @@ const match = {
     active: true,
     hasFreeTicket: false
   },
-  result: [],
-  sets: [],
+  sets: [
+    { p1: 11, p2: 8 },
+    { p1: 8, p2: 11 },
+    { p1: 8, p2: 11 },
+    { p1: 11, p2: 8 },
+    { p1: 8, p2: 11 }
+  ],
   freeTicket: false
 };
 
@@ -38,7 +43,7 @@ function Match({ appTitle, isConnected }) {
     <div>
       <Title title={appTitle} />
       <ConnectionStatus isConnected={isConnected} />
-      <ScoreBoard />
+      <ScoreBoard match={match} />
     </div>
   );
 }
