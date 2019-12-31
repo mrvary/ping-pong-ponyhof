@@ -8,6 +8,7 @@ const testMatches = [{
         clubname: 'ESV SF Neuaubing',
         gamesWon: 3,
         matchIds: [0],
+        opponentIds:[],
         qttr: 1515,
         active: true,
         hasFreeTicket: false
@@ -20,6 +21,7 @@ const testMatches = [{
         clubname: 'TTC Friedberg ',
         gamesWon: 1,
         matchIds: [0],
+        opponentIds:[],
         qttr: 1211,
         active: true,
         hasFreeTicket: false
@@ -50,6 +52,7 @@ const testMatches = [{
         clubname: 'ESV SF Neuaubing',
         gamesWon: 3,
         matchIds: [1],
+        opponentIds:[],
         qttr: 1415,
         active: true,
         hasFreeTicket: false
@@ -62,6 +65,7 @@ const testMatches = [{
         clubname: 'SC Baldham-Vaterstetten ',
         gamesWon: 5,
         matchIds: [1],
+        opponentIds:[],
         qttr: 1251,
         active: true,
         hasFreeTicket: false
@@ -96,6 +100,7 @@ const testMatches = [{
         clubname: 'SC Baldham-Vaterstetten ',
         gamesWon: 5,
         matchIds: [2],
+        opponentIds:[],
         qttr: 1351,
         active: true,
         hasFreeTicket: false
@@ -108,6 +113,7 @@ const testMatches = [{
         clubname: 'TTC Friedberg ',
         gamesWon: 1,
         matchIds: [2],
+        opponentIds:[],
         qttr: 1111,
         active: true,
         hasFreeTicket: false
