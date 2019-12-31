@@ -7,7 +7,7 @@ const testMatches = [{
         lastname: 'Acker',
         clubname: 'ESV SF Neuaubing',
         gamesWon: 3,
-        matchIds: [],
+        matchIds: [0],
         qttr: 1515,
         active: true,
         hasFreeTicket: false
@@ -19,7 +19,7 @@ const testMatches = [{
         lastname: 'Dietzel',
         clubname: 'TTC Friedberg ',
         gamesWon: 1,
-        matchIds: [],
+        matchIds: [0],
         qttr: 1211,
         active: true,
         hasFreeTicket: false
@@ -49,7 +49,7 @@ const testMatches = [{
         lastname: 'Acker',
         clubname: 'ESV SF Neuaubing',
         gamesWon: 3,
-        matchIds: [],
+        matchIds: [1],
         qttr: 1415,
         active: true,
         hasFreeTicket: false
@@ -61,7 +61,7 @@ const testMatches = [{
         lastname: 'Amthor',
         clubname: 'SC Baldham-Vaterstetten ',
         gamesWon: 5,
-        matchIds: [],
+        matchIds: [1],
         qttr: 1251,
         active: true,
         hasFreeTicket: false
@@ -95,7 +95,7 @@ const testMatches = [{
         lastname: 'Amthor',
         clubname: 'SC Baldham-Vaterstetten ',
         gamesWon: 5,
-        matchIds: [],
+        matchIds: [2],
         qttr: 1351,
         active: true,
         hasFreeTicket: false
@@ -107,7 +107,7 @@ const testMatches = [{
         lastname: 'Dietzel',
         clubname: 'TTC Friedberg ',
         gamesWon: 1,
-        matchIds: [],
+        matchIds: [2],
         qttr: 1111,
         active: true,
         hasFreeTicket: false
