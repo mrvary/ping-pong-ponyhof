@@ -84,11 +84,23 @@ function shuffle(array) {
 
 // updatePlayers : [matches] -> [players]
 function updatePlayers(matches) {
+  console.log(matches);
   let players = [];
+
   for (let match of matches) {
-    players.push(match.player1);
-    players.push(match.player2);
+    const player1 = {
+      ...match.player1,
+      opponentIds: match.player1.opponentIds.concat(match.player2.id)
+    }
+
+    const player2 = {
+      ...match.player2,
+      opponentIds: match.player2.opponentIds.concat(match.player1.id)
+    }
+    players.push(player1);
+    players.push(player2);
   }
+  
   return players;
 }
 

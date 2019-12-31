@@ -167,13 +167,33 @@ describe("updatePlayers()", () => {
   const newPlayers = updatePlayers(testMatches);
 
   test("returns an array of all players from an array of matches", () => {
-
+    expect(newPlayers).toBeDefined();
+    expect(newPlayers.length).toBe(testMatches.length * 2);
+    expect(newPlayers.length).toBe(6);
 
   });
 
-  test("check the amount of players after the update", () => {
-    expect(newPlayers.length).toBe(testMatches.length * 2);
-    expect(newPlayers.length).toBe(6);
+  test("check gamesWon changed for winners ", () => {
+    
+
+  });
+
+  test("match Id added to each player", () => {
+    for (let match of testMatches) {
+      let playersOfTheMatch = newPlayers.filter(function(e){
+        return e.matchIds[0] === match.id;
+      });
+      expect(playersOfTheMatch.length).toBe(2);      
+    }
+  });
+
+  test("opponent Id added to each player", () => {
+ 
+
+  });
+
+  test("check gamesWon changed for winners ", () => {
+    
 
   });
 });
