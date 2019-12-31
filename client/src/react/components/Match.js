@@ -29,11 +29,11 @@ const match = {
     hasFreeTicket: false
   },
   sets: [
-    { p1: 11, p2: 8 },
-    { p1: 8, p2: 11 },
-    { p1: 8, p2: 11 },
-    { p1: 11, p2: 8 },
-    { p1: 8, p2: 11 }
+    { player1: 11, player2: 8 },
+    { player1: 8, player2: 11 },
+    { player1: 8, player2: 11 },
+    { player1: 11, player2: 8 },
+    { player1: 8, player2: 11 }
   ],
   freeTicket: false
 };

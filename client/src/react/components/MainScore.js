@@ -11,11 +11,11 @@ function MainScore({ match }) {
 
     match.sets.forEach(set => {
       if (player === 1) {
-        if (set.p1 >= 11 && set.p1 > set.p2) {
+        if (set.player1 >= 11 && set.player1 > set.player2) {
           result++;
         }
       } else {
-        if (set.p2 >= 11 && set.p2 > set.p1) {
+        if (set.player2 >= 11 && set.player2 > set.player1) {
           result++;
         }
       }
