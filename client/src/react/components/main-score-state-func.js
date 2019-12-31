@@ -8,6 +8,15 @@ function setsWon(match, player, opponent) {
   return result;
 }
 
+function setsWonPlayer1(match) {
+  return setsWon(match, 'player1', 'player2');
+}
+
+function setsWonPlayer2(match) {
+  return setsWon(match, 'player2', 'player1');
+}
+
 module.exports = {
-  setsWon
+  setsWonPlayer1,
+  setsWonPlayer2
 };
