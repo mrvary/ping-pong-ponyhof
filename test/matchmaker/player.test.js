@@ -4,7 +4,8 @@ const {
   shuffle,
   sortPlayersBy,
   separateTopFromBottomPlayers,
-  createPlayersFromJSON
+  createPlayersFromJSON,
+  updatePlayers
 } = require("../../src/matchmaker/player");
 
 const {
@@ -12,6 +13,10 @@ const {
   cleanedUpPlayers,
   tournamentJSON
 } = require("./player.test.data");
+
+const {
+  testMatches
+} = require("./match.test.data");
 
 const EXPECTED_PLAYER = {
   id: "PLAYER1",
@@ -108,7 +113,7 @@ describe("pairPlayers()", () => {
   const evenNumberOfPlayers = cleanedUpPlayers
     .map(player => ({
       ...player, firstname: player.firstname + " Copy",
-      id: player.id + "0", 
+      id: player.id + "0",
       qttr: player.qttr + 100
     }))
     .concat(cleanedUpPlayers);
@@ -127,9 +132,9 @@ describe("pairPlayers()", () => {
     expect(evenPairedPlayers.length).toBe(evenNumberOfPlayers.length / 2);
   });
 
-  test("contains one of the top and one of the bottom players when even", () =>{
+  test("contains one of the top and one of the bottom players when even", () => {
 
-    evenPairedPlayers.forEach(pair =>{      
+    evenPairedPlayers.forEach(pair => {
       expect(evenTopAndBottomPlayers.top).toContain(pair.player1)
       expect(evenTopAndBottomPlayers.bottom).toContain(pair.player2)
     })
@@ -158,5 +163,17 @@ describe("pairPlayers()", () => {
 });
 
 describe("updatePlayers()", () => {
-  test.todo("returns an array of all players from an array of matches");
+
+  const newPlayers = updatePlayers(testMatches);
+
+  test("returns an array of all players from an array of matches", () => {
+
+
+  });
+
+  test("check the amount of players after the update", () => {
+    expect(newPlayers.length).toBe(testMatches.length * 2);
+    expect(newPlayers.length).toBe(6);
+
+  });
 });
