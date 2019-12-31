@@ -5,10 +5,10 @@ import './App.css';
 import io from 'socket.io-client';
 import { clientChannels } from '../shared/client-channels';
 
-// import components
-import Login from './components/Login';
-import WaitForRound from './components/WaitForRound';
-import Match from './components/Match';
+// import routing components
+import Login from './pages/Login/Login';
+import WaitForRound from './pages/WaitForRound/WaitForRound';
+import Match from './pages/Match';
 
 const appTitle = 'TTRace';
 

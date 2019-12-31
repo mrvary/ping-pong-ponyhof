@@ -1,8 +1,8 @@
 import React from 'react';
 import './ScoreBoard.css';
 
-import MainScore from './MainScore';
-import SetScore from './SetScore';
+import MainScore from '../MainScore/MainScore';
+import SetScore from '../SetScore/SetScore';
 
 function ScoreBoard() {
   return (
