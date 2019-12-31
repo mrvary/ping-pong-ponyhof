@@ -31,9 +31,9 @@ const match = {
   sets: [
     { player1: 11, player2: 8 },
     { player1: 8, player2: 11 },
-    { player1: 8, player2: 11 },
-    { player1: 11, player2: 8 },
-    { player1: 8, player2: 11 }
+    { player1: 10, player2: 12 },
+    { player1: 15, player2: 13 },
+    { player1: 4, player2: 11 }
   ],
   freeTicket: false
 };
