@@ -1,10 +1,18 @@
 {
   "name": "ping-pong-ponyhof",
   "productName": "TTRace",
+  "description": "A table tennis software for organizing tournaments. Based on the rules of the bavarian TT Race Tournament.",
   "version": "1.0.0",
   "homepage": "./",
-  "main": "electron/main.js",
+  "main": "./electron/main.js",
   "license": "MIT",
+  "contributors": [
+    "Felix Breitenbach",
+    "Marco Goebel",
+    "Daniel Niemczyk",
+    "Sophia Dietze",
+    "William Kistenberger"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/mrvary/ping-pong-ponyhof.git"
@@ -65,16 +73,16 @@
     "xml2json": "^0.11.2"
   },
   "build": {
-    "appId": "de.bttv.ping-pong-ponyhof",
-    "win": {
-      "icon": "build/assets/icons/win/icon.ico"
+    "appId": "de.fhws.ping-pong-ponyhof",
+    "directories": {
+      "buildResources": "assets"
     },
     "files": [
       "build/**/*",
       "node_modules/**/*"
     ],
-    "directories": {
-      "buildResources": "assets"
+    "win": {
+      "icon": "build/assets/icons/win/icon.ico"
     }
   }
 }
