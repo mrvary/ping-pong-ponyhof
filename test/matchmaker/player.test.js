@@ -174,26 +174,40 @@ describe("updatePlayers()", () => {
   });
 
   test("check gamesWon changed for winners ", () => {
-    
+
 
   });
 
   test("match Id added to each player", () => {
     for (let match of testMatches) {
-      let playersOfTheMatch = newPlayers.filter(function(e){
+      let playersOfTheMatch = newPlayers.filter(function (e) {
         return e.matchIds[0] === match.id;
       });
-      expect(playersOfTheMatch.length).toBe(2);      
+      expect(playersOfTheMatch.length).toBe(2);
     }
   });
 
   test("opponent Id added to each player", () => {
- 
+    for (let match of testMatches) {
+      let player1Id = match.player1.id;
+      let player2Id = match.player2.id;
+
+      newPlayers.forEach(player => {
+        if (player.id === player1Id) {
+          expect(player.opponentIds).toContain(player2Id);
+        }
+
+        if (player.id === player2Id) {
+          expect(player.opponentIds).toContain(player1Id);
+        }
+      })
+
+    }
 
   });
 
   test("check gamesWon changed for winners ", () => {
-    
+
 
   });
 });
