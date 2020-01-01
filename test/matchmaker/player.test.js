@@ -173,7 +173,7 @@ describe("updatePlayers()", () => {
 
   });
 
-  test("check gamesWon changed for winners ", () => {
+  test.todo("check gamesWon changed for winners ", () => {
 
 
   });
@@ -201,13 +201,8 @@ describe("updatePlayers()", () => {
           expect(player.opponentIds).toContain(player1Id);
         }
       })
-
     }
-
   });
 
-  test("check gamesWon changed for winners ", () => {
 
-
-  });
 });

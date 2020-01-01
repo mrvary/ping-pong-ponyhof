@@ -84,9 +84,9 @@ function shuffle(array) {
 
 // updatePlayers : [matches] -> [players]
 function updatePlayers(matches) {
-  console.log(matches);
   let players = [];
 
+  //TODO calculate winner and ++gamesWon
   for (let match of matches) {
     const player1 = {
       ...match.player1,
