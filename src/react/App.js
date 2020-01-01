@@ -1,7 +1,8 @@
-import './App.css';
-import React, { useState } from 'react';
-import { channels } from '../shared/channels';
-import dummyPlayers from '../assets/players';
+import PopupDelete from "./components/PopupDelete";
+import React, { useState } from "react";
+import { channels } from "../shared/channels";
+import dummyPlayers from "../assets/players";
+import "./App.css";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -19,7 +20,6 @@ const Header = ({ importXML, title, startCompetition }) => {
   );
 };
 
-//Header Box mit Tunier anlegen und XML hochladen
 const HeaderBox = ({ importXML, startCompetition }) => {
   return (
     <div className="container-box">
@@ -30,7 +30,6 @@ const HeaderBox = ({ importXML, startCompetition }) => {
   );
 };
 
-//Upload Fenster
 const UploadXML = ({ importXML }) => {
   return (
     <button className="button-upload-xml" onClick={importXML}>
@@ -39,7 +38,6 @@ const UploadXML = ({ importXML }) => {
   );
 };
 
-//Button zum uploaden
 const StartCompetitionButton = ({ startCompetition }) => {
   return (
     <button className="start-competition-button" onClick={startCompetition}>
@@ -48,22 +46,30 @@ const StartCompetitionButton = ({ startCompetition }) => {
   );
 };
 
-//Liste der "Buttons" mit Löschen Button
-//Löschen Button funktioniert nicht
-//Angabe der Tunierart fehlt
+//  TODO: Angabe der Tunierart fehlt
 const ButtonRow = props => {
   const {
     game: { id, date },
     deleteGame
   } = props;
 
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
   return (
     <div className="button-list">
       <button className="button-game">Spiel vom {date}</button>
       <div className="button-game" />
-      <button className="button-delete" onClick={() => deleteGame(id)}>
+      <button className="button-delete" onClick={handleShow}>
         Löschen
       </button>
+      <PopupDelete
+        show={show}
+        handleClose={handleClose}
+        deleteGame={deleteGame}
+        id={id}
+      ></PopupDelete>
     </div>
   );
 };
@@ -78,8 +84,8 @@ const ButtonList = props => {
 
 const Footer = ({ title }) => {
   return (
-    <footer>
-      <p>
+    <footer className="center">
+      <p className="footer-Line">
         <strong>{title}</strong> by coolest guys ever.
       </p>
     </footer>
@@ -88,12 +94,12 @@ const Footer = ({ title }) => {
 
 const App = () => {
   const [games, setGames] = useState([
-    { id: 0, date: '23.7.2019' },
-    { id: 1, date: '11.8.2019' },
-    { id: 2, date: '7.9.2019' },
-    { id: 3, date: '22.9.2019' },
-    { id: 4, date: '2.10.2019' },
-    { id: 5, date: '21.11.2019' }
+    { id: 0, date: "23.7.2019" },
+    { id: 1, date: "11.8.2019" },
+    { id: 2, date: "7.9.2019" },
+    { id: 3, date: "22.9.2019" },
+    { id: 4, date: "2.10.2019" },
+    { id: 5, date: "21.11.2019" }
   ]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
@@ -120,7 +126,9 @@ const App = () => {
   const startCompetition = () => {
     if (players.length > 0) {
       const date = new Date();
-      setGames(games.concat([{ id: currentId, date: date.toDateString() }]));
+      setGames(
+        games.concat([{ id: currentId, date: date.toLocaleDateString() }])
+      );
       setCurrentId(currentId + 1);
     }
   };
@@ -137,10 +145,23 @@ const App = () => {
       <div>
         {players.map(({ person, id }) => (
           <p key={id}>
-            {person.firstname} {person.lastname}{' '}
-            {person.ttr > 1400 ? '🍑' : '💩'}
+            {person.firstname} {person.lastname}{" "}
+            {person.ttr > 1400 ? "🍑" : "💩"}
           </p>
         ))}
+      </div>
+      <div className="center">
+        <button
+          id="startRound"
+          onClick={() => {
+            if (USE_BROWSER) {
+              return;
+            }
+            ipcRenderer.send(channels.START_ROUND);
+          }}
+        >
+          start round
+        </button>
       </div>
     </div>
   );

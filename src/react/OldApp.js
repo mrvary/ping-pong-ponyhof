@@ -1,6 +1,6 @@
 import React from 'react';
 import './App.css';
-import Popup from './Popup';
+import Popup from './OldPopup';
 
 class OldApp extends React.Component {
   constructor(props) {

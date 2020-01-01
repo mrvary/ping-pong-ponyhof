@@ -1,7 +1,7 @@
 import React from 'react';
 import './MainScore.css';
 
-import PlayerScore from './PlayerScore';
+import PlayerScore from '../PlayerScore/PlayerScore';
 import { setsWonPlayer1, setsWonPlayer2 } from './main-score-state-func';
 
 function MainScore({ match }) {
