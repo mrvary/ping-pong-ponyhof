@@ -5,14 +5,16 @@ function Score({ score }) {
   return <div className="set-score__score">{score ? score : 0}</div>;
 }
 
-function SetScore({score}) {
+function SetScore({ index, set }) {
+  const { player1, player2 } = set;
+
   return (
     <div>
       <div className="set-score__container">
-        <h3 className="set-score__title">1. Satz</h3>
-        <Score />
+        <h3 className="set-score__title">{index + 1}. Satz</h3>
+        <Score score={player1} />
         <div className="set-score__delimiter">:</div>
-        <Score />
+        <Score score={player2} />
       </div>
     </div>
   );

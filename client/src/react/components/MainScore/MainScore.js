@@ -2,15 +2,16 @@ import React from 'react';
 import './MainScore.css';
 
 import PlayerScore from '../PlayerScore/PlayerScore';
+import { setsWonPlayer1, setsWonPlayer2 } from './main-score-state-func';
 
-function MainScore() {
-  const players = ['Marco Goebel', 'Felix Breitenbach'];
+function MainScore({ match }) {
+  const { player1, player2 } = match;
 
   return (
     <div className="main-score__container">
-      <PlayerScore player={players[0]} />
+      <PlayerScore player={player1} score={setsWonPlayer1(match)} />
       <div className="main-score__delimiter">:</div>
-      <PlayerScore player={players[1]} />
+      <PlayerScore player={player2} score={setsWonPlayer2(match)} />
     </div>
   );
 }
