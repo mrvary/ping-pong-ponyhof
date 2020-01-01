@@ -1,4 +1,4 @@
-import PopupDelete from "./components/PopupDelete";
+import Popup from "./components/Popup";
 import React, { useState } from "react";
 import { channels } from "../shared/channels";
 import dummyPlayers from "../assets/players";
@@ -7,7 +7,7 @@ import "./App.css";
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = false;
+const USE_BROWSER = true;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -65,7 +65,7 @@ const ButtonRow = props => {
     return (
     <div>
       <p className="small-text">Willst du dieses Spiel wirklich löschen?</p>
-      <button onClick={() => deleteGame(id)}>Löschen</button>
+      <button className="start-competition-button" onClick={() => deleteGame(id)}>Löschen</button>
     </div>)
   }
   
@@ -76,14 +76,12 @@ const ButtonRow = props => {
       <button className="button-delete" onClick={handleShow}>
         Löschen
       </button>
-      <PopupDelete
+      <Popup
         show={show}
         handleClose={handleClose}
-        deleteGame={deleteGame}
-        id={id}
         header={header()}
         body={body()}
-      ></PopupDelete>
+      ></Popup>
     </div>
   );
 };
@@ -166,6 +164,7 @@ const App = () => {
       </div>
       <div className="center">
         <button
+          className="start-competition-button"
           id="startRound"
           onClick={() => {
             if (USE_BROWSER) {

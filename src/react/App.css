@@ -112,12 +112,14 @@ body {
 .text {
   margin: 1vh 2vh;
   color: black;
-  font-size: medium;
+  font-size: large;
+  text-align: center;
 }
 .small-text {
   margin: 1vh 2vh;
   color: black;
-  font-size: small;
+  font-size: medium;
+  text-align: left;
 }
 
 .button-upload:hover {

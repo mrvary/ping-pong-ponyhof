@@ -1,12 +1,12 @@
 :root {
-  --main-color: #8aba87;
+  --main-color: #f4f4f4;
   --anti-color: #b788ba;
 }
 
 body {
   font-family: system, -apple-system, ".SFNSText-Regular", "SF UI Text",
     "Lucida Grande", "Segoe UI", Ubuntu, Cantarell, sans-serif;
-  color: #fff;
+  color: rgb(0, 0, 0);
   background-color: var(--main-color);
   text-align: center;
   font-size: 40px;
