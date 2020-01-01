@@ -112,6 +112,12 @@ body {
 .text {
   margin: 1vh 2vh;
   color: black;
+  font-size: medium;
+}
+.small-text {
+  margin: 1vh 2vh;
+  color: black;
+  font-size: small;
 }
 
 .button-upload:hover {
