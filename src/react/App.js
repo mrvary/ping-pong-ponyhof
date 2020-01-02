@@ -56,18 +56,14 @@ const ButtonRow = props => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const header = () => {
-    return (
-      <p className="text">Achtung!</p>
-    )
-  }
-  const body = () => { 
-    return (
+  const header = 
+    <p className="popup_header-text">Achtung!</p>
+    
+  const body = 
     <div>
-      <p className="small-text">Willst du dieses Spiel wirklich löschen?</p>
+      <p className="popup_body-small-text">Willst du dieses Spiel wirklich löschen?</p>
       <button className="start-competition-button" onClick={() => deleteGame(id)}>Löschen</button>
-    </div>)
-  }
+    </div>
   
   return (
     <div className="button-list">
@@ -79,8 +75,8 @@ const ButtonRow = props => {
       <Popup
         show={show}
         handleClose={handleClose}
-        header={header()}
-        body={body()}
+        header={header}
+        body={body}
       ></Popup>
     </div>
   );
@@ -97,7 +93,7 @@ const ButtonList = props => {
 const Footer = ({ title }) => {
   return (
     <footer className="center">
-      <p className="text">
+      <p className="footer-text">
         <strong>{title}</strong> by coolest guys ever.
       </p>
     </footer>
