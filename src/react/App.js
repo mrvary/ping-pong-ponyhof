@@ -53,9 +53,9 @@ const ButtonRow = props => {
     deleteGame
   } = props;
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [showPopupDelete, setShowPopupDelete] = useState(false);
+  const handleClose = () => setShowPopupDelete(false);
+  const handleShow = () => setShowPopupDelete(true);
   const header = 
     <p className="popup__header-text">Achtung!</p>
     
@@ -73,7 +73,7 @@ const ButtonRow = props => {
         Löschen
       </button>
       <Popup
-        show={show}
+        show={showPopupDelete}
         handleClose={handleClose}
         header={header}
         body={body}
