@@ -1,6 +1,7 @@
 // TODO: use hash?
 let matchId = 0;
 
+// createMatches : [{player1: Player, player2: Player}] -> [Match]
 function createMatches(pairings) {
   let remainingPairings = [...pairings];
 
