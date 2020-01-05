@@ -19,7 +19,7 @@ function createPlayer(dataFromJSON) {
     clubname,
     gamesWon: 0,
     matchIds: [],
-    opponentIds:[],
+    opponentIds: [],
     qttr: parseInt(ttr, 10),
     active: true,
     hasFreeTicket: false
@@ -91,16 +91,16 @@ function updatePlayers(matches) {
     const player1 = {
       ...match.player1,
       opponentIds: match.player1.opponentIds.concat(match.player2.id)
-    }
+    };
 
     const player2 = {
       ...match.player2,
       opponentIds: match.player2.opponentIds.concat(match.player1.id)
-    }
+    };
     players.push(player1);
     players.push(player2);
   }
-  
+
   return players;
 }
 

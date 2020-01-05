@@ -19,7 +19,6 @@ describe("createMatches()", () => {
   const pairings = pairPlayers(separatedPlayers);
   const matches = createMatches(pairings);
 
-
   test("creates an array of matches from an array of pairings", () => {
     let matchIds = new Set();
     let players = new Set();

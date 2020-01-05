@@ -14,9 +14,7 @@ const {
   tournamentJSON
 } = require("./player.test.data");
 
-const {
-  testMatches
-} = require("./match.test.data");
+const { testMatches } = require("./match.test.data");
 
 const EXPECTED_PLAYER = {
   id: "PLAYER1",
@@ -112,7 +110,8 @@ describe("pairPlayers()", () => {
   //tests for even number of players
   const evenNumberOfPlayers = cleanedUpPlayers
     .map(player => ({
-      ...player, firstname: player.firstname + " Copy",
+      ...player,
+      firstname: player.firstname + " Copy",
       id: player.id + "0",
       qttr: player.qttr + 100
     }))
@@ -133,13 +132,10 @@ describe("pairPlayers()", () => {
   });
 
   test("contains one of the top and one of the bottom players when even", () => {
-
     evenPairedPlayers.forEach(pair => {
-      expect(evenTopAndBottomPlayers.top).toContain(pair.player1)
-      expect(evenTopAndBottomPlayers.bottom).toContain(pair.player2)
-    })
-
-
+      expect(evenTopAndBottomPlayers.top).toContain(pair.player1);
+      expect(evenTopAndBottomPlayers.bottom).toContain(pair.player2);
+    });
   });
 
   //tests for odd number of players
@@ -159,28 +155,22 @@ describe("pairPlayers()", () => {
       Math.ceil(oddNumberOfPlayers.length / 2)
     );
   });
-
 });
 
 describe("updatePlayers()", () => {
-
   const newPlayers = updatePlayers(testMatches);
 
   test("returns an array of all players from an array of matches", () => {
     expect(newPlayers).toBeDefined();
     expect(newPlayers.length).toBe(testMatches.length * 2);
     expect(newPlayers.length).toBe(6);
-
   });
 
-  test.todo("check gamesWon changed for winners ", () => {
-
-
-  });
+  test.todo("check gamesWon changed for winners ", () => {});
 
   test("match Id added to each player", () => {
     for (let match of testMatches) {
-      let playersOfTheMatch = newPlayers.filter(function (e) {
+      let playersOfTheMatch = newPlayers.filter(function(e) {
         return e.matchIds[0] === match.id;
       });
       expect(playersOfTheMatch.length).toBe(2);
@@ -200,9 +190,7 @@ describe("updatePlayers()", () => {
         if (player.id === player2Id) {
           expect(player.opponentIds).toContain(player1Id);
         }
-      })
+      });
     }
   });
-
-
 });
