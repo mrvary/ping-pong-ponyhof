@@ -17,7 +17,7 @@ function createMatches(pairings) {
 // createMatch : {player1: Player, player2: Player} -> Match
 function createMatch({ player1, player2 }) {
   // early return when no second player
-  if (!player2.id) {
+  if (!player2 && !player2.id) {
     const freeTicketMatch = {
       id: matchId,
       player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
