@@ -1,0 +1,12 @@
+.footer__container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-text {
+  margin: 1vh 2vh;
+  color: black;
+  font-size: large;
+  text-align: center;
+}

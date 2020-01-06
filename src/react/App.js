@@ -1,12 +1,16 @@
-import Popup from "./components/Popup";
 import React, { useState } from "react";
 import { channels } from "../shared/channels";
 import dummyPlayers from "../assets/players";
 import "./App.css";
 
+// components
+import Footer from "./components/Footer";
+import Popup from "./components/Popup";
+
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
+// set to true for fake backend data and skip IPC calls
 const USE_BROWSER = true;
 
 const Header = ({ importXML, title, startCompetition }) => {
@@ -95,16 +99,6 @@ const ButtonList = props => {
   return games.map(game => (
     <ButtonRow key={game.id} game={game} deleteGame={deleteGame} />
   ));
-};
-
-const Footer = ({ title }) => {
-  return (
-    <footer className="center">
-      <p className="footer-text">
-        <strong>{title}</strong> by coolest guys ever.
-      </p>
-    </footer>
-  );
 };
 
 const App = () => {
