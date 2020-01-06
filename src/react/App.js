@@ -1,4 +1,4 @@
-import PopupDelete from "./components/PopupDelete";
+import Popup from "./components/Popup";
 import React, { useState } from "react";
 import { channels } from "../shared/channels";
 import dummyPlayers from "../assets/players";
@@ -7,7 +7,7 @@ import "./App.css";
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
-const USE_BROWSER = false;
+const USE_BROWSER = true;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -53,23 +53,31 @@ const ButtonRow = props => {
     deleteGame
   } = props;
 
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const [showPopupDelete, setShowPopupDelete] = useState(false);
+  const handleClose = () => setShowPopupDelete(false);
+  const handleShow = () => setShowPopupDelete(true);
+  const header = 
+    <p className="popup__header-text">Achtung!</p>
+    
+  const body = 
+    <div>
+      <p className="popup__body-small-text">Willst du dieses Spiel wirklich löschen?</p>
+      <button className="start-competition-button" onClick={() => deleteGame(id)}>Löschen</button>
+    </div>
 
   return (
-    <div className="button-list">
-      <button className="button-game">Spiel vom {date}</button>
-      <div className="button-game" />
-      <button className="button-delete" onClick={handleShow}>
+    <div className="list-element">
+      <button className="list-element__btn-game">Spiel vom {date}</button>
+      <div className="list-element__btn-game" />
+      <button className="list-element__btn-delete" onClick={handleShow}>
         Löschen
       </button>
-      <PopupDelete
-        show={show}
+      <Popup
+        show={showPopupDelete}
         handleClose={handleClose}
-        deleteGame={deleteGame}
-        id={id}
-      ></PopupDelete>
+        header={header}
+        body={body}
+      ></Popup>
     </div>
   );
 };
@@ -85,7 +93,7 @@ const ButtonList = props => {
 const Footer = ({ title }) => {
   return (
     <footer className="center">
-      <p className="footer-Line">
+      <p className="footer-text">
         <strong>{title}</strong> by coolest guys ever.
       </p>
     </footer>
@@ -152,6 +160,7 @@ const App = () => {
       </div>
       <div className="center">
         <button
+          className="start-competition-button"
           id="startRound"
           onClick={() => {
             if (USE_BROWSER) {

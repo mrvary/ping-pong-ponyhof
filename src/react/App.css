@@ -18,7 +18,7 @@ body {
   color: black
 }
 
-.button-list {
+.list-element {
   display: flex;
   justify-content: center;
   margin: 1vh 4vh;
@@ -26,18 +26,7 @@ body {
   background: white;
 }
 
-.button-game {
-  border: none;
-  width: 150vh;
-  height: 7vh;
-  background: none;
-  font-size: 2.5vh;
-  cursor: pointer;
-  text-decoration: none;
-  box-sizing: border-box;
-}
-
-.button-delete {
+.list-element__btn-delete {
   width: 20vh;
   height: 7vh;
   float: left;
@@ -49,6 +38,32 @@ body {
   cursor: pointer;
   box-sizing: border-box;
 }
+.list-element__btn-game {
+  border: none;
+  width: 150vh;
+  height: 7vh;
+  background: none;
+  font-size: 2.5vh;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+.list-element__btn-game:hover {
+  color: #4d4d4d;
+}
+.list-element__btn-delete:hover {
+  color: black;
+}
+.list-element__btn-game:focus {
+  outline: 0;
+}
+.list-element__btn-delete:focus {
+  outline: 0;
+}
+.list-element__btn-game:active {
+  transform: translateY(0.3vh);
+}
+
 
 .header-box-container {
   display: flex;
@@ -109,9 +124,17 @@ body {
   justify-content: center;
 }
 
-.text {
+.popup__header-text {
   margin: 1vh 2vh;
   color: black;
+  font-size: large;
+  text-align: center;
+}
+.popup__body-small-text {
+  margin: 1vh 2vh;
+  color: black;
+  font-size: medium;
+  text-align: left;
 }
 
 .button-upload:hover {
@@ -131,23 +154,6 @@ body {
   outline: 0;
 }
 
-.button-game:hover {
-  color: #4d4d4d;
-}
-.button-delete:hover {
-  color: black;
-}
-
-.button-game:focus {
-  outline: 0;
-}
-.button-delete:focus {
-  outline: 0;
-}
-.button-game:active {
-  transform: translateY(0.3vh);
-}
-
 .server-running {
   background: var(--anti-color);
 }
@@ -160,4 +166,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.footer-text {
+  margin: 1vh 2vh;
+  color: black;
+  font-size: large;
+  text-align: center;
 }

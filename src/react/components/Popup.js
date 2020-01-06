@@ -3,21 +3,18 @@ import React from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 
 
-function PopupDelete ({show,handleClose,deleteGame,id}){
+function Popup ({show,handleClose,header,body}){
 
     return (
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-            Achtung!
+            {header}
             </Modal.Header>
             <Modal.Body>
-                <div>
-                    <p>Willst du dieses Spiel wirklich löschen?</p>
-                    <button onClick={() => deleteGame(id)}>Löschen</button>
-                </div>
+            {body}
             </Modal.Body>
         </Modal>
     )
 }
 
-export default PopupDelete;
+export default Popup;
