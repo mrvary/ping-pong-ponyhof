@@ -143,7 +143,7 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="app__container">
       <Header
         title="PingPongPonyhof"
         importXML={importXML}
