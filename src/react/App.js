@@ -56,14 +56,21 @@ const ButtonRow = props => {
   const [showPopupDelete, setShowPopupDelete] = useState(false);
   const handleClose = () => setShowPopupDelete(false);
   const handleShow = () => setShowPopupDelete(true);
-  const header = 
-    <p className="popup__header-text">Achtung!</p>
-    
-  const body = 
+  const header = <p className="popup__header-text">Achtung!</p>;
+
+  const body = (
     <div>
-      <p className="popup__body-small-text">Willst du dieses Spiel wirklich löschen?</p>
-      <button className="start-competition-button" onClick={() => deleteGame(id)}>Löschen</button>
+      <p className="popup__body-small-text">
+        Willst du dieses Spiel wirklich löschen?
+      </p>
+      <button
+        className="start-competition-button"
+        onClick={() => deleteGame(id)}
+      >
+        Löschen
+      </button>
     </div>
+  );
 
   return (
     <div className="list-element">
