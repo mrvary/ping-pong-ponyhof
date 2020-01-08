@@ -6,7 +6,7 @@
   background: white;
 }
 
-.list-element__btn-delete {
+.competition__btn-delete {
   width: 20vh;
   height: 7vh;
   float: left;
@@ -19,7 +19,7 @@
   box-sizing: border-box;
 }
 
-.list-element__btn-game {
+.competition__btn-game {
   border: none;
   width: 150vh;
   height: 7vh;
@@ -30,22 +30,36 @@
   box-sizing: border-box;
 }
 
-.list-element__btn-game:hover {
+.competition__btn-game:hover {
   color: #4d4d4d;
 }
 
-.list-element__btn-delete:hover {
+.competition__btn-delete:hover {
   color: black;
 }
 
-.list-element__btn-game:focus {
+.competition__btn-game:focus {
   outline: 0;
 }
 
-.list-element__btn-delete:focus {
+.competition__btn-delete:focus {
   outline: 0;
 }
 
-.list-element__btn-game:active {
+.competition__btn-game:active {
   transform: translateY(0.3vh);
+}
+
+.popup__header-text {
+  margin: 1vh 2vh;
+  color: black;
+  font-size: large;
+  text-align: center;
+}
+
+.popup__body-small-text {
+  margin: 1vh 2vh;
+  color: black;
+  font-size: medium;
+  text-align: left;
 }

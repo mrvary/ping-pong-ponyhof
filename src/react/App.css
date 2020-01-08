@@ -50,19 +50,6 @@
   justify-content: center;
 }
 
-.popup__header-text {
-  margin: 1vh 2vh;
-  color: black;
-  font-size: large;
-  text-align: center;
-}
-.popup__body-small-text {
-  margin: 1vh 2vh;
-  color: black;
-  font-size: medium;
-  text-align: left;
-}
-
 .button-upload:hover {
   color: #4d4d4d;
 }

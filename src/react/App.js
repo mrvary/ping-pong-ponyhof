@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { channels } from "../shared/channels";
 import dummyPlayers from "../assets/players";
 import "./App.css";
+import "./Colors.css";
 
 // components
 import Footer from "./components/Footer";
@@ -31,7 +32,6 @@ const HeaderBox = ({ importXML, startCompetition }) => {
       <p className="text">Neues Turnier anlegen</p>
       <UploadXML importXML={importXML} />
       <Button onClick={startCompetition} mode="primary" text="loslegen" />
-      <Button onClick={startCompetition} text="loslegen" />
     </div>
   );
 };

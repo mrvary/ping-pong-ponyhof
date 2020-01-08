@@ -28,9 +28,9 @@ function Competition(props) {
 
   return (
     <div className="competition__container">
-      <button className="list-element__btn-game">Spiel vom {date}</button>
-      <button className="list-element__btn-game">Schweizer System</button>
-      <button className="list-element__btn-delete" onClick={handleShow}>
+      <button className="competition__btn-game">Spiel vom {date}</button>
+      <button className="competition__btn-game">Schweizer System</button>
+      <button className="competition__btn-delete" onClick={handleShow}>
         Löschen
       </button>
       <Popup
