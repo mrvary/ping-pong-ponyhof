@@ -6,7 +6,7 @@ class Popup extends React.Component{
       return(
         <div className='popup'>
             <div className='popup\_inner'>
-                <h1>{this.props.titleText}</h1>
+                <h3>{this.props.titleText}</h3>
                 <button onClick={this.props.justClosePopup}>zurück</button>
                 <button onClick={this.props.deleteAndClose}>löschen</button>
             </div>
@@ -15,4 +15,4 @@ class Popup extends React.Component{
     }
 }
 
-  export default Popup;
+export default Popup;

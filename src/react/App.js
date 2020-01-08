@@ -1,8 +1,9 @@
-import "./App.css";
+import Popup from "./components/Popup";
+import CompetitionPage from "./components/CompetitionPage";
 import React, { useState } from "react";
 import { channels } from "../shared/channels";
 import dummyPlayers from "../assets/players";
-import CompetitionPage from "./components/CompetitionPage";
+import "./App.css";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -20,7 +21,6 @@ const Header = ({ importXML, title, startCompetition }) => {
   );
 };
 
-//Header Box mit Tunier anlegen und XML hochladen
 const HeaderBox = ({ importXML, startCompetition }) => {
   return (
     <div className="container-box">
@@ -31,7 +31,6 @@ const HeaderBox = ({ importXML, startCompetition }) => {
   );
 };
 
-//Upload Fenster
 const UploadXML = ({ importXML }) => {
   return (
     <button className="button-upload-xml" onClick={importXML}>
@@ -40,7 +39,6 @@ const UploadXML = ({ importXML }) => {
   );
 };
 
-//Button zum uploaden
 const StartCompetitionButton = ({ startCompetition }) => {
   return (
     <button className="start-competition-button" onClick={startCompetition}>
@@ -49,22 +47,45 @@ const StartCompetitionButton = ({ startCompetition }) => {
   );
 };
 
-//Liste der "Buttons" mit Löschen Button
-//Löschen Button funktioniert nicht
-//Angabe der Tunierart fehlt
+//  TODO: Angabe der Tunierart fehlt
 const ButtonRow = props => {
   const {
     game: { id, date },
     deleteGame
   } = props;
 
-  return (
-    <div className="button-list">
-      <button className="button-game">Spiel vom {date}</button>
-      <div className="button-game" />
-      <button className="button-delete" onClick={() => deleteGame(id)}>
+  const [showPopupDelete, setShowPopupDelete] = useState(false);
+  const handleClose = () => setShowPopupDelete(false);
+  const handleShow = () => setShowPopupDelete(true);
+  const header = <p className="popup__header-text">Achtung!</p>;
+
+  const body = (
+    <div>
+      <p className="popup__body-small-text">
+        Willst du dieses Spiel wirklich löschen?
+      </p>
+      <button
+        className="start-competition-button"
+        onClick={() => deleteGame(id)}
+      >
         Löschen
       </button>
+    </div>
+  );
+
+  return (
+    <div className="list-element">
+      <button className="list-element__btn-game">Spiel vom {date}</button>
+      <div className="list-element__btn-game" />
+      <button className="list-element__btn-delete" onClick={handleShow}>
+        Löschen
+      </button>
+      <Popup
+        show={showPopupDelete}
+        handleClose={handleClose}
+        header={header}
+        body={body}
+      ></Popup>
     </div>
   );
 };
@@ -79,8 +100,8 @@ const ButtonList = props => {
 
 const Footer = ({ title }) => {
   return (
-    <footer>
-      <p>
+    <footer className="center">
+      <p className="footer-text">
         <strong>{title}</strong> by coolest guys ever.
       </p>
     </footer>
@@ -107,7 +128,7 @@ const App = () => {
     }
 
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
-    ipcRenderer.on(channels.OPEN_IMPORT_DIALOG, (event, args) => {
+    ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
       const { players } = args;
       log.info(players);
       setPlayers(players);
@@ -121,43 +142,46 @@ const App = () => {
   const startCompetition = () => {
     if (players.length > 0) {
       const date = new Date();
-      setGames(games.concat([{ id: currentId, date: date.toDateString() }]));
+      setGames(
+        games.concat([{ id: currentId, date: date.toLocaleDateString() }])
+      );
       setCurrentId(currentId + 1);
     }
   };
 
   return (
-    // <div>
-    //   <Header
-    //     title="PingPongPonyhof"
-    //     importXML={importXML}
-    //     startCompetition={startCompetition}
-    //   />
-    //   <ButtonList games={games} deleteGame={deleteGame} />
-    //   <Footer title="PingPongPonyhof" />
-    //   <div>
-    //     {players.map(({ person, id }) => (
-    //       <p key={id}>
-    //         {person.firstname} {person.lastname}{' '}
-    //         {person.ttr > 1400 ? '🍑' : '💩'}
-    //       </p>
-    //     ))}
-    //   </div>
-    //   <button
-    //     className="button"
-    //     id="startRound"
-    //     onClick={() => {
-    //       if (USE_BROWSER) {
-    //         return;
-    //       }
-    //       ipcRenderer.send(channels.START_ROUND);
-    //     }}
-    //   >
-    //     start round
-    //   </button>
-    // </div>
-
-    <CompetitionPage />
+    <div>
+      <CompetitionPage />
+      {/* <Header
+        title="PingPongPonyhof"
+        importXML={importXML}
+        startCompetition={startCompetition}
+      />
+      <ButtonList games={games} deleteGame={deleteGame} />
+      <Footer title="PingPongPonyhof" />
+      <div>
+        {players.map(({ person, id }) => (
+          <p key={id}>
+            {person.firstname} {person.lastname}{" "}
+            {person.ttr > 1400 ? "🍑" : "💩"}
+          </p>
+        ))}
+      </div>
+      <div className="center">
+        <button
+          className="start-competition-button"
+          id="startRound"
+          onClick={() => {
+            if (USE_BROWSER) {
+              return;
+            }
+            ipcRenderer.send(channels.START_ROUND);
+          }}
+        >
+          start round
+        </button>
+      </div> */}
+    </div>
   );
 };
 

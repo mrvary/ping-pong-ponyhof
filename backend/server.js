@@ -1,64 +1,26 @@
-const express = require("express");
+const app = require('./app');
+const http = require('http');
 
-const io = require("socket.io");
-const { clientChannels } = require("../client/src/shared/client-channels");
+// electron dependencies
+const log = require('electron-log');
 
-const isDev = require("electron-is-dev");
-const log = require("electron-log");
+// communication dependecies
+const io = require('socket.io');
+const { clientChannels } = require('../client/src/shared/client-channels');
 
-const path = require("path");
-
-const PORT = 4000;
-const MAX_AMOUNT_TABLE = 3;
+const MAX_AMOUNT_TABLE = 4;
+const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let serverSocket = null;
 let connectedClients = new Map();
+let matchStarted = false;
 
-const findInMap = (map, val) => {
-  for (let [k, v] of map) {
-    if (v === val) {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-function createServer() {
-  let server = setupExpressApp();
-  if (!server) {
-    log.info("Could not start web server");
-    return null;
-  }
-
+function createServer(port) {
+  const server = http.createServer(app);
   setupSocketIO(server);
 
-  return server;
-}
-
-function setupExpressApp() {
-  // create a express application
-  const serverApp = express();
-
-  if (isDev) {
-    // redirect to the development server of the react client app
-    serverApp.get("*", (request, response) => {
-      const clientUrl = process.env.CLIENT_START_URL || "http://localhost:3001";
-      response.redirect(clientUrl);
-    });
-  } else {
-    // Serve the static files from the react client app
-    serverApp.use(express.static(path.join(__dirname, "../client/build")));
-
-    // Handles any requests that don't match the ones above
-    serverApp.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "../client/build/index.html"));
-    });
-  }
-
-  // start web server
-  return serverApp.listen(PORT, () => {
-    log.info(`Server is running on port ${PORT}`);
+  return server.listen(port, () => {
+    log.info(`Server is running on port ${port}`);
   });
 }
 
@@ -71,6 +33,9 @@ function setupSocketIO(server) {
     let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
 
+    // send current server state to clients
+    clientSocket.emit(clientChannels.AVAILABLE_TABLES, availableTables());
+
     // event fired every time a client sends a table number
     clientSocket.on(clientChannels.LOGIN_TABLE, data => {
       const { tableNumber } = data;
@@ -82,20 +47,26 @@ function setupSocketIO(server) {
       }
 
       // verify if a client is already connected to a table
-      if (findInMap(connectedClients, tableNumber)) {
+      if (mapHasValue(connectedClients, tableNumber)) {
         clientSocket.emit(clientChannels.LOGIN_ERROR, data);
         return;
       }
 
-      // add client to connection list
+      // login client
       connectedClients.set(clientSocket.id, tableNumber);
       addedDevice = true;
       console.info(
         `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
       );
 
+      // send current server state to clients
+      sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
+
       // send data to client
-      clientSocket.emit(clientChannels.LOGIN_TABLE, data);
+      clientSocket.emit(clientChannels.LOGIN_TABLE, {
+        tableNumber: tableNumber,
+        matchStarted: matchStarted
+      });
     });
 
     // event fired when the client sends a message
@@ -108,26 +79,50 @@ function setupSocketIO(server) {
       if (addedDevice) {
         connectedClients.delete(clientSocket.id);
         console.info(`Client logout [id=${clientSocket.id}]`);
+
+        sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
       }
       console.log(`Client gone [id=${clientSocket.id}]`);
     });
   });
 }
 
+function mapHasValue(inputMap, searchedValue) {
+  const values = Array.from(inputMap.entries());
+  return values.some(([_, value]) => value === searchedValue);
+}
+
 function sendStartRoundBroadcast() {
-  sendBroadcast(clientChannels.START_ROUND);
+  if (matchStarted) return;
+  
+  matchStarted = true;
+  sendBroadcast(clientChannels.START_ROUND, null);
 }
 
 // this method is used to submit a broadcast event to all clients
-function sendBroadcast(eventName) {
+function sendBroadcast(eventName, data) {
   if (serverSocket) {
-    serverSocket.sockets.emit(eventName);
+    serverSocket.sockets.emit(eventName, data);
     console.log(`server emit broadcast: ${eventName}`);
+    console.log(`--- data was ${data}`);
   }
 }
 
+function availableTables() {
+  const takenTables = Array.from(connectedClients.values()).map(x =>
+    parseInt(x, 10)
+  );
+  const availableTables = ALL_POTENTIAL_TABLES.filter(
+    key => !takenTables.includes(key)
+  );
+  return availableTables;
+}
+
+function range(start, exclusiveEnd) {
+  return [...Array(exclusiveEnd).keys()].slice(start);
+}
+
 module.exports = {
-  SERVER_PORT: PORT,
   createServer,
   sendStartRoundBroadcast
 };

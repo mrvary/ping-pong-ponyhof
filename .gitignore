@@ -12,5 +12,8 @@ node_modules/
 build/
 dist/
 
-# systemfiles
+# Yarn
+*.log
+
+# mac files
 .DS_Store
