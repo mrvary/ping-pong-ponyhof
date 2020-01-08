@@ -6,6 +6,7 @@ import "./App.css";
 // components
 import Footer from "./components/Footer";
 import Competition from "./components/Competition";
+import Button from "./components/Button";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -43,19 +44,8 @@ const UploadXML = ({ importXML }) => {
   );
 };
 
-function Button({ text, onClick, mode }) {
-  const css =
-    "start-competition-button " +
-    (mode === "primary"
-      ? "start-competition-button--primary"
-      : "start-competition-button--secondary");
 
-  return (
-    <button className={css} onClick={onClick}>
-      {text}
-    </button>
-  );
-}
+
 
 const ButtonList = props => {
   const { games, deleteGame } = props;
@@ -116,9 +106,9 @@ const App = () => {
       <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
       <div className="center">
-        <button
-          className="start-competition-button"
-          id="startRound"
+        <Button
+          mode="primary"
+          text="start Round"
           onClick={() => {
             if (USE_BROWSER) {
               return;
@@ -126,8 +116,7 @@ const App = () => {
             ipcRenderer.send(channels.START_ROUND);
           }}
         >
-          start round
-        </button>
+        </Button>
       </div>
     </div>
   );

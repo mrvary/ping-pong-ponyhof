@@ -4,6 +4,7 @@ import "./Competition.css";
 
 // components
 import Popup from "./Popup";
+import Button from "./Button";
 
 function Competition(props) {
   const {
@@ -21,12 +22,7 @@ function Competition(props) {
       <p className="popup__body-small-text">
         Willst du dieses Spiel wirklich löschen?
       </p>
-      <button
-        className="start-competition-button"
-        onClick={() => deleteGame(id)}
-      >
-        Löschen
-      </button>
+      <Button text="Löschen" onClick={() => deleteGame(id)} mode="primary"></Button>
     </div>
   );
 

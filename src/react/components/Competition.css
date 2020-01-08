@@ -49,14 +49,3 @@
 .list-element__btn-game:active {
   transform: translateY(0.3vh);
 }
-
-.start-competition-button {
-  width: 27vh;
-  height: 6.5vh;
-  color: black;
-  font-size: 2vh;
-  border: none;
-  background: #84afce;
-  border-radius: 2vh;
-  margin: 1.5vh 0vh;
-}

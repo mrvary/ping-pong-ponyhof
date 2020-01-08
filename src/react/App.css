@@ -2,22 +2,6 @@
   background-color: #f4f4f4;
 }
 
-.popup {
-  position: fixed;
-  width: 60vh;
-  height: 40vh;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  margin: auto;
-  background-color: white;
-  border: 0.3vh solid black;
-  border-radius: 3vh;
-  font-size: 4vh;
-  color: black;
-}
-
 .header-box-container {
   display: flex;
   justify-content: space-around;
@@ -53,23 +37,6 @@
   padding: 2vh;
 }
 
-.start-competition-button {
-  width: 27vh;
-  height: 6.5vh;
-  color: black;
-  font-size: 2vh;
-  border: none;
-  border-radius: 2vh;
-  margin: 1.5vh 0vh;
-}
-
-.start-competition-button--primary {
-  background: #84afce;
-}
-
-.start-competition-button--secondary {
-  background: red;
-}
 .hero-size {
   height: 70vh;
   background-image: url("../assets/header_background.jpg");
@@ -119,8 +86,4 @@
 .server-running:hover {
   color: var(--anti-color);
   background-color: white;
-}
-
-.asdf {
-  background: red;
 }
