@@ -35,5 +35,11 @@ const players = [
 ];
 
 function getPlayersByMatchId(id) {
-  return players.filter(player => player.matchIds.some(matchId => matchId === id))
+  return players.filter(player =>
+    player.matchIds.some(matchId => matchId === id)
+  );
 }
+
+module.exports = {
+  getPlayersByMatchId
+};
