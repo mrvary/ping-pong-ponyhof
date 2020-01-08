@@ -1,12 +1,6 @@
-.footer__container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .footer__text {
   margin: 1vh 2vh;
-  color: black;
+  color: var(--font-color);
   font-size: large;
   text-align: center;
 }

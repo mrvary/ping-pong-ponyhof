@@ -3,7 +3,7 @@
   justify-content: center;
   margin: 1vh 4vh;
   border-radius: 2vh;
-  background: white;
+  background: var(--sec-background-color);
 }
 
 .competition__btn-delete {
@@ -12,8 +12,8 @@
   float: left;
   border: none;
   background: none;
-  border-left: 0.01vh solid #f4f4f4;
-  color: #4d4d4d;
+  border-left: 0.01vh solid var(--prim-background-color);
+  color: var(--grey-out-color);
   font-size: 1.5vh;
   cursor: pointer;
   box-sizing: border-box;
@@ -31,11 +31,11 @@
 }
 
 .competition__btn-game:hover {
-  color: #4d4d4d;
+  color: var(--grey-out-color);
 }
 
 .competition__btn-delete:hover {
-  color: black;
+  color: var(--prim-font-color);
 }
 
 .competition__btn-game:focus {
@@ -52,14 +52,14 @@
 
 .popup__header-text {
   margin: 1vh 2vh;
-  color: black;
+  color: var(--prim-font-color);
   font-size: large;
   text-align: center;
 }
 
 .popup__body-small-text {
   margin: 1vh 2vh;
-  color: black;
+  color: var(--prim-font-color);
   font-size: medium;
   text-align: left;
 }

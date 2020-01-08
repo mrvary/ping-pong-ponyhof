@@ -105,9 +105,8 @@ const App = () => {
       />
       <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
-      <div className="center">
-        <Button
-          mode="primary"
+      <Button
+        mode="primary"
           text="start Round"
           onClick={() => {
             if (USE_BROWSER) {
@@ -117,7 +116,6 @@ const App = () => {
           }}
         >
         </Button>
-      </div>
     </div>
   );
 };

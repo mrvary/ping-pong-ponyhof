@@ -1,8 +1,9 @@
 import React from "react";
+import "./Footer.css"
 
 function Footer({ title }) {
   return (
-    <footer className="footer__container">
+    <footer>
       <p className="footer__text">
         <strong>{title}</strong> by coolest guys ever.
       </p>

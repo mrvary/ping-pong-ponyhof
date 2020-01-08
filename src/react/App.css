@@ -1,5 +1,5 @@
 .app__container {
-  background-color: #f4f4f4;
+  background-color: var(--prim-background-color);
 }
 
 .header-box-container {
@@ -12,8 +12,8 @@
   width: 35vh;
   height: 50vh;
   border: none;
-  background: white;
-  color: #4d4d4d;
+  background: var(--sec-background-color);
+  color: var(--grey-out-color);
   font-size: 2.5vh;
   border-radius: 2vh;
   margin: 10vh 4vh;
@@ -27,10 +27,10 @@
 .button-upload-xml {
   width: 27vh;
   height: 20vh;
-  color: #4d4d4d;
+  color: var(--grey-out-color);
   font-size: 2vh;
-  border: 0.3vh solid #f4f4f4;
-  background: white;
+  border: 0.3vh solid var(--prim-background-color);
+  background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
   margin: 5vh 0vh;
@@ -40,18 +40,18 @@
 .hero-size {
   height: 70vh;
   background-image: url("../assets/header_background.jpg");
-  background-color: #84afce;
+  background-color: var(--button-color);
 }
 
 .title-header {
   margin: 20vh 10vh;
   font-size: 6vh;
-  color: white;
+  color: var(--sec-font-color);
   justify-content: center;
 }
 
 .button-upload:hover {
-  color: #4d4d4d;
+  color: var(--grey-out-color);
 }
 
 .button-upload:focus {
@@ -59,8 +59,8 @@
 }
 
 .button-upload-xml:hover {
-  color: black;
-  border: 0.1vh solid #4d4d4d;
+  color: var(font);
+  border: 0.1vh solid var(--grey-out-color);
 }
 
 .button-upload-xml:focus {
@@ -72,5 +72,5 @@
 }
 .server-running:hover {
   color: var(--anti-color);
-  background-color: white;
+  background-color: var(--sec-background-color);
 }
