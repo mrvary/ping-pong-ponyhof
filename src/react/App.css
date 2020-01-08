@@ -59,11 +59,17 @@
   color: black;
   font-size: 2vh;
   border: none;
-  background: #84afce;
   border-radius: 2vh;
   margin: 1.5vh 0vh;
 }
 
+.start-competition-button--primary {
+  background: #84afce;
+}
+
+.start-competition-button--secondary {
+  background: red;
+}
 .hero-size {
   height: 70vh;
   background-image: url("../assets/header_background.jpg");
@@ -113,4 +119,8 @@
 .server-running:hover {
   color: var(--anti-color);
   background-color: white;
+}
+
+.asdf {
+  background: red;
 }

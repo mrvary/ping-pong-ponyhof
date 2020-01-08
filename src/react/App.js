@@ -11,7 +11,7 @@ const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
 // set to true for fake backend data and skip IPC calls
-const USE_BROWSER = true;
+const USE_BROWSER = false;
 
 const Header = ({ importXML, title, startCompetition }) => {
   return (
@@ -29,7 +29,8 @@ const HeaderBox = ({ importXML, startCompetition }) => {
     <div className="container-box">
       <p className="text">Neues Turnier anlegen</p>
       <UploadXML importXML={importXML} />
-      <StartCompetitionButton startCompetition={startCompetition} />
+      <Button onClick={startCompetition} mode="primary" text="loslegen" />
+      <Button onClick={startCompetition} text="loslegen" />
     </div>
   );
 };
@@ -42,13 +43,19 @@ const UploadXML = ({ importXML }) => {
   );
 };
 
-const StartCompetitionButton = ({ startCompetition }) => {
+function Button({ text, onClick, mode }) {
+  const css =
+    "start-competition-button " +
+    (mode === "primary"
+      ? "start-competition-button--primary"
+      : "start-competition-button--secondary");
+
   return (
-    <button className="start-competition-button" onClick={startCompetition}>
-      Loslegen
+    <button className={css} onClick={onClick}>
+      {text}
     </button>
   );
-};
+}
 
 const ButtonList = props => {
   const { games, deleteGame } = props;
