@@ -19,7 +19,8 @@
   },
   "scripts": {
     "start": "yarn build && yarn start-electron",
-    "start-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel-mac",
+    "start-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel",
+    "start-dev-mac": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel-mac",
     "start-dev-parallel-mac": "cross-env BROWSER=none concurrently --kill-others \"yarn:start-react-app\" \"yarn:start-react-client\" \"wait-on ${ELECTRON_START_URL} ${CLIENT_START_URL} && yarn start-dev-electron-mac\"",
     "start-dev-parallel": "cross-env BROWSER=none concurrently --kill-others \"yarn:start-react-app\" \"yarn:start-react-client\" \"wait-on ${ELECTRON_START_URL} ${CLIENT_START_URL} && yarn start-dev-electron\"",
     "start-electron": "cross-env ELECTRON_IS_DEV=0 electron .",
