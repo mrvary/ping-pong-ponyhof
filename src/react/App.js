@@ -7,6 +7,7 @@ import "./Colors.css";
 // components
 import Footer from "./components/Footer";
 import Competition from "./components/Competition";
+import Header from "./components/Header";
 import Button from "./components/Button";
 
 const log = window.log;
@@ -14,37 +15,6 @@ const ipcRenderer = window.ipcRenderer;
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
-
-const Header = ({ importXML, title, startCompetition }) => {
-  return (
-    <section className="hero-size">
-      <div className="header-box-container">
-        <HeaderBox importXML={importXML} startCompetition={startCompetition} />
-        <strong className="title-header">{title}</strong>
-      </div>
-    </section>
-  );
-};
-
-const HeaderBox = ({ importXML, startCompetition }) => {
-  return (
-    <div className="container-box">
-      <p className="text">Neues Turnier anlegen</p>
-      <UploadXML importXML={importXML} />
-      <Button onClick={startCompetition} mode="primary" text="loslegen" />
-    </div>
-  );
-};
-
-const UploadXML = ({ importXML }) => {
-  return (
-    <button className="button-upload-xml" onClick={importXML}>
-      Lade hier deine XML Datei hoch!
-    </button>
-  );
-};
-
-
 
 
 const ButtonList = props => {
