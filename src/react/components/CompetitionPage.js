@@ -55,14 +55,16 @@ const CompetitionPage = () => {
     MatchService.getMatchesByCompetition(0)
   );
 
+  const PrintMatches = () => {
+    console.log(matches);
+  };
+
   return (
     <div>
       <Header kind="Schweizer System" date="xx.xx.2020" time="xx:xx " />
       <IpAdressAndStatisticLink />
       <DescriptionLine />
-      {matches.forEach(match => {
-        return <div>{match.player1}</div>;
-      })}
+      {PrintMatches()}
     </div>
   );
 };
