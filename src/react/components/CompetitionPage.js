@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import MatchService from "../../services/matchService";
 import "./CompetitionPage.css";
 
 const Header = ({ kind, date, time }) => {
@@ -49,15 +50,19 @@ const DescriptionLine = () => {
 
 const CompetitionPage = () => {
   //dummy game
-  const [game, setGames] = useState([
-    { id: 0, date: "23.7.2019", kind: "SChweizer SYSTEm", time: "xx.xx" }
-  ]);
+
+  const [matches, setMatches] = useState(
+    MatchService.getMatchesByCompetition(0)
+  );
 
   return (
     <div>
       <Header kind="Schweizer System" date="xx.xx.2020" time="xx:xx " />
       <IpAdressAndStatisticLink />
       <DescriptionLine />
+      {matches.forEach(match => {
+        return <div>{match.player1}</div>;
+      })}
     </div>
   );
 };
