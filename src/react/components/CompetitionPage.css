@@ -1,0 +1,79 @@
+body {
+  background-color: #f4f4f4;
+}
+
+.hero-alignment {
+  height: 10vh;
+  font-size: 2vh;
+  color: #4d4d4d;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.competition-kind {
+  margin: 2vh 2vh;
+}
+
+.competition-date {
+  margin: 2vh 2vh;
+}
+
+.competition-time {
+  margin: 2vh 2vh;
+}
+
+.first-row-box {
+  justify-content: center;
+  width: 150vh;
+  height: 7vh;
+  border-radius: 2vh;
+  background: white;
+}
+
+.first-row-alignment {
+  display: flex;
+  font-size: 2vh;
+  color: black;
+  margin: 3vh 3vh;
+  justify-content: center;
+  justify-content: space-between;
+}
+
+.link-back-to-overview {
+  text-decoration: underline;
+  color: #4d4d4d;
+  font-size: 2vh;
+  border: none;
+  margin: 2vh 2vh;
+}
+
+.link-ip-adress-statistic {
+  text-decoration: underline;
+  color: #9a6fa5;
+  font-size: 2vh;
+  border: none;
+  margin: 2vh;
+}
+
+.link-size {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.link-ip-adress-statistic:focus {
+  outline: 0;
+}
+
+.link-ip-adress-statistic:hover {
+  color: rgb(117, 84, 126);
+}
+
+.link-back-to-overview:focus {
+  outline: 0;
+}
+
+.link-back-to-overview:hover {
+  color: black;
+}

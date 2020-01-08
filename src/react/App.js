@@ -1,7 +1,8 @@
-import './App.css';
-import React, { useState } from 'react';
-import { channels } from '../shared/channels';
-import dummyPlayers from '../assets/players';
+import "./App.css";
+import React, { useState } from "react";
+import { channels } from "../shared/channels";
+import dummyPlayers from "../assets/players";
+import CompetitionPage from "./components/CompetitionPage";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -88,12 +89,12 @@ const Footer = ({ title }) => {
 
 const App = () => {
   const [games, setGames] = useState([
-    { id: 0, date: '23.7.2019' },
-    { id: 1, date: '11.8.2019' },
-    { id: 2, date: '7.9.2019' },
-    { id: 3, date: '22.9.2019' },
-    { id: 4, date: '2.10.2019' },
-    { id: 5, date: '21.11.2019' }
+    { id: 0, date: "23.7.2019" },
+    { id: 1, date: "11.8.2019" },
+    { id: 2, date: "7.9.2019" },
+    { id: 3, date: "22.9.2019" },
+    { id: 4, date: "2.10.2019" },
+    { id: 5, date: "21.11.2019" }
   ]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
@@ -126,35 +127,37 @@ const App = () => {
   };
 
   return (
-    <div>
-      <Header
-        title="PingPongPonyhof"
-        importXML={importXML}
-        startCompetition={startCompetition}
-      />
-      <ButtonList games={games} deleteGame={deleteGame} />
-      <Footer title="PingPongPonyhof" />
-      <div>
-        {players.map(({ person, id }) => (
-          <p key={id}>
-            {person.firstname} {person.lastname}{' '}
-            {person.ttr > 1400 ? '🍑' : '💩'}
-          </p>
-        ))}
-      </div>
-      <button
-        className="button"
-        id="startRound"
-        onClick={() => {
-          if (USE_BROWSER) {
-            return;
-          }
-          ipcRenderer.send(channels.START_ROUND);
-        }}
-      >
-        start round
-      </button>
-    </div>
+    // <div>
+    //   <Header
+    //     title="PingPongPonyhof"
+    //     importXML={importXML}
+    //     startCompetition={startCompetition}
+    //   />
+    //   <ButtonList games={games} deleteGame={deleteGame} />
+    //   <Footer title="PingPongPonyhof" />
+    //   <div>
+    //     {players.map(({ person, id }) => (
+    //       <p key={id}>
+    //         {person.firstname} {person.lastname}{' '}
+    //         {person.ttr > 1400 ? '🍑' : '💩'}
+    //       </p>
+    //     ))}
+    //   </div>
+    //   <button
+    //     className="button"
+    //     id="startRound"
+    //     onClick={() => {
+    //       if (USE_BROWSER) {
+    //         return;
+    //       }
+    //       ipcRenderer.send(channels.START_ROUND);
+    //     }}
+    //   >
+    //     start round
+    //   </button>
+    // </div>
+
+    <CompetitionPage />
   );
 };
 
