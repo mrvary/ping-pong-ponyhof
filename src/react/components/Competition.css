@@ -1,0 +1,62 @@
+.competition__container {
+  display: flex;
+  justify-content: center;
+  margin: 1vh 4vh;
+  border-radius: 2vh;
+  background: white;
+}
+
+.list-element__btn-delete {
+  width: 20vh;
+  height: 7vh;
+  float: left;
+  border: none;
+  background: none;
+  border-left: 0.01vh solid #f4f4f4;
+  color: #4d4d4d;
+  font-size: 1.5vh;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.list-element__btn-game {
+  border: none;
+  width: 150vh;
+  height: 7vh;
+  background: none;
+  font-size: 2.5vh;
+  cursor: pointer;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.list-element__btn-game:hover {
+  color: #4d4d4d;
+}
+
+.list-element__btn-delete:hover {
+  color: black;
+}
+
+.list-element__btn-game:focus {
+  outline: 0;
+}
+
+.list-element__btn-delete:focus {
+  outline: 0;
+}
+
+.list-element__btn-game:active {
+  transform: translateY(0.3vh);
+}
+
+.start-competition-button {
+  width: 27vh;
+  height: 6.5vh;
+  color: black;
+  font-size: 2vh;
+  border: none;
+  background: #84afce;
+  border-radius: 2vh;
+  margin: 1.5vh 0vh;
+}

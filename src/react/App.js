@@ -5,7 +5,7 @@ import "./App.css";
 
 // components
 import Footer from "./components/Footer";
-import Popup from "./components/Popup";
+import Competition from "./components/Competition";
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -50,54 +50,11 @@ const StartCompetitionButton = ({ startCompetition }) => {
   );
 };
 
-//  TODO: Angabe der Tunierart fehlt
-const ButtonRow = props => {
-  const {
-    game: { id, date },
-    deleteGame
-  } = props;
-
-  const [showPopupDelete, setShowPopupDelete] = useState(false);
-  const handleClose = () => setShowPopupDelete(false);
-  const handleShow = () => setShowPopupDelete(true);
-  const header = <p className="popup__header-text">Achtung!</p>;
-
-  const body = (
-    <div>
-      <p className="popup__body-small-text">
-        Willst du dieses Spiel wirklich löschen?
-      </p>
-      <button
-        className="start-competition-button"
-        onClick={() => deleteGame(id)}
-      >
-        Löschen
-      </button>
-    </div>
-  );
-
-  return (
-    <div className="list-element">
-      <button className="list-element__btn-game">Spiel vom {date}</button>
-      <div className="list-element__btn-game" />
-      <button className="list-element__btn-delete" onClick={handleShow}>
-        Löschen
-      </button>
-      <Popup
-        show={showPopupDelete}
-        handleClose={handleClose}
-        header={header}
-        body={body}
-      ></Popup>
-    </div>
-  );
-};
-
 const ButtonList = props => {
   const { games, deleteGame } = props;
 
   return games.map(game => (
-    <ButtonRow key={game.id} game={game} deleteGame={deleteGame} />
+    <Competition key={game.id} game={game} deleteGame={deleteGame} />
   ));
 };
 
@@ -151,14 +108,6 @@ const App = () => {
       />
       <ButtonList games={games} deleteGame={deleteGame} />
       <Footer title="PingPongPonyhof" />
-      <div>
-        {players.map(({ person, id }) => (
-          <p key={id}>
-            {person.firstname} {person.lastname}{" "}
-            {person.ttr > 1400 ? "🍑" : "💩"}
-          </p>
-        ))}
-      </div>
       <div className="center">
         <button
           className="start-competition-button"
