@@ -23,21 +23,26 @@ body {
   margin: 2vh 2vh;
 }
 
-.first-row-box {
-  justify-content: center;
+.table__first-row-alignment {
   width: 150vh;
   height: 7vh;
   border-radius: 2vh;
   background: white;
-}
-
-.first-row-alignment {
   display: flex;
   font-size: 2vh;
   color: black;
-  margin: 3vh 3vh;
-  justify-content: center;
-  justify-content: space-between;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.table__column-alignment {
+  color: black;
+  border: 1px solid black;
+  width: 14vh;
+  height: 7vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
 }
 
 .link-back-to-overview {

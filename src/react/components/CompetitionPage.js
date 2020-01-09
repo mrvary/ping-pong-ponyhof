@@ -29,21 +29,47 @@ const IpAdressAndStatisticLink = () => {
   );
 };
 
-const DescriptionLine = () => {
+const TableHeadline = () => {
   return (
-    <div className="first-row-box">
-      <div className="first-row-alignment">
-        <strong> Tisch </strong>
-        <strong> Spieler 1</strong>
-        <strong> : </strong>
-        <strong> Spieler 2 </strong>
-        <strong> Satz 1 </strong>
-        <strong> Satz 2 </strong>
-        <strong> Satz 3 </strong>
-        <strong> Satz 4 </strong>
-        <strong> Satz 5 </strong>
-        <strong> Ergebnis </strong>
-      </div>
+    <div className="table__first-row-alignment">
+      <div className="table__column-alignment"> Tisch </div>
+      <div className="table__column-alignment"> Spieler 1</div>
+      <strong className="table__column-alignment"> : </strong>
+      <strong className="table__column-alignment"> Spieler 2 </strong>
+      <strong className="table__column-alignment"> Satz 1 </strong>
+      <strong className="table__column-alignment"> Satz 2 </strong>
+      <strong className="table__column-alignment"> Satz 3 </strong>
+      <strong className="table__column-alignment"> Satz 4 </strong>
+      <strong className="table__column-alignment"> Satz 5 </strong>
+      <strong className="table__column-alignment"> Ergebnis </strong>
+    </div>
+  );
+};
+
+const TableRow = ({ match }) => {
+  return (
+    <div className="table__first-row-alignment">
+      <div className="table__column-alignment"> </div>
+      <div className="table__column-alignment"> {match.player1}</div>
+      <strong className="table__column-alignment"> : </strong>
+      <strong className="table__column-alignment"> Spieler 2 </strong>
+      <strong className="table__column-alignment"> Satz 1 </strong>
+      <strong className="table__column-alignment"> Satz 2 </strong>
+      <strong className="table__column-alignment"> Satz 3 </strong>
+      <strong className="table__column-alignment"> Satz 4 </strong>
+      <strong className="table__column-alignment"> Satz 5 </strong>
+      <strong className="table__column-alignment"> Ergebnis </strong>
+    </div>
+  );
+};
+
+const Table = ({ matches }) => {
+  return (
+    <div>
+      <TableHeadline />
+      {matches.map(match => {
+        return <TableRow match={match} />;
+      })}
     </div>
   );
 };
@@ -62,10 +88,7 @@ const CompetitionPage = () => {
     <div>
       <Header kind="Schweizer System" date="xx.xx.2020" time="xx:xx " />
       <IpAdressAndStatisticLink />
-      <DescriptionLine matches={matches} />
-      {matches.map(match => {
-        return <div>{match.player1}</div>;
-      })}
+      <Table matches={matches} />
     </div>
   );
 };
