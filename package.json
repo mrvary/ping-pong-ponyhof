@@ -34,7 +34,7 @@
     "preelectron-pack": "yarn build",
     "electron-pack": "electron-builder build --win -c.extraMetadata.main=build/electron/main.js --publish never",
     "postinstall": "electron-rebuild electron-builder install-app-deps",
-    "test": "jest --verbose",
+    "test": "jest",
     "electron-rebuild": "electron-rebuild"
   },
   "eslintConfig": {
