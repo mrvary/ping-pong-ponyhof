@@ -1,0 +1,64 @@
+.header-box-container {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row-reverse;
+}
+
+.container-box {
+  width: 35vh;
+  height: 50vh;
+  border: none;
+  background: var(--sec-background-color);
+  color: var(--grey-out-color);
+  font-size: 2.5vh;
+  border-radius: 2vh;
+  margin: 10vh 4vh;
+  padding: 3vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-upload-xml {
+  width: 27vh;
+  height: 20vh;
+  color: var(--grey-out-color);
+  font-size: 2vh;
+  border: 0.3vh solid var(--prim-background-color);
+  background: var(--sec-background-color);
+  top: 60px;
+  border-radius: 2vh;
+  margin: 5vh 0vh;
+  padding: 2vh;
+}
+
+.hero-size {
+  height: 70vh;
+  background-image: url('../assets/header_background.jpg');
+  background-color: var(--button-color);
+}
+
+.title-header {
+  margin: 20vh 10vh;
+  font-size: 6vh;
+  color: var(--sec-font-color);
+  justify-content: center;
+}
+
+.button-upload:hover {
+  color: var(--grey-out-color);
+}
+
+.button-upload:focus {
+  outline: 0;
+}
+
+.button-upload-xml:hover {
+  color: var(font);
+  border: 0.1vh solid var(--grey-out-color);
+}
+
+.button-upload-xml:focus {
+  outline: 0;
+}

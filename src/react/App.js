@@ -1,21 +1,20 @@
-import React, { useState } from "react";
-import { channels } from "../shared/channels";
-import dummyPlayers from "../assets/players";
-import "./App.css";
-import "./Colors.css";
+import React, { useState } from 'react';
+import { channels } from '../shared/channels';
+import dummyPlayers from '../assets/players';
+import './App.css';
+import './Colors.css';
 
 // components
-import Footer from "./components/Footer";
-import Competition from "./components/Competition";
-import Header from "./components/Header";
-import Button from "./components/Button";
+import Footer from './components/Footer';
+import Competition from './components/Competition';
+import Header from './components/Header';
+import Button from './components/Button';
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
-
 
 const ButtonList = props => {
   const { games, deleteGame } = props;
@@ -27,12 +26,12 @@ const ButtonList = props => {
 
 const App = () => {
   const [games, setGames] = useState([
-    { id: 0, date: "23.7.2019" },
-    { id: 1, date: "11.8.2019" },
-    { id: 2, date: "7.9.2019" },
-    { id: 3, date: "22.9.2019" },
-    { id: 4, date: "2.10.2019" },
-    { id: 5, date: "21.11.2019" }
+    { id: 0, date: '23.7.2019' },
+    { id: 1, date: '11.8.2019' },
+    { id: 2, date: '7.9.2019' },
+    { id: 3, date: '22.9.2019' },
+    { id: 4, date: '2.10.2019' },
+    { id: 5, date: '21.11.2019' }
   ]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
@@ -77,15 +76,14 @@ const App = () => {
       <Footer title="PingPongPonyhof" />
       <Button
         mode="primary"
-          text="start Round"
-          onClick={() => {
-            if (USE_BROWSER) {
-              return;
-            }
-            ipcRenderer.send(channels.START_ROUND);
-          }}
-        >
-        </Button>
+        text="start Round"
+        onClick={() => {
+          if (USE_BROWSER) {
+            return;
+          }
+          ipcRenderer.send(channels.START_ROUND);
+        }}
+      ></Button>
     </div>
   );
 };
