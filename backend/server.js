@@ -24,13 +24,51 @@ function createServer(port) {
   });
 }
 
+function clientLogin(clientSocket, data) {
+  const { tableNumber } = data;
+
+  // verify if max amount of connected devices/table is reached
+  if (connectedClients.size === MAX_AMOUNT_TABLE) {
+    clientSocket.emit(clientChannels.LOGIN_ERROR, data);
+    return;
+  }
+
+  // verify if a client is already connected to a table
+  if (mapHasValue(connectedClients, tableNumber)) {
+    clientSocket.emit(clientChannels.LOGIN_ERROR, data);
+    return;
+  }
+
+  // login client
+  connectedClients.set(clientSocket.id, tableNumber);
+  console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
+
+  // send current server state to clients
+  sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
+
+  // send data to client
+  clientSocket.emit(clientChannels.LOGIN_TABLE, {
+    tableNumber: tableNumber,
+    matchStarted: matchStarted
+  });
+}
+
+function clientLogout(clientSocket) {
+  if (connectedClients.has(clientSocket.id)) {
+    connectedClients.delete(clientSocket.id);
+    console.info(`Client logout [id=${clientSocket.id}]`);
+
+    sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
+  }
+  console.log(`Client gone [id=${clientSocket.id}]`);
+}
+
 function setupSocketIO(server) {
   // open server socket
   serverSocket = io(server);
 
   // event fired every time a new client connects (Browser window was opened)
   serverSocket.on(clientChannels.CONNECTION, clientSocket => {
-    let addedDevice = false;
     console.info(`Client connected [id=${clientSocket.id}]`);
 
     // send current server state to clients
@@ -38,51 +76,12 @@ function setupSocketIO(server) {
 
     // event fired every time a client sends a table number
     clientSocket.on(clientChannels.LOGIN_TABLE, data => {
-      const { tableNumber } = data;
-
-      // verify if max amount of connected devices/table is reached
-      if (connectedClients.size === MAX_AMOUNT_TABLE) {
-        clientSocket.emit(clientChannels.LOGIN_ERROR, data);
-        return;
-      }
-
-      // verify if a client is already connected to a table
-      if (mapHasValue(connectedClients, tableNumber)) {
-        clientSocket.emit(clientChannels.LOGIN_ERROR, data);
-        return;
-      }
-
-      // login client
-      connectedClients.set(clientSocket.id, tableNumber);
-      addedDevice = true;
-      console.info(
-        `Client login [id=${clientSocket.id}] [table=${tableNumber}]`
-      );
-
-      // send current server state to clients
-      sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
-
-      // send data to client
-      clientSocket.emit(clientChannels.LOGIN_TABLE, {
-        tableNumber: tableNumber,
-        matchStarted: matchStarted
-      });
-    });
-
-    // event fired when the client sends a message
-    clientSocket.on(clientChannels.SEND_MESSAGE, data => {
-      console.log(`${clientSocket.id} -> ${data}`);
+      clientLogin(clientSocket, data);
     });
 
     // event fired when a client disconnects, remove it from the list
     clientSocket.on(clientChannels.DISCONNECT, data => {
-      if (addedDevice) {
-        connectedClients.delete(clientSocket.id);
-        console.info(`Client logout [id=${clientSocket.id}]`);
-
-        sendBroadcast(clientChannels.AVAILABLE_TABLES, availableTables());
-      }
-      console.log(`Client gone [id=${clientSocket.id}]`);
+      clientLogout()
     });
   });
 }
@@ -94,7 +93,7 @@ function mapHasValue(inputMap, searchedValue) {
 
 function sendStartRoundBroadcast() {
   if (matchStarted) return;
-  
+
   matchStarted = true;
   sendBroadcast(clientChannels.START_ROUND, null);
 }

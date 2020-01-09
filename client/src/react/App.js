@@ -25,7 +25,7 @@ const getServerURL = () => {
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState('match');
+  const [page, setPage] = useState('login');
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
