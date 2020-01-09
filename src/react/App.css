@@ -9,3 +9,10 @@
   color: var(--anti-color);
   background-color: var(--sec-background-color);
 }
+.duda{
+  border: "1";
+
+}
+table{
+  border: "1";
+}

@@ -84,6 +84,30 @@ const App = () => {
           ipcRenderer.send(channels.START_ROUND);
         }}
       ></Button>
+      <table className="duda">
+        <tr>
+          <th>
+            ich
+          </th>
+          <th>
+            geh
+          </th>
+          <th>
+            essen
+          </th>
+        </tr>
+        <tr>
+          <th>
+            ich
+          </th>
+          <th>
+            geh
+          </th>
+          <th>
+            laufen
+          </th>
+        </tr>
+      </table>
     </div>
   );
 };
