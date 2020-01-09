@@ -85,7 +85,7 @@ function App() {
       setIsConnected(true);
 
       console.log('matchStart ->', matchStarted);
-      matchStarted ? toPage('match') : toPage('wait');
+      matchStarted ? connection.emit(clientChannels.GET_MATCH, { tableNumber }) : toPage('wait');
 
       connection.on(clientChannels.START_ROUND, () => {
         connection.emit(clientChannels.GET_MATCH, { tableNumber });
