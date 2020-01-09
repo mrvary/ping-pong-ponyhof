@@ -40,7 +40,7 @@ const startRound = () => {
   server.sendStartRoundBroadcast();
 };
 
-// main menu template
+// main menu template for windows and linux
 const template = [
   {
     label: 'Turnier',
@@ -170,5 +170,42 @@ const template = [
     ]
   }
 ];
+
+if (process.platform === 'darwin') {
+  const name = app.getName();
+  template.unshift({
+    label: name,
+    submenu: [
+      {
+        role: 'about'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'services',
+        submenu: []
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'hide'
+      },
+      {
+        role: 'hideothers'
+      },
+      {
+        role: 'unhide'
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'quit'
+      }
+    ]
+  });
+}
 
 module.exports = Menu.buildFromTemplate(template);
