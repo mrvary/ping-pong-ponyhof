@@ -1,11 +1,15 @@
 const io = require('socket.io');
 const { clientChannels } = require('../client/src/shared/client-channels');
 
+const { createMatches } = require('../src/matchmaker/match');
+
 const MAX_AMOUNT_TABLE = 4;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let serverSocket = null;
 let connectedClients = new Map();
+let matchTableMap = null;
+
 let matchStarted = false;
 
 function setupSocketIO(server) {
@@ -82,10 +86,34 @@ function clientLogout(clientSocket) {
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
+function scrubleMatches(players) {
+  const matches = createDummyMatches(players);
+  
+  // map matches to tables
+  matchTableMap = new Map();
+  matchTableMap.set(1, matches[0]);
+  matchTableMap.set(2, matches[1]);
+  matchTableMap.set(3, matches[2]);
+}
+
+function createDummyMatches(players) {
+  const pairings = [
+    { player1: players[0], player2: players[1] },
+    { player1: players[2], player2: players[3] },
+    { player1: players[4], player2: players[5] },
+    { player1: players[6], player2: players[7] }
+  ];
+
+  // use imported players without matchmaker
+  return createMatches(pairings);
+}
+
 function sendMatchToClient(clientSocket, data) {
   const { tableNumber } = data;
 
-  const match = {
+  const match = matchTableMap.get(tableNumber);
+
+  /*const match = {
     id: 0,
     player1: {
       id: 'PLAYER20',
@@ -117,7 +145,7 @@ function sendMatchToClient(clientSocket, data) {
       { player1: 4, player2: 11 }
     ],
     freeTicket: false
-  };
+  };*/
 
   clientSocket.emit(clientChannels.SEND_MATCH, { match });
 }
@@ -152,5 +180,6 @@ function range(start, exclusiveEnd) {
 
 module.exports = {
   setupSocketIO,
+  scrubleMatches,
   sendStartRoundBroadcast
 };

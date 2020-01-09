@@ -16,11 +16,16 @@ function createServer(port) {
   });
 }
 
+function scrubleMatches(players) {
+  socketIO.scrubleMatches(players);
+}
+
 function sendStartRoundBroadcast() {
-  socketIO.sendStartRoundBroadcast()
+  socketIO.sendStartRoundBroadcast();
 }
 
 module.exports = {
   createServer,
+  scrubleMatches,
   sendStartRoundBroadcast
 };
