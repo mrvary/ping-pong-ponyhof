@@ -5,14 +5,8 @@
 .server-running {
   background: var(--anti-color);
 }
+
 .server-running:hover {
   color: var(--anti-color);
   background-color: var(--sec-background-color);
-}
-.duda{
-  border: "1";
-
-}
-table{
-  border: "1";
 }

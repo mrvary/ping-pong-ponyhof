@@ -5,61 +5,46 @@
   border-radius: 2vh;
   background: var(--sec-background-color);
 }
-
-.competition__btn-delete {
-  width: 20vh;
-  height: 7vh;
-  float: left;
+.competition__btn{
   border: none;
+  height: 7vh;
   background: none;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.competition__btn--gameload {
+  width: 150vh;
+  font-size: 2.5vh;
+  text-decoration: none;
+}
+
+.competition__btn--gametype {
+  width: 150vh;
+  font-size: 2vh;
+  text-decoration: none;
+}
+
+.competition__btn--delete {
+  width: 20vh;
+  float: left;
   border-left: 0.01vh solid var(--prim-background-color);
   color: var(--grey-out-color);
   font-size: 1.5vh;
-  cursor: pointer;
-  box-sizing: border-box;
 }
 
-.competition__btn-game {
-  border: none;
-  width: 150vh;
-  height: 7vh;
-  background: none;
-  font-size: 2.5vh;
-  cursor: pointer;
-  text-decoration: none;
-  box-sizing: border-box;
-}
-
-.competition__btn-game:hover {
+.competition__btn--gameload:hover {
   color: var(--grey-out-color);
 }
 
-.competition__btn-delete:hover {
+.competition__btn--delete:hover {
   color: var(--prim-font-color);
 }
 
-.competition__btn-game:focus {
+.competition__btn:focus {
   outline: 0;
 }
 
-.competition__btn-delete:focus {
-  outline: 0;
-}
-
-.competition__btn-game:active {
+.competition__btn--gameload:active {
   transform: translateY(0.3vh);
-}
-
-.popup__header-text {
-  margin: 1vh 2vh;
-  color: var(--prim-font-color);
-  font-size: large;
-  text-align: center;
-}
-
-.popup__body-small-text {
-  margin: 1vh 2vh;
-  color: var(--prim-font-color);
-  font-size: medium;
-  text-align: left;
 }

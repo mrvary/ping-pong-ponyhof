@@ -16,22 +16,14 @@ const ipcRenderer = window.ipcRenderer;
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
-const ButtonList = props => {
-  const { games, deleteGame } = props;
-
-  return games.map(game => (
-    <Competition key={game.id} game={game} deleteGame={deleteGame} />
-  ));
-};
-
 const App = () => {
   const [games, setGames] = useState([
-    { id: 0, date: '23.7.2019' },
-    { id: 1, date: '11.8.2019' },
-    { id: 2, date: '7.9.2019' },
-    { id: 3, date: '22.9.2019' },
-    { id: 4, date: '2.10.2019' },
-    { id: 5, date: '21.11.2019' }
+    { id: 0, date: '23.7.2019',system: "Schweizer System"},
+    { id: 1, date: '11.8.2019',system: "Schweizer System" },
+    { id: 2, date: '7.9.2019',system: "Schweizer System" },
+    { id: 3, date: '22.9.2019',system: "Schweizer System" },
+    { id: 4, date: '2.10.2019',system: "Schweizer System" },
+    { id: 5, date: '21.11.2019',system: "Schweizer System" }
   ]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
@@ -72,7 +64,9 @@ const App = () => {
         importXML={importXML}
         startCompetition={startCompetition}
       />
-      <ButtonList games={games} deleteGame={deleteGame} />
+      {games.map(game => (
+        <Competition key={game.id} game={game} deleteGame={deleteGame} />
+      ))}
       <Footer title="PingPongPonyhof" />
       <Button
         mode="primary"
@@ -84,30 +78,6 @@ const App = () => {
           ipcRenderer.send(channels.START_ROUND);
         }}
       ></Button>
-      <table className="duda">
-        <tr>
-          <th>
-            ich
-          </th>
-          <th>
-            geh
-          </th>
-          <th>
-            essen
-          </th>
-        </tr>
-        <tr>
-          <th>
-            ich
-          </th>
-          <th>
-            geh
-          </th>
-          <th>
-            laufen
-          </th>
-        </tr>
-      </table>
     </div>
   );
 };
