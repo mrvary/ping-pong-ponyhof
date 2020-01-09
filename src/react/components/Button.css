@@ -1,4 +1,4 @@
-.start-competition-button {
+.button {
     width: 27vh;
     height: 6.5vh;
     color: var(--prim-font-color);
@@ -9,6 +9,6 @@
     background: var(--button-color);
 }
   
-.start-competition-button--primary {
+.button--primary {
     background: var(--button-color);
 }

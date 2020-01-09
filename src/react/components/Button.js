@@ -3,10 +3,10 @@ import "./Button.css";
 
 function Button({ text, onClick, mode }) {
     const css =
-      "start-competition-button " +
+      "button " +
       (mode === "primary"
-        ? "start-competition-button--primary"
-        : "start-competition-button--secondary");
+        ? "button--primary"
+        : "button--secondary");
   
     return (
       <button className={css} onClick={onClick}>
