@@ -23,8 +23,8 @@ const Header = ({ kind, date, time }) => {
 const IpAdressAndStatisticLink = () => {
   return (
     <div className="link-size">
-      <href className="link-ip-adress-statistic"> IP-Adresse </href>
-      <href className="link-ip-adress-statistic"> Statistik </href>
+      <a className="link-ip-adress-statistic"> IP-Adresse </a>
+      <a className="link-ip-adress-statistic"> Statistik </a>
     </div>
   );
 };
@@ -68,7 +68,7 @@ const Table = ({ matches }) => {
     <div>
       <TableHeadline />
       {matches.map(match => {
-        return <TableRow match={match} />;
+        return <TableRow key={match.id} match={match} />;
       })}
     </div>
   );
