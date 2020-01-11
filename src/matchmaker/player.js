@@ -1,13 +1,26 @@
 // createPlayersFromJSON : JSON -> [players]
 function createPlayersFromJSON(json) {
   // players are deeply nested in the input json
-  const players = json.tournament.competition.players.player;
+  const initPlayers = json.tournament.competition.players.player;
+  let players = initPlayers.map(createPlayer);
 
-  return players.map(createPlayer);
+  //add freeticket player when odd number of players
+  if (players.length % 2 === 1) {
+    players.push({
+      id: "FreeTicket",
+      gamesWon: 0,
+      matchIds: [],
+      opponentIds: [],
+      qttr: 0
+    });
+  }
+
+  return players;
 }
 
 // createPlayer : playerFromJSON -> Player
 function createPlayer(dataFromJSON) {
+
   const { id, person } = dataFromJSON;
   const { firstname, lastname, ttr } = person;
   const clubname = person["club-name"];
@@ -25,6 +38,7 @@ function createPlayer(dataFromJSON) {
     hadFreeTicketAlready: false
   };
 }
+
 
 // pairPlayers : { top: [players], bottom: [players]} -> [{ player1: player, player2: player}]
 function pairPlayersRoundOne({ top, bottom }) {
