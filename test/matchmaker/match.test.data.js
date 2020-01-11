@@ -11,7 +11,7 @@ const testMatches = [
       opponentIds: [],
       qttr: 1515,
       active: true,
-      hasFreeTicket: false
+      hadFreeTicketAlready: false
     },
     player2: {
       id: "PLAYER30",
@@ -23,7 +23,7 @@ const testMatches = [
       opponentIds: [],
       qttr: 1211,
       active: true,
-      hasFreeTicket: false
+      hadFreeTicketAlready: false
     },
     sets: [
       {
@@ -55,7 +55,7 @@ const testMatches = [
       opponentIds: [],
       qttr: 1415,
       active: true,
-      hasFreeTicket: false
+      hadFreeTicketAlready: false
     },
     player2: {
       id: "PLAYER2",
@@ -67,7 +67,7 @@ const testMatches = [
       opponentIds: [],
       qttr: 1251,
       active: true,
-      hasFreeTicket: false
+      hadFreeTicketAlready: false
     },
     sets: [
       {
@@ -115,7 +115,7 @@ const testMatches = [
       opponentIds: [],
       qttr: 1111,
       active: true,
-      hasFreeTicket: false
+      hadFreeTicketAlready: false
     },
     sets: [
       {
