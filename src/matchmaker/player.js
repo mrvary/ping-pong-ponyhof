@@ -58,7 +58,7 @@ function pairPlayersRoundOne({ top, bottom }) {
       player => player !== randomBottomPlayer
     );
 
-    pairings.push({ player1: randomTopPlayer, player2: randomBottomPlayer });
+    pairings.push({ player1: randomTopPlayer.id, player2: randomBottomPlayer.id });
   }
 
   // pair last player when odd number of players
