@@ -11,7 +11,8 @@ const {
 const {
   inputPlayers,
   cleanedUpPlayers,
-  tournamentJSON
+  tournamentJSON,
+  tournamentJSON15Players
 } = require("./player.test.data");
 
 const { testMatches } = require("./match.test.data");
@@ -46,6 +47,23 @@ describe("createPlayers()", () => {
   test("with correct player objects", () => {
     expect(players[0]).toEqual(EXPECTED_PLAYER);
   });
+
+  //tests for odd number of humanplayers now
+  const playersWithFreeTicketPlayer = createPlayersFromJSON(tournamentJSON15Players);
+  test("freeticketPlayer created", () => {
+
+    expect(playersWithFreeTicketPlayer).toContainEqual({
+      id: "FreeTicket",
+      gamesWon: 0,
+      matchIds: [],
+      opponentIds: [],
+      qttr: 0
+    });
+
+    expect(playersWithFreeTicketPlayer).toHaveLength(16);
+
+  });
+
 });
 
 describe("sortPlayersBy()", () => {
@@ -166,7 +184,7 @@ describe("updatePlayers()", () => {
     expect(newPlayers.length).toBe(6);
   });
 
-  test.todo("check gamesWon changed for winners ", () => {});
+  test.todo("check gamesWon changed for winners");
 
   test("match Id added to each player", () => {
     for (let match of testMatches) {
