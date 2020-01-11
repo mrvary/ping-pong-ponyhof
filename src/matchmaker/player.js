@@ -22,12 +22,12 @@ function createPlayer(dataFromJSON) {
     opponentIds: [],
     qttr: parseInt(ttr, 10),
     active: true,
-    hasFreeTicket: false
+    hadFreeTicketAlready: false
   };
 }
 
 // pairPlayers : { top: [players], bottom: [players]} -> [{ player1: player, player2: player}]
-function pairPlayers({ top, bottom }) {
+function pairPlayersRoundOne({ top, bottom }) {
   let bottomPlayers = bottom;
   let topPlayers = top;
   let pairings = [];
@@ -110,7 +110,7 @@ module.exports = {
 
   // private
   createPlayer,
-  pairPlayers,
+  pairPlayersRoundOne,
   sortPlayersBy,
   separateTopFromBottomPlayers,
   shuffle,

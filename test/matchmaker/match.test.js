@@ -2,7 +2,7 @@ const { createMatch, createMatches } = require("../../src/matchmaker/match");
 const { cleanedUpPlayers } = require("./player.test.data");
 const {
   separateTopFromBottomPlayers,
-  pairPlayers
+  pairPlayersRoundOne
 } = require("../../src/matchmaker/player");
 
 describe("createMatches()", () => {
@@ -16,7 +16,7 @@ describe("createMatches()", () => {
     .concat(cleanedUpPlayers);
 
   const separatedPlayers = separateTopFromBottomPlayers(players);
-  const pairings = pairPlayers(separatedPlayers);
+  const pairings = pairPlayersRoundOne(separatedPlayers);
   const matches = createMatches(pairings);
 
   test("creates an array of matches from an array of pairings", () => {

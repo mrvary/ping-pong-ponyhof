@@ -1,6 +1,6 @@
 const {
   createPlayer,
-  pairPlayers,
+  pairPlayersRoundOne,
   shuffle,
   sortPlayersBy,
   separateTopFromBottomPlayers,
@@ -106,7 +106,7 @@ describe("shuffle()", () => {
   });
 });
 
-describe("pairPlayers()", () => {
+describe("pairPlayersRoundOne()", () => {
   //tests for even number of players
   const evenNumberOfPlayers = cleanedUpPlayers
     .map(player => ({
@@ -120,7 +120,7 @@ describe("pairPlayers()", () => {
   const evenTopAndBottomPlayers = separateTopFromBottomPlayers(
     evenNumberOfPlayers
   );
-  const evenPairedPlayers = pairPlayers(evenTopAndBottomPlayers);
+  const evenPairedPlayers = pairPlayersRoundOne(evenTopAndBottomPlayers);
 
   test("returns no unmatched player when even", () => {
     const { unmatchedPlayer } = evenPairedPlayers;
@@ -143,7 +143,7 @@ describe("pairPlayers()", () => {
   const oddTopAndBottomPlayers = separateTopFromBottomPlayers(
     oddNumberOfPlayers
   );
-  const oddPairedPlayers = pairPlayers(oddTopAndBottomPlayers);
+  const oddPairedPlayers = pairPlayersRoundOne(oddTopAndBottomPlayers);
   test("returns on unmatched player when odd", () => {
     const singlePairing = oddPairedPlayers[oddPairedPlayers.length - 1];
     expect(singlePairing.player1).not.toBeUndefined();
