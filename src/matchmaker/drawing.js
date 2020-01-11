@@ -1,42 +1,35 @@
 const {
   separateTopFromBottomPlayers,
-  updatePlayers,
-  pairPlayers
+  pairPlayersRoundOne
 } = require("./player.js");
 
 const { createMatches } = require("./match.js");
 
-// DRAW ROUNDS
+// drawRound : [players] -> [matches]
 function drawRound({ players }) {
-  const isLaterRound = players[0].matchIds.length > 0;
+  const isFirstRound = players[0].matchIds.length == 0;
 
-  if (!isLaterRound) {
-    return drawLaterRound(players);
+  if (!isFirstRound) {
+    return createMatches(drawLaterRound(players));
   }
 
-  return drawFirstRound(players);
+  return createMatches(drawFirstRound(players));
+
 }
 
-function drawFirstRound({ players }) {
+// drawFirstRound : [players] -> [pairings]
+function drawFirstRound(players) {
   // 1. separate top and bottom players
   const { top, bottom } = separateTopFromBottomPlayers(players);
-
+  
   // 2. pair players together
-  const pairings = pairPlayers({ top, bottom });
-
-  // 3. create matches
-  const newMatches = createMatches(pairings);
-
-  //4. play matches
-  //Todo - create a valid match result for each match
-
-  // 5. update players
-  const newPlayers = updatePlayers(newMatches);
-
-  return { players: newPlayers, matches: newMatches };
+  const pairings = pairPlayersRoundOne({ top, bottom });
+  
+  return pairings;
 }
 
-function drawLaterRound({ players }) {
+// drawLaterRound : [players] -> [pairings]
+function drawLaterRound(players) {
   // todo
 }
 
