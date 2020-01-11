@@ -61,11 +61,6 @@ function pairPlayersRoundOne({ top, bottom }) {
     pairings.push({ player1: randomTopPlayer.id, player2: randomBottomPlayer.id });
   }
 
-  // pair last player when odd number of players
-  if (topPlayers[0]) {
-    pairings.push({ player1: topPlayers[0] });
-  }
-
   return pairings;
 }
 
