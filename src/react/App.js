@@ -11,8 +11,6 @@ import Competition from './components/Competition';
 import Header from './components/Header';
 import Button from './components/Button';
 
-import Test from './linkTest';
-
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
@@ -81,12 +79,7 @@ const App = () => {
           ipcRenderer.send(channels.START_ROUND);
         }}
       ></Button>
-      <Router>
-        <div>
-          <Route path="/" component={App} />
-          <Route path="/test" component={Test} />
-        </div>
-      </Router>
+      <Link to="/test">Test</Link>
     </div>
   );
 };
