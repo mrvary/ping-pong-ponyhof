@@ -8,6 +8,8 @@ const log = require('electron-log');
 const io = require('socket.io');
 const { clientChannels } = require('../client/src/shared/client-channels');
 
+const database = require('./persistance/sqlite3');
+
 const MAX_AMOUNT_TABLE = 4;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
@@ -17,6 +19,13 @@ let matchStarted = false;
 
 function createServer(port) {
   const server = http.createServer(app);
+
+  // init database
+  database.createDatabase(true);
+  database.getAllProducts();
+  database.close();
+
+  // Open communication socket
   setupSocketIO(server);
 
   return server.listen(port, () => {
@@ -94,7 +103,7 @@ function mapHasValue(inputMap, searchedValue) {
 
 function sendStartRoundBroadcast() {
   if (matchStarted) return;
-  
+
   matchStarted = true;
   sendBroadcast(clientChannels.START_ROUND, null);
 }
