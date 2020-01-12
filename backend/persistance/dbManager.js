@@ -4,6 +4,8 @@ const sqlite3 = require('sqlite3');
 const path = require('path');
 const fs = require('fs');
 
+const dirHelper = require('../utils/directory-helper');
+
 let db = null;
 
 function createDatabase(inMemory) {
@@ -18,7 +20,7 @@ function createDatabase(inMemory) {
 
   // Create database folder
   const dataDir = path.join(userPath, 'database');
-  createDirectorySync(dataDir);
+  dirHelper.createDirectorySync(dataDir);
 
   const dbPath = path.join(dataDir, 'database.db');
   // Open existing database
@@ -91,14 +93,6 @@ function getAllTournaments() {
 
 function close() {
   db.close();
-}
-
-function createDirectorySync(directory) {
-  try {
-    fs.statSync(directory);
-  } catch (e) {
-    fs.mkdirSync(directory);
-  }
 }
 
 module.exports = {
