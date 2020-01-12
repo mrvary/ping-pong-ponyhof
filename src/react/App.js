@@ -3,12 +3,15 @@ import { channels } from '../shared/channels';
 import dummyPlayers from '../assets/players';
 import './App.css';
 import './Colors.css';
+import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
 
 // components
 import Footer from './components/Footer';
 import Competition from './components/Competition';
 import Header from './components/Header';
 import Button from './components/Button';
+
+import Test from './linkTest';
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -18,12 +21,12 @@ const USE_BROWSER = false;
 
 const App = () => {
   const [games, setGames] = useState([
-    { id: 0, date: '23.7.2019',system: "Schweizer System"},
-    { id: 1, date: '11.8.2019',system: "Schweizer System" },
-    { id: 2, date: '7.9.2019',system: "Schweizer System" },
-    { id: 3, date: '22.9.2019',system: "Schweizer System" },
-    { id: 4, date: '2.10.2019',system: "Schweizer System" },
-    { id: 5, date: '21.11.2019',system: "Schweizer System" }
+    { id: 0, date: '23.7.2019', system: 'Schweizer System' },
+    { id: 1, date: '11.8.2019', system: 'Schweizer System' },
+    { id: 2, date: '7.9.2019', system: 'Schweizer System' },
+    { id: 3, date: '22.9.2019', system: 'Schweizer System' },
+    { id: 4, date: '2.10.2019', system: 'Schweizer System' },
+    { id: 5, date: '21.11.2019', system: 'Schweizer System' }
   ]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
@@ -78,6 +81,12 @@ const App = () => {
           ipcRenderer.send(channels.START_ROUND);
         }}
       ></Button>
+      <Router>
+        <div>
+          <Route path="/" component={App} />
+          <Route path="/test" component={Test} />
+        </div>
+      </Router>
     </div>
   );
 };
