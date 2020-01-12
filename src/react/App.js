@@ -50,7 +50,7 @@ const App = () => {
 
       setGames(temp);
     });
-    
+
     ipcRenderer.send(channels.GET_ALL_TOURNAMENTS);
   };
 
@@ -72,7 +72,16 @@ const App = () => {
   };
 
   const deleteGame = id => {
-    setGames(games.filter(game => game.id !== id));
+    if (USE_BROWSER) {
+      setGames(games.filter(game => game.id !== id));
+      return;
+    }
+
+    ipcRenderer.on(channels.DELETE_TOURNAMENT, (event, args) => {
+      setGames(games.filter(game => game.id !== id));
+    });
+
+    ipcRenderer.send(channels.DELETE_TOURNAMENT, { id: id });
   };
 
   const startCompetition = () => {

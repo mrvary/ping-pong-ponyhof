@@ -126,9 +126,16 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
 });
 
 ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
-  database.getAllTournaments().then((tournaments) => {
+  database.getAllTournaments().then(tournaments => {
     event.sender.send(channels.GET_ALL_TOURNAMENTS, {
       tournaments: tournaments
-    })
+    });
+  });
+});
+
+ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
+  const { id } = data;
+  database.deleteTournament(id).then(() => {
+    event.sender.send(channels.DELETE_TOURNAMENT);
   });
 });

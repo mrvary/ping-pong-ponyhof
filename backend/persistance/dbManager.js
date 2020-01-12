@@ -82,9 +82,22 @@ function getAllTournaments() {
     });
 }
 
+function deleteTournament(id) {
+  return tournamentRepo
+    .remove(dao, id)
+    .then(() => {
+      console.log('Delete tournament with id: ', id);
+    })
+    .catch(err => {
+      console.log('Error: ');
+      console.log(JSON.stringify(err));
+    });
+}
+
 module.exports = {
   openConnection,
   createDatabase,
   importFromJSON,
-  getAllTournaments
+  getAllTournaments,
+  deleteTournament
 };
