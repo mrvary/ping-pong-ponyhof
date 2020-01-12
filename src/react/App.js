@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
-import { channels } from '../shared/channels';
-import dummyPlayers from '../assets/players';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Colors.css';
+
+import { channels } from '../shared/channels';
+
+// dummy data
+import dummyPlayers from '../assets/players';
+import dummyGames from '../assets/games';
 
 // components
 import Footer from './components/Footer';
@@ -10,6 +14,7 @@ import Competition from './components/Competition';
 import Header from './components/Header';
 import Button from './components/Button';
 
+// electron
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
@@ -17,16 +22,37 @@ const ipcRenderer = window.ipcRenderer;
 const USE_BROWSER = false;
 
 const App = () => {
-  const [games, setGames] = useState([
-    { id: 0, date: '23.7.2019',system: "Schweizer System"},
-    { id: 1, date: '11.8.2019',system: "Schweizer System" },
-    { id: 2, date: '7.9.2019',system: "Schweizer System" },
-    { id: 3, date: '22.9.2019',system: "Schweizer System" },
-    { id: 4, date: '2.10.2019',system: "Schweizer System" },
-    { id: 5, date: '21.11.2019',system: "Schweizer System" }
-  ]);
+  const [games, setGames] = useState([]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState(games.length + 1);
+
+  useEffect(() => {
+    getAllTournaments();
+  }, []);
+
+  const getAllTournaments = () => {
+    if (USE_BROWSER) {
+      setGames(dummyGames);
+      return;
+    }
+
+    ipcRenderer.on(channels.GET_ALL_TOURNAMENTS, (event, args) => {
+      const { tournaments } = args;
+      log.info(tournaments);
+
+      const temp = tournaments.map(tournament => {
+        return {
+          id: tournament.id,
+          date: tournament.start_date,
+          system: 'Schweizer System'
+        };
+      });
+
+      setGames(temp);
+    });
+    
+    ipcRenderer.send(channels.GET_ALL_TOURNAMENTS);
+  };
 
   const importXML = () => {
     // fake backend data for browser
@@ -40,6 +66,8 @@ const App = () => {
       const { players } = args;
       log.info(players);
       setPlayers(players);
+
+      getAllTournaments();
     });
   };
 

@@ -61,7 +61,7 @@ function importFromJSON(json) {
 }
 
 function getAllTournaments() {
-  tournamentRepo
+  return tournamentRepo
     .getAll(dao)
     .then(tournaments => {
       console.log('Retrieved tournaments from database');
@@ -73,7 +73,7 @@ function getAllTournaments() {
           console.log(`tournament start-date = ${tournament.start_date}`);
           console.log(`tournament end-date = ${tournament.end_date}`);
         });
-        resolve('success');
+        resolve(tournaments);
       });
     })
     .catch(err => {
