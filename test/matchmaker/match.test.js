@@ -25,7 +25,7 @@ describe("createMatches()", () => {
   });
 
   test("matchID for next match is ++1", () => {
-
+    matchIds = Array.from(matchIds);
     matchIds.reduce((prev, current) => {
       expect(current).toBe(prev + 1);
       return current;
