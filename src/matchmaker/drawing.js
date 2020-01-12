@@ -1,7 +1,7 @@
 const {
   separateTopFromBottomPlayers,
   pairPlayersRoundOne
-} = require("./player.js");
+} = require("./drawingAlgorithms.js");
 
 const { createMatches } = require("./match.js");
 

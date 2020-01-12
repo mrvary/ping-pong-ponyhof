@@ -50,7 +50,4 @@ describe("createMatch()", () => {
     expect(match.sets).toBeDefined();
   });
 
-
-
-
 });

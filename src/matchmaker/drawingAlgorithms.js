@@ -67,4 +67,7 @@ module.exports = {
     // pubic
     pairPlayersRoundOne,
     separateTopFromBottomPlayers,
+    sortPlayersBy,
+    shuffle
+
 };

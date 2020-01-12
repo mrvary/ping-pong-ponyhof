@@ -4,14 +4,15 @@ const {
 } = require("../../src/matchmaker/drawing");
 
 const {
-  tournamentJSON
+  tournamentJSON,
+  tournamentJSON15Players,
 } = require("./player.test.data");
 
 const {
   createPlayersFromJSON
 } = require("../../src/matchmaker/player");
 
-const initPlayers = createPlayersFromJSON(tournamentJSON);
+const initPlayers = createPlayersFromJSON(tournamentJSON15Players);
 
 describe("drawFirstRound()", () => {
   const pairings = drawFirstRound(initPlayers);
