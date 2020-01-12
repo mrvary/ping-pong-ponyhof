@@ -40,39 +40,6 @@ function createPlayer(dataFromJSON) {
 }
 
 
-// pairPlayers : { top: [players], bottom: [players]} -> [{ player1: player, player2: player}]
-function pairPlayersRoundOne({ top, bottom }) {
-  let bottomPlayers = bottom;
-  let topPlayers = top;
-  let pairings = [];
-
-  while (bottomPlayers.length !== 0) {
-    const randomTopPlayer =
-      topPlayers[Math.floor(Math.random() * topPlayers.length)];
-    const randomBottomPlayer =
-      bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
-
-    //remove chosen players
-    topPlayers = topPlayers.filter(player => player !== randomTopPlayer);
-    bottomPlayers = bottomPlayers.filter(
-      player => player !== randomBottomPlayer
-    );
-
-    pairings.push({ player1: randomTopPlayer.id, player2: randomBottomPlayer.id });
-  }
-
-  return pairings;
-}
-
-// separateTopFromBottomPlayers : [players] -> { top: [players], bottom: [players]}
-function separateTopFromBottomPlayers(players) {
-  const sortedPlayers = sortPlayersBy(players, "qttr");
-  const top = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
-  const bottom = sortedPlayers.slice(Math.ceil(sortedPlayers.length / 2));
-
-  return { top, bottom };
-}
-
 // sortPlayersBy : [players] -> [players]
 function sortPlayersBy(players, selector) {
   return players.sort((playerA, playerB) => {
@@ -80,37 +47,10 @@ function sortPlayersBy(players, selector) {
   });
 }
 
-// shuffle : [a] -> [a]
-function shuffle(array) {
-  const TIMES = array.length;
-  for (let i = 0; i < TIMES; i++) {
-    const first = Math.floor(Math.random() * array.length);
-    const second = Math.floor(Math.random() * array.length);
-    [array[first], array[second]] = [array[second], array[first]];
-  }
-  return array;
-}
 
-// updatePlayers : [matches] -> [players]
-function updatePlayers(matches) {
-  let players = [];
+// ToDo
+function updatePlayers() {
 
-  //TODO calculate winner and ++gamesWon
-  for (let match of matches) {
-    const player1 = {
-      ...match.player1,
-      opponentIds: match.player1.opponentIds.concat(match.player2.id)
-    };
-
-    const player2 = {
-      ...match.player2,
-      opponentIds: match.player2.opponentIds.concat(match.player1.id)
-    };
-    players.push(player1);
-    players.push(player2);
-  }
-
-  return players;
 }
 
 module.exports = {
@@ -119,9 +59,6 @@ module.exports = {
 
   // private
   createPlayer,
-  pairPlayersRoundOne,
   sortPlayersBy,
-  separateTopFromBottomPlayers,
-  shuffle,
   updatePlayers
 };
