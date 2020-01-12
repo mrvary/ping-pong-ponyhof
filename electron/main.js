@@ -4,7 +4,6 @@ const path = require("path");
 // electron dependencies
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
 const log = require("electron-log");
-const isDev = require("electron-is-dev");
 
 require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
@@ -16,6 +15,7 @@ const menu = require("./menu/main-menu");
 
 // server dependencies
 const server = require("../backend/server");
+const database = require('../backend/persistance/dbManager');
 
 // frontend dependencies
 const { channels } = require("../src/shared/channels");
@@ -65,12 +65,18 @@ function createMainWindow() {
 app.on("ready", () => {
   // start web server
   const port = config.SERVER_PORT;
-  webServer = server.createServer(port);
+  webServer = server.setupHTTPServer(port);
 
   if (!webServer) {
     log.info("Could not start web server");
     return;
   }
+
+  // setup Database
+  database.createDatabase(false);
+
+  // setup socket io communication
+  server.setupSocketIO();
 
   // open the main window
   createMainWindow();
@@ -105,9 +111,13 @@ ipcMain.on(channels.START_ROUND, () => {
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
-  uiActions.openXMLFile(players => {
-    console.log(players);
+  uiActions.openXMLFile(json => {
+    console.log(json);
 
+    database.importJSON(json);
+    database.close();
+
+    const players = json.tournament.competition.players.player;
     // notify main window
     event.sender.send(channels.FILE_IMPORTED, {
       players: players

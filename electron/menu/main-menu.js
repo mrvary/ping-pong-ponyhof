@@ -26,8 +26,10 @@ const showURL = () => {
 };
 
 const openXMLFile = () => {
-  uiActions.openXMLFile(players => {
-    console.log(players);
+  uiActions.openXMLFile(json => {
+    console.log(json);
+
+    const players = json.tournament.competition.players.player;
 
     // notify main window
     ipcMain.emit(channels.FILE_IMPORTED, {

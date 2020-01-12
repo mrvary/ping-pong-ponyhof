@@ -8,8 +8,6 @@ const log = require('electron-log');
 const io = require('socket.io');
 const { clientChannels } = require('../client/src/shared/client-channels');
 
-const database = require('./persistance/sqlite3');
-
 const MAX_AMOUNT_TABLE = 4;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
@@ -17,16 +15,8 @@ let serverSocket = null;
 let connectedClients = new Map();
 let matchStarted = false;
 
-function createServer(port) {
+function setupHTTPServer(port) {
   const server = http.createServer(app);
-
-  // init database
-  database.createDatabase(true);
-  database.getAllProducts();
-  database.close();
-
-  // Open communication socket
-  setupSocketIO(server);
 
   return server.listen(port, () => {
     log.info(`Server is running on port ${port}`);
@@ -132,6 +122,7 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  createServer,
+  setupHTTPServer,
+  setupSocketIO,
   sendStartRoundBroadcast
 };
