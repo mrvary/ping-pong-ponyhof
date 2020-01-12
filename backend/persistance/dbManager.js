@@ -1,103 +1,90 @@
-const { app } = require('electron');
-const sqlite3 = require('sqlite3');
-
-const path = require('path');
-const fs = require('fs');
+const Promise = require('bluebird');
+const dao = require('./dao');
+const tournamentRepo = require('./tournament-repository');
+const competitionRepo = require('./competition-repository');
 
 const dirHelper = require('../utils/directory-helper');
 
-let db = null;
-
-function createDatabase(inMemory) {
+function openConnection(inMemory) {
   if (inMemory) {
-    db = new sqlite3.Database(':memory:');
-    createSchemas();
-    return;
+    // open database connection to in memory
+    dao.open(':memory:');
+  } else {
+    // open database connection to file
+    const dbPath = dirHelper.getDatabasePath();
+    dao.open(dbPath);
   }
-
-  // Get application path
-  const userPath = app.getPath('userData');
-
-  // Create database folder
-  const dataDir = path.join(userPath, 'database');
-  dirHelper.createDirectorySync(dataDir);
-
-  const dbPath = path.join(dataDir, 'database.db');
-  // Open existing database
-  if (fs.existsSync(dbPath)) {
-    db = new sqlite3.Database(dbPath);
-    return;
-  }
-
-  // Create absolute new database
-  db = new sqlite3.Database(dbPath);
-  createSchemas();
 }
 
-function createSchemas() {
-  if (!db) {
-    return;
-  }
+function createDatabase() {
+  // create database schemas
+  tournamentRepo
+    .createTable(dao)
+    .then(() => {
+      console.log('Create table tournaments');
+      competitionRepo
+        .createTable(dao)
+        .then(() => console.log('Create table competitions'));
+    })
+    .catch(err => {
+      console.log('Error: ');
+      console.log(JSON.stringify(err));
+    });
 
-  db.serialize(() => {
-    db.run(
-      'CREATE TABLE tournaments (tournament_id, name, city, start_date, end_date)'
-    );
-    db.run(
-      'CREATE TABLE competitions (competition_id, playmode, age_group, type, start_date, tournament_id)'
-    );
-    db.run(
-      'CREATE TABLE matches (match_id, player1_id, player2_id, competition_id)'
-    );
-    db.run('CREATE TABLE players (player_id, type)');
-    db.run(
-      'CREATE TABLE persons (person_id, firstname, lastname, TTR, internal_nr, player_id)'
-    );
-  });
+  // 'CREATE TABLE matches (match_id, player1_id, player2_id, competition_id)'
+  // 'CREATE TABLE players (player_id, type)'
+  // 'CREATE TABLE persons (person_id, firstname, lastname, TTR, internal_nr, player_id)'
 }
 
-function importJSON(json) {
+function importFromJSON(json) {
+  // create tournament in database
   const tournament = {
-    tournament_id: json.tournament["tournament-id"],
-    name: json.tournament["name"],
-    city: json.tournament["tournament-location"].city,
-    start_date: json.tournament["start-date"],
-    end_date: json.tournament["end-date"]
+    tournament_id: json.tournament['tournament-id'],
+    name: json.tournament['name'],
+    city: json.tournament['tournament-location'].city,
+    start_date: json.tournament['start-date'],
+    end_date: json.tournament['end-date']
   };
-
   console.log(tournament);
+  tournamentRepo.create(dao, tournament);
 
-  addTournament(tournament);
-}
-
-function addTournament(tournament) {
-  db.serialize(() => {
-    db.run(
-      'INSERT INTO tournaments (tournament_id, name, city, start_date, end_date) VALUES (?,?,?,?,?)',
-      [
-        tournament.tournament_id,
-        tournament.name,
-        tournament.city,
-        tournament.start_date,
-        tournament.end_date
-      ]
-    );
-  });
+  // create competitions in database
+  const competition = {
+    playmode: json.tournament.competition['preliminary-round-playmode'],
+    age_group: json.tournament.competition['age-group'],
+    type: json.tournament.competition['type'],
+    start_date: json.tournament.competition['start-date'],
+    tournament_id: tournament.tournament_id
+  };
+  console.log(competition);
+  competitionRepo.create(dao, competition, tournament.tournament_id);
 }
 
 function getAllTournaments() {
-  db.each('SELECT * FROM tournaments', (err, row) => {
-    console.log(row);
-  });
-}
-
-function close() {
-  db.close();
+  tournamentRepo
+    .getAll(dao)
+    .then(tournaments => {
+      console.log('Retrieved tournaments from database');
+      return new Promise((resolve, reject) => {
+        tournaments.forEach(tournament => {
+          console.log(`tournament id = ${tournament.id}`);
+          console.log(`tournament name = ${tournament.name}`);
+          console.log(`tournament city = ${tournament.city}`);
+          console.log(`tournament start-date = ${tournament.start_date}`);
+          console.log(`tournament end-date = ${tournament.end_date}`);
+        });
+        resolve('success');
+      });
+    })
+    .catch(err => {
+      console.log('Error: ');
+      console.log(JSON.stringify(err));
+    });
 }
 
 module.exports = {
+  openConnection,
   createDatabase,
-  importJSON,
-  getAllTournaments,
-  close
+  importFromJSON,
+  getAllTournaments
 };

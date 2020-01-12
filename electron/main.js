@@ -73,7 +73,9 @@ app.on("ready", () => {
   }
 
   // setup Database
-  database.createDatabase(false);
+  database.openConnection(false);
+  database.createDatabase();
+  database.getAllTournaments();
 
   // setup socket io communication
   server.setupSocketIO();
@@ -112,9 +114,9 @@ ipcMain.on(channels.START_ROUND, () => {
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile(json => {
-    console.log(json);
+    //console.log(json);
 
-    database.importJSON(json);
+    database.importFromJSON(json);
     database.close();
 
     const players = json.tournament.competition.players.player;
