@@ -19,7 +19,6 @@ function pairPlayersRoundOne({ top, bottom }) {
 
         pairings.push({ player1: randomTopPlayer.id, player2: randomBottomPlayer.id });
     }
-
     return pairings;
 }
 
@@ -28,18 +27,10 @@ function separateTopFromBottomPlayers(players) {
     const sortedPlayers = sortPlayersBy(players, "qttr");
     const top = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
     const bottom = sortedPlayers.slice(Math.ceil(sortedPlayers.length / 2));
-
     return { top, bottom };
 }
 
-
 //Algorithms for drawing later round
-
-
-
-
-
-
 
 //Help functions
 
@@ -61,13 +52,10 @@ function shuffle(array) {
     return array;
 }
 
-
-
 module.exports = {
     // pubic
     pairPlayersRoundOne,
     separateTopFromBottomPlayers,
     sortPlayersBy,
     shuffle
-
 };
