@@ -23,7 +23,8 @@ function openXMLFile(callback) {
       callback(json);
     })
     .catch(err => {
-      //console.log(err);
+      console.log('No file is readed');
+      console.log(err);
     });
 }
 
