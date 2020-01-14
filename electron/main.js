@@ -69,7 +69,7 @@ app.on("ready", () => {
   server.setupHTTPServer(port);
 
   // setup Database
-  database.openConnection(false);
+  database.openConnection(true);
   database.createDatabase();
 
   // setup socket io communication
@@ -105,7 +105,7 @@ ipcMain.on(channels.START_ROUND, () => {
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile(json => {
-    console.log(json);
+    console.log('Import XML');
 
     const players = createPlayersFromJSON(json);
     server.diceMatches(players);

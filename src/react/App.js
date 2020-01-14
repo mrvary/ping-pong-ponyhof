@@ -15,7 +15,6 @@ import Header from './components/Header';
 import Button from './components/Button';
 
 // electron
-const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
 // set to true for fake backend data and skip IPC calls
@@ -38,7 +37,7 @@ const App = () => {
 
     ipcRenderer.on(channels.GET_ALL_TOURNAMENTS, (event, args) => {
       const { tournaments } = args;
-      log.info(tournaments);
+      //log.info(tournaments);
 
       const temp = tournaments.map(tournament => {
         return {
@@ -55,6 +54,7 @@ const App = () => {
   };
 
   const importXML = () => {
+    console.log('XML-Event')
     // fake backend data for browser
     if (USE_BROWSER) {
       setPlayers(dummyPlayers);
@@ -64,7 +64,7 @@ const App = () => {
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
     ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
       const { players } = args;
-      log.info(players);
+      //log.info(players);
       setPlayers(players);
 
       getAllTournaments();

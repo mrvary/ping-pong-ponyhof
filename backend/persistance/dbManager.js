@@ -45,8 +45,8 @@ function importFromJSON(json) {
     start_date: json.tournament['start-date'],
     end_date: json.tournament['end-date']
   };
-  console.log(tournament);
   tournamentRepo.create(dao, tournament);
+  console.log('Create new tournament');
 
   // create competitions in database
   const competition = {
@@ -56,8 +56,9 @@ function importFromJSON(json) {
     start_date: json.tournament.competition['start-date'],
     tournament_id: tournament.tournament_id
   };
-  console.log(competition);
+ 
   competitionRepo.create(dao, competition, tournament.tournament_id);
+  console.log('Create a new competition');
 }
 
 function getAllTournaments() {
