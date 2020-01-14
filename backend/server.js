@@ -16,6 +16,7 @@ const { mockedMatch } = require('./match.mock.data');
 const MAX_AMOUNT_TABLE = 4;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
+let server = null;
 let serverSocket = null;
 
 let connectedClients = new Map();
@@ -23,17 +24,22 @@ let matchTableMap = null;
 
 let matchStarted = false;
 
-function createServer(port) {
-  const server = http.createServer(app);
-
-  setupSocketIO(server);
-
-  return server.listen(port, () => {
-    log.info(`Server is running on port ${port}`);
+function setupHTTPServer(port) {
+  server = http.createServer(app);
+  server.listen(port, () => {
+    console.log(`Server: is running on port ${port}`);
   });
 }
 
-function setupSocketIO(server) {
+function shutdownServer() {
+  if (server) {
+    console.log("Server: gracefully shutting down...");
+    server.kill();
+    server = null;
+  }
+}
+
+function setupSocketIO() {
   // open server socket
   serverSocket = io(server);
 
@@ -171,7 +177,9 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  createServer,
+  setupHTTPServer,
+  shutdownServer,
+  setupSocketIO,
   diceMatches,
   sendStartRoundBroadcast
 };
