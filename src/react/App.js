@@ -10,6 +10,8 @@ import Competition from './components/Competition';
 import Header from './components/Header';
 import Button from './components/Button';
 
+import CompetitionPage from './components/CompetitionPage';
+
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
 
@@ -58,6 +60,8 @@ const App = () => {
   };
 
   return (
+    <CompetitionPage ></CompetitionPage>
+/*
     <div className="app__container">
       <Header
         title="PingPongPonyhof"
@@ -79,6 +83,7 @@ const App = () => {
         }}
       ></Button>
     </div>
+    */
   );
 };
 
