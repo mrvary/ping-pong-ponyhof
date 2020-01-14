@@ -14,7 +14,7 @@ const menu = require("./menu/main-menu");
 
 // server dependencies
 const server = require("../backend/server");
-const database = require('../backend/persistance/dbManager');
+const database = require("../backend/persistance/dbManager");
 
 // matchmaker
 const { createPlayersFromJSON } = require('../src/matchmaker/player');
@@ -71,7 +71,6 @@ app.on("ready", () => {
   // setup Database
   database.openConnection(false);
   database.createDatabase();
-  database.getAllTournaments();
 
   // setup socket io communication
   server.setupSocketIO();
@@ -117,5 +116,20 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
     event.sender.send(channels.FILE_IMPORTED, {
       players: json.tournament.competition.players.player
     });
+  });
+});
+
+ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
+  database.getAllTournaments().then(tournaments => {
+    event.sender.send(channels.GET_ALL_TOURNAMENTS, {
+      tournaments: tournaments
+    });
+  });
+});
+
+ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
+  const { id } = data;
+  database.deleteTournament(id).then(() => {
+    event.sender.send(channels.DELETE_TOURNAMENT);
   });
 });
