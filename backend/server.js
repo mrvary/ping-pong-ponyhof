@@ -10,6 +10,7 @@ const { clientChannels } = require('../client/src/shared/client-channels');
 
 // Matchmaker
 const { createMatches } = require('../src/matchmaker/match');
+const { mockedMatch } = require('./match.mock.data');
 
 // Variables
 const MAX_AMOUNT_TABLE = 4;
@@ -106,9 +107,10 @@ function clientLogout(clientSocket) {
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
-function scrubleMatches(players) {
+function diceMatches(players) {
   const matches = createDummyMatches(players);
-  
+  console.log('Create example matches', matches);
+
   // map matches to tables
   matchTableMap = new Map();
   matchTableMap.set(1, matches[0]);
@@ -131,41 +133,11 @@ function createDummyMatches(players) {
 function sendMatchToClient(clientSocket, data) {
   const { tableNumber } = data;
 
-  const match = matchTableMap.get(tableNumber);
-
-  /*const match = {
-    id: 0,
-    player1: {
-      id: 'PLAYER20',
-      firstname: 'Achim',
-      lastname: 'Amthor',
-      clubname: 'SC Baldham-Vaterstetten',
-      gamesWon: 5,
-      matchIds: [0],
-      qttr: 1351,
-      active: true,
-      hasFreeTicket: false
-    },
-    player2: {
-      id: 'PLAYER3',
-      firstname: 'Ulrich',
-      lastname: 'Dietzel',
-      clubname: 'TTC Friedberg',
-      gamesWon: 1,
-      matchIds: [0],
-      qttr: 1111,
-      active: true,
-      hasFreeTicket: false
-    },
-    sets: [
-      { player1: 11, player2: 8 },
-      { player1: 8, player2: 11 },
-      { player1: 10, player2: 12 },
-      { player1: 15, player2: 13 },
-      { player1: 4, player2: 11 }
-    ],
-    freeTicket: false
-  };*/
+  // use mocked match as default
+  let match = mockedMatch;
+  if (matchTableMap) {
+    match = matchTableMap.get(tableNumber);
+  }
 
   clientSocket.emit(clientChannels.SEND_MATCH, { match });
 }
@@ -200,6 +172,6 @@ function range(start, exclusiveEnd) {
 
 module.exports = {
   createServer,
-  scrubleMatches,
+  diceMatches,
   sendStartRoundBroadcast
 };

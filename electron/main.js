@@ -112,7 +112,7 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
     console.log(json);
 
     const players = createPlayersFromJSON(json);
-    server.scrubleMatches(players);
+    server.diceMatches(players);
 
     // notify main window
     event.sender.send(channels.FILE_IMPORTED, {
