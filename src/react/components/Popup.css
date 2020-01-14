@@ -1,0 +1,13 @@
+.popup__header-text {
+  margin: 1vh 2vh;
+  color: var(--prim-font-color);
+  font-size: large;
+  text-align: center;
+}
+
+.popup__body-small-text {
+  margin: 1vh 2vh;
+  color: var(--prim-font-color);
+  font-size: medium;
+  text-align: left;
+}

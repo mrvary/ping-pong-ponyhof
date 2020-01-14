@@ -27,7 +27,10 @@ function drawFirstRound({ players }) {
   // 3. create matches
   const newMatches = createMatches(pairings);
 
-  // 4. update players
+  //4. play matches
+  //Todo - create a valid match result for each match
+
+  // 5. update players
   const newPlayers = updatePlayers(newMatches);
 
   return { players: newPlayers, matches: newMatches };
