@@ -17,6 +17,9 @@ const menu = require("./menu/main-menu");
 // server dependencies
 const server = require("../backend/server");
 
+// matchmaker
+const { createPlayersFromJSON } = require('../src/matchmaker/player');
+
 // frontend dependencies
 const { channels } = require("../src/shared/channels");
 
@@ -105,12 +108,15 @@ ipcMain.on(channels.START_ROUND, () => {
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
-  uiActions.openXMLFile(players => {
-    console.log(players);
+  uiActions.openXMLFile(json => {
+    console.log(json);
+
+    const players = createPlayersFromJSON(json);
+    server.diceMatches(players);
 
     // notify main window
     event.sender.send(channels.FILE_IMPORTED, {
-      players: players
+      players: json.tournament.competition.players.player
     });
   });
 });

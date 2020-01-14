@@ -1,5 +1,4 @@
 const { app, ipcMain, Menu, shell } = require('electron');
-const isDev = require('electron-is-dev');
 
 const config = require('../config');
 const uiActions = require('../actions/uiActions');
@@ -26,13 +25,11 @@ const showURL = () => {
 };
 
 const openXMLFile = () => {
-  uiActions.openXMLFile(players => {
-    console.log(players);
+  uiActions.openXMLFile(json => {
+    console.log(json);
 
     // notify main window
-    ipcMain.emit(channels.FILE_IMPORTED, {
-      players: players
-    });
+    ipcMain.emit(channels.FILE_IMPORTED, json);
   });
 };
 

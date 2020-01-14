@@ -25,12 +25,12 @@ const getServerURL = () => {
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState('match');
+  const [page, setPage] = useState('login');
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
-  const [tableNumber, setTableNumber] = useState(0);
-  const [message, setMessage] = useState('');
+  const [tableNumber, setTableNumber] = useState(-1);
+  const [match, setMatch] = useState(null);
 
   const toPage = page => {
     setPage(page);
@@ -52,13 +52,7 @@ function App() {
       return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
     } else if (page === 'match') {
       return (
-        <Match
-          appTitle={appTitle}
-          isConnected={isConnected}
-          message={message}
-          sendMessage={sendMessage}
-          messageChanged={handleMessageChange}
-        />
+        <Match appTitle={appTitle} isConnected={isConnected} match={match} />
       );
     }
   };
@@ -72,16 +66,6 @@ function App() {
 
   const handleTableNumberChange = event => {
     setTableNumber(event.target.value);
-  };
-
-  const sendMessage = event => {
-    event.preventDefault();
-    socket.emit(clientChannels.SEND_MESSAGE, message);
-    setMessage('');
-  };
-
-  const handleMessageChange = event => {
-    setMessage(event.target.value);
   };
 
   if (!socket) {
@@ -101,11 +85,18 @@ function App() {
       setIsConnected(true);
 
       console.log('matchStart ->', matchStarted);
-      matchStarted ? toPage('match') : toPage('wait');
+      matchStarted ? connection.emit(clientChannels.GET_MATCH, { tableNumber }) : toPage('wait');
 
       connection.on(clientChannels.START_ROUND, () => {
-        toPage('match');
+        connection.emit(clientChannels.GET_MATCH, { tableNumber });
       });
+
+      connection.on(clientChannels.SEND_MATCH, data => {
+        const { match } = data;
+        setMatch(match);
+
+        toPage('match');
+      })
     });
 
     connection.on(clientChannels.LOGIN_ERROR, data => {
