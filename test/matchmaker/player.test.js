@@ -4,7 +4,8 @@ const {
   shuffle,
   sortPlayersBy,
   separateTopFromBottomPlayers,
-  createPlayersFromJSON
+  createPlayersFromJSON,
+  updatePlayers
 } = require("../../src/matchmaker/player");
 
 const {
@@ -13,6 +14,8 @@ const {
   tournamentJSON
 } = require("./player.test.data");
 
+const { testMatches } = require("./match.test.data");
+
 const EXPECTED_PLAYER = {
   id: "PLAYER1",
   firstname: "Gerhard",
@@ -20,6 +23,7 @@ const EXPECTED_PLAYER = {
   clubname: "ESV SF Neuaubing",
   gamesWon: 0,
   matchIds: [],
+  opponentIds: [],
   qttr: 1415,
   active: true,
   hasFreeTicket: false
@@ -103,8 +107,14 @@ describe("shuffle()", () => {
 });
 
 describe("pairPlayers()", () => {
+  //tests for even number of players
   const evenNumberOfPlayers = cleanedUpPlayers
-    .map(player => ({ ...player, qttr: player.qttr + 100 }))
+    .map(player => ({
+      ...player,
+      firstname: player.firstname + " Copy",
+      id: player.id + "0",
+      qttr: player.qttr + 100
+    }))
     .concat(cleanedUpPlayers);
 
   const evenTopAndBottomPlayers = separateTopFromBottomPlayers(
@@ -121,8 +131,14 @@ describe("pairPlayers()", () => {
     expect(evenPairedPlayers.length).toBe(evenNumberOfPlayers.length / 2);
   });
 
-  test.todo("contains one of the top and one of the bottom players when even");
+  test("contains one of the top and one of the bottom players when even", () => {
+    evenPairedPlayers.forEach(pair => {
+      expect(evenTopAndBottomPlayers.top).toContain(pair.player1);
+      expect(evenTopAndBottomPlayers.bottom).toContain(pair.player2);
+    });
+  });
 
+  //tests for odd number of players
   const oddNumberOfPlayers = cleanedUpPlayers;
   const oddTopAndBottomPlayers = separateTopFromBottomPlayers(
     oddNumberOfPlayers
@@ -139,10 +155,42 @@ describe("pairPlayers()", () => {
       Math.ceil(oddNumberOfPlayers.length / 2)
     );
   });
-
-  test.todo("contains one of the top and one of the bottom players when even");
 });
 
 describe("updatePlayers()", () => {
-  test.todo("returns an array of all players from an array of matches");
+  const newPlayers = updatePlayers(testMatches);
+
+  test("returns an array of all players from an array of matches", () => {
+    expect(newPlayers).toBeDefined();
+    expect(newPlayers.length).toBe(testMatches.length * 2);
+    expect(newPlayers.length).toBe(6);
+  });
+
+  test.todo("check gamesWon changed for winners ", () => {});
+
+  test("match Id added to each player", () => {
+    for (let match of testMatches) {
+      let playersOfTheMatch = newPlayers.filter(function(e) {
+        return e.matchIds[0] === match.id;
+      });
+      expect(playersOfTheMatch.length).toBe(2);
+    }
+  });
+
+  test("opponent Id added to each player", () => {
+    for (let match of testMatches) {
+      let player1Id = match.player1.id;
+      let player2Id = match.player2.id;
+
+      newPlayers.forEach(player => {
+        if (player.id === player1Id) {
+          expect(player.opponentIds).toContain(player2Id);
+        }
+
+        if (player.id === player2Id) {
+          expect(player.opponentIds).toContain(player1Id);
+        }
+      });
+    }
+  });
 });

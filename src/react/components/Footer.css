@@ -1,0 +1,6 @@
+.footer__text {
+  margin: 1vh 2vh;
+  color: var(--font-color);
+  font-size: large;
+  text-align: center;
+}
