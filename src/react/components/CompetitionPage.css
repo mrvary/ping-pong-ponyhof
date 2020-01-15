@@ -2,7 +2,7 @@ body {
   background-color: var(--prim-background-color);
 }
 
-.hero-alignment {
+.competitionPage__header-alignment {
   height: 10vh;
   font-size: 2vh;
   color: var(--tert-out-color);

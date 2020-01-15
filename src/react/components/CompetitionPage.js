@@ -11,7 +11,7 @@ import Button from './Button';
 
 const Header = ({ kind, date, time }) => {
   return (
-    <div className="hero-alignment">
+    <div className="competitionPage__header-alignment">
       {' '}
       <Link className="link-back-to-overview" to="/">
         {' '}
