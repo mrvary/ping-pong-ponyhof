@@ -6,16 +6,15 @@ import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom';
 import 'normalize.css';
 import './index.css';
 
-import Test from './react/linkTest';
 import NotFound from './react/NotFound';
-
+import CompetitionPage from './react/components/CompetitionPage'
 
 const routing = (
   <Router>
     <div>
       <Switch>
         <Route exact path="/" component={App} />
-        <Route path="/test" component={Test} />
+        <Route path="/competition" component={CompetitionPage} />
         <Route component={NotFound} />
       </Switch>
     </div>

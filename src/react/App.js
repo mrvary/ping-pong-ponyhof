@@ -3,7 +3,7 @@ import { channels } from '../shared/channels';
 import dummyPlayers from '../assets/players';
 import './App.css';
 import './Colors.css';
-import { Route, Link, BrowserRouter as Router } from 'react-router-dom';
+import {Link, BrowserRouter as Router } from 'react-router-dom';
 
 // components
 import Footer from './components/Footer';
@@ -11,7 +11,6 @@ import Competition from './components/Competition';
 import Header from './components/Header';
 import Button from './components/Button';
 
-import CompetitionPage from './components/CompetitionPage';
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -60,9 +59,8 @@ const App = () => {
     }
   };
 
+
   return (
-    <CompetitionPage ></CompetitionPage>
-/*
     <div className="app__container">
       <Header
         title="PingPongPonyhof"
@@ -85,7 +83,6 @@ const App = () => {
       ></Button>
       <Link to="/test">Test</Link>
     </div>
-    */
   );
 };
 
