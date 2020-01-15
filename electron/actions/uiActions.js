@@ -20,8 +20,12 @@ function openXMLFile(callback) {
         reversible: false
       });
 
-      const players = json.tournament.competition.players.player;
-      callback(players);
+      callback(json);
+      callback(json);
+    })
+    .catch(err => {
+      console.log('No file is readed');
+      console.log(err);
     });
 }
 

@@ -3,8 +3,6 @@ const path = require("path");
 
 // electron dependencies
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
-const log = require("electron-log");
-const isDev = require("electron-is-dev");
 
 require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
@@ -16,12 +14,15 @@ const menu = require("./menu/main-menu");
 
 // server dependencies
 const server = require("../backend/server");
+const database = require("../backend/persistance/dbManager");
+
+// matchmaker
+const { createPlayersFromJSON } = require('../src/matchmaker/player');
 
 // frontend dependencies
 const { channels } = require("../src/shared/channels");
 
 let mainWindow;
-let webServer;
 
 function createMainWindow() {
   // create the browser window ...
@@ -65,23 +66,21 @@ function createMainWindow() {
 app.on("ready", () => {
   // start web server
   const port = config.SERVER_PORT;
-  webServer = server.createServer(port);
+  server.setupHTTPServer(port);
 
-  if (!webServer) {
-    log.info("Could not start web server");
-    return;
-  }
+  // setup Database
+  database.openConnection(false);
+  database.createDatabase();
+
+  // setup socket io communication
+  server.setupSocketIO();
 
   // open the main window
   createMainWindow();
 });
 
 app.on("before-quit", () => {
-  if (webServer) {
-    log.info("gracefully shutting down...");
-    webServer.kill();
-    webServer = null;
-  }
+  server.shutdownServer();
 });
 
 // app.on("window-all-closed", () => {
@@ -105,12 +104,32 @@ ipcMain.on(channels.START_ROUND, () => {
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
-  uiActions.openXMLFile(players => {
-    console.log(players);
+  uiActions.openXMLFile(json => {
+    console.log(json);
+
+    const players = createPlayersFromJSON(json);
+    server.diceMatches(players);
+
+    database.importFromJSON(json);
 
     // notify main window
     event.sender.send(channels.FILE_IMPORTED, {
-      players: players
+      players: json.tournament.competition.players.player
     });
+  });
+});
+
+ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
+  database.getAllTournaments().then(tournaments => {
+    event.sender.send(channels.GET_ALL_TOURNAMENTS, {
+      tournaments: tournaments
+    });
+  });
+});
+
+ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
+  const { id } = data;
+  database.deleteTournament(id).then(() => {
+    event.sender.send(channels.DELETE_TOURNAMENT);
   });
 });
