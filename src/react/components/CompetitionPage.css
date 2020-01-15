@@ -95,3 +95,9 @@ body {
 .link-back-to-overview:hover {
   color: var(--grey-out-color);
 }
+
+.competitionPage__Bottom-Buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: space-between;
+}

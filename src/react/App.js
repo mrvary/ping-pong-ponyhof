@@ -3,14 +3,13 @@ import { channels } from '../shared/channels';
 import dummyPlayers from '../assets/players';
 import './App.css';
 import './Colors.css';
-import {Link, BrowserRouter as Router } from 'react-router-dom';
+import { Link, BrowserRouter as Router } from 'react-router-dom';
 
 // components
 import Footer from './components/Footer';
 import Competition from './components/Competition';
 import Header from './components/Header';
 import Button from './components/Button';
-
 
 const log = window.log;
 const ipcRenderer = window.ipcRenderer;
@@ -59,7 +58,6 @@ const App = () => {
     }
   };
 
-
   return (
     <div className="app__container">
       <Header
@@ -81,7 +79,6 @@ const App = () => {
           ipcRenderer.send(channels.START_ROUND);
         }}
       ></Button>
-      <Link to="/test">Test</Link>
     </div>
   );
 };
