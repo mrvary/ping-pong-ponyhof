@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 import './Competition.css';
 
@@ -14,12 +15,12 @@ function Competition(props) {
   const [showPopupDelete, setShowPopupDelete] = useState(false);
   const handleClose = () => setShowPopupDelete(false);
   const handleShow = () => setShowPopupDelete(true);
-
+  const match = 'competition/matchId';
   return (
     <div className="competition__container">
-      <button className="competition__btn competition__btn--gameload">
+      <Link to={match} className="competition__btn competition__btn--gameload">
         Spiel vom {date}
-      </button>
+      </Link>
       <button className="competition__btn competition__btn--gametype">
         {system}
       </button>
