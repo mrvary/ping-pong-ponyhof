@@ -46,9 +46,10 @@ describe("createPlayers()", () => {
   });
 
   //tests for odd number of humanplayers now
-  const playersWithFreeTicketPlayer = createPlayersFromJSON(tournamentJSON15Players);
+  const playersWithFreeTicketPlayer = createPlayersFromJSON(
+    tournamentJSON15Players
+  );
   test("freeticketPlayer created", () => {
-
     expect(playersWithFreeTicketPlayer).toContainEqual({
       id: "FreeTicket",
       gamesWon: 0,
@@ -58,9 +59,7 @@ describe("createPlayers()", () => {
     });
 
     expect(playersWithFreeTicketPlayer).toHaveLength(16);
-
   });
-
 });
 
 describe("sortPlayersBy()", () => {
@@ -77,9 +76,7 @@ describe("sortPlayersBy()", () => {
   });
 });
 
-
 describe("updatePlayers()", () => {
-
   test.todo("returns an array of all players from an array of matches");
 
   test.todo("check gamesWon changed for winners");

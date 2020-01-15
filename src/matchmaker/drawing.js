@@ -6,12 +6,13 @@ const {
 const { createMatches } = require("./match.js");
 
 // drawRound : [players] -> [matches]
-function drawRound( players ) {
-
-  const pairings = players[0].matchIds.length === 0 ? drawFirstRound(players) : drawLaterRound(players);
+function drawRound(players) {
+  const pairings =
+    players[0].matchIds.length === 0
+      ? drawFirstRound(players)
+      : drawLaterRound(players);
 
   return createMatches(pairings);
-
 }
 
 // drawFirstRound : [players] -> [pairings]

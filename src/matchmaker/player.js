@@ -20,7 +20,6 @@ function createPlayersFromJSON(json) {
 
 // createPlayer : playerFromJSON -> Player
 function createPlayer(dataFromJSON) {
-
   const { id, person } = dataFromJSON;
   const { firstname, lastname, ttr } = person;
   const clubname = person["club-name"];
@@ -39,7 +38,6 @@ function createPlayer(dataFromJSON) {
   };
 }
 
-
 // sortPlayersBy : [players] -> [players]
 function sortPlayersBy(players, selector) {
   return players.sort((playerA, playerB) => {
@@ -47,11 +45,8 @@ function sortPlayersBy(players, selector) {
   });
 }
 
-
 // ToDo
-function updatePlayers() {
-
-}
+function updatePlayers() {}
 
 module.exports = {
   // pubic

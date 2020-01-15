@@ -16,14 +16,13 @@ function createMatches(pairings) {
 
 // createMatch : {player1: Player, player2: Player} -> Match
 function createMatch({ player1, player2 }) {
-  
   const match = {
     id: matchId,
     player1: player1,
     player2: player2,
     sets: []
   };
-  
+
   matchId++;
   return match;
 }

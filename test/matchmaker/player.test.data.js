@@ -825,4 +825,9 @@ const tournamentJSON15Players = {
   }
 };
 
-module.exports = { inputPlayers, tournamentJSON, cleanedUpPlayers, tournamentJSON15Players };
+module.exports = {
+  inputPlayers,
+  tournamentJSON,
+  cleanedUpPlayers,
+  tournamentJSON15Players
+};
