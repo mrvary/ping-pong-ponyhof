@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import MatchService from '../../services/matchService';
 import './CompetitionPage.css';
 import { Link, useParams } from 'react-router-dom';
+import '../Colors.css';
 
 const Header = ({ kind, date, time }) => {
   return (
@@ -21,15 +22,15 @@ const Header = ({ kind, date, time }) => {
 const IpAdressAndStatisticLink = () => {
   return (
     <div className="link-size">
-      <a className="link-ip-adress-statistic"> IP-Adresse </a>
-      <a className="link-ip-adress-statistic"> Statistik </a>
+      <div className="link-ip-adress-statistic"> IP-Adresse </div>
+      <div className="link-ip-adress-statistic"> Statistik </div>
     </div>
   );
 };
 
 const TableHeadline = () => {
   return (
-    <div className="table__first-row-alignment">
+    <div className="table__first-row-style">
       <strong className="table__column-alignment"> Tisch </strong>
       <strong className="table__column-alignment"> Spieler 1</strong>
       <strong className="table__column-alignment"> : </strong>
@@ -50,7 +51,7 @@ const TableRow = ({ match }) => {
       <div className="table__column-alignment"> </div>
       <div className="table__column-alignment"> {match.player1}</div>
       <div className="table__column-alignment"> : </div>
-      <div className="table__column-alignment"> Spieler 2 </div>
+      <div className="table__column-alignment"> {match.player2} </div>
       <div className="table__column-alignment"> Satz 1 </div>
       <div className="table__column-alignment"> Satz 2 </div>
       <div className="table__column-alignment"> Satz 3 </div>
@@ -73,7 +74,7 @@ const Table = ({ matches }) => {
 };
 
 const CompetitionPage = () => {
-  //dummy game
+  //dummy match
   const { match } = useParams();
   const [matches, setMatches] = useState([]);
 
@@ -86,7 +87,7 @@ const CompetitionPage = () => {
   return (
     <div>
       <p>{match}</p>
-      <Header kind="Schweizer System" date="xx.xx.2020" time="xx:xx " />
+      <Header />
       <IpAdressAndStatisticLink />
       <Table matches={matches} />
     </div>

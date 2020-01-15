@@ -23,7 +23,21 @@ body {
   margin: 2vh 2vh;
 }
 
+.table__first-row-style {
+  margin: 2vh 0vh;
+  width: 150vh;
+  height: 7vh;
+  border-radius: 2vh;
+  background: var(--sec-background-color);
+  display: flex;
+  font-size: 2vh;
+  color: var(--prim-font-color);
+  justify-content: space-around;
+  align-items: center;
+}
+
 .table__first-row-alignment {
+  margin: 0.3vh 0vh;
   width: 150vh;
   height: 7vh;
   border-radius: 2vh;
@@ -54,7 +68,7 @@ body {
 
 .link-ip-adress-statistic {
   text-decoration: underline;
-  color: var(--anti-color);
+  color: var(--link-font-hover-color);
   font-size: 2vh;
   border: none;
   margin: 2vh;

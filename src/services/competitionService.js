@@ -1,19 +1,19 @@
 const competitions = [
-  { 
-    id: 0, 
-    name: 'BTTV Bavarian TT-Race', 
+  {
+    id: 0,
+    name: 'BTTV Bavarian TT-Race',
     startDate: '25.05.2019',
     endDate: '25.05.2019',
     type: 'Einzel',
-    playmode: 'Schweizer System' 
+    playmode: 'Schweizer System'
   },
-  { 
-    id: 1, 
-    name: 'BTTV Bavarian TT-Race', 
+  {
+    id: 1,
+    name: 'BTTV Bavarian TT-Race',
     startDate: '11.08.2019',
     endDate: '11.08.2019',
     type: 'Doppel',
-    playmode: 'Schweizer System' 
+    playmode: 'Schweizer System'
   }
 ];
 
@@ -22,7 +22,7 @@ function getAllCompetitions() {
 }
 
 function deleteCompetition(compId) {
-  competitions.filter(competition => competition.id !== compId)
+  competitions.filter(competition => competition.id !== compId);
 }
 
 module.exports = {
