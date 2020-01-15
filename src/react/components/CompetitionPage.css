@@ -29,11 +29,14 @@ body {
   height: 7vh;
   border-radius: 2vh;
   background: var(--sec-background-color);
-  display: flex;
   font-size: 2vh;
   color: var(--prim-font-color);
+  display: flex;
   justify-content: space-around;
-  align-items: center;
+}
+.center {
+  display: flex;
+  justify-content: space-around;
 }
 
 .table__first-row-alignment {

@@ -35,34 +35,38 @@ const IpAdressAndStatisticLink = () => {
 
 const TableHeadline = () => {
   return (
-    <div className="table__first-row-style">
-      <strong className="table__column-alignment"> Tisch </strong>
-      <strong className="table__column-alignment"> Spieler 1</strong>
-      <strong className="table__column-alignment"> : </strong>
-      <strong className="table__column-alignment"> Spieler 2 </strong>
-      <strong className="table__column-alignment"> Satz 1 </strong>
-      <strong className="table__column-alignment"> Satz 2 </strong>
-      <strong className="table__column-alignment"> Satz 3 </strong>
-      <strong className="table__column-alignment"> Satz 4 </strong>
-      <strong className="table__column-alignment"> Satz 5 </strong>
-      <strong className="table__column-alignment"> Ergebnis </strong>
+    <div className="center">
+      <div className="table__first-row-style">
+        <strong className="table__column-alignment"> Tisch </strong>
+        <strong className="table__column-alignment"> Spieler 1</strong>
+        <strong className="table__column-alignment"> : </strong>
+        <strong className="table__column-alignment"> Spieler 2 </strong>
+        <strong className="table__column-alignment"> Satz 1 </strong>
+        <strong className="table__column-alignment"> Satz 2 </strong>
+        <strong className="table__column-alignment"> Satz 3 </strong>
+        <strong className="table__column-alignment"> Satz 4 </strong>
+        <strong className="table__column-alignment"> Satz 5 </strong>
+        <strong className="table__column-alignment"> Ergebnis </strong>
+      </div>
     </div>
   );
 };
 
 const TableRow = ({ match }) => {
   return (
-    <div className="table__first-row-alignment">
-      <div className="table__column-alignment"> </div>
-      <div className="table__column-alignment"> {match.player1}</div>
-      <div className="table__column-alignment"> : </div>
-      <div className="table__column-alignment"> {match.player2} </div>
-      <div className="table__column-alignment"> Satz 1 </div>
-      <div className="table__column-alignment"> Satz 2 </div>
-      <div className="table__column-alignment"> Satz 3 </div>
-      <div className="table__column-alignment"> Satz 4 </div>
-      <div className="table__column-alignment"> Satz 5 </div>
-      <div className="table__column-alignment"> Ergebnis </div>
+    <div className="center">
+      <div className="table__first-row-alignment">
+        <div className="table__column-alignment"> </div>
+        <div className="table__column-alignment"> {match.player1}</div>
+        <div className="table__column-alignment"> : </div>
+        <div className="table__column-alignment"> {match.player2} </div>
+        <div className="table__column-alignment"> Satz 1 </div>
+        <div className="table__column-alignment"> Satz 2 </div>
+        <div className="table__column-alignment"> Satz 3 </div>
+        <div className="table__column-alignment"> Satz 4 </div>
+        <div className="table__column-alignment"> Satz 5 </div>
+        <div className="table__column-alignment"> Ergebnis </div>
+      </div>
     </div>
   );
 };
