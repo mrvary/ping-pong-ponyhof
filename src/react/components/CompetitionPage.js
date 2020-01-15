@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import MatchService from '../../services/matchService';
 import './CompetitionPage.css';
+import { Link } from 'react-router-dom';
 
 const Header = ({ kind, date, time }) => {
   return (
     <div className="hero-alignment">
       {' '}
-      <a
-        className="link-back-to-overview"
-        href="https://www.google.com/?client=safari"
-      >
+      <Link className="link-back-to-overview" to="/">
         {' '}
         zur Übersicht{' '}
-      </a>
+      </Link>
       <div className="competition-kind"> {kind}</div>
       <div className="competition-date">{date}</div>
       <div className="competition-time"> {time} Uhr </div>

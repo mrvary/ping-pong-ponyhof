@@ -1,14 +1,14 @@
 :root {
-    --prim-background-color: #f4f4f4;
-    --sec-background-color:white;
+  --prim-background-color: #f4f4f4;
+  --sec-background-color: white;
 
-    --button-color:#84afce;
-    --button-hover-color:#99bad1;
+  --button-color: #84afce;
+  --button-hover-color: #99bad1;
 
-    --grey-out-color: #4d4d4d;
-    --prim-font-color:black;
-    --sec-font-color:white;
+  --grey-out-color: #4d4d4d;
+  --prim-font-color: black;
+  --sec-font-color: white;
 
-    --anti-color: #b788ba;
-    --main-color: #f4f4f4;
+  --anti-color: #b788ba;
+  --main-color: #f4f4f4;
 }

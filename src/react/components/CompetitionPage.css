@@ -37,7 +37,6 @@ body {
 
 .table__column-alignment {
   color: black;
-  border: 1px solid black;
   width: 14vh;
   height: 7vh;
   display: flex;

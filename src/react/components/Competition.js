@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import './Competition.css';
 
@@ -18,8 +18,12 @@ function Competition(props) {
 
   return (
     <div className="competition__container">
-      <Link to="/competition" className="competition__btn competition__btn--gameload">
-        Spiel vom {date}</Link>
+      <Link
+        to="/competition"
+        className="competition__btn competition__btn--gameload"
+      >
+        Spiel vom {date}
+      </Link>
       <button className="competition__btn competition__btn--gametype">
         {system}
       </button>
