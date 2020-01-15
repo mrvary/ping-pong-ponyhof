@@ -61,7 +61,7 @@ function importFromJSON(json) {
 }
 
 function getAllTournaments() {
-  tournamentRepo
+  return tournamentRepo
     .getAll(dao)
     .then(tournaments => {
       console.log('Retrieved tournaments from database');
@@ -73,8 +73,20 @@ function getAllTournaments() {
           console.log(`tournament start-date = ${tournament.start_date}`);
           console.log(`tournament end-date = ${tournament.end_date}`);
         });
-        resolve('success');
+        resolve(tournaments);
       });
+    })
+    .catch(err => {
+      console.log('Error: ');
+      console.log(JSON.stringify(err));
+    });
+}
+
+function deleteTournament(id) {
+  return tournamentRepo
+    .remove(dao, id)
+    .then(() => {
+      console.log('Delete tournament with id: ', id);
     })
     .catch(err => {
       console.log('Error: ');
@@ -86,5 +98,6 @@ module.exports = {
   openConnection,
   createDatabase,
   importFromJSON,
-  getAllTournaments
+  getAllTournaments,
+  deleteTournament
 };
