@@ -1,11 +1,11 @@
 body {
-  background-color: #f4f4f4;
+  background-color: var(--prim-background-color);
 }
 
 .hero-alignment {
   height: 10vh;
   font-size: 2vh;
-  color: #4d4d4d;
+  color: var(--tert-out-color);
   display: flex;
   justify-content: space-between;
   flex-direction: row;
@@ -27,17 +27,16 @@ body {
   width: 150vh;
   height: 7vh;
   border-radius: 2vh;
-  background: white;
+  background: var(--sec-background-color);
   display: flex;
   font-size: 2vh;
-  color: black;
+  color: var(--prim-font-color);
   justify-content: space-around;
   align-items: center;
 }
 
 .table__column-alignment {
-  color: black;
-  border: 1px solid black;
+  color: var(--prim-font-color);
   width: 14vh;
   height: 7vh;
   display: flex;
@@ -47,7 +46,7 @@ body {
 
 .link-back-to-overview {
   text-decoration: underline;
-  color: #4d4d4d;
+  color: var(--prim-font-color);
   font-size: 2vh;
   border: none;
   margin: 2vh 2vh;
@@ -55,7 +54,7 @@ body {
 
 .link-ip-adress-statistic {
   text-decoration: underline;
-  color: #9a6fa5;
+  color: var(--anti-color);
   font-size: 2vh;
   border: none;
   margin: 2vh;
@@ -72,7 +71,7 @@ body {
 }
 
 .link-ip-adress-statistic:hover {
-  color: rgb(117, 84, 126);
+  color: var(--link-font-hover-color);
 }
 
 .link-back-to-overview:focus {
@@ -80,5 +79,5 @@ body {
 }
 
 .link-back-to-overview:hover {
-  color: black;
+  color: var(--grey-out-color);
 }

@@ -1,20 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './react/App';
-import { Route, Link, BrowserRouter as Router, Switch } from 'react-router-dom';
+import { Route, BrowserRouter as Router, Switch } from 'react-router-dom';
 
 import 'normalize.css';
 import './index.css';
 
 import NotFound from './react/NotFound';
-import CompetitionPage from './react/components/CompetitionPage'
+import CompetitionPage from './react/components/CompetitionPage';
 
 const routing = (
   <Router>
     <div>
       <Switch>
         <Route exact path="/" component={App} />
-        <Route path="/competition" component={CompetitionPage} />
+        <Route path="/competition/:match" component={CompetitionPage} />
         <Route component={NotFound} />
       </Switch>
     </div>
