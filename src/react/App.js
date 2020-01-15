@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Colors.css';
-import { Link, BrowserRouter as Router } from 'react-router-dom';
 
 import { channels } from '../shared/channels';
 

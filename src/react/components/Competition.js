@@ -18,7 +18,10 @@ function Competition(props) {
   const match = 'competition/matchId';
   return (
     <div className="competition__container">
-      <Link to={match} className="competition__btn competition__btn--gameload">
+      <Link
+        to={match}
+        className="competition__btn competition__btn--gameload competition__link"
+      >
         Spiel vom {date}
       </Link>
       <button className="competition__btn competition__btn--gametype">
