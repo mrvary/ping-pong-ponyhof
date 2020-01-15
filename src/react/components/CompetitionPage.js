@@ -13,40 +13,76 @@ const Header = ({ kind, date, time }) => {
   return (
     <div className="competitionPage__header-alignment">
       {' '}
-      <Link className="link-back-to-overview" to="/">
+      <Link className="competitionPage__link-back-to-overview" to="/">
         {' '}
         zur Übersicht{' '}
       </Link>
-      <div className="competition-kind"> {kind}</div>
-      <div className="competition-date">{date}</div>
-      <div className="competition-time"> {time} Uhr </div>
+      <div className="competitionPage__competition-kind"> {kind}</div>
+      <div className="competitionPage__competition-date">{date}</div>
+      <div className="competitionPage__competition-time"> {time} Uhr </div>
     </div>
   );
 };
 
 const IpAdressAndStatisticLink = () => {
   return (
-    <div className="link-size">
-      <div className="link-ip-adress-statistic"> IP-Adresse </div>
-      <div className="link-ip-adress-statistic"> Statistik </div>
+    <div className="competitionPage__link-alignment">
+      <div className="competitionPage__link-ip-adress-statistic">
+        {' '}
+        IP-Adresse{' '}
+      </div>
+      <div className="competitionPage__link-ip-adress-statistic">
+        {' '}
+        Statistik{' '}
+      </div>
     </div>
   );
 };
 
 const TableHeadline = () => {
   return (
-    <div className="center">
-      <div className="table__first-row-style">
-        <strong className="table__column-alignment"> Tisch </strong>
-        <strong className="table__column-alignment"> Spieler 1</strong>
-        <strong className="table__column-alignment"> : </strong>
-        <strong className="table__column-alignment"> Spieler 2 </strong>
-        <strong className="table__column-alignment"> Satz 1 </strong>
-        <strong className="table__column-alignment"> Satz 2 </strong>
-        <strong className="table__column-alignment"> Satz 3 </strong>
-        <strong className="table__column-alignment"> Satz 4 </strong>
-        <strong className="table__column-alignment"> Satz 5 </strong>
-        <strong className="table__column-alignment"> Ergebnis </strong>
+    <div className="competitionPage__center-table">
+      <div className="competitionPage__table__first-row-style">
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Tisch{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Spieler 1
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          :{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Spieler 2{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Satz 1{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Satz 2{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Satz 3{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Satz 4{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Satz 5{' '}
+        </strong>
+        <strong className="competitionPage__table__column-alignment">
+          {' '}
+          Ergebnis{' '}
+        </strong>
       </div>
     </div>
   );
@@ -54,18 +90,27 @@ const TableHeadline = () => {
 
 const TableRow = ({ match }) => {
   return (
-    <div className="center">
-      <div className="table__first-row-alignment">
-        <div className="table__column-alignment"> </div>
-        <div className="table__column-alignment"> {match.player1}</div>
-        <div className="table__column-alignment"> : </div>
-        <div className="table__column-alignment"> {match.player2} </div>
-        <div className="table__column-alignment"> Satz 1 </div>
-        <div className="table__column-alignment"> Satz 2 </div>
-        <div className="table__column-alignment"> Satz 3 </div>
-        <div className="table__column-alignment"> Satz 4 </div>
-        <div className="table__column-alignment"> Satz 5 </div>
-        <div className="table__column-alignment"> Ergebnis </div>
+    <div className="competitionPage__center-table">
+      <div className="competitionPage__table__first-row-alignment">
+        <div className="competitionPage__table__column-alignment"> </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {match.player1}
+        </div>
+        <div className="competitionPage__table__column-alignment"> : </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {match.player2}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment"> Satz 1 </div>
+        <div className="competitionPage__table__column-alignment"> Satz 2 </div>
+        <div className="competitionPage__table__column-alignment"> Satz 3 </div>
+        <div className="competitionPage__table__column-alignment"> Satz 4 </div>
+        <div className="competitionPage__table__column-alignment"> Satz 5 </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          Ergebnis{' '}
+        </div>
       </div>
     </div>
   );

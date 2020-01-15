@@ -11,19 +11,19 @@ body {
   flex-direction: row;
 }
 
-.competition-kind {
+.competitionPage__competition-kind {
   margin: 2vh 2vh;
 }
 
-.competition-date {
+.competitionPage__competition-date {
   margin: 2vh 2vh;
 }
 
-.competition-time {
+.competitionPage__competition-time {
   margin: 2vh 2vh;
 }
 
-.table__first-row-style {
+.competitionPage__table__first-row-style {
   margin: 2vh 0vh;
   width: 150vh;
   height: 7vh;
@@ -34,12 +34,12 @@ body {
   display: flex;
   justify-content: space-around;
 }
-.center {
+.competitionPage__center-table {
   display: flex;
   justify-content: space-around;
 }
 
-.table__first-row-alignment {
+.competitionPage__table__first-row-alignment {
   margin: 0.3vh 0vh;
   width: 150vh;
   height: 7vh;
@@ -52,7 +52,7 @@ body {
   align-items: center;
 }
 
-.table__column-alignment {
+.competitionPage__table__column-alignment {
   color: var(--prim-font-color);
   width: 14vh;
   height: 7vh;
@@ -61,7 +61,7 @@ body {
   justify-content: space-around;
 }
 
-.link-back-to-overview {
+.competitionPage__link-back-to-overview {
   text-decoration: underline;
   color: var(--prim-font-color);
   font-size: 2vh;
@@ -69,7 +69,7 @@ body {
   margin: 2vh 2vh;
 }
 
-.link-ip-adress-statistic {
+.competitionPage__link-ip-adress-statistic {
   text-decoration: underline;
   color: var(--link-font-hover-color);
   font-size: 2vh;
@@ -77,25 +77,25 @@ body {
   margin: 2vh;
 }
 
-.link-size {
+.competitionPage__link-alignment {
   display: flex;
   justify-content: space-between;
   flex-direction: row;
 }
 
-.link-ip-adress-statistic:focus {
+.lcompetitionPage__ink-ip-adress-statistic:focus {
   outline: 0;
 }
 
-.link-ip-adress-statistic:hover {
+.competitionPage__link-ip-adress-statistic:hover {
   color: var(--link-font-hover-color);
 }
 
-.link-back-to-overview:focus {
+.lcompetitionPage__ink-back-to-overview:focus {
   outline: 0;
 }
 
-.link-back-to-overview:hover {
+.competitionPage__link-back-to-overview:hover {
   color: var(--grey-out-color);
 }
 
