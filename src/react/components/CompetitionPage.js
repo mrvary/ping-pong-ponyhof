@@ -3,6 +3,11 @@ import MatchService from '../../services/matchService';
 import './CompetitionPage.css';
 import { Link, useParams } from 'react-router-dom';
 
+//componenten
+import Popup from './Popup';
+import Footer from './Footer';
+import Button from './Button';
+
 const Header = ({ kind, date, time }) => {
   return (
     <div className="hero-alignment">
@@ -83,12 +88,60 @@ const CompetitionPage = () => {
     setMatches(data);
   }, []);
 
+  const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
+  const handleCloseEndTournament = () => setShowPopupEndTournament(false);
+  const handleShowEndTournament = () => setShowPopupEndTournament(true);
+
+  const [showPopupEndRound, setShowPopupEndRound] = useState(false);
+  const handleCloseEndRound = () => setShowPopupEndRound(false);
+  const handleShowEndRound = () => setShowPopupEndRound(true);
+
+  const handleEndTournament = () => {
+    handleCloseEndTournament();
+  };
+
+  const handleEndRound = () => {
+    handleCloseEndRound();
+  };
+
   return (
     <div>
       <p>{match}</p>
       <Header kind="Schweizer System" date="xx.xx.2020" time="xx:xx " />
       <IpAdressAndStatisticLink />
       <Table matches={matches} />
+      <div className="competitionPage__Bottom-Buttons">
+        <Button
+          onClick={handleShowEndTournament}
+          text="Tunier abschließen"
+          mode="primary"
+        ></Button>
+        <Popup
+          show={showPopupEndTournament}
+          handleClose={handleCloseEndTournament}
+          header="Sicher?"
+          bodyText="Möchtest du wirklich das Tunier beenden?"
+          buttonFunk={() => handleEndTournament()}
+          buttonText="Beenden"
+          mode="primary"
+        ></Popup>
+        <Button
+          onClick={handleShowEndRound}
+          text="Runde beenden"
+          mode="primary"
+        ></Button>
+        <Popup
+          show={showPopupEndRound}
+          handleClose={handleCloseEndRound}
+          header="Sicher?"
+          bodyText="Möchtest du wirklich die Runde beenden?"
+          buttonFunk={() => handleEndRound()}
+          buttonText="Beenden"
+          mode="primary"
+        ></Popup>
+      </div>
+
+      <Footer title="Die Tabelle" />
     </div>
   );
 };
