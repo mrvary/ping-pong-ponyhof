@@ -34,6 +34,29 @@ function separateTopFromBottomPlayers(players) {
 }
 
 //Algorithms for drawing later round
+// separateTopFromBottomPlayers : [players] -> [groups]
+function groupByGamesWon(players) {
+  /*
+    if round 1 is over there are 2 groups of players (0|1 gamesWon )
+    if round 2 is over there are 3 groups of players (0|1|2 gameWon)
+    ...
+  */
+  const roundNr = players[0].matchIds.length;
+
+  let groups = [];
+  for (let i = 0; i < roundNr + 1; i++) {
+    let playersWithSameAmountOfGamesWon = [];
+
+    players.forEach(player => {
+      if (player.gamesWon === i) playersWithSameAmountOfGamesWon.push(player);
+    });
+    groups.push(playersWithSameAmountOfGamesWon);
+  }
+  //reverser ranking so that the best players are at the beginning of the array
+  groups.reverse();
+
+  return groups;
+}
 
 //Help functions
 
