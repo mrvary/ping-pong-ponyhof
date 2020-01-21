@@ -115,7 +115,7 @@ function clientLogout(clientSocket) {
 
 function diceMatches(players) {
   const matches = createDummyMatches(players);
-  console.log('Create example matches', matches);
+  //console.log('Create example matches', matches);
 
   // map matches to tables
   matchTableMap = new Map();
