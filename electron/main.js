@@ -69,7 +69,8 @@ app.on("ready", () => {
   server.setupHTTPServer(port);
 
   // setup Database
-  database.openConnection(true);
+  const useInMemoryDB = true;
+  database.openConnection(useInMemoryDB);
   database.createDatabase();
 
   // setup socket io communication
