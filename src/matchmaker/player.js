@@ -33,8 +33,7 @@ function createPlayer(dataFromJSON) {
     matchIds: [],
     opponentIds: [],
     qttr: parseInt(ttr, 10),
-    active: true,
-    hadFreeTicketAlready: false
+    active: true
   };
 }
 

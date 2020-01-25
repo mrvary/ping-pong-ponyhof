@@ -73,8 +73,7 @@ const cleanedUpPlayers = [
     gamesWon: 3,
     matchIds: [],
     qttr: 1415,
-    active: true,
-    hasFreeTicket: false
+    active: true
   },
   {
     id: "PLAYER2",
@@ -84,8 +83,7 @@ const cleanedUpPlayers = [
     gamesWon: 5,
     matchIds: [],
     qttr: 1251,
-    active: true,
-    hasFreeTicket: false
+    active: true
   },
   {
     id: "PLAYER3",
@@ -95,8 +93,7 @@ const cleanedUpPlayers = [
     gamesWon: 1,
     matchIds: [],
     qttr: 1111,
-    active: true,
-    hasFreeTicket: false
+    active: true
   }
 ];
 
