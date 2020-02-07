@@ -34,7 +34,7 @@ function separateTopFromBottomPlayers(players) {
 }
 
 //Algorithms for drawing later round
-// separateTopFromBottomPlayers : [players] -> [groups]
+// groupByGamesWon : [players] -> [groups]
 function groupByGamesWon(players) {
   /*
     if round 1 is over there are 2 groups of players (0|1 gamesWon )
@@ -78,10 +78,30 @@ function shuffle(array) {
   return array;
 }
 
+// groupsToString : [groups] -> string
+function groupsToString(groups) {
+  let string = "";
+
+  groups.forEach(group => {
+    if (group.length !== 0) {
+      string += group[0].gamesWon + " Siege Spieler -> ";
+
+      group.forEach(player => {
+        string += player.lastname + " ";
+      });
+      string += "\n";
+    }
+  });
+
+  return string;
+}
+
 module.exports = {
   // pubic
   pairPlayersRoundOne,
   separateTopFromBottomPlayers,
   sortPlayersBy,
-  shuffle
+  shuffle,
+  groupByGamesWon,
+  groupsToString
 };

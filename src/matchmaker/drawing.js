@@ -1,6 +1,8 @@
 const {
   separateTopFromBottomPlayers,
-  pairPlayersRoundOne
+  pairPlayersRoundOne,
+  groupByGamesWon,
+  groupsToString
 } = require("./drawingAlgorithms.js");
 
 const { createMatches } = require("./match.js");
@@ -28,7 +30,10 @@ function drawFirstRound(players) {
 
 // drawLaterRound : [players] -> [pairings]
 function drawLaterRound(players) {
-  // todo
+  // 1. create groups with equal gamesWon
+  let groups = groupByGamesWon(players);
+
+  console.log(groupsToString(groups));
 }
 
 module.exports = {
