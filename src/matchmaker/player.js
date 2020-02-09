@@ -54,28 +54,49 @@ and a random player gets gameWon++
 // updatePlayers : [players], [matches] -> [players]
 function updatePlayers(players, matches) {
   matches.forEach(match => {
-    // 0 -> player1 wins, 1 -> player2 wins
-    let rnd = Math.floor(Math.random() * 2);
-
-    players.forEach(player => {
-      if (match.player1 === player.id) {
-        player.opponentIds.push(match.player2);
-        player.matchIds.push(match.id);
-        if (rnd === 0) {
+    if (!isFreeticketPlayerInMatch(match)) {
+      // 0 -> player1 wins, 1 -> player2 wins
+      let rnd = Math.floor(Math.random() * 2);
+      players.forEach(player => {
+        if (match.player1 === player.id) {
+          player.opponentIds.push(match.player2);
+          player.matchIds.push(match.id);
+          if (rnd === 0) {
+            player.gamesWon++;
+          }
+        }
+        if (match.player2 === player.id) {
+          player.opponentIds.push(match.player1);
+          player.matchIds.push(match.id);
+          if (rnd === 1) {
+            player.gamesWon++;
+          }
+        }
+      });
+    } else {
+      players.forEach(player => {
+        if (match.player1 !== "FreeTicket") {
+          player.opponentIds.push(match.player2);
+          player.matchIds.push(match.id);
           player.gamesWon++;
         }
-      }
-      if (match.player2 === player.id) {
-        player.opponentIds.push(match.player1);
-        player.matchIds.push(match.id);
-        if (rnd === 1) {
+        if (match.player2 !== "FreeTicket") {
+          player.opponentIds.push(match.player1);
+          player.matchIds.push(match.id);
           player.gamesWon++;
         }
-      }
-    });
+      });
+    }
   });
 
   return players;
+}
+
+// isFreeticketPlayerInMatch : [match] -> [boolean]
+function isFreeticketPlayerInMatch(match) {
+  if (match.player1 === "FreeTicket" || match.player2 === "FreeTicket")
+    return true;
+  else return false;
 }
 
 module.exports = {
