@@ -13,7 +13,7 @@ const {
 let players = createPlayersFromJSON(tournamentJSON15Players);
 
 describe("playCompetition", () => {
-  const roundsToPlay = 2;
+  const roundsToPlay = 6;
 
   for (let round = 1; round <= roundsToPlay; round++) {
     let matches = drawRound(players);
