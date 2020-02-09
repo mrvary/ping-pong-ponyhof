@@ -75,15 +75,24 @@ function updatePlayers(players, matches) {
       });
     } else {
       players.forEach(player => {
-        if (match.player1 !== "FreeTicket") {
+        if (player.id === match.player1 && player.id !== "FreeTicket") {
           player.opponentIds.push(match.player2);
           player.matchIds.push(match.id);
           player.gamesWon++;
         }
-        if (match.player2 !== "FreeTicket") {
+        if (player.id === match.player2 && player.id !== "FreeTicket") {
           player.opponentIds.push(match.player1);
           player.matchIds.push(match.id);
           player.gamesWon++;
+        }
+
+        if (player.id === match.player1 && player.id === "FreeTicket") {
+          player.opponentIds.push(match.player2);
+          player.matchIds.push(match.id);
+        }
+        if (player.id === match.player2 && player.id === "FreeTicket") {
+          player.opponentIds.push(match.player1);
+          player.matchIds.push(match.id);
         }
       });
     }
