@@ -58,7 +58,64 @@ function groupByGamesWon(players) {
   return groups;
 }
 
-//Help functions
+// pairPlayersLaterRound : [players] -> [pairings]
+function pairPlayersLaterRound(players) {
+  basicPairing = basicDrawingAlgorithm(players);
+  return basicPairing;
+}
+
+// basicDrawingAlgorithm : [players] -> [pairings]
+function basicDrawingAlgorithm(players) {
+  let dummyPlayers = [...players];
+  let doLoopCounter = 0;
+  let pairingSucceeded;
+
+  do {
+    pairingSucceeded = true;
+    dummyPlayers = shuffle(dummyPlayers);
+    dummyPlayers = sortPlayersBy(dummyPlayers, "gamesWon");
+
+    for (let i = 0; i < dummyPlayers.length; i = i + 2) {
+      if (isRematch(dummyPlayers[i], dummyPlayers[i + 1])) {
+        pairingSucceeded = false;
+      }
+    }
+    doLoopCounter++;
+  } while (pairingSucceeded == false && doLoopCounter < 500);
+
+  if (pairingSucceeded) {
+    return createPairingFromArray(dummyPlayers);
+  } else {
+    console.log("Basic drawing failed");
+  }
+}
+
+// Help functions
+// createPairingFromArray : [players] -> [pairings]
+function createPairingFromArray(players) {
+  let pairings = [];
+  for (let i = 0; i < players.length; i = i + 2) {
+    pairings.push({
+      player1: players[i].id,
+      player2: players[i + 1].id
+    });
+  }
+  return pairings;
+}
+
+// isRematch : [players] -> [boolean]
+function isRematch(player1, player2) {
+  //find a match where player1 and player2 were involved
+  let duplicates = player1.matchIds.filter(function(val) {
+    return player2.matchIds.indexOf(val) != -1;
+  });
+
+  if (duplicates.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
 
 // sortPlayersBy : [players] -> [players]
 function sortPlayersBy(players, selector) {
@@ -103,5 +160,6 @@ module.exports = {
   sortPlayersBy,
   shuffle,
   groupByGamesWon,
-  groupsToString
+  groupsToString,
+  pairPlayersLaterRound
 };
