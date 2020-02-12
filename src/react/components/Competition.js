@@ -15,14 +15,14 @@ function Competition(props) {
   const [showPopupDelete, setShowPopupDelete] = useState(false);
   const handleClose = () => setShowPopupDelete(false);
   const handleShow = () => setShowPopupDelete(true);
-  const competitionID = 'competition/' + { id };
+  const competitionID = '/competition/' + id;
   return (
     <div className="competition__container">
       <Link
         to={competitionID}
         className="competition__btn competition__btn--gameload competition__link"
       >
-        Spiel vom {date} und ID {id}
+        Spiel vom {date}
       </Link>
       <button className="competition__btn competition__btn--gametype">
         {system}

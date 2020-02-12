@@ -97,7 +97,6 @@ const App = () => {
         ])
       );
       setCurrentId(currentId + 1);
-      //TODO: clear players
     }
   };
 
