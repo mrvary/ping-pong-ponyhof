@@ -88,9 +88,16 @@ const App = () => {
     if (players.length > 0) {
       const date = new Date();
       setGames(
-        games.concat([{ id: currentId, date: date.toLocaleDateString() }])
+        games.concat([
+          {
+            id: currentId,
+            date: date.toLocaleDateString(),
+            system: 'Schweizer System'
+          }
+        ])
       );
       setCurrentId(currentId + 1);
+      //TODO: clear players
     }
   };
 

@@ -14,6 +14,7 @@ function Header({ importXML, title, startCompetition }) {
     </section>
   );
 }
+
 const HeaderBox = ({ importXML, startCompetition }) => {
   return (
     <div className="header__match-box">

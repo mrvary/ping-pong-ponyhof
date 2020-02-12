@@ -14,7 +14,7 @@ const routing = (
     <div>
       <Switch>
         <Route exact path="/" component={App} />
-        <Route path="/competition/:match" component={CompetitionPage} />
+        <Route path="/competition/:competitionID" component={CompetitionPage} />
         <Route component={NotFound} />
       </Switch>
     </div>
