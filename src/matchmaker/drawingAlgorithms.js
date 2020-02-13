@@ -68,25 +68,31 @@ function pairPlayersLaterRound(players) {
 function basicDrawingAlgorithm(players) {
   let dummyPlayers = [...players];
   let doLoopCounter = 0;
+  const maxTries = 500;
   let pairingSucceeded;
 
   do {
     pairingSucceeded = true;
+
+    //shuffle the players each time to get a different sorted list
     dummyPlayers = shuffle(dummyPlayers);
     dummyPlayers = sortPlayersBy(dummyPlayers, "gamesWon");
 
+    /*check if 1. & 2. player of players played against each other
+      check if 3. & 4. player of players played against each other
+           ... 5. & 6. ...*/
     for (let i = 0; i < dummyPlayers.length; i = i + 2) {
       if (isRematch(dummyPlayers[i], dummyPlayers[i + 1])) {
         pairingSucceeded = false;
       }
     }
     doLoopCounter++;
-  } while (pairingSucceeded == false && doLoopCounter < 500);
+  } while (pairingSucceeded == false && doLoopCounter < maxTries);
 
   if (pairingSucceeded) {
     return createPairingFromArray(dummyPlayers);
   } else {
-    console.log("Basic drawing failed");
+    return "basic Drawing failed";
   }
 }
 
