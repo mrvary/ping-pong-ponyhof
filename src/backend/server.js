@@ -9,7 +9,7 @@ const io = require('socket.io');
 const { clientChannels } = require('../client/src/shared/client-channels');
 
 // Matchmaker
-const { createMatches } = require('../src/matchmaker/match');
+const { createMatches } = require('../matchmaker/match');
 const { mockedMatch } = require('./match.mock.data');
 
 // Variables

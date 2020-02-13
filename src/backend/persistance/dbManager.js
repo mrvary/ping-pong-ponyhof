@@ -3,7 +3,7 @@ const dao = require('./dao');
 const tournamentRepo = require('./tournament-repository');
 const competitionRepo = require('./competition-repository');
 
-const dirHelper = require('../utils/directory-helper');
+const dirHelper = require('../../utils/directory-helper');
 
 function openConnection(inMemory) {
   if (inMemory) {

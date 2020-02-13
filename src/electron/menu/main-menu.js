@@ -3,7 +3,7 @@ const { app, ipcMain, Menu, shell } = require('electron');
 const config = require('../config');
 const uiActions = require('../actions/uiActions');
 const server = require('../../backend/server');
-const { channels } = require('../../src/shared/channels');
+const { channels } = require('../../shared/channels');
 
 // Event handler
 const reload = (item, focusedWindow) => {
