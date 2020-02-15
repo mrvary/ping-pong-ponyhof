@@ -5,7 +5,6 @@ const competitionRepo = require("./repositories/competition-repository");
 const competitionPersonRepo = require("./repositories/competiton-person-repository");
 const personRepo = require("./repositories/person-repository");
 const matchRepo = require("./repositories/match-repository");
-
 const dao = require("./repositories/dao/dao");
 
 function createDatabase(dbFilePath) {
@@ -67,7 +66,7 @@ function importCompetitionFromJSON(jsonCompetition, tournament_id) {
 
 function importFromJSON(json) {
   const tournamentId = importTournamentFromJSON(json.tournament);
-  importCompetitionFromJSON(json.tournament.competition, tournamentId)
+  importCompetitionFromJSON(json.tournament.competition, tournamentId);
 }
 
 //** Tournaments */
@@ -108,6 +107,9 @@ function deleteTournament(id) {
 
 /** Competitions */
 
+function getCompetitonByTournamentId(tournament_id) {
+  return competitionRepo.getCompetitionsByTournamentId(tournament_id)
+}
 
 module.exports = {
   createDatabase,
