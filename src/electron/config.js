@@ -16,7 +16,7 @@ const ELECTRON_START_URL  =
   url.format({
     // important for deployment -> delete sub path "build"
     // -> https://stackoverflow.com/questions/41130993/electron-not-allowed-to-load-local-resource
-    pathname: path.join(__dirname, '../build/index.html'),
+    pathname: path.join(__dirname, '../../build/index.html'),
     protocol: 'file:',
     slashes: true
   });
