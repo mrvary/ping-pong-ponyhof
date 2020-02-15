@@ -2,6 +2,8 @@ const Promise = require("bluebird");
 
 const tournamentRepo = require("./repositories/tournament-repository");
 const competitionRepo = require("./repositories/competition-repository");
+const competitionPersonRepo = require("./repositories/competiton-person-repository");
+const personRepo = require("./repositories/person-repository");
 
 const dao = require("./repositories/dao/dao");
 
@@ -18,9 +20,15 @@ function createDatabase(dbFilePath) {
     .createTable(dao)
     .then(() => {
       console.log("Create table tournaments");
-      competitionRepo
-        .createTable(dao)
-        .then(() => console.log("Create table competitions"));
+      competitionRepo.createTable(dao).then(() => {
+        console.log("Create table competitions");
+        personRepo.createTable(dao).then(() => {
+          console.log("Create table persons");
+          competitionPersonRepo.createTable(dao).then(() => {
+            console.log("Create table competition_person");
+          });
+        });
+      });
     })
     .catch(err => {
       console.log("Error: ");
