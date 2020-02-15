@@ -6,7 +6,7 @@
 
 .header__picture{
   height: 70vh;
-  background-image: url('../../assets/header_background.jpg');
+  background-image: url('../../assets/images/header_background.jpg');
 }
 
 .header__title {

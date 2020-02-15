@@ -6,8 +6,8 @@ import { Link, BrowserRouter as Router } from 'react-router-dom';
 import { channels } from '../shared/channels';
 
 // dummy data
-import dummyPlayers from '../assets/players';
-import dummyGames from '../assets/games';
+import dummyPlayers from '../assets/mock-data/players';
+import dummyGames from '../assets/mock-data/games';
 
 // components
 import Footer from './components/Footer';
