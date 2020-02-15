@@ -97,7 +97,7 @@
       "node_modules/**/*"
     ],
     "win": {
-      "icon": "build/src/assets/icons/win/icon.ico"
+      "icon": "build/src/assets/icons/win/app-icon.ico"
     }
   }
 }
