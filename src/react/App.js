@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Colors.css';
-import { Link, BrowserRouter as Router } from 'react-router-dom';
 
 import { channels } from '../shared/channels';
 
@@ -89,7 +88,13 @@ const App = () => {
     if (players.length > 0) {
       const date = new Date();
       setGames(
-        games.concat([{ id: currentId, date: date.toLocaleDateString() }])
+        games.concat([
+          {
+            id: currentId,
+            date: date.toLocaleDateString(),
+            system: 'Schweizer System'
+          }
+        ])
       );
       setCurrentId(currentId + 1);
     }

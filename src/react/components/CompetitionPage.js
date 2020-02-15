@@ -129,7 +129,7 @@ const Table = ({ matches }) => {
 
 const CompetitionPage = () => {
   //dummy match
-  const { match } = useParams();
+  const { competitionID } = useParams();
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
@@ -156,7 +156,7 @@ const CompetitionPage = () => {
 
   return (
     <div>
-      <p>{match}</p>
+      <p>competitionID: {competitionID}</p>
       <Header />
       <IpAdressAndStatisticLink />
       <Table matches={matches} />
@@ -190,7 +190,6 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
       </div>
-
       <Footer title="Die Tabelle" />
     </div>
   );
