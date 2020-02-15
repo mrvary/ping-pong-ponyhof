@@ -6,7 +6,7 @@ const fields = {
   age_group: "age_group",
   type: "type",
   start_date: "start_date",
-  tournamentId: "tournamentId"
+  tournament_Id: "tournament_Id"
 };
 
 function createTable(dao) {
@@ -16,9 +16,9 @@ function createTable(dao) {
                 ${fields.age_group} TEXT,
                 ${fields.type} TEXT,
                 ${fields.start_date} TEXT,
-                ${fields.tournamentId} TEXT,
+                ${fields.tournament_Id} TEXT,
                 CONSTRAINT competitions_fk_tournamentId 
-                FOREIGN KEY (${fields.tournamentId})
+                FOREIGN KEY (${fields.tournament_Id})
                   REFERENCES tournaments(id)
                   ON UPDATE NO ACTION
                   ON DELETE CASCADE
@@ -32,7 +32,7 @@ function create(dao, competition, tournament_id) {
                 ${fields.age_group},
                 ${fields.type},
                 ${fields.start_date},
-                ${fields.tournamentId}
+                ${fields.tournament_Id}
                 ) 
                 VALUES (?,?,?,?,?)`;
   return dao.run(sql, [

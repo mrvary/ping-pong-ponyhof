@@ -67,11 +67,11 @@ function get(sql, params = []) {
 
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
-    if (!db) {
+    if (!this.db) {
       return;
     }
 
-    db.all(sql, params, (err, rows) => {
+    this.db.all(sql, params, (err, rows) => {
       if (err) {
         console.log("Error running sql: ", sql);
         console.log(err);
