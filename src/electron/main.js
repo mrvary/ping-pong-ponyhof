@@ -17,10 +17,13 @@ const server = require("../backend/server");
 const database = require("../backend/persistance/dbManager");
 
 // matchmaker
-const { createPlayersFromJSON } = require('../matchmaker/player');
+const { createPlayersFromJSON } = require("../matchmaker/player");
 
 // frontend dependencies
 const { channels } = require("../shared/channels");
+
+// helper
+const dirHelper = require("./helper/directory-helper");
 
 let mainWindow;
 
@@ -29,7 +32,10 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: path.join(__dirname, "../assets/icons/png/app-icon/app-icon_16x16.png"),
+    icon: path.join(
+      __dirname,
+      "../assets/icons/png/app-icon/app-icon_16x16.png"
+    ),
     webPreferences: {
       nodeIntegration: false,
       preload: path.join(__dirname, "preload.js")
@@ -49,11 +55,6 @@ function createMainWindow() {
     .then(name => console.log(`Added Extension:  ${name}`))
     .catch(err => console.log("An error occurred: ", err));
 
-  // Open the DevTools
-  // if (isDev) {
-  //   mainWindow.webContents.openDevTools();
-  // }
-
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -63,18 +64,23 @@ function createMainWindow() {
   Menu.setApplicationMenu(menu);
 }
 
-app.on("ready", () => {
-  // start web server
+function setupDatabase() {
+  const dbFilePath = config.USE_IN_MEMORY
+    ? ":memory:"
+    : dirHelper.getDatabasePath();
+
+  database.createDatabase(dbFilePath);
+}
+
+function setupHTTPServer() {
   const port = config.SERVER_PORT;
   server.setupHTTPServer(port);
-
-  // setup Database
-  const useInMemoryDB = true;
-  database.openConnection(useInMemoryDB);
-  database.createDatabase();
-
-  // setup socket io communication
   server.setupSocketIO();
+}
+
+app.on("ready", () => {
+  setupDatabase();
+  setupHTTPServer();
 
   // open the main window
   createMainWindow();
@@ -106,7 +112,7 @@ ipcMain.on(channels.START_ROUND, () => {
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile(json => {
-    console.log('Import XML');
+    console.log("Import XML");
 
     const players = createPlayersFromJSON(json);
     server.diceMatches(players);

@@ -1,8 +1,5 @@
-const app = require('./app');
 const http = require('http');
-
-// electron dependencies
-const log = require('electron-log');
+const app = require('./app');
 
 // communication dependecies
 const io = require('socket.io');

@@ -1,33 +1,29 @@
-const Promise = require('bluebird');
-const dao = require('./dao');
-const tournamentRepo = require('./tournament-repository');
-const competitionRepo = require('./competition-repository');
+const Promise = require("bluebird");
 
-const dirHelper = require('../../utils/directory-helper');
+const tournamentRepo = require("./repositories/tournament-repository");
+const competitionRepo = require("./repositories/competition-repository");
 
-function openConnection(inMemory) {
-  if (inMemory) {
-    // open database connection to in memory
-    dao.open(':memory:');
-  } else {
-    // open database connection to file
-    const dbPath = dirHelper.getDatabasePath();
-    dao.open(dbPath);
-  }
-}
+const dao = require("./repositories/dao/dao");
 
-function createDatabase() {
+let dbFilePath = null;
+
+function createDatabase(dbFilePath) {
+  this.dbFilePath = dbFilePath;
+
+  // open database connection
+  dao.open(dbFilePath);
+
   // create database schemas
   tournamentRepo
     .createTable(dao)
     .then(() => {
-      console.log('Create table tournaments');
+      console.log("Create table tournaments");
       competitionRepo
         .createTable(dao)
-        .then(() => console.log('Create table competitions'));
+        .then(() => console.log("Create table competitions"));
     })
     .catch(err => {
-      console.log('Error: ');
+      console.log("Error: ");
       console.log(JSON.stringify(err));
     });
 
@@ -39,33 +35,33 @@ function createDatabase() {
 function importFromJSON(json) {
   // create tournament in database
   const tournament = {
-    tournament_id: json.tournament['tournament-id'],
-    name: json.tournament['name'],
-    city: json.tournament['tournament-location'].city,
-    start_date: json.tournament['start-date'],
-    end_date: json.tournament['end-date']
+    tournament_id: json.tournament["tournament-id"],
+    name: json.tournament["name"],
+    city: json.tournament["tournament-location"].city,
+    start_date: json.tournament["start-date"],
+    end_date: json.tournament["end-date"]
   };
   tournamentRepo.create(dao, tournament);
-  console.log('Create new tournament');
+  console.log("Create new tournament");
 
   // create competitions in database
   const competition = {
-    playmode: json.tournament.competition['preliminary-round-playmode'],
-    age_group: json.tournament.competition['age-group'],
-    type: json.tournament.competition['type'],
-    start_date: json.tournament.competition['start-date'],
+    playmode: json.tournament.competition["preliminary-round-playmode"],
+    age_group: json.tournament.competition["age-group"],
+    type: json.tournament.competition["type"],
+    start_date: json.tournament.competition["start-date"],
     tournament_id: tournament.tournament_id
   };
- 
+
   competitionRepo.create(dao, competition, tournament.tournament_id);
-  console.log('Create a new competition');
+  console.log("Create a new competition");
 }
 
 function getAllTournaments() {
   return tournamentRepo
     .getAll(dao)
     .then(tournaments => {
-      console.log('Retrieved tournaments from database');
+      console.log("Retrieved tournaments from database");
       return new Promise((resolve, reject) => {
         tournaments.forEach(tournament => {
           console.log(`tournament id = ${tournament.id}`);
@@ -78,7 +74,7 @@ function getAllTournaments() {
       });
     })
     .catch(err => {
-      console.log('Error: ');
+      console.log("Error: ");
       console.log(JSON.stringify(err));
     });
 }
@@ -87,16 +83,15 @@ function deleteTournament(id) {
   return tournamentRepo
     .remove(dao, id)
     .then(() => {
-      console.log('Delete tournament with id: ', id);
+      console.log("Delete tournament with id: ", id);
     })
     .catch(err => {
-      console.log('Error: ');
+      console.log("Error: ");
       console.log(JSON.stringify(err));
     });
 }
 
 module.exports = {
-  openConnection,
   createDatabase,
   importFromJSON,
   getAllTournaments,
