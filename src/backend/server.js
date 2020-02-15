@@ -10,7 +10,7 @@ const { clientChannels } = require('../client/src/shared/client-channels');
 
 // Matchmaker
 const { createMatches } = require('../matchmaker/match');
-const { mockedMatch } = require('./match.mock.data');
+const { mockedMatch } = require('../assets/mock-data/match.mock.data');
 
 // Variables
 const MAX_AMOUNT_TABLE = 4;
