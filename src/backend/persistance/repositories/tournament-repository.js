@@ -29,7 +29,7 @@ function create(dao, tournament) {
               ) VALUES (?,?,?,?,?)`;
 
   return dao.run(sql, [
-    tournament.tournament_id,
+    tournament.id,
     tournament.name,
     tournament.city,
     tournament.start_date,

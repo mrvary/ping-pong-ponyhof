@@ -1,4 +1,4 @@
-const sqlite3 = require("sqlite3");
+const sqlite3 = require("sqlite3").verbose();
 const Promise = require("bluebird");
 
 let db = null;
@@ -31,17 +31,13 @@ function close() {
 
 function run(sql, params = []) {
   return new Promise((resolve, reject) => {
-    if (!this.db) {
-      return;
-    }
-
     this.db.run(sql, params, err => {
       if (err) {
         console.log("Error running SQL-Statement:", sql);
         console.log(err);
         reject(err);
       } else {
-        resolve();
+        resolve({ id: this.lastID });
       }
     });
   });
@@ -49,10 +45,6 @@ function run(sql, params = []) {
 
 function get(sql, params = []) {
   return new Promise((resolve, reject) => {
-    if (!this.db) {
-      return;
-    }
-
     this.db.get(sql, params, (err, result) => {
       if (err) {
         console.log("Error running sql: ", sql);
@@ -67,10 +59,6 @@ function get(sql, params = []) {
 
 function all(sql, params = []) {
   return new Promise((resolve, reject) => {
-    if (!this.db) {
-      return;
-    }
-
     this.db.all(sql, params, (err, rows) => {
       if (err) {
         console.log("Error running sql: ", sql);

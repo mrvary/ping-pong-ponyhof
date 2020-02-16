@@ -7,32 +7,29 @@ const personRepo = require("./repositories/person-repository");
 const matchRepo = require("./repositories/match-repository");
 const dao = require("./repositories/dao/dao");
 
-function createDatabase(dbFilePath) {
+async function createDatabase(dbFilePath) {
   // open database connection
   dao.open(dbFilePath);
 
-  // create database schemas
-  tournamentRepo
-    .createTable(dao)
-    .then(() => {
-      console.log("Create table tournaments");
-      competitionRepo.createTable(dao).then(() => {
-        console.log("Create table competitions");
-        personRepo.createTable(dao).then(() => {
-          console.log("Create table persons");
-          competitionPersonRepo.createTable(dao).then(() => {
-            console.log("Create table competition_person");
-            matchRepo.createTable(dao).then(() => {
-              console.log("Create table matches");
-            });
-          });
-        });
-      });
-    })
-    .catch(err => {
-      console.log("Error: ");
-      console.log(JSON.stringify(err));
-    });
+  try {
+    // create database schemas
+    await tournamentRepo.createTable(dao);
+    console.log("Create table tournaments");
+
+    await competitionRepo.createTable(dao);
+    console.log("Create table competitions");
+
+    await personRepo.createTable(dao);
+    console.log("Create table persons");
+
+    await competitionPersonRepo.createTable(dao);
+    console.log("Create table competition_person");
+
+    await matchRepo.createTable(dao);
+    console.log("Create table matches");
+  } catch (error) {
+    console.log("Error: ", error);
+  }
 }
 
 /** Import from JSON */
@@ -52,7 +49,7 @@ function importTournamentFromJSON(jsonTournament) {
   return tournament.id;
 }
 
-function importCompetitionFromJSON(jsonCompetition, tournament_id) {
+async function importCompetitionFromJSON(jsonCompetition, tournament_id) {
   const competition = {
     playmode: jsonCompetition["preliminary-round-playmode"],
     age_group: jsonCompetition["age-group"],
@@ -60,8 +57,11 @@ function importCompetitionFromJSON(jsonCompetition, tournament_id) {
     start_date: jsonCompetition["start-date"]
   };
 
-  competitionRepo.create(dao, competition, tournament_id);
+  const id = await competitionRepo.create(dao, competition, tournament_id);
   console.log("Create a new competition");
+  console.log(id);
+
+  return id;
 }
 
 function importFromJSON(json) {
@@ -108,7 +108,7 @@ function deleteTournament(id) {
 /** Competitions */
 
 function getCompetitonByTournamentId(tournament_id) {
-  return competitionRepo.getCompetitionsByTournamentId(tournament_id)
+  return competitionRepo.getCompetitionsByTournamentId(tournament_id);
 }
 
 module.exports = {
