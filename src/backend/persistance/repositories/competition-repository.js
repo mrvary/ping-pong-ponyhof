@@ -12,10 +12,10 @@ const fields = {
 function createTable(dao) {
   const sql = `CREATE TABLE IF NOT EXISTS ${tables.competitions} (
                 ${fields.id} INTEGER PRIMARY KEY AUTOINCREMENT,
-                ${fields.playmode} TEXT, 
-                ${fields.age_group} TEXT,
-                ${fields.type} TEXT,
-                ${fields.start_date} TEXT,
+                ${fields.playmode} TEXT NOT NULL, 
+                ${fields.age_group} TEXT NOT NULL,
+                ${fields.type} TEXT NOT NULL,
+                ${fields.start_date} TEXT NOT NULL,
                 ${fields.tournament_Id} TEXT,
                 CONSTRAINT competitions_fk_tournamentId 
                 FOREIGN KEY (${fields.tournament_Id})
@@ -26,7 +26,7 @@ function createTable(dao) {
   return dao.run(sql);
 }
 
-function create(dao, competition, tournament_id) {
+function create(dao, competition) {
   const sql = `INSERT INTO ${tables.competitions} (
                 ${fields.playmode},
                 ${fields.age_group},
@@ -37,10 +37,10 @@ function create(dao, competition, tournament_id) {
                 VALUES (?,?,?,?,?)`;
   return dao.run(sql, [
     competition.playmode,
-    competition.age_group,
+    competition.ageGroup,
     competition.type,
-    competition.start_date,
-    tournament_id
+    competition.startDate,
+    competition.tournamentId
   ]);
 }
 

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import './Colors.css';
-import { Link, BrowserRouter as Router } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import "./Colors.css";
+import { Link, BrowserRouter as Router } from "react-router-dom";
 
-import { channels } from '../shared/channels';
+import { channels } from "../shared/channels";
 
 // dummy data
-import dummyPlayers from '../assets/mock-data/players';
-import dummyGames from '../assets/mock-data/games';
+import dummyPlayers from "../assets/mock-data/players";
+import dummyGames from "../assets/mock-data/games";
 
 // components
-import Footer from './components/Footer';
-import Competition from './components/Competition';
-import Header from './components/Header';
-import Button from './components/Button';
+import Footer from "./components/Footer";
+import Competition from "./components/Competition";
+import Header from "./components/Header";
+import Button from "./components/Button";
 
 // electron
 const ipcRenderer = window.ipcRenderer;
@@ -44,7 +44,7 @@ const App = () => {
         return {
           id: tournament.id,
           date: tournament.start_date,
-          system: 'Schweizer System'
+          system: "Schweizer System"
         };
       });
 
@@ -55,7 +55,7 @@ const App = () => {
   };
 
   const importXML = () => {
-    console.log('XML-Event')
+    console.log("XML-Event");
     // fake backend data for browser
     if (USE_BROWSER) {
       setPlayers(dummyPlayers);
@@ -63,13 +63,7 @@ const App = () => {
     }
 
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
-    ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
-      const { players } = args;
-      //log.info(players);
-      setPlayers(players);
-
-      getAllTournaments();
-    });
+    ipcRenderer.on(channels.FILE_IMPORTED, () => getAllTournaments());
   };
 
   const deleteGame = id => {

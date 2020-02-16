@@ -16,14 +16,16 @@ const menu = require("./menu/main-menu");
 const server = require("../backend/server");
 const database = require("../backend/persistance/dbManager");
 
-// matchmaker
-const { createPlayersFromJSON } = require("../matchmaker/player");
-
 // frontend dependencies
 const { channels } = require("../shared/channels");
 
 // helper
 const dirHelper = require("./helper/directory-helper");
+
+// import
+const {
+  readTournamentXMLFileFromDisk
+} = require("../backend/import/xml-import");
 
 let mainWindow;
 
@@ -111,18 +113,11 @@ ipcMain.on(channels.START_ROUND, () => {
 });
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
-  uiActions.openXMLFile(json => {
-    console.log("Import XML");
+  uiActions.openXMLFile().then(filePath => {
+    const jsonObject = readTournamentXMLFileFromDisk(filePath);
+    database.importJSONTournament(jsonObject);
 
-    const players = createPlayersFromJSON(json);
-    server.diceMatches(players);
-
-    database.importFromJSON(json);
-
-    // notify main window
-    event.sender.send(channels.FILE_IMPORTED, {
-      players: json.tournament.competition.players.player
-    });
+    event.sender.send(channels.FILE_IMPORTED);
   });
 });
 

@@ -21,7 +21,7 @@ const openClient = () => {
 
 const showURL = () => {
   const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
-  uiActions.showInfoBox('URL-Info', `URL: ${url}`, null);
+  uiActions.showInfoBox('URL-Info', `URL: ${url}`);
 };
 
 const openXMLFile = () => {

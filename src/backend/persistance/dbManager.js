@@ -1,11 +1,18 @@
 const Promise = require("bluebird");
 
+// repositories
 const tournamentRepo = require("./repositories/tournament-repository");
 const competitionRepo = require("./repositories/competition-repository");
 const competitionPersonRepo = require("./repositories/competiton-person-repository");
 const personRepo = require("./repositories/person-repository");
 const matchRepo = require("./repositories/match-repository");
-const dao = require("./repositories/dao/dao");
+
+// model functions
+const { createTournamentFromJSON } = require("./models/tournament");
+const { createCompetitionFromJSON } = require("./models/competition");
+
+// dao
+const dao = require("./dao/dao");
 
 async function createDatabase(dbFilePath) {
   // open database connection
@@ -31,45 +38,27 @@ async function createDatabase(dbFilePath) {
     console.log("Error: ", error);
   }
 }
-
-/** Import from JSON */
-
-function importTournamentFromJSON(jsonTournament) {
-  const tournament = {
-    id: jsonTournament["tournament-id"],
-    name: jsonTournament["name"],
-    city: jsonTournament["tournament-location"].city,
-    start_date: jsonTournament["start-date"],
-    end_date: jsonTournament["end-date"]
-  };
-
-  tournamentRepo.create(dao, tournament);
-  console.log("Create a new tournament");
-
-  return tournament.id;
-}
-
-async function importCompetitionFromJSON(jsonCompetition, tournament_id) {
-  const competition = {
-    playmode: jsonCompetition["preliminary-round-playmode"],
-    age_group: jsonCompetition["age-group"],
-    type: jsonCompetition["type"],
-    start_date: jsonCompetition["start-date"]
-  };
-
-  const id = await competitionRepo.create(dao, competition, tournament_id);
-  console.log("Create a new competition");
-  console.log(id);
-
-  return id;
-}
-
-function importFromJSON(json) {
-  const tournamentId = importTournamentFromJSON(json.tournament);
-  importCompetitionFromJSON(json.tournament.competition, tournamentId);
-}
-
 //** Tournaments */
+
+function importJSONTournament(jsonObject) {
+  // import tournament object
+  const tournament = createTournamentFromJSON(jsonObject.tournament);
+  const tournamentId = createTournament(tournament);
+
+  // import competition object
+  const competition = createCompetitionFromJSON(
+    jsonObject.tournament.competition
+  );
+  competition.tournamentId = tournament.id;
+  const competitionId = createCompetition(competition);
+}
+
+function createTournament(tournament) {
+  tournamentRepo.create(dao, tournament).then(data => {
+    console.log("Create new tournament: ", data);
+    return data;
+  });
+}
 
 function getAllTournaments() {
   return tournamentRepo
@@ -107,13 +96,24 @@ function deleteTournament(id) {
 
 /** Competitions */
 
+function createCompetition(competition) {
+  competitionRepo.create(dao, competition).then(data => {
+    console.log("Create new competition: ", data);
+    return data;
+  });
+}
+
 function getCompetitonByTournamentId(tournament_id) {
   return competitionRepo.getCompetitionsByTournamentId(tournament_id);
 }
 
 module.exports = {
   createDatabase,
-  importFromJSON,
+
+  importJSONTournament,
+
   getAllTournaments,
-  deleteTournament
+  deleteTournament,
+
+  getCompetitonByTournamentId
 };
