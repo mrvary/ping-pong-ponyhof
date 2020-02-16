@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 /** Tables */
 const tables = {
   tournaments: "tournaments",

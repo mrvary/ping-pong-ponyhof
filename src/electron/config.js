@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 require("dotenv").config();
 const isDev = require("electron-is-dev");
 

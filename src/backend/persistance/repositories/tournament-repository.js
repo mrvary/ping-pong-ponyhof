@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const tables = require("../config");
 
 const fields = {

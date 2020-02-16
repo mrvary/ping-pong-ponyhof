@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const { app, ipcMain, Menu, shell } = require('electron');
 
 const config = require('../config');

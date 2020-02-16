@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const http = require('http');
 const app = require('./app');
 

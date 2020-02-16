@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const { app } = require('electron');
 
 const fs = require('fs');
