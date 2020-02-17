@@ -15,8 +15,8 @@ const uiActions = require("./actions/uiActions");
 const menu = require("./menu/main-menu");
 
 // server dependencies
-const server = require("../backend/server");
-const database = require("../backend/persistance/dbManager");
+const server = require("../modules/server");
+const database = require("../modules/persistance/sqlite3/dbManager");
 
 // frontend dependencies
 const { channels } = require("../shared/channels");
@@ -24,7 +24,7 @@ const { channels } = require("../shared/channels");
 // import
 const {
   readTournamentXMLFileFromDisk
-} = require("../backend/import/xml-import");
+} = require("../modules/import/xml-import");
 
 let mainWindow;
 

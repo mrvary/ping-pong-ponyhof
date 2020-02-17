@@ -12,8 +12,8 @@ const personRepo = require("./repositories/person-repository");
 const matchRepo = require("./repositories/match-repository");
 
 // model functions
-const { createTournamentFromJSON } = require("./models/tournament");
-const { createCompetitionFromJSON } = require("./models/competition");
+const { createTournamentFromJSON } = require("../../models/tournament");
+const { createCompetitionFromJSON } = require("../../models/competition");
 
 // dao
 const dao = require("./dao/dao");

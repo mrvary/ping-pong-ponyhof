@@ -7,7 +7,7 @@ const config = require("../config");
 
 const {
   createTournamentFromJSON
-} = require("../../src/backend/persistance/models/tournament");
+} = require("../../src/modules/models/tournament");
 
 test("createTournamentFromJSON()", () => {
   const expectedTournament = {

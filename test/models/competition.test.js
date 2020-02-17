@@ -5,7 +5,7 @@
 const fs = require("fs");
 const config = require("../config");
 
-const Competition = require("../../src/backend/persistance/models/competition");
+const Competition = require("../../src/modules/models/competition");
 
 test("createCompetitionFromJSON()", () => {
   const expectedCompetition = {

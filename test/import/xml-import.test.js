@@ -7,7 +7,7 @@ const config = require("../config");
 
 const {
   readTournamentXMLFileFromDisk
-} = require("../../src/backend/import/xml-import");
+} = require("../../src/modules/import/xml-import");
 
 test("readTournamentXMLFileFromDisk()", () => {
   // Allocate

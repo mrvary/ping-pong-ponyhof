@@ -2,12 +2,12 @@
  * @author Marco Goebel
  */
 
-const { app, ipcMain, Menu, shell } = require('electron');
+const { app, ipcMain, Menu, shell } = require("electron");
 
-const config = require('../config');
-const uiActions = require('../actions/uiActions');
-const server = require('../../backend/server');
-const { channels } = require('../../shared/channels');
+const config = require("../config");
+const uiActions = require("../actions/uiActions");
+const server = require("../../modules/server");
+const { channels } = require("../../shared/channels");
 
 // Event handler
 const reload = (item, focusedWindow) => {
@@ -25,7 +25,7 @@ const openClient = () => {
 
 const showURL = () => {
   const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
-  uiActions.showInfoBox('URL-Info', `URL: ${url}`);
+  uiActions.showInfoBox("URL-Info", `URL: ${url}`);
 };
 
 const openXMLFile = () => {
@@ -44,126 +44,126 @@ const startRound = () => {
 // main menu template
 const template = [
   {
-    label: 'Turnier',
+    label: "Turnier",
     submenu: [
       {
-        label: 'XML importieren',
+        label: "XML importieren",
         click: openXMLFile
       },
       {
-        label: 'Runde starten',
+        label: "Runde starten",
         click: startRound
       }
     ]
   },
   {
-    label: 'Bearbeiten',
+    label: "Bearbeiten",
     submenu: [
       {
-        label: 'Rückgängig',
-        role: 'undo'
+        label: "Rückgängig",
+        role: "undo"
       },
       {
-        label: 'Wiederholen',
-        role: 'redo'
+        label: "Wiederholen",
+        role: "redo"
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        label: 'Ausschneiden',
-        role: 'cut'
+        label: "Ausschneiden",
+        role: "cut"
       },
       {
-        label: 'Kopieren',
-        role: 'copy'
+        label: "Kopieren",
+        role: "copy"
       },
       {
-        label: 'Einfügen',
-        role: 'paste'
+        label: "Einfügen",
+        role: "paste"
       },
       {
-        label: 'Löschen',
-        role: 'delete'
+        label: "Löschen",
+        role: "delete"
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        label: 'Alle auswählen',
-        role: 'selectall'
+        label: "Alle auswählen",
+        role: "selectall"
       }
     ]
   },
   {
-    label: 'Ansicht',
+    label: "Ansicht",
     submenu: [
       {
-        label: 'Neu laden',
-        accelerator: 'CmdOrCtrl+R',
+        label: "Neu laden",
+        accelerator: "CmdOrCtrl+R",
         click: reload
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        label: 'Zoom zurücksetzen',
-        role: 'resetzoom'
+        label: "Zoom zurücksetzen",
+        role: "resetzoom"
       },
       {
-        label: 'Vergrößern',
-        role: 'zoomin'
+        label: "Vergrößern",
+        role: "zoomin"
       },
       {
-        label: 'Verkleinern',
-        role: 'zoomout'
+        label: "Verkleinern",
+        role: "zoomout"
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        label: 'Vollbild-Modus',
-        role: 'togglefullscreen'
+        label: "Vollbild-Modus",
+        role: "togglefullscreen"
       }
     ]
   },
   {
-    label: 'Entwickler',
+    label: "Entwickler",
     submenu: [
       {
-        label: 'Entwicklertools',
+        label: "Entwicklertools",
         accelerator:
-          process.platform === 'darwin' ? 'Alt+Command+I' : 'Ctrl+Shift+I',
+          process.platform === "darwin" ? "Alt+Command+I" : "Ctrl+Shift+I",
         click: toggleDevTools
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        label: 'Client öffnen',
+        label: "Client öffnen",
         click: openClient
       },
       {
-        label: 'Server URL anzeigen',
+        label: "Server URL anzeigen",
         click: showURL
       }
     ]
   },
   {
-    label: 'Fenster',
+    label: "Fenster",
     submenu: [
       {
-        label: 'Minimieren',
-        role: 'minimize'
+        label: "Minimieren",
+        role: "minimize"
       },
       {
-        label: 'Schließen',
-        role: 'close'
+        label: "Schließen",
+        role: "close"
       }
     ]
   },
   {
-    label: 'Hilfe',
+    label: "Hilfe",
     submenu: [
       {
         label: `Über ${app.name}`
