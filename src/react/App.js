@@ -24,6 +24,7 @@ const App = () => {
   const [games, setGames] = useState([]);
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState([]);
+  const [linkDisabled, setLinkDisabled] = useState(['true']);
 
   useEffect(() => {
     getAllTournaments();
@@ -62,15 +63,18 @@ const App = () => {
     }
 
     ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
+
     ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
       const { players } = args;
+      //const { matchID } = args;
+
       //log.info(players);
       setPlayers(players);
 
-      getAllTournaments();
+      getAllTournaments(); //vllt nicht machen damit es noch nicht in der liste auftaucht
+      //setCurrentId(matchID);
+      setLinkDisabled('false');
     });
-
-    setCurrentId(games[0].id);
   };
 
   const deleteGame = id => {
@@ -110,6 +114,7 @@ const App = () => {
         title="PingPongPonyhof"
         importXML={importXML}
         currentId={currentId}
+        linkDisabled={linkDisabled}
       />
       {games.map(game => (
         <Competition key={game.id} game={game} deleteGame={deleteGame} />

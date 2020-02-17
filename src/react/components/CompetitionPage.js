@@ -133,7 +133,7 @@ const CompetitionPage = () => {
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    const data = MatchService.getMatchesByCompetition(0);
+    const data = MatchService.getMatchesByCompetition(competitionID);
     console.log(data);
     setMatches(data);
   }, []);
