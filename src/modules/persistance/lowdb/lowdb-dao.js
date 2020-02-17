@@ -1,8 +1,26 @@
+/**
+ * @author Marco Goebel
+ */
+
 const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+const FileAsync = require("lowdb/adapters/FileAsync");
 
-const adapters = new FileSync("./test/data/tournament.json");
-const db = low(adapters);
+let db = null;
 
-const tournamet = db.get("tournament");
-console.log(tournamet);
+function open(dbFilePath) {
+  const adapters = new FileAsync(dbFilePath);
+  db = low(adapters).then(() =>
+    console.log("Open connection to file: ", dbFilePath)
+  );
+}
+
+function create() {
+  
+}
+
+
+function get(element) {}
+
+function save() {
+  ;
+}

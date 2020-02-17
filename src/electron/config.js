@@ -25,12 +25,8 @@ const ELECTRON_START_URL =
     slashes: true
   });
 
-// database config
-const USE_IN_MEMORY = true;
-
 module.exports = {
   SERVER_HOST,
   SERVER_PORT,
-  ELECTRON_START_URL,
-  USE_IN_MEMORY
+  ELECTRON_START_URL
 };

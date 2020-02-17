@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const tables = require("../config");
+const { tables } = require("../config");
 
 const fields = {
   id: "id",

@@ -3,6 +3,8 @@
  */
 
 const Promise = require("bluebird");
+const config = require("./config");
+const fileManager = require("../file-manager");
 
 // repositories
 const tournamentRepo = require("./repositories/tournament-repository");
@@ -18,8 +20,11 @@ const { createCompetitionFromJSON } = require("../../models/competition");
 // dao
 const dao = require("./dao/dao");
 
-async function createDatabase(dbFilePath) {
+async function createDatabase() {
   // open database connection
+  const dbFilePath = config.USE_IN_MEMORY
+    ? ":memory:"
+    : fileManager.getDatabasePath();
   dao.open(dbFilePath);
 
   try {
