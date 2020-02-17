@@ -16,7 +16,7 @@ const menu = require("./menu/main-menu");
 // server dependencies
 const server = require("../modules/server");
 const database = require("../modules/persistance/sqlite3/dbManager");
-const fileManager = require("../modules/persistance/file-manager");
+const lowdbManager = require("../modules/persistance/lowdb/lowdb-manager");
 
 // frontend dependencies
 const { channels } = require("../shared/channels");
@@ -67,7 +67,7 @@ function createMainWindow() {
 
 app.on("ready", () => {
   // setup tournament db
-  fileManager.createTournamentMetaData();
+  lowdbManager.createTournamentDatabase();
 
   // setup sqlite database
   database.createDatabase();
@@ -114,7 +114,7 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
     database.importJSONTournament(jsonObject);
 
     // save tournament as json file
-    fileManager.createNewTournamentFile(jsonObject);
+    lowdbManager.importJSONTournament(jsonObject);
 
     event.sender.send(channels.FILE_IMPORTED);
   });
@@ -122,10 +122,6 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
 
 ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
   database.getAllTournaments().then(tournaments => {
-    // load files of data dir
-    const appDataPath = fileManager.getApplicationDir("data");
-    fileManager.getDirectoryFiles(appDataPath);
-
     event.sender.send(channels.GET_ALL_TOURNAMENTS, {
       tournaments: tournaments
     });

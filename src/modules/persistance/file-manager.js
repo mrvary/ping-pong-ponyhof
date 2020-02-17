@@ -3,9 +3,6 @@ const { app } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
-const tournamentService = require("./lowdb/tournament-service");
-const { createTournamentFromJSON } = require("../models/tournament");
-
 function getApplicationDir(directoryName) {
   const appPath = app.getPath("userData");
   const appDataPath = path.join(appPath, directoryName);
@@ -22,11 +19,15 @@ function getDatabasePath() {
   return path.join(databaseDir, "database.db");
 }
 
-function createTournamentMetaData() {
+function getTournamentDatabasePath() {
   const dataDir = getApplicationDir("data");
-  const dbFilePath = path.join(dataDir, "tournaments.json");
+  return path.join(dataDir, "tournaments.json");
+}
 
-  tournamentService.createTournamentMetaFile(dbFilePath);
+function generateTournamentFileName(tournament) {
+  const appDataPath = getApplicationDir("data");
+  const filename = `${tournament.id}.json`;
+  return path.join(appDataPath, filename);
 }
 
 function getDirectoryFiles(directoryPath) {
@@ -50,26 +51,19 @@ function getDirectoryFiles(directoryPath) {
   });
 }
 
-function createNewTournamentFile(jsonObject) {
-  const tournament = createTournamentFromJSON(jsonObject.tournament);
-
-  // create full file path
-  const appDataPath = getApplicationDir("data");
-  const filename = `${tournament.id}.json`;
-  const jsonFilePath = path.join(appDataPath, filename);
-
-  // convert from json object to json plain text and store file
+/**
+ * Convert from json object to json plain text and store file
+ * */
+function createNewTournamentFile(filepath, jsonObject) {
   const data = JSON.stringify(jsonObject, null, 2);
-  fs.writeFileSync(jsonFilePath, data);
-
-  // add new entriy into the tournaments json
-  tournamentService.addTournamentFile(tournament);
+  fs.writeFileSync(filepath, data);
 }
 
 module.exports = {
-  createTournamentMetaData,
+  generateTournamentFileName,
   getApplicationDir,
   getDatabasePath,
+  getTournamentDatabasePath,
   getDirectoryFiles,
   createNewTournamentFile
 };
