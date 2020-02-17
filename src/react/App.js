@@ -23,7 +23,7 @@ const USE_BROWSER = false;
 const App = () => {
   const [games, setGames] = useState([]);
   const [players, setPlayers] = useState([]);
-  const [currentId, setCurrentId] = useState(games.length + 1);
+  const [currentId, setCurrentId] = useState([]);
 
   useEffect(() => {
     getAllTournaments();
@@ -54,7 +54,7 @@ const App = () => {
   };
 
   const importXML = () => {
-    console.log('XML-Event')
+    console.log('XML-Event');
     // fake backend data for browser
     if (USE_BROWSER) {
       setPlayers(dummyPlayers);
@@ -69,6 +69,8 @@ const App = () => {
 
       getAllTournaments();
     });
+
+    setCurrentId(games[0].id);
   };
 
   const deleteGame = id => {
@@ -84,6 +86,7 @@ const App = () => {
     ipcRenderer.send(channels.DELETE_TOURNAMENT, { id: id });
   };
 
+  /* outdated
   const startCompetition = () => {
     if (players.length > 0) {
       const date = new Date();
@@ -99,13 +102,14 @@ const App = () => {
       setCurrentId(currentId + 1);
     }
   };
+  */
 
   return (
     <div className="app__container">
       <Header
         title="PingPongPonyhof"
         importXML={importXML}
-        startCompetition={startCompetition}
+        currentId={currentId}
       />
       {games.map(game => (
         <Competition key={game.id} game={game} deleteGame={deleteGame} />
