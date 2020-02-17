@@ -2,11 +2,9 @@
  * @author Marco Goebel
  */
 
-// node dependencies
-const path = require("path");
-
-// electron dependencies
 const { app, BrowserWindow, ipcMain, Menu } = require("electron");
+const path = require("path");
+const fs = require("fs");
 
 require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
@@ -22,9 +20,6 @@ const database = require("../backend/persistance/dbManager");
 
 // frontend dependencies
 const { channels } = require("../shared/channels");
-
-// helper
-const dirHelper = require("./helper/directory-helper");
 
 // import
 const {
@@ -70,23 +65,31 @@ function createMainWindow() {
   Menu.setApplicationMenu(menu);
 }
 
-function setupDatabase() {
-  const dbFilePath = config.USE_IN_MEMORY
-    ? ":memory:"
-    : dirHelper.getDatabasePath();
+function getApplicationDir(directoryName) {
+  const appPath = app.getPath("userData");
+  const appDataPath = path.join(appPath, directoryName);
 
-  database.createDatabase(dbFilePath);
+  if (!fs.existsSync(appDataPath)) {
+    fs.mkdirSync(appDataPath);
+  }
+
+  return appDataPath;
 }
 
-function setupHTTPServer() {
-  const port = config.SERVER_PORT;
-  server.setupHTTPServer(port);
-  server.setupSocketIO();
+function getDatabasePath() {
+  const databaseDir = getApplicationDir("database");
+  return path.join(databaseDir, "database.db");
 }
 
 app.on("ready", () => {
-  setupDatabase();
-  setupHTTPServer();
+  // setup sqlite database
+  const dbFilePath = config.USE_IN_MEMORY ? ":memory:" : getDatabasePath();
+  database.createDatabase(dbFilePath);
+
+  // setup http server
+  const port = config.SERVER_PORT;
+  server.setupHTTPServer(port);
+  server.setupSocketIO();
 
   // open the main window
   createMainWindow();
@@ -118,8 +121,15 @@ ipcMain.on(channels.START_ROUND, () => {
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile().then(filePath => {
+    // read xml file from disk and convert it to json
     const jsonObject = readTournamentXMLFileFromDisk(filePath);
     database.importJSONTournament(jsonObject);
+
+    // save tournament as json file
+    const appDataPath = getApplicationDir("data");
+    const jsonFilePath = path.join(appDataPath, "tournament.json");
+    const data = JSON.stringify(jsonObject, null, 2);
+    fs.writeFileSync(jsonFilePath, data);
 
     event.sender.send(channels.FILE_IMPORTED);
   });
@@ -127,6 +137,10 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
 
 ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
   database.getAllTournaments().then(tournaments => {
+    // load files of data dir
+    const appDataPath = getApplicationDir("data");
+    getDirectoryFiles(appDataPath);
+
     event.sender.send(channels.GET_ALL_TOURNAMENTS, {
       tournaments: tournaments
     });
@@ -139,3 +153,22 @@ ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
     event.sender.send(channels.DELETE_TOURNAMENT);
   });
 });
+
+function getDirectoryFiles(directoryPath) {
+  console.log("Load tournaments from directory:", directoryPath);
+  fs.readdir(directoryPath, (err, files) => {
+    if (err) {
+      return console.log("Unable to scan directory: " + err);
+    }
+
+    if (files.length === 0) {
+      console.log("No tournaments found");
+    }
+
+    //listing all files using forEach
+    files.forEach(function(file) {
+      // Do whatever you want to do with the file
+      console.log(file);
+    });
+  });
+}
