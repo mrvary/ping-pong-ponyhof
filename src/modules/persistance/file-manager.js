@@ -30,45 +30,28 @@ function generateTournamentFileName(id) {
   return path.join(appDataPath, filename);
 }
 
-function getDirectoryFiles(directoryPath) {
-  console.log("Load tournaments from directory:", directoryPath);
-  fs.readdir(directoryPath, (err, files) => {
-    if (err) {
-      return console.log("Unable to scan directory: " + err);
-    }
-
-    if (files.length === 0) {
-      console.log("No tournaments found");
-    }
-
-    //listing all files using forEach
-    files.forEach(function(file) {
-      // Do whatever you want to do with the file
-      console.log(file);
-    });
-
-    return files;
-  });
-}
-
 /**
  * Convert from json object to json plain text and store file
  */
- function createNewTournamentFile(filepath, jsonObject) {
+ function createTournamentFile(id, jsonObject) {
+  const filepath = generateTournamentFileName(id);
+
   const data = JSON.stringify(jsonObject, null, 2);
   fs.writeFileSync(filepath, data);
   console.log("Create new tournament file:", filepath);
 }
 
-function deleteTournamentFile(filepath) {
-  fs.unlinkSync(filepath);
-  console.log("Delete file:", filepath);
+function deleteTournamentFile(id) {
+  const filePath = generateTournamentFileName(id);
+
+  fs.unlinkSync(filePath);
+  console.log("Delete file:", filePath);
 }
 
 module.exports = {
   generateTournamentFileName,
   getDatabasePath,
   getTournamentDatabasePath,
-  createNewTournamentFile,
+  createTournamentFile,
   deleteTournamentFile
 };
