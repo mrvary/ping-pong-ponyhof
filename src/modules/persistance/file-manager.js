@@ -57,6 +57,7 @@ function getDirectoryFiles(directoryPath) {
 function createNewTournamentFile(filepath, jsonObject) {
   const data = JSON.stringify(jsonObject, null, 2);
   fs.writeFileSync(filepath, data);
+  console.log("Create new tournament file:", filepath);
 }
 
 module.exports = {

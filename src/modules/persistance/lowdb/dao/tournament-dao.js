@@ -8,20 +8,20 @@ const FileSync = require("lowdb/adapters/FileSync");
 let db = null;
 
 function open(filePath) {
-  console.log(`lowdb: Open connection to file "${filePath}"`);
-
   const adapters = new FileSync(filePath);
   db = low(adapters);
+  console.log("Connected to database:", filePath);
 
   // init db with default structure
   db.defaults({ tournaments: [] }).write();
+  console.log("Create tournaments table");
 }
 
 function create(tournament) {
   db.get("tournaments")
     .push(tournament)
     .write();
-  console.log(`Created tournament: ${tournament.id}`);
+  console.log(`Created new tournament: ${tournament.id}`);
 }
 
 function remove(tournament) {
@@ -29,14 +29,16 @@ function remove(tournament) {
 }
 
 function getAll() {
-  return db.get("tournaments");
+  return db.get("tournaments").value();
 }
 
 function get(id) {
-  return db
-    .get("tournaments")
-    .find({ id: id })
-    .value();
+  return JSON.stringify(
+    db
+      .get("tournaments")
+      .find({ id: id })
+      .value()
+  );
 }
 
 module.exports = { open, create, remove, getAll, get };

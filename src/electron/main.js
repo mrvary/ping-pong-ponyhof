@@ -121,10 +121,9 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
 });
 
 ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
-  database.getAllTournaments().then(tournaments => {
-    event.sender.send(channels.GET_ALL_TOURNAMENTS, {
-      tournaments: tournaments
-    });
+  const tournaments = lowdbManager.getAllTournaments();
+  event.sender.send(channels.GET_ALL_TOURNAMENTS, {
+    tournaments: tournaments
   });
 });
 
