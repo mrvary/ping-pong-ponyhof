@@ -1,10 +1,10 @@
-.header__container{
+.header__container {
   display: flex;
   justify-content: space-around;
   flex-direction: row-reverse;
 }
 
-.header__picture{
+.header__picture {
   height: 70vh;
   background-image: url('../../assets/images/header_background.jpg');
 }
@@ -16,7 +16,7 @@
   justify-content: center;
 }
 
-.header__match-box{
+.header__match-box {
   width: 35vh;
   height: 50vh;
   border: none;
@@ -32,7 +32,7 @@
   align-items: center;
 }
 
-.header__match-box--title{
+.header__match-box--title {
   font-size: small;
   text-align: center;
 }
@@ -57,4 +57,13 @@
 
 .header__upload-xml-button:focus {
   outline: 0;
+}
+
+.disabled-link-true {
+  pointer-events: none;
+  color: red;
+}
+
+.disabled-link-false {
+  color: green;
 }

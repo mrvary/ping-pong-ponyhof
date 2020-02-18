@@ -89,6 +89,11 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
+  const set1 = match.sets[0][0] + ' : ' + match.sets[0][1];
+  const set2 = match.sets[1][0] + ' : ' + match.sets[1][1];
+  const set3 = 0; //= match.sets[2][0] + ' : ' + match.sets[2][1];
+  const set4 = 0; //= match.sets[3][0] + ' : ' + match.sets[3][1];
+  const set5 = 0; //= match.sets[4][0] + ' : ' + match.sets[4][1];
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
@@ -102,11 +107,11 @@ const TableRow = ({ match }) => {
           {' '}
           {match.player2}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment"> Satz 1 </div>
-        <div className="competitionPage__table__column-alignment"> Satz 2 </div>
-        <div className="competitionPage__table__column-alignment"> Satz 3 </div>
-        <div className="competitionPage__table__column-alignment"> Satz 4 </div>
-        <div className="competitionPage__table__column-alignment"> Satz 5 </div>
+        <div className="competitionPage__table__column-alignment"> {set1} </div>
+        <div className="competitionPage__table__column-alignment"> {set2} </div>
+        <div className="competitionPage__table__column-alignment"> {set3} </div>
+        <div className="competitionPage__table__column-alignment"> {set4} </div>
+        <div className="competitionPage__table__column-alignment"> {set5} </div>
         <div className="competitionPage__table__column-alignment">
           {' '}
           Ergebnis{' '}
@@ -129,11 +134,11 @@ const Table = ({ matches }) => {
 
 const CompetitionPage = () => {
   //dummy match
-  const { match } = useParams();
+  const { competitionID } = useParams();
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    const data = MatchService.getMatchesByCompetition(0);
+    const data = MatchService.getMatchesByCompetition(competitionID);
     console.log(data);
     setMatches(data);
   }, []);
@@ -156,7 +161,7 @@ const CompetitionPage = () => {
 
   return (
     <div>
-      <p>{match}</p>
+      <p>competitionID: {competitionID}</p>
       <Header />
       <IpAdressAndStatisticLink />
       <Table matches={matches} />
@@ -190,7 +195,6 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
       </div>
-
       <Footer title="Die Tabelle" />
     </div>
   );
