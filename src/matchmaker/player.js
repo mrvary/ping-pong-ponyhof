@@ -1,9 +1,21 @@
 // createPlayersFromJSON : JSON -> [players]
 function createPlayersFromJSON(json) {
   // players are deeply nested in the input json
-  const players = json.tournament.competition.players.player;
+  const initPlayers = json.tournament.competition.players.player;
+  let players = initPlayers.map(createPlayer);
 
-  return players.map(createPlayer);
+  //add freeticket player when odd number of players
+  if (players.length % 2 === 1) {
+    players.push({
+      id: "FreeTicket",
+      gamesWon: 0,
+      matchIds: [],
+      opponentIds: [],
+      qttr: 0
+    });
+  }
+
+  return players;
 }
 
 // createPlayer : playerFromJSON -> Player
@@ -19,48 +31,11 @@ function createPlayer(dataFromJSON) {
     clubname,
     gamesWon: 0,
     matchIds: [],
+    opponentIds: [],
     qttr: parseInt(ttr, 10),
     active: true,
-    hasFreeTicket: false
+    hadFreeTicketAlready: false
   };
-}
-
-// pairPlayers : { top: [players], bottom: [players]} -> [{ player1: player, player2: player}]
-function pairPlayers({ top, bottom }) {
-  let bottomPlayers = bottom;
-  let topPlayers = top;
-  let pairings = [];
-
-  while (bottomPlayers.length !== 0) {
-    const randomTopPlayer =
-      topPlayers[Math.floor(Math.random() * topPlayers.length)];
-    const randomBottomPlayer =
-      bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
-
-    //remove chosen players
-    topPlayers = topPlayers.filter(player => player !== randomTopPlayer);
-    bottomPlayers = bottomPlayers.filter(
-      player => player !== randomBottomPlayer
-    );
-
-    pairings.push({ player1: randomTopPlayer, player2: randomBottomPlayer });
-  }
-
-  // pair last player when odd number of players
-  if (topPlayers[0]) {
-    pairings.push({ player1: topPlayers[0] });
-  }
-
-  return pairings;
-}
-
-// separateTopFromBottomPlayers : [players] -> { top: [players], bottom: [players]}
-function separateTopFromBottomPlayers(players) {
-  const sortedPlayers = sortPlayersBy(players, "qttr");
-  const top = sortedPlayers.slice(0, Math.ceil(sortedPlayers.length / 2));
-  const bottom = sortedPlayers.slice(Math.ceil(sortedPlayers.length / 2));
-
-  return { top, bottom };
 }
 
 // sortPlayersBy : [players] -> [players]
@@ -70,26 +45,8 @@ function sortPlayersBy(players, selector) {
   });
 }
 
-// shuffle : [a] -> [a]
-function shuffle(array) {
-  const TIMES = array.length;
-  for (let i = 0; i < TIMES; i++) {
-    const first = Math.floor(Math.random() * array.length);
-    const second = Math.floor(Math.random() * array.length);
-    [array[first], array[second]] = [array[second], array[first]];
-  }
-  return array;
-}
-
-// updatePlayers : [matches] -> [players]
-function updatePlayers(matches) {
-  let players = [];
-  for (let match of matches) {
-    players.push(match.player1);
-    players.push(match.player2);
-  }
-  return players;
-}
+// ToDo
+function updatePlayers() {}
 
 module.exports = {
   // pubic
@@ -97,9 +54,6 @@ module.exports = {
 
   // private
   createPlayer,
-  pairPlayers,
   sortPlayersBy,
-  separateTopFromBottomPlayers,
-  shuffle,
   updatePlayers
 };

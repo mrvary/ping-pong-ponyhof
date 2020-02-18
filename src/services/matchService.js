@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const matches0 = [
   {
     id: 0,
@@ -30,7 +34,10 @@ const matches1 = [
     id: 3,
     player1: 'Samuel Geiger',
     player2: 'Marius Bach',
-    sets: [],
+    sets: [
+      [11, 13],
+      [4, 11]
+    ],
     freeTicket: false,
     compId: 1
   },
@@ -38,7 +45,10 @@ const matches1 = [
     id: 4,
     player1: 'Edith Finch',
     player2: 'Finch Assozial',
-    sets: [],
+    sets: [
+      [13, 15],
+      [14, 16]
+    ],
     freeTicket: false,
     compId: 1
   }

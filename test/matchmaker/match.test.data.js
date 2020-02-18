@@ -1,50 +1,23 @@
-const matches0 = [
-  {
-    id: 0,
-    player1: 'Thomas Krause',
-    player2: 'Max Müller',
-    sets: [],
-    freeTicket: false,
-    compId: 0
-  },
-  {
-    id: 1,
-    player1: 'Janis Huss',
-    player2: 'Gerald Knut',
-    sets: [],
-    freeTicket: false,
-    compId: 0
-  },
-  {
-    id: 2,
-    player1: 'Jürgen Bach',
-    player2: 'Klaus Kraus',
-    sets: [],
-    freeTicket: false,
-    compId: 0
-  }
+const testPairing = [
+  { player1: "PLAYER13", player2: "PLAYER4" },
+  { player1: "PLAYER6", player2: "PLAYER5" },
+  { player1: "PLAYER11", player2: "PLAYER8" },
+  { player1: "PLAYER9", player2: "PLAYER12" },
+  { player1: "PLAYER16", player2: "PLAYER7" },
+  { player1: "PLAYER14", player2: "PLAYER2" },
+  { player1: "PLAYER15", player2: "PLAYER3" },
+  { player1: "PLAYER10", player2: "PLAYER1" }
 ];
 
-const matches1 = [
-  {
-    id: 3,
-    player1: 'Samuel Geiger',
-    player2: 'Marius Bach',
-    sets: [],
-    freeTicket: false,
-    compId: 1
-  },
-  {
-    id: 4,
-    player1: 'Edith Finch',
-    player2: 'Finch Assozial',
-    sets: [],
-    freeTicket: false,
-    compId: 1
-  }
+const testPairingWithFreeTicket = [
+  { player1: "PLAYER15", player2: "PLAYER3" },
+  { player1: "PLAYER12", player2: "PLAYER1" },
+  { player1: "PLAYER9", player2: "PLAYER4" },
+  { player1: "PLAYER14", player2: "PLAYER5" },
+  { player1: "PLAYER13", player2: "FreeTicket" },
+  { player1: "PLAYER10", player2: "PLAYER2" },
+  { player1: "PLAYER6", player2: "PLAYER7" },
+  { player1: "PLAYER11", player2: "PLAYER8" }
 ];
 
-module.exports = {
-  matches0,
-  matches1
-}
+module.exports = { testPairing, testPairingWithFreeTicket };

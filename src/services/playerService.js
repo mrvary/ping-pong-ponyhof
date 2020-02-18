@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const players = [
   {
     id: 'PLAYER1',
