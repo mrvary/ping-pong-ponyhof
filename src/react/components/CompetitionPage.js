@@ -9,7 +9,7 @@ import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
 
-const Header = ({ kind, date, time }) => {
+const Header = ({ playmode, startDate }) => {
   return (
     <div className="competitionPage__header-alignment">
       {' '}
@@ -17,9 +17,12 @@ const Header = ({ kind, date, time }) => {
         {' '}
         zur Übersicht{' '}
       </Link>
-      <div className="competitionPage__competition-kind"> {kind}</div>
-      <div className="competitionPage__competition-date">{date}</div>
-      <div className="competitionPage__competition-time"> {time} Uhr </div>
+      <div className="competitionPage__header-alignment-right">
+        <div className="competitionPage__competition-playmode"> {playmode}</div>
+        <div className="competitionPage__competition-startDate">
+          {startDate}
+        </div>
+      </div>
     </div>
   );
 };
@@ -162,7 +165,7 @@ const CompetitionPage = () => {
   return (
     <div>
       <p>competitionID: {competitionID}</p>
-      <Header />
+      <Header playmode="Scheizer System" startDate="02.02.2020" />
       <IpAdressAndStatisticLink />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
@@ -188,7 +191,7 @@ const CompetitionPage = () => {
         <Popup
           show={showPopupEndRound}
           handleClose={handleCloseEndRound}
-          header="Sicher?"
+          header="Bist du dir sicher?"
           bodyText="Möchtest du wirklich die Runde beenden?"
           buttonFunk={() => handleEndRound()}
           buttonText="Beenden"

@@ -11,12 +11,24 @@ body {
   flex-direction: row;
 }
 
-.competitionPage__competition-kind {
-  margin: 2vh 2vh;
+.competitionPage__header-alignment-right {
+  height: 10vh;
+  font-size: 2vh;
+  color: var(--tert-out-color);
+  display: flex;
+  flex-direction: row;
 }
 
-.competitionPage__competition-date {
+.competitionPage__competition-playmode {
+  margin: 2vh 8vh;
+  color: var(--grey-out-color);
+  font-size: 1.5vh;
+}
+
+.competitionPage__competition-startDate {
   margin: 2vh 2vh;
+  color: var(--grey-out-color);
+  font-size: 1.5vh;
 }
 
 .competitionPage__competition-time {
@@ -35,11 +47,6 @@ body {
   justify-content: space-around;
 }
 
-.competitionPage__table__first-row-style:after {
-  content: '';
-  display: block;
-}
-
 .content {
   position: absolute;
   width: 100;
@@ -54,7 +61,7 @@ body {
 .competitionPage__table__first-row-alignment {
   position: relative;
   margin: 0.3vh 0vh;
-  width: 80%;
+  max-width: 80%;
   border-radius: 2vh;
   background: var(--sec-background-color);
   display: flex;
@@ -62,11 +69,6 @@ body {
   color: var(--prim-font-color);
   justify-content: space-around;
   align-items: center;
-}
-
-.competitionPage__table__first-row-alignment:after {
-  content: '';
-  display: block;
 }
 
 .competitionPage__table__column-alignment {
