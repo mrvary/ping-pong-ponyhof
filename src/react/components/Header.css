@@ -74,6 +74,10 @@
 .header__upload-xml-button-true:focus {
   outline: 0;
 }
+.header__upload-xml-button-true:hover {
+  color: var(--prim-font-color);
+  border: 0.3vh solid var(--grey-out-color);
+}
 
 .header__loslegen-link {
   width: 27vh;
@@ -92,5 +96,5 @@
   align-items: center;
 }
 .header__link:hover {
-  color: var(--grey-out-color);
+  color: var(--prim-font-color);
 }
