@@ -15,23 +15,24 @@ const menu = require("./menu/main-menu");
 
 // server dependencies
 const server = require("../modules/server");
-const database = require("../modules/persistance/sqlite3/dbManager");
+
+// import
+const { readTournamentXMLFileFromDisk } = require("../modules/import/xml-import");
+
+// persistence
 const file_manager = require("../modules/persistance/file-manager");
 const file_storage = require("../modules/persistance/lowdb/file-storage");
 const tournament_storage = require("../modules/persistance/lowdb/tournament-storage");
 
+// models
 const { createTournamentFromJSON } = require("../modules/models/tournament");
 const { createPlayersFromJSON } = require("../matchmaker/player");
 
+// matchmaker
 const matchmaker = require("../matchmaker/drawing");
 
 // frontend dependencies
 const { channels } = require("../shared/channels");
-
-// import
-const {
-  readTournamentXMLFileFromDisk
-} = require("../modules/import/xml-import");
 
 let mainWindow;
 
@@ -77,9 +78,6 @@ app.on("ready", () => {
   const filePath = file_manager.getTournamentDatabasePath();
   file_storage.open(filePath);
 
-  // setup sqlite database
-  database.createDatabase();
-
   // setup http server
   const port = config.SERVER_PORT;
   server.setupHTTPServer(port);
@@ -122,9 +120,6 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
     // read xml file from disk and convert it to json
     const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
 
-    // save tournament in sqlite database
-    database.importJSONTournament(jsonObject);
-
     // save tournament as json file
     const tournament = createTournamentFromJSON(jsonObject.tournament);
     file_manager.createTournamentFile(tournament.id, jsonObject);
@@ -157,10 +152,9 @@ ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
 
 ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
   const { id } = data;
+
   file_manager.deleteTournamentFile(id);
   file_storage.deleteTournament(id);
+
   event.sender.send(channels.DELETE_TOURNAMENT);
-  /*database.deleteTournament(id).then(() => {
-    event.sender.send(channels.DELETE_TOURNAMENT);
-  });*/
 });

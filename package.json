@@ -38,8 +38,7 @@
     "electron-pack": "electron-builder build --win -c.extraMetadata.main=build/electron/main.js --publish never",
     "postinstall": "electron-rebuild electron-builder install-app-deps",
     "test": "jest",
-    "electron-rebuild": "electron-rebuild",
-    "rebuild-sqlite3": "./node_modules/.bin/electron-rebuild  -f -w sqlite3"
+    "electron-rebuild": "electron-rebuild"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -85,7 +84,6 @@
     "react-scripts": "^3.2.0",
     "reactjs-popup": "^1.5.0",
     "socket.io": "^2.3.0",
-    "sqlite3": "^4.1.1",
     "xml2json": "^0.11.2"
   },
   "build": {
