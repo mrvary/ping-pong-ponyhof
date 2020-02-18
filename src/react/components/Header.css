@@ -35,6 +35,7 @@
 .header__match-box--title {
   font-size: small;
   text-align: center;
+  font-size: 2.5vh;
 }
 
 .header__upload-xml-button-false {
@@ -42,7 +43,7 @@
   height: 20vh;
   color: var(--grey-out-color);
   font-size: 2vh;
-  border: 0.3vh solid var(--prim-background-color);
+  border: 0.1vh solid var(--prim-font-color);
   background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
@@ -64,7 +65,7 @@
   height: 20vh;
   color: var(--grey-out-color);
   font-size: 2vh;
-  border: 0.3vh solid var(--prim-background-color);
+  border: 0.1vh solid var(--prim-font-color);
   background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
