@@ -17,11 +17,24 @@ function create(tournament) {
     return null;
   }
 
-  tournamentDao.create(tournament);
+  tournamentDao
+      .create(tournament)
+      .then(() => {
+        console.log(`Created new tournament: ${tournament.id}`)
+      })
+      .catch((err) => {
+        console.error(err);
+        throw err;
+      });
 }
 
 function remove(id) {
-  tournamentDao.remove(id);
+  tournamentDao.remove(id).then(() => {
+    console.log("Delete tournament with id: ", id)
+  }).catch((err) => {
+    console.error(err);
+    throw err;
+  });
 }
 
 function getAll() {

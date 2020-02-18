@@ -3,30 +3,31 @@
  */
 
 const low = require("lowdb");
-const FileSync = require("lowdb/adapters/FileSync");
+const FileAsync = require("lowdb/adapters/FileAsync");
 
 let db = null;
 
 function open(filePath) {
-  const adapters = new FileSync(filePath);
-  db = low(adapters);
   console.log("Connected to database:", filePath);
+  const adapters = new FileAsync(filePath);
+  low(adapters).then(file => {
+    db = file;
 
-  // init db with default structure
-  db.defaults({ tournaments: [] }).write();
-  console.log("Create tournaments table");
+    // Set default values (required if your JSON file is empty)
+    db.defaults({tournaments: []}).write().then(() => {
+      console.log("Create tournaments table")
+    });
+  });
 }
 
 function create(tournament) {
-  db.get("tournaments")
-    .push(tournament)
-    .write();
-  console.log(`Created new tournament: ${tournament.id}`);
+  return db.get("tournaments")
+      .push(tournament)
+      .write();
 }
 
 function remove(id) {
-  db.get("tournaments").remove({id: id}).write();
-  console.log("Delete tournament with id: ", id);
+  return db.get("tournaments").remove({id: id}).write();
 }
 
 function getAll() {

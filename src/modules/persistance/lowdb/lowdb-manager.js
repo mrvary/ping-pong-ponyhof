@@ -28,12 +28,7 @@ function importJSONTournament(jsonObject) {
 
 function getAllTournaments() {
   const tournaments = tournamentRepository.getAll();
-  console.log("Retrieved tournaments from database");
-
-  tournaments.forEach(tournament => {
-    console.log(tournament);
-  });
-
+  console.log("Retrieved tournaments from database", tournaments.length);
   return tournaments;
 }
 
