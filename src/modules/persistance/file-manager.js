@@ -24,9 +24,9 @@ function getTournamentDatabasePath() {
   return path.join(dataDir, "tournaments.json");
 }
 
-function generateTournamentFileName(tournament) {
+function generateTournamentFileName(id) {
   const appDataPath = getApplicationDir("data");
-  const filename = `${tournament.id}.json`;
+  const filename = `${id}.json`;
   return path.join(appDataPath, filename);
 }
 
@@ -53,18 +53,22 @@ function getDirectoryFiles(directoryPath) {
 
 /**
  * Convert from json object to json plain text and store file
- * */
-function createNewTournamentFile(filepath, jsonObject) {
+ */
+ function createNewTournamentFile(filepath, jsonObject) {
   const data = JSON.stringify(jsonObject, null, 2);
   fs.writeFileSync(filepath, data);
   console.log("Create new tournament file:", filepath);
 }
 
+function deleteTournamentFile(filepath) {
+  fs.unlinkSync(filepath);
+  console.log("Delete file:", filepath);
+}
+
 module.exports = {
   generateTournamentFileName,
-  getApplicationDir,
   getDatabasePath,
   getTournamentDatabasePath,
-  getDirectoryFiles,
-  createNewTournamentFile
+  createNewTournamentFile,
+  deleteTournamentFile
 };

@@ -24,8 +24,9 @@ function create(tournament) {
   console.log(`Created new tournament: ${tournament.id}`);
 }
 
-function remove(tournament) {
-  db.remove(tournament).write();
+function remove(id) {
+  db.get("tournaments").remove({id: id}).write();
+  console.log("Delete tournament with id: ", id);
 }
 
 function getAll() {
@@ -33,12 +34,10 @@ function getAll() {
 }
 
 function get(id) {
-  return JSON.stringify(
-    db
+  return db
       .get("tournaments")
-      .find({ id: id })
-      .value()
-  );
+      .find({id: id})
+      .value();
 }
 
 module.exports = { open, create, remove, getAll, get };

@@ -19,10 +19,10 @@ function importJSONTournament(jsonObject) {
   const tournament = createTournamentFromJSON(jsonObject.tournament);
 
   // create new file for tournament
-  const jsonFilePath = fileManager.generateTournamentFileName(tournament);
+  const jsonFilePath = fileManager.generateTournamentFileName(tournament.id);
   fileManager.createNewTournamentFile(jsonFilePath, jsonObject);
 
-  // add new entriy into the tournaments json
+  // add new entry into the tournaments json
   tournamentRepository.create(tournament);
 }
 
@@ -37,8 +37,18 @@ function getAllTournaments() {
   return tournaments;
 }
 
+function deleteTournament(id) {
+  // delete file from disk
+  const filePath = fileManager.generateTournamentFileName(id);
+  fileManager.deleteTournamentFile(filePath);
+
+  // delete tournament from meta data file
+  tournamentRepository.remove(id);
+}
+
 module.exports = {
   createTournamentDatabase,
   importJSONTournament,
-  getAllTournaments
+  getAllTournaments,
+  deleteTournament
 };

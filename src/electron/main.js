@@ -107,6 +107,10 @@ ipcMain.on(channels.START_ROUND, () => {
 
 ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile().then(filePath => {
+    if (!filePath) {
+      return;
+    }
+
     // read xml file from disk and convert it to json
     const jsonObject = readTournamentXMLFileFromDisk(filePath);
 
@@ -129,7 +133,9 @@ ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
 
 ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
   const { id } = data;
-  database.deleteTournament(id).then(() => {
+  lowdbManager.deleteTournament(id);
+  event.sender.send(channels.DELETE_TOURNAMENT);
+  /*database.deleteTournament(id).then(() => {
     event.sender.send(channels.DELETE_TOURNAMENT);
-  });
+  });*/
 });

@@ -21,15 +21,7 @@ function create(tournament) {
 }
 
 function remove(id) {
-  const tournament = tournamentDao.get(id);
-
-  // if tournament not found, return error
-  if (!tournament) {
-    console.log("Tournament can not found");
-    return null;
-  }
-
-  tournamentDao.remove(tournament);
+  tournamentDao.remove(id);
 }
 
 function getAll() {
