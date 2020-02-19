@@ -24,6 +24,19 @@ const matches1 = [
     compId: 0
   },
   {
+    id: 1,
+    player1: 'Janis Huss',
+    player2: 'Gerald Knut',
+    sets: [
+      { player1: 7, player2: 11 },
+      { player1: 13, player2: 11 },
+      { player1: 19, player2: 21 }
+    ],
+    freeTicket: false,
+    compId: 0
+  },
+
+  {
     id: 2,
     player1: 'Jürgen Bach',
     player2: 'Klaus Kraus',
@@ -34,6 +47,66 @@ const matches1 = [
 ];
 
 const matches0 = [
+  {
+    id: 3,
+    player1: 'Samuel Geiger',
+    player2: 'Marius Bach',
+    sets: [
+      { player1: 11, player2: 13 },
+      { player1: 11, player2: 8 },
+      { player1: 11, player2: 2 }
+    ],
+    freeTicket: false,
+    compId: 1
+  },
+  {
+    id: 3,
+    player1: 'Samuel Geiger',
+    player2: 'Marius Bach',
+    sets: [
+      { player1: 11, player2: 13 },
+      { player1: 11, player2: 8 },
+      { player1: 11, player2: 2 }
+    ],
+    freeTicket: false,
+    compId: 1
+  },
+  {
+    id: 3,
+    player1: 'Samuel Geiger',
+    player2: 'Marius Bach',
+    sets: [
+      { player1: 11, player2: 13 },
+      { player1: 11, player2: 8 },
+      { player1: 11, player2: 2 }
+    ],
+    freeTicket: false,
+    compId: 1
+  },
+  {
+    id: 3,
+    player1: 'Samuel Geiger',
+    player2: 'Marius Bach',
+    sets: [
+      { player1: 11, player2: 13 },
+      { player1: 11, player2: 8 },
+      { player1: 11, player2: 2 }
+    ],
+    freeTicket: false,
+    compId: 1
+  },
+  {
+    id: 3,
+    player1: 'Samuel Geiger',
+    player2: 'Marius Bach',
+    sets: [
+      { player1: 11, player2: 13 },
+      { player1: 11, player2: 8 },
+      { player1: 11, player2: 2 }
+    ],
+    freeTicket: false,
+    compId: 1
+  },
   {
     id: 3,
     player1: 'Samuel Geiger',
