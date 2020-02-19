@@ -4,6 +4,8 @@ import './Colors.css';
 
 import { channels } from "../shared/channels";
 
+import CompetitionService from '../services/competitionService';
+
 // dummy data
 import dummyPlayers from "../assets/mock-data/players";
 import dummyGames from "../assets/mock-data/games";
@@ -27,31 +29,18 @@ const App = () => {
   const [linkDisabled, setLinkDisabled] = useState(['true']);
 
   useEffect(() => {
-    getAllTournaments();
+    getAllCompetitions();
   }, []);
 
-  const getAllTournaments = () => {
+  const getAllCompetitions = () => {
     if (USE_BROWSER) {
       setGames(dummyGames);
       return;
     }
 
-    ipcRenderer.on(channels.GET_ALL_TOURNAMENTS, (event, args) => {
-      const { tournaments } = args;
-      //log.info(tournaments);
-
-      const temp = tournaments.map(tournament => {
-        return {
-          id: tournament.id,
-          date: tournament.start_date,
-          system: "Schweizer System"
-        };
-      });
-
-      setGames(temp);
-    });
-
-    ipcRenderer.send(channels.GET_ALL_TOURNAMENTS);
+   CompetitionService.getAllCompetitions((competitions) => {
+     setGames(competitions)
+   });
   };
 
   const importXML = () => {
@@ -69,7 +58,7 @@ const App = () => {
       //log.info(players);
       setPlayers(players);
 
-      getAllTournaments(); //vllt nicht machen damit es noch nicht in der liste auftaucht
+      getAllCompetitions(); //vllt nicht machen damit es noch nicht in der liste auftaucht
       //setCurrentId(matchID);
       setLinkDisabled('false');
     });
@@ -82,11 +71,9 @@ const App = () => {
       return;
     }
 
-    ipcRenderer.on(channels.DELETE_TOURNAMENT, (event, args) => {
+    CompetitionService.deleteCompetition(id, () => {
       setGames(games.filter(game => game.id !== id));
     });
-
-    ipcRenderer.send(channels.DELETE_TOURNAMENT, { id: id });
   };
 
   /* outdated

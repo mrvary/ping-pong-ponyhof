@@ -4,8 +4,8 @@
 
 // Constants
 const PLAYMODES = { SCHWEIZER_SYSTEM: "Schweizer System" };
-const TYPES = { EINZEL: "Einzel" };
-const AGE_GROUPS = { DAMEN_HERREN: "Damen/Herren" };
+const TYPES = { EINZEL: "Einzel", DOPPEL: "Doppel" };
+const AGE_GROUPS = { DAMEN_HERREN: "Damen/Herren", HERREN: "Herren", DAMEN: "Damen" };
 
 // createCompetitionFromJSON: competitionFromJSON -> Competition
 function createCompetitionFromJSON(dataFromJSON) {
