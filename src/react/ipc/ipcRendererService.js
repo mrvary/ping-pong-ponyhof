@@ -19,11 +19,6 @@ function importXMLFile(xmlFilePath, callback) {
         callback(competitionId, message);
     });
 
-    ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_EXCEPTION, (event, args) => {
-        const { competitionId, message } = args;
-        callback(competitionId, message);
-    });
-
     ipcRenderer.send(ipcChannels.IMPORT_XML_FILE, {xmlFilePath: xmlFilePath});
 }
 

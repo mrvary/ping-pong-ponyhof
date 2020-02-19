@@ -159,7 +159,7 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: competition.id, message: "success" });
   } catch (err) {
     // notify react app that a error has happend
-    event.sender.send(ipcChannels.IMPORT_XML_FILE_EXCEPTION, {competitionId: null, message: err.message})
+    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: '', message: err.message })
   }
 });
 
