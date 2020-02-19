@@ -206,8 +206,14 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   event.sender.send(ipcChannels.DELETE_COMPETITION);
 });
 
-ipcMain.on(ipcChannels.GET_MATCHES_BY_ROUND, (event, args) => {
-  const { round } = args;
+ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
+  const { id } = args;
 
-  event.sender.send(ipcChannels.GET_MATCHES_BY_ROUND, { matches: currentMatches })
+  if (currentMatches.length === 0) {
+    const filePath = file_manager.getCompetitionFilePath(id);
+    competition_storage.open(filePath);
+    currentMatches = competition_storage.getMatchesBy();
+  }
+
+  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matches: currentMatches })
 });

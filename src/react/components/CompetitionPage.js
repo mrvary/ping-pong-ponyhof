@@ -11,7 +11,7 @@ import Button from './Button';
 // ipc service
 import IPCService from '../ipc/ipcRendererService';
 
-const USE_BROWSER = true;
+const USE_BROWSER = false;
 
 const Header = ({ kind, date, time }) => {
   return (
@@ -178,7 +178,7 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByRound(1, (matchData) => {
+    IPCService.getMatchesByCompetition(competitionID, (matchData) => {
       console.log(matchData);
       setMatches(matchData);
 

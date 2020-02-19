@@ -43,13 +43,13 @@ function deleteCompetition(id, callback) {
     ipcRenderer.send(ipcChannels.DELETE_COMPETITION, {id: id});
 }
 
-function getMatchesByRound(round, callback) {
-    ipcRenderer.once(ipcChannels.GET_MATCHES_BY_ROUND, (event, args) => {
-        const { matches } = args;
+function getMatchesByCompetition(id, callback) {
+    ipcRenderer.once(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
+        const {matches} = args;
         callback(matches);
     });
 
-    ipcRenderer.send(ipcChannels.GET_MATCHES_BY_ROUND, {round: round});
+    ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {id: id});
 }
 
 function getPlayersByPlayerId(id) {
@@ -106,6 +106,6 @@ module.exports = {
     getAllCompetitions,
     deleteCompetition,
 
-    getMatchesByRound,
+    getMatchesByCompetition,
     getPlayersByPlayerId
 };

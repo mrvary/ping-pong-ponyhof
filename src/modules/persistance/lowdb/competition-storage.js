@@ -28,7 +28,17 @@ function createMatches(matches) {
     }
 }
 
+function getMatchesBy() {
+    if (!storage) {
+        return;
+    }
+
+    const elementPath = "tournament.competition.matches";
+    return storage.get(elementPath).value();
+}
+
 module.exports = {
   open,
-  createMatches
+  createMatches,
+    getMatchesBy
 };
