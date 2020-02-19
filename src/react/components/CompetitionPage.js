@@ -8,36 +8,19 @@ import '../Colors.css';
 import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
+import CompetitionPage__Header from './CompetitionPage__Header';
 
-const Header = ({ playmode, startDate }) => {
-  return (
-    <div className="competitionPage__header-alignment">
-      {' '}
-      <Link className="competitionPage__link-back-to-overview" to="/">
-        {' '}
-        zur Übersicht{' '}
-      </Link>
-      <div className="competitionPage__header-alignment-right">
-        <div className="competitionPage__competition-playmode"> {playmode}</div>
-        <div className="competitionPage__competition-startDate">
-          {startDate}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const IpAdressAndStatisticLink = () => {
+const IpAdressAndStatisticLink = competitionID => {
+  const statisticID = '/statisticTable/' + competitionID;
   return (
     <div className="competitionPage__link-alignment">
       <div className="competitionPage__link-ip-adress-statistic">
         {' '}
         IP-Adresse{' '}
       </div>
-      <div className="competitionPage__link-ip-adress-statistic">
-        {' '}
-        Statistik{' '}
-      </div>
+      <Link className="competitionPage__link-back-to-overview" to={statisticID}>
+        Statistik
+      </Link>
     </div>
   );
 };
@@ -165,8 +148,13 @@ const CompetitionPage = () => {
   return (
     <div>
       <p>competitionID: {competitionID}</p>
-      <Header playmode="Scheizer System" startDate="02.02.2020" />
-      <IpAdressAndStatisticLink />
+      <CompetitionPage__Header
+        playmode="Scheizer System"
+        startDate="02.02.2020"
+        linkTitle="zur Übersicht"
+        linkDestination="/"
+      />
+      <IpAdressAndStatisticLink competitionID={competitionID} />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
