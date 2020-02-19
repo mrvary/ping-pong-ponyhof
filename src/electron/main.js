@@ -124,6 +124,14 @@ ipcMain.on(ipcChannels.START_ROUND, () => {
 
 ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile().then((xmlFilePath) => {
+    event.sender.send(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, { xmlFilePath: xmlFilePath })
+  });
+});
+
+ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
+  try {
+    const { xmlFilePath } = args;
+
     if (!xmlFilePath) {
       return;
     }
@@ -147,9 +155,12 @@ ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
     competition_storage.open(filePath);
     competition_storage.createMatches(matches);
 
-    // notify react app that import is ready
-    event.sender.send(ipcChannels.FILE_IMPORTED);
-  });
+    // notify react app that import is ready and was successful
+    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: competition.id, message: "success" });
+  } catch (err) {
+    // notify react app that a error has happend
+    event.sender.send(ipcChannels.IMPORT_XML_FILE_EXCEPTION, {competitionId: null, message: err.message})
+  }
 });
 
 ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
