@@ -148,19 +148,22 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     }
 
     // save tournament as json file
-    file_manager.createTournamentJSONFile(filepath, jsonObject);
-    file_storage.createCompetition(competition);
+    //file_manager.createTournamentJSONFile(filepath, jsonObject);
+    //file_storage.createCompetition(competition);
 
     // use matchmaker to draw first round
     console.log("Matchmaker draw matches");
     const players = createPlayersFromJSON(jsonObject);
     const matches = matchmaker.drawRound(players);
-    console.log((matches));
 
     // save matches into tournament file
     const filePath = file_manager.getCompetitionFilePath(competition.id);
-    competition_storage.open(filePath);
-    competition_storage.createMatches(matches);
+    //competition_storage.open(filePath);
+    //competition_storage.createMatches(matches);
+
+    // set matches to tables
+    server.setMatchesToTables(matches);
+    console.log('Ready to play');
 
     // notify react app that import is ready and was successful
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: competition.id, message: "success" });

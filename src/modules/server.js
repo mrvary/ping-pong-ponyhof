@@ -18,10 +18,10 @@ const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let server = null;
 let serverSocket = null;
-
 let connectedClients = new Map();
-let matchTableMap = null;
 
+let matchCount = 0;
+let matchTableMap = null;
 let matchStarted = false;
 
 function setupHTTPServer(port) {
@@ -117,9 +117,10 @@ function clientLogout(clientSocket) {
 function setMatchesToTables(matches) {
   matchTableMap = new Map();
 
-  let counter = 1;
+  console.log(`Map matches to tables`);
   matches.forEach(match => {
-    matchTableMap.set(1, matches[0]);
+    matchTableMap.set(++matchCount, match);
+    console.log(`Table ${matchCount} - ${match.player1} VS. ${match.player2}`)
   });
 }
 
@@ -167,6 +168,6 @@ module.exports = {
   setupHTTPServer,
   shutdownServer,
   setupSocketIO,
-  diceMatches: setMatchesToTables,
+  setMatchesToTables,
   sendStartRoundBroadcast
 };
