@@ -5,8 +5,8 @@
 const file_storage = require("../../src/modules/persistance/lowdb/file-storage");
 const config = require("../config");
 const {
-    createTournamentFromJSON
-} = require("../../src/modules/models/tournament");
+    createCompetitionFromJSON
+} = require("../../src/modules/models/competition");
 const assert = require('assert')
 
 describe("file storage tests", () => {
@@ -19,13 +19,13 @@ describe("file storage tests", () => {
         file_storage.open();
 
         const data = fs.readFileSync(config.JSON_FILE);
-        const tournament = createTournamentFromJSON(JSON.parse(data));
+        const tournament = createCompetitionFromJSON(JSON.parse(data));
 
         // ACT: create tournament entry
-        file_storage.createTournament(tournament);
+        file_storage.createCompetition(tournament);
 
         // ASSERT: check the result
-        const tournaments = file_storage.getTournament(tournament.id);
+        const tournaments = file_storage.getCompetition(tournament.id);
         assert.equal(tournaments.length, 1);
     }) ;
 });

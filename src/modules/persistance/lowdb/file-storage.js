@@ -16,42 +16,42 @@ function open(filePath) {
         : new FileSync(filePath));
 
     // Set default values (required if your JSON file is empty)
-    storage.defaults({ tournaments: [] }).write();
+    storage.defaults({ competitions: [] }).write();
     console.log("Open storage:", filePath)
 }
 
-function createTournament(tournament) {
-    const data = getTournament(tournament.id);
+function createCompetition(competition) {
+    const data = getCompetition(competition.id);
 
-    // if tournament is found, return error
+    // if competition is found, return error
     if (data) {
-        console.log("Tournament does already exist");
+        console.log("Competition does already exist");
         return null;
     }
 
-    storage.get("tournaments")
-        .push(tournament)
+    storage.get("competitions")
+        .push(competition)
         .write();
 
-    console.log(`Created new tournament: ${tournament.id}`);
+    console.log(`Created new competition: ${competition.id}`);
 }
 
-function deleteTournament(id) {
-    storage.get("tournaments")
+function deleteCompetition(id) {
+    storage.get("competitions")
         .remove({id: id})
         .write();
 
     console.log("Delete tournament with id: ", id)
 }
 
-function getAllTournaments() {
-    return storage.get("tournaments").value();
+function getAllCompetitions() {
+    return storage.get("competitions").value();
 }
 
-function getTournament(id) {
-    return storage.get("tournaments")
+function getCompetition(id) {
+    return storage.get("competitions")
         .find({id: id})
         .value();
 }
 
-module.exports = { open, createTournament, deleteTournament, getAllTournaments, getTournament };
+module.exports = { open, createCompetition, deleteCompetition, getAllCompetitions, getCompetition };
