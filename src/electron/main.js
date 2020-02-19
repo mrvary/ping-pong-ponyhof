@@ -133,15 +133,22 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     const { xmlFilePath } = args;
 
     if (!xmlFilePath) {
-      return;
+      throw new Error('xml is not set');
     }
 
     // read xml file from disk and convert it to json
     const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
+    const competition = createCompetitionFromJSON(jsonObject.tournament);
+
+    // check if file already exists
+    const filepath = file_manager.getCompetitionFilePath(competition.id);
+    if (file_manager.checkIfFilesExists(filepath)) {
+      console.log("Competition does already exist");
+      throw new Error("Das Spiel existiert bereits!");
+    }
 
     // save tournament as json file
-    const competition = createCompetitionFromJSON(jsonObject.tournament);
-    file_manager.createTournamentJSONFile(competition.id, jsonObject);
+    file_manager.createTournamentJSONFile(filepath, jsonObject);
     file_storage.createCompetition(competition);
 
     // use matchmaker to draw first round

@@ -138,12 +138,22 @@ const CompetitionPage = () => {
   //dummy match
   const { competitionID } = useParams();
   const [matches, setMatches] = useState([]);
+  const [players, setPlayer] = useState([]);
 
   useEffect(() => {
-    const data = IPCService.getMatchesByCompetition(competitionID);
-    console.log(data);
-    setMatches(data);
+    updateCompetition()
   }, []);
+
+  const updateCompetition = () => {
+    console.log(competitionID);
+
+    const matchData = IPCService.getMatchesByCompetition(competitionID);
+    console.log(matches);
+    setMatches(matchData);
+
+    const playerData = IPCService.getPlayersByPlayerId()
+    setPlayer(playerData);
+  };
 
   const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
   const handleCloseEndTournament = () => setShowPopupEndTournament(false);

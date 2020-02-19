@@ -53,6 +53,7 @@ const App = () => {
 
       IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
           if (!competitionId) {
+              console.log(message);
               setLinkDisabled(true);
               return;
           }
