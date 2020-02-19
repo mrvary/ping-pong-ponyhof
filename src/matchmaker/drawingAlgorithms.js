@@ -104,7 +104,6 @@ function advancedDrawingAlgorithm(players) {
   let groups = groupByGamesWon(players);
   console.log(groupsToString(groups));
 
-
   return createPairing(dummyPlayers);
 }
 
@@ -175,14 +174,24 @@ function shuffle(array) {
 
 // groupsToString : [groups] -> string
 function groupsToString(groups) {
+  //string =  id of player --> (3)Dietzel(12|10|14|11) <-- opponentIds
   let string = "";
-
   groups.forEach(group => {
     if (group.length !== 0) {
       string += group[0].gamesWon + " Siege Spieler -> ";
 
       group.forEach(player => {
-        string += player.lastname + " ";
+        let pIdShortcut =
+          player.id.substring(6, player.id.length) == "cket"
+            ? "X"
+            : player.id.substring(6, player.id.length);
+        string += "(" + pIdShortcut + ")" + player.lastname + "(";
+        player.opponentIds.forEach(oId => {
+          if (oId.substring(6, oId.length) == "cket") string += "X|";
+          else string += oId.substring(6, oId.length) + "|";
+        });
+        string = string.substring(0, string.length - 1);
+        string += ") ";
       });
       string += "\n";
     }
