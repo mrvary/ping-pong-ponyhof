@@ -8,6 +8,7 @@ import './index.css';
 
 import NotFound from './react/NotFound';
 import CompetitionPage from './react/components/CompetitionPage';
+import StatisticTable from './react/components/StatisticTable';
 
 const routing = (
   <Router>
@@ -15,6 +16,10 @@ const routing = (
       <Switch>
         <Route exact path="/" component={App} />
         <Route path="/competition/:competitionID" component={CompetitionPage} />
+        <Route
+          path="/statisticTable/:competitionID"
+          component={StatisticTable}
+        />
         <Route component={NotFound} />
       </Switch>
     </div>
