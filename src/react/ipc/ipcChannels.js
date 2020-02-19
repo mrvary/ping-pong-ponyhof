@@ -11,6 +11,9 @@ module.exports = {
   DELETE_COMPETITION: "delete-tournament",
   GET_MATCHES_BY_COMPETITON_ID: "get-matches-by-competition-id",
 
+  // Matches
+  GET_MATCHES_BY_ROUND: "get-matches-for-round",
+
   // Trigger
   START_ROUND: "start-round"
 };

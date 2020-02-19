@@ -36,6 +36,11 @@ const ipcChannels = require("../react/ipc/ipcChannels");
 
 let mainWindow;
 
+let currentMatches = [];
+let players = [];
+
+const SKIP_FILE_CREATION = true;
+
 function createMainWindow() {
   // create the browser window ...
   mainWindow = new BrowserWindow({
@@ -148,21 +153,31 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     }
 
     // save tournament as json file
-    //file_manager.createTournamentJSONFile(filepath, jsonObject);
-    //file_storage.createCompetition(competition);
+    if(!SKIP_FILE_CREATION) {
+      file_manager.createTournamentJSONFile(filepath, jsonObject);
+      file_storage.createCompetition(competition);
+    }
 
     // use matchmaker to draw first round
     console.log("Matchmaker draw matches");
-    const players = createPlayersFromJSON(jsonObject);
-    const matches = matchmaker.drawRound(players);
+    players = createPlayersFromJSON(jsonObject);
+    currentMatches = matchmaker.drawRound(players);
+
+    // set first set to zero
+    currentMatches.forEach(match => {
+      match.sets.push({player1: 0, player2: 0});
+      match.sets.push({player1: 0, player2: 0});
+    });
 
     // save matches into tournament file
-    const filePath = file_manager.getCompetitionFilePath(competition.id);
-    //competition_storage.open(filePath);
-    //competition_storage.createMatches(matches);
+    if(!SKIP_FILE_CREATION) {
+      const filePath = file_manager.getCompetitionFilePath(competition.id);
+      competition_storage.open(filePath);
+      competition_storage.createMatches(currentMatches);
+    }
 
     // set matches to tables
-    server.setMatchesToTables(matches);
+    server.setMatchesToTables(currentMatches);
     console.log('Ready to play');
 
     // notify react app that import is ready and was successful
@@ -189,4 +204,10 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   file_storage.deleteCompetition(id);
 
   event.sender.send(ipcChannels.DELETE_COMPETITION);
+});
+
+ipcMain.on(ipcChannels.GET_MATCHES_BY_ROUND, (event, args) => {
+  const { round } = args;
+
+  event.sender.send(ipcChannels.GET_MATCHES_BY_ROUND, { matches: currentMatches })
 });
