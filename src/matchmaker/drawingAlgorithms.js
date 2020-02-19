@@ -60,8 +60,11 @@ function groupByGamesWon(players) {
 
 // pairPlayersLaterRound : [players] -> [pairings]
 function pairPlayersLaterRound(players) {
-  pairing = basicDrawingAlgorithm(players);
-  return pairing;
+  basicPairing = basicDrawingAlgorithm(players);
+
+  advancedPairing = advancedDrawingAlgorithm(players);
+
+  return basicPairing;
 }
 
 // basicDrawingAlgorithm : [players] -> [pairings]
@@ -90,10 +93,19 @@ function basicDrawingAlgorithm(players) {
   } while (pairingSucceeded == false && doLoopCounter < maxTries);
 
   if (pairingSucceeded) {
-    return createPairingFromArray(dummyPlayers);
+    return createPairing(dummyPlayers);
   } else {
     return emergencyDrawingAlgorithm(dummyPlayers);
   }
+}
+
+function advancedDrawingAlgorithm(players) {
+  let dummyPlayers = [...players];
+  let groups = groupByGamesWon(players);
+  console.log(groupsToString(groups));
+
+
+  return createPairing(dummyPlayers);
 }
 
 // emergencyDrawingAlgorithm : [players] -> [pairings]
@@ -113,12 +125,12 @@ function emergencyDrawingAlgorithm(players) {
     }
   } while (pairingSucceeded == false);
 
-  return createPairingFromArray(dummyPlayers);
+  return createPairing(dummyPlayers);
 }
 
 // Help functions
-// createPairingFromArray : [players] -> [pairings]
-function createPairingFromArray(players) {
+// createPairing : [players] -> [pairings]
+function createPairing(players) {
   let pairings = [];
   for (let i = 0; i < players.length; i = i + 2) {
     pairings.push({
