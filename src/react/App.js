@@ -124,16 +124,6 @@ const App = () => {
         <Competition key={game.id} game={game} deleteGame={deleteGame} />
       ))}
       <Footer title="PingPongPonyhof" />
-      <Button
-        mode="primary"
-        text="start Round"
-        onClick={() => {
-          if (USE_BROWSER) {
-            return;
-          }
-          ipcRenderer.send(channels.START_ROUND);
-        }}
-      ></Button>
     </div>
   );
 };
