@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Colors.css';
 
-import { channels } from "../shared/channels";
-
-import CompetitionService from '../services/competitionService';
+import ipcChannels from "./ipc/ipcChannels";
+// ipc service
+import IPCService from './ipc/ipcRendererService';
 
 // dummy data
 import dummyPlayers from "../assets/mock-data/players";
@@ -38,31 +38,20 @@ const App = () => {
       return;
     }
 
-   CompetitionService.getAllCompetitions((competitions) => {
+   IPCService.getAllCompetitions((competitions) => {
      setGames(competitions)
    });
   };
 
   const importXML = () => {
-    console.log("XML-Event");
-    // fake backend data for browser
-    if (USE_BROWSER) {
-      setPlayers(dummyPlayers);
-      return;
-    }
+   IPCService.importXMLFile(() => {
+       //const { players } = args;
+       //const { matchID } = args;
 
-    ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
-      //const { players } = args;
-      //const { matchID } = args;
-
-      //log.info(players);
-      setPlayers(players);
-
-      getAllCompetitions(); //vllt nicht machen damit es noch nicht in der liste auftaucht
-      //setCurrentId(matchID);
-      setLinkDisabled('false');
-    });
-    ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
+       getAllCompetitions(); //vllt nicht machen damit es noch nicht in der liste auftaucht
+       //setCurrentId(matchID);
+       setLinkDisabled('false');
+   })
   };
 
   const deleteGame = id => {
@@ -71,7 +60,7 @@ const App = () => {
       return;
     }
 
-    CompetitionService.deleteCompetition(id, () => {
+    IPCService.deleteCompetition(id, () => {
       setGames(games.filter(game => game.id !== id));
     });
   };
@@ -113,7 +102,7 @@ const App = () => {
           if (USE_BROWSER) {
             return;
           }
-          ipcRenderer.send(channels.START_ROUND);
+          ipcRenderer.send(ipcChannels.START_ROUND);
         }}
       ></Button>
     </div>

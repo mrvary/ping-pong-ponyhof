@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const { app, BrowserWindow, ipcMain, Menu } = require("electron");
+const { app, ipcMain, BrowserWindow, Menu } = require("electron");
 const path = require("path");
 
 require("electron-reload")(__dirname, {
@@ -32,7 +32,7 @@ const { createPlayersFromJSON } = require("../matchmaker/player");
 const matchmaker = require("../matchmaker/drawing");
 
 // frontend dependencies
-const { channels } = require("../shared/channels");
+const ipcChannels = require("../react/ipc/ipcChannels");
 
 let mainWindow;
 
@@ -54,16 +54,6 @@ function createMainWindow() {
   // ...and load the frontend react app
   mainWindow.loadURL(config.ELECTRON_START_URL);
 
-  // react dev tools for electron
-  const {
-    default: installExtension,
-    REACT_DEVELOPER_TOOLS
-  } = require("electron-devtools-installer");
-
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then(name => console.log(`Added Extension:  ${name}`))
-    .catch(err => console.log("An error occurred: ", err));
-
   // Emitted when the window is closed.
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -73,7 +63,24 @@ function createMainWindow() {
   Menu.setApplicationMenu(menu);
 }
 
+/**
+ *  init react dev tools for electron
+ *  @author Felix Breitenbach
+ */
+function initDevTools() {
+  const {
+    default: installExtension,
+    REACT_DEVELOPER_TOOLS
+  } = require("electron-devtools-installer");
+
+  installExtension(REACT_DEVELOPER_TOOLS)
+      .then(name => console.log(`Added Extension:  ${name}`))
+      .catch(err => console.log("An error occurred: ", err));
+}
+
 app.on("ready", () => {
+  initDevTools();
+
   // setup file database
   const filePath = file_manager.getTournamentDatabasePath();
   file_storage.open(filePath);
@@ -107,11 +114,11 @@ app.on("activate", () => {
   }
 });
 
-ipcMain.on(channels.START_ROUND, () => {
+ipcMain.on(ipcChannels.START_ROUND, () => {
   server.sendStartRoundBroadcast();
 });
 
-ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
+ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
   uiActions.openXMLFile().then((xmlFilePath) => {
     if (!xmlFilePath) {
       return;
@@ -137,24 +144,24 @@ ipcMain.on(channels.OPEN_IMPORT_DIALOG, event => {
     tournament_storage.createMatches(matches);
 
     // notify react app that import is ready
-    event.sender.send(channels.FILE_IMPORTED);
+    event.sender.send(ipcChannels.FILE_IMPORTED);
   });
 });
 
-ipcMain.on(channels.GET_ALL_TOURNAMENTS, event => {
+ipcMain.on(ipcChannels.GET_ALL_TOURNAMENTS, event => {
   const tournaments = file_storage.getAllTournaments();
   console.log("Retrieved tournaments from database", tournaments.length);
 
-  event.sender.send(channels.GET_ALL_TOURNAMENTS, {
+  event.sender.send(ipcChannels.GET_ALL_TOURNAMENTS, {
     tournaments: tournaments
   });
 });
 
-ipcMain.on(channels.DELETE_TOURNAMENT, (event, data) => {
+ipcMain.on(ipcChannels.DELETE_TOURNAMENT, (event, data) => {
   const { id } = data;
 
   file_manager.deleteTournamentFile(id);
   file_storage.deleteTournament(id);
 
-  event.sender.send(channels.DELETE_TOURNAMENT);
+  event.sender.send(ipcChannels.DELETE_TOURNAMENT);
 });

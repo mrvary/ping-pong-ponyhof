@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import MatchService from '../../services/matchService';
-import './CompetitionPage.css';
 import { Link, useParams } from 'react-router-dom';
+import './CompetitionPage.css';
 import '../Colors.css';
 
 //componenten
 import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
+
+// ipc service
+import IPCService from '../ipc/ipcRendererService';
 
 const Header = ({ kind, date, time }) => {
   return (
@@ -138,7 +140,7 @@ const CompetitionPage = () => {
   const [matches, setMatches] = useState([]);
 
   useEffect(() => {
-    const data = MatchService.getMatchesByCompetition(competitionID);
+    const data = IPCService.getMatchesByCompetition(competitionID);
     console.log(data);
     setMatches(data);
   }, []);
