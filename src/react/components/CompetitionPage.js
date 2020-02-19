@@ -75,11 +75,19 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
+  var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
+  var index = 0;
+  match.sets.forEach(set => {
+    stringSet[index] = set.player1 + ' : ' + set.player2;
+    index++;
+  });
+  /*
   const set1 = match.sets[0][0] + ' : ' + match.sets[0][1];
   const set2 = match.sets[1][0] + ' : ' + match.sets[1][1];
   const set3 = 0; //= match.sets[2][0] + ' : ' + match.sets[2][1];
   const set4 = 0; //= match.sets[3][0] + ' : ' + match.sets[3][1];
   const set5 = 0; //= match.sets[4][0] + ' : ' + match.sets[4][1];
+  */
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
@@ -93,11 +101,26 @@ const TableRow = ({ match }) => {
           {' '}
           {match.player2}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment"> {set1} </div>
-        <div className="competitionPage__table__column-alignment"> {set2} </div>
-        <div className="competitionPage__table__column-alignment"> {set3} </div>
-        <div className="competitionPage__table__column-alignment"> {set4} </div>
-        <div className="competitionPage__table__column-alignment"> {set5} </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[0]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[1]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[2]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[3]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[4]}{' '}
+        </div>
         <div className="competitionPage__table__column-alignment">
           {' '}
           Ergebnis{' '}

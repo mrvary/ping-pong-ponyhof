@@ -35,14 +35,15 @@
 .header__match-box--title {
   font-size: small;
   text-align: center;
+  font-size: 2.5vh;
 }
 
-.header__upload-xml-button {
+.header__upload-xml-button-false {
   width: 27vh;
   height: 20vh;
   color: var(--grey-out-color);
   font-size: 2vh;
-  border: 0.3vh solid var(--prim-background-color);
+  border: 0.1vh solid var(--prim-font-color);
   background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
@@ -50,20 +51,51 @@
   padding: 2vh;
 }
 
-.header__upload-xml-button:hover {
+.header__upload-xml-button-false:hover {
   color: var(--prim-font-color);
   border: 0.3vh solid var(--grey-out-color);
 }
 
-.header__upload-xml-button:focus {
+.header__upload-xml-button-false:focus {
   outline: 0;
 }
 
-.disabled-link-true {
-  pointer-events: none;
-  color: red;
+.header__upload-xml-button-true {
+  width: 27vh;
+  height: 20vh;
+  color: var(--grey-out-color);
+  font-size: 2vh;
+  border: 0.1vh solid var(--prim-font-color);
+  background: var(--sec-background-color);
+  top: 60px;
+  border-radius: 2vh;
+  margin: 5vh 0vh;
+  padding: 2vh;
+}
+.header__upload-xml-button-true:focus {
+  outline: 0;
+}
+.header__upload-xml-button-true:hover {
+  color: var(--prim-font-color);
+  border: 0.3vh solid var(--grey-out-color);
 }
 
-.disabled-link-false {
-  color: green;
+.header__loslegen-link {
+  width: 27vh;
+  height: 6.5vh;
+  color: var(--prim-font-color);
+  font-size: 2vh;
+  border: none;
+  border-radius: 2vh;
+  margin: 1.5vh 0vh;
+  background: var(--button-color);
+}
+
+.header__link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header__link:hover {
+  color: var(--prim-font-color);
 }

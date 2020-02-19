@@ -8,7 +8,12 @@
   margin: 1.5vh 2vh;
   background: var(--button-color);
 }
-
 .button--primary {
   background: var(--button-color);
+}
+.button:hover {
+  color: var(--grey-out-color);
+}
+.button:focus {
+  outline: 0;
 }

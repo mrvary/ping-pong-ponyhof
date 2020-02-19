@@ -25,6 +25,7 @@ const App = () => {
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState([]);
   const [linkDisabled, setLinkDisabled] = useState(['true']);
+  const [uploaded, setUploaded] = useState(['false']);
 
   useEffect(() => {
     getAllTournaments();
@@ -57,6 +58,7 @@ const App = () => {
   const importXML = () => {
     console.log('XML-Event');
     // fake backend data for browser
+
     if (USE_BROWSER) {
       setPlayers(dummyPlayers);
       return;
@@ -71,9 +73,10 @@ const App = () => {
       //log.info(players);
       setPlayers(players);
 
-      getAllTournaments(); //vllt nicht machen damit es noch nicht in der liste auftaucht
+      //getAllTournaments(); //vllt nicht machen damit es noch nicht in der liste auftaucht
       //setCurrentId(matchID);
       setLinkDisabled('false');
+      setUploaded('true');
     });
   };
 
@@ -115,21 +118,12 @@ const App = () => {
         importXML={importXML}
         currentId={currentId}
         linkDisabled={linkDisabled}
+        uploaded={uploaded}
       />
       {games.map(game => (
         <Competition key={game.id} game={game} deleteGame={deleteGame} />
       ))}
       <Footer title="PingPongPonyhof" />
-      <Button
-        mode="primary"
-        text="start Round"
-        onClick={() => {
-          if (USE_BROWSER) {
-            return;
-          }
-          ipcRenderer.send(channels.START_ROUND);
-        }}
-      ></Button>
     </div>
   );
 };
