@@ -22,7 +22,7 @@ const { readTournamentXMLFileFromDisk } = require("../modules/import/xml-import"
 // persistence
 const file_manager = require("../modules/persistance/file-manager");
 const file_storage = require("../modules/persistance/lowdb/file-storage");
-const tournament_storage = require("../modules/persistance/lowdb/competition-storage");
+const competition_storage = require("../modules/persistance/lowdb/competition-storage");
 
 // models
 const { createCompetitionFromJSON } = require("../modules/models/competition");
@@ -78,19 +78,23 @@ function initDevTools() {
       .catch(err => console.log("An error occurred: ", err));
 }
 
-app.on("ready", () => {
-  initDevTools();
-
-  // setup file database
+function initFileDatabase() {
   const filePath = file_manager.getCompetitionDatabasePath();
   file_storage.open(filePath);
+}
 
-  // setup http server
+function initHTTPServer() {
   const port = config.SERVER_PORT;
   server.setupHTTPServer(port);
   server.setupSocketIO();
+}
 
-  // open the main window
+app.on("ready", () => {
+  initDevTools();
+
+  initFileDatabase();
+  initHTTPServer();
+
   createMainWindow();
 });
 
@@ -128,9 +132,9 @@ ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
     const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
 
     // save tournament as json file
-    const tournament = createCompetitionFromJSON(jsonObject.tournament);
-    file_manager.createTournamentJSONFile(tournament.id, jsonObject);
-    file_storage.createCompetition(tournament);
+    const competition = createCompetitionFromJSON(jsonObject.tournament);
+    file_manager.createTournamentJSONFile(competition.id, jsonObject);
+    file_storage.createCompetition(competition);
 
     // use matchmaker to draw first round
     console.log("Matchmaker draw matches");
@@ -139,29 +143,29 @@ ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
     console.log((matches));
 
     // save matches into tournament file
-    const filePath = file_manager.getCompetitionFilePath(tournament.id);
-    tournament_storage.open(filePath);
-    tournament_storage.createMatches(matches);
+    const filePath = file_manager.getCompetitionFilePath(competition.id);
+    competition_storage.open(filePath);
+    competition_storage.createMatches(matches);
 
     // notify react app that import is ready
     event.sender.send(ipcChannels.FILE_IMPORTED);
   });
 });
 
-ipcMain.on(ipcChannels.GET_ALL_TOURNAMENTS, event => {
-  const tournaments = file_storage.getAllCompetitions();
-  console.log("Retrieved tournaments from database", tournaments.length);
+ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
+  const competitions = file_storage.getAllCompetitions();
+  console.log("Retrieved competitions from database", competitions.length);
 
-  event.sender.send(ipcChannels.GET_ALL_TOURNAMENTS, {
-    tournaments: tournaments
+  event.sender.send(ipcChannels.GET_ALL_COMPETITIONS, {
+    competitions: competitions
   });
 });
 
-ipcMain.on(ipcChannels.DELETE_TOURNAMENT, (event, data) => {
+ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   const { id } = data;
 
   file_manager.deleteTournamentJSONFile(id);
   file_storage.deleteCompetition(id);
 
-  event.sender.send(ipcChannels.DELETE_TOURNAMENT);
+  event.sender.send(ipcChannels.DELETE_COMPETITION);
 });

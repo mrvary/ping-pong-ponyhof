@@ -3,54 +3,34 @@
  */
 
 const ipcRenderer = window.ipcRenderer;
-const ipcCannels = require("./ipcChannels");
+const ipcChannels = require("./ipcChannels");
 
 function importXMLFile(callback) {
-    ipcRenderer.once(ipcCannels.FILE_IMPORTED, (event, args) => {
+    ipcRenderer.once(ipcChannels.FILE_IMPORTED, (event, args) => {
         callback();
     });
-    ipcRenderer.send(ipcCannels.OPEN_IMPORT_DIALOG);
+    ipcRenderer.send(ipcChannels.OPEN_IMPORT_DIALOG);
+}
+
+function startRound() {
+    ipcRenderer.send(ipcChannels.START_ROUND);
 }
 
 function getAllCompetitions(callback) {
-    const competitions = [
-        {
-            id: 0,
-            name: 'BTTV Bavarian TT-Race',
-            startDate: '25.05.2019',
-            playmode: 'Schweizer System'
-        },
-        {
-            id: 1,
-            name: 'BTTV Bavarian TT-Race',
-            startDate: '11.08.2019',
-            playmode: 'Schweizer System'
-        }
-    ];
-
-    ipcRenderer.once(ipcCannels.GET_ALL_TOURNAMENTS, (event, args) => {
-        const {tournaments} = args;
-
-        const games = tournaments.map(tournament => {
-            return {
-                id: tournament.id,
-                date: tournament.start_date,
-                system: "Schweizer System"
-            };
-        });
-
-        callback(games);
+    ipcRenderer.once(ipcChannels.GET_ALL_COMPETITIONS, (event, args) => {
+        const {competitions} = args;
+        callback(competitions);
     });
 
-    ipcRenderer.send(ipcCannels.GET_ALL_TOURNAMENTS);
+    ipcRenderer.send(ipcChannels.GET_ALL_COMPETITIONS);
 }
 
 function deleteCompetition(id, callback) {
-    ipcRenderer.once(ipcCannels.DELETE_TOURNAMENT, (event, args) => {
+    ipcRenderer.once(ipcChannels.DELETE_COMPETITION, (event, args) => {
         callback();
     });
 
-    ipcRenderer.send(ipcCannels.DELETE_TOURNAMENT, {id: id});
+    ipcRenderer.send(ipcChannels.DELETE_COMPETITION, {id: id});
 }
 
 function getMatchesByCompetition(compId) {
@@ -152,8 +132,11 @@ function getPlayersByMatchId(id) {
 }
 
 module.exports = {
+    // Triggers
     importXMLFile,
+    startRound,
 
+    // Competitions
     getAllCompetitions,
     deleteCompetition,
 

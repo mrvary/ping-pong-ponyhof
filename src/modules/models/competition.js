@@ -9,14 +9,16 @@ const PLAYMODES = { SCHWEIZER_SYSTEM: "Schweizer System" };
  * createCompetitionFromJSON: dataFromJSON -> Competition
  */
  function createCompetitionFromJSON(dataFromJSON) {
-  return {
-    id: dataFromJSON["tournament-id"],
-    name: dataFromJSON["name"],
-    playmode: dataFromJSON.competition["preliminary-round-playmode"],
-    start_date: dataFromJSON["start-date"],
-  };
+    return {
+        id: dataFromJSON["tournament-id"],
+        name: dataFromJSON["name"],
+        date: dataFromJSON["start-date"],
+        playmode: dataFromJSON.competition["preliminary-round-playmode"],
+    };
 }
 
 module.exports = {
-  createCompetitionFromJSON
+    PLAYMODES,
+
+    createCompetitionFromJSON
 };
