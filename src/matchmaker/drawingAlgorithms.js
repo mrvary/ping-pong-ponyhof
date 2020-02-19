@@ -60,8 +60,8 @@ function groupByGamesWon(players) {
 
 // pairPlayersLaterRound : [players] -> [pairings]
 function pairPlayersLaterRound(players) {
-  basicPairing = basicDrawingAlgorithm(players);
-  return basicPairing;
+  pairing = basicDrawingAlgorithm(players);
+  return pairing;
 }
 
 // basicDrawingAlgorithm : [players] -> [pairings]
@@ -92,8 +92,28 @@ function basicDrawingAlgorithm(players) {
   if (pairingSucceeded) {
     return createPairingFromArray(dummyPlayers);
   } else {
-    return "basic Drawing failed";
+    return emergencyDrawingAlgorithm(dummyPlayers);
   }
+}
+
+// emergencyDrawingAlgorithm : [players] -> [pairings]
+function emergencyDrawingAlgorithm(players) {
+  let dummyPlayers = [...players];
+  let pairingSucceeded;
+
+  do {
+    pairingSucceeded = true;
+
+    //shuffle the players each time to get a different sorted list
+    dummyPlayers = shuffle(dummyPlayers);
+    for (let i = 0; i < dummyPlayers.length; i = i + 2) {
+      if (isRematch(dummyPlayers[i], dummyPlayers[i + 1])) {
+        pairingSucceeded = false;
+      }
+    }
+  } while (pairingSucceeded == false);
+
+  return createPairingFromArray(dummyPlayers);
 }
 
 // Help functions
