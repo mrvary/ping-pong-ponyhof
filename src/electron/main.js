@@ -17,10 +17,10 @@ const server = require("../backend/server");
 const database = require("../backend/persistance/dbManager");
 
 // matchmaker
-const { createPlayersFromJSON } = require('../src/matchmaker/player');
+const { createPlayersFromJSON } = require('../matchmaker/player');
 
 // frontend dependencies
-const { channels } = require("../src/shared/channels");
+const { channels } = require("../shared/channels");
 
 let mainWindow;
 
@@ -29,7 +29,7 @@ function createMainWindow() {
   mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    icon: path.join(__dirname, "../assets/icons/png/icon_16x16.png"),
+    icon: path.join(__dirname, "../assets/icons/png/app-icon/app-icon_16x16.png"),
     webPreferences: {
       nodeIntegration: false,
       preload: path.join(__dirname, "preload.js")
