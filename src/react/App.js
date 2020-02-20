@@ -3,12 +3,12 @@ import './App.css';
 import './Colors.css';
 
 // dummy data
-import dummyCompetitions from '../assets/mock-data/competitions.mock.data';
+import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
 
 // components
-import Footer from './components/Footer';
-import Competition from './components/Competition';
-import Header from './components/Header';
+import Footer from "./components/Footer";
+import Competition from "./components/Competition";
+import Header from "./components/Header";
 
 // electron
 import IPCService from '../shared/ipc/ipcRendererService';
@@ -34,9 +34,9 @@ const App = () => {
       return;
     }
 
-    IPCService.getAllCompetitions(competitions => {
-      setCompetitions(competitions);
-    });
+   IPCService.getAllCompetitions(competitions => {
+     setCompetitions(competitions)
+   });
   };
 
   const openXMLDialog = () => {
@@ -54,6 +54,7 @@ const App = () => {
 
     IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
       if (!competitionId) {
+        // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
         console.log(message);
         setLinkDisabled(true);
         return;
@@ -66,16 +67,12 @@ const App = () => {
 
   const deleteCompetition = id => {
     if (USE_BROWSER) {
-      setCompetitions(
-        competitions.filter(competition => competition.id !== id)
-      );
+      setCompetitions(competitions.filter(competition => competition.id !== id));
       return;
     }
 
     IPCService.deleteCompetition(id, () => {
-      setCompetitions(
-        competitions.filter(competition => competition.id !== id)
-      );
+      setCompetitions(competitions.filter(competition => competition.id !== id));
     });
   };
 
@@ -88,7 +85,6 @@ const App = () => {
         xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
-
         uploadedXML={uploadedXML}
       />
       {competitions.map(competition => (

@@ -7,13 +7,13 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const Memory = require('lowdb/adapters/Memory');
 
+const config = require("../../../electron/config");
+
 let storage = null;
 
 function open(filePath) {
-    storage = low(
-        process.env.NODE_ENV === "test"
-        ? new Memory()
-        : new FileSync(filePath));
+    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
+    storage = low(adapter);
 
     // Set default values (required if your JSON file is empty)
     storage.defaults({ competitions: [] }).write();
@@ -21,6 +21,7 @@ function open(filePath) {
 }
 
 function createCompetition(competition) {
+    // TODO: Remove Players from json after init
     const data = getCompetition(competition.id);
 
     // if competition is found, return error
@@ -53,4 +54,15 @@ function getCompetition(id) {
         .value();
 }
 
-module.exports = { open, createCompetition, deleteCompetition, getAllCompetitions, getCompetition };
+function hasCompetition(id) {
+    const competition = getCompetition(id);
+    return !!competition;
+}
+
+module.exports = {
+    open,
+    hasCompetition,
+    createCompetition,
+    deleteCompetition,
+    getAllCompetitions,
+    getCompetition };

@@ -3,20 +3,21 @@
  */
 
 const low = require("lowdb");
+
 const FileSync = require("lowdb/adapters/FileSync");
 const Memory = require('lowdb/adapters/Memory');
+
+const config = require("../../../electron/config");
 
 let storage = null;
 
 function open(filePath) {
-    storage = low(
-        process.env.NODE_ENV === "test"
-            ? new Memory()
-            : new FileSync(filePath));
+    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath)
+    storage = low(adapter);
 }
 
 function createMatches(matches) {
-    const elementPath = "tournament.competition.matches";
+    const elementPath = "matches";
     const hasMatchesFlag = storage.has(elementPath).value();
 
     if (!hasMatchesFlag) {
@@ -28,17 +29,36 @@ function createMatches(matches) {
     }
 }
 
+function createPlayers(players) {
+    const elementPath = "players";
+    const hasMatchesFlag = storage.has(elementPath).value();
+
+    if (!hasMatchesFlag) {
+        storage.set(elementPath, players).write();
+    } else {
+        players.forEach((player) => {
+            storage.get(elementPath).post(player).write();
+        })
+    }
+}
+
 function getMatchesBy() {
     if (!storage) {
         return;
     }
 
-    const elementPath = "tournament.competition.matches";
+    const elementPath = "matches";
     return storage.get(elementPath).value();
+}
+
+function initCompetition(jsonObject) {
+    storage.setState(jsonObject).write();
 }
 
 module.exports = {
   open,
   createMatches,
-    getMatchesBy
+  getMatchesBy,
+  createPlayers,
+  initCompetition
 };
