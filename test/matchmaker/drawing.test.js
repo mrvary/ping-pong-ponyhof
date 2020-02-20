@@ -19,10 +19,7 @@ describe("drawFirstRound()", () => {
 });
 
 describe("drawRound()", () => {
-  const tournamentObj = {
-    players: initPlayers
-  };
-  const matches = drawRound(tournamentObj);
+  const matches = drawRound(initPlayers);
 
   test("matches defined", () => {
     expect(matches).toBeDefined();

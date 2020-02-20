@@ -9,6 +9,7 @@ function createPlayersFromJSON(json) {
     players.push({
       id: "FreeTicket",
       gamesWon: 0,
+      lastname: "FREILOS",
       matchIds: [],
       opponentIds: [],
       qttr: 0
@@ -33,8 +34,7 @@ function createPlayer(dataFromJSON) {
     matchIds: [],
     opponentIds: [],
     qttr: parseInt(ttr, 10),
-    active: true,
-    hadFreeTicketAlready: false
+    active: true
   };
 }
 
@@ -45,8 +45,68 @@ function sortPlayersBy(players, selector) {
   });
 }
 
-// ToDo
-function updatePlayers() {}
+/*
+this function is just for testing - later the update function will be in our DB
+it updates the players matchIds and opponentIds
+and a random player gets gameWon++
+*/
+
+// updatePlayers : [players], [matches] -> [players]
+function updatePlayers(players, matches) {
+  matches.forEach(match => {
+    if (!isFreeticketPlayerInMatch(match)) {
+      // 0 -> player1 wins, 1 -> player2 wins
+      let rnd = Math.floor(Math.random() * 2);
+      players.forEach(player => {
+        if (match.player1 === player.id) {
+          player.opponentIds.push(match.player2);
+          player.matchIds.push(match.id);
+          if (rnd === 0) {
+            player.gamesWon++;
+          }
+        }
+        if (match.player2 === player.id) {
+          player.opponentIds.push(match.player1);
+          player.matchIds.push(match.id);
+          if (rnd === 1) {
+            player.gamesWon++;
+          }
+        }
+      });
+    } else {
+      players.forEach(player => {
+        if (player.id === match.player1 && player.id !== "FreeTicket") {
+          player.opponentIds.push(match.player2);
+          player.matchIds.push(match.id);
+          player.gamesWon++;
+        }
+        if (player.id === match.player2 && player.id !== "FreeTicket") {
+          player.opponentIds.push(match.player1);
+          player.matchIds.push(match.id);
+          player.gamesWon++;
+        }
+
+        if (player.id === match.player1 && player.id === "FreeTicket") {
+          player.opponentIds.push(match.player2);
+          player.matchIds.push(match.id);
+        }
+        if (player.id === match.player2 && player.id === "FreeTicket") {
+          player.opponentIds.push(match.player1);
+          player.matchIds.push(match.id);
+        }
+      });
+    }
+  });
+
+  return players;
+}
+
+// isFreeticketPlayerInMatch : [match] -> [boolean]
+function isFreeticketPlayerInMatch(match) {
+  if (match.player1 === "FreeTicket" || match.player2 === "FreeTicket")
+    return true;
+  else return false;
+}
 
 module.exports = {
   // pubic

@@ -1,0 +1,44 @@
+.competitionPage__header-alignment {
+  height: 10vh;
+  font-size: 2vh;
+  color: var(--tert-out-color);
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.competitionPage__header-alignment-right {
+  height: 10vh;
+  font-size: 2vh;
+  color: var(--tert-out-color);
+  display: flex;
+  flex-direction: row;
+}
+
+.competitionPage__competition-playmode {
+  margin: 2vh 8vh;
+  color: var(--grey-out-color);
+  font-size: 1.5vh;
+}
+
+.competitionPage__competition-startDate {
+  margin: 2vh 2vh;
+  color: var(--grey-out-color);
+  font-size: 1.5vh;
+}
+
+.competitionPage__link-back-to-overview:focus {
+  outline: 0;
+}
+
+.competitionPage__link-back-to-overview {
+  text-decoration: underline;
+  color: var(--prim-font-color);
+  font-size: 2vh;
+  border: none;
+  margin: 2vh 2vh;
+}
+
+.competitionPage__link-back-to-overview:hover {
+  color: var(--grey-out-color);
+}

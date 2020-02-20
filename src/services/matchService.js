@@ -1,4 +1,4 @@
-const matches1 = [
+const matches0 = [
   {
     id: 0,
     player1: 'Thomas Krause',
@@ -46,7 +46,7 @@ const matches1 = [
   }
 ];
 
-const matches0 = [
+const matches1 = [
   {
     id: 3,
     player1: 'Samuel Geiger',

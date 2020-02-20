@@ -8,8 +8,8 @@ import Popup from './Popup';
 
 function Competition(props) {
   const {
-    game: { id, date, system },
-    deleteGame
+    competition: { id, name, date, playmode },
+    deleteCompetition
   } = props;
 
   const [showPopupDelete, setShowPopupDelete] = useState(false);
@@ -25,7 +25,7 @@ function Competition(props) {
         Spiel vom {date}
       </Link>
       <button className="competition__btn competition__btn--gametype">
-        {system}
+        {playmode}
       </button>
       <button
         className="competition__btn competition__btn--delete"
@@ -38,7 +38,7 @@ function Competition(props) {
         handleClose={handleClose}
         header="Achtung!"
         bodyText="Willst du dieses Spiel wirklich löschen?"
-        buttonFunk={() => deleteGame(id)}
+        buttonFunk={() => deleteCompetition(id)}
         buttonText="Löschen"
         mode="primary"
       ></Popup>

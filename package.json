@@ -30,7 +30,11 @@
     "start-react-client": "cd ./src/client && cross-env PORT=3001 yarn start",
     "start-simulation": "cd src/simulation && node testCompetition.js",
     "build": "yarn build-react-app && yarn build-react-client && yarn build-electron",
+<<<<<<< HEAD
     "build-electron": "cross-env-shell \"yarn run reset-electron && mkdir build/src && mkdir build/src/client && cp -r src/electron/. build/src/electron && cp -r src/shared/. build/src/shared && cp -r src/client/build/. build/src/client/build && cp -r src/backend/. build/src/backend && cp -r src/assets/. build/src/assets\"",
+=======
+    "build-electron": "cross-env-shell \"yarn run reset-electron && mkdir build/src && mkdir build/src/client && cp -r src/electron/. build/src/electron && cp -r src/shared/. build/src/shared && cp -r src/client/build/. build/src/client/build && cp -r src/modules/. build/src/modules && cp -r src/assets/. build/src/assets\"",
+>>>>>>> master
     "build-react-app": "react-scripts build",
     "build-react-client": "cd ./src/client && yarn build",
     "reset-electron": "cross-env \"rm -rf build/src\"",

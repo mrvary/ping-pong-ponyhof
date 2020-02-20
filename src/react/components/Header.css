@@ -6,7 +6,7 @@
 
 .header__picture {
   height: 70vh;
-  background-image: url('../../assets/header_background.jpg');
+  background-image: url('../../assets/images/header_background.jpg');
 }
 
 .header__title {
@@ -63,6 +63,7 @@
   border: 0.5vh solid green;
 }
 
+<<<<<<< HEAD
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
@@ -81,4 +82,9 @@
 }
 .header__link:hover {
   color: var(--prim-font-color);
+=======
+.disabled-link-false {
+  cursor: pointer;
+  color: green;
+>>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
 }

@@ -5,7 +5,7 @@
   font-size: 2vh;
   border: none;
   border-radius: 2vh;
-  margin: 1.5vh 0vh;
+  margin: 1.5vh 2vh;
   background: var(--button-color);
 }
 .button--primary {
