@@ -75,6 +75,7 @@ body {
   font-size: 2vh;
   border: none;
   margin: 2vh;
+  cursor: pointer;
 }
 
 .competitionPage__link-alignment {

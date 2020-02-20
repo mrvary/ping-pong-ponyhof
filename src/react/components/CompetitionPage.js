@@ -13,7 +13,7 @@ import IPCService from '../../shared/ipc/ipcRendererService';
 
 const USE_BROWSER = false;
 
-const Header = ({ kind, date, time }) => {
+const Header = ({ kind, date, time, }) => {
   return (
     <div className="competitionPage__header-alignment">
       {' '}
@@ -28,17 +28,17 @@ const Header = ({ kind, date, time }) => {
   );
 };
 
-const IpAdressAndStatisticLink = () => {
+const IpAdressAndStatisticLink = ({ openStatisticWindow }) => {
   return (
     <div className="competitionPage__link-alignment">
       <div className="competitionPage__link-ip-adress-statistic">
         {' '}
         IP-Adresse{' '}
       </div>
-      <div className="competitionPage__link-ip-adress-statistic">
+      <p onClick={openStatisticWindow} className="competitionPage__link-ip-adress-statistic">
         {' '}
         Statistik{' '}
-      </div>
+      </p>
     </div>
   );
 };
@@ -203,11 +203,16 @@ const CompetitionPage = () => {
     handleCloseEndRound();
   };
 
+  const openStatisticWindow = () => {
+    // TODO: Statistik-Route hier eintragen
+    IPCService.createWindow('/competition/' + competitionID);
+  };
+
   return (
     <div>
       <p>competitionID: {competitionID}</p>
       <Header />
-      <IpAdressAndStatisticLink />
+      <IpAdressAndStatisticLink openStatisticWindow={openStatisticWindow} />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
