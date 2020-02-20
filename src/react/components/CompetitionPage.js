@@ -8,8 +8,8 @@ import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
 
-// ipc service
-import IPCService from '../ipc/ipcRendererService';
+// shared service
+import IPCService from '../../shared/ipc/ipcRendererService';
 
 const USE_BROWSER = false;
 

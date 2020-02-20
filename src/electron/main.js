@@ -32,14 +32,14 @@ const { createPlayersFromJSON } = require("../matchmaker/player");
 const matchmaker = require("../matchmaker/drawing");
 
 // frontend dependencies
-const ipcChannels = require("../react/ipc/ipcChannels");
+const ipcChannels = require("../shared/ipc/ipcChannels");
 
 let mainWindow;
 
 let currentMatches = [];
 let players = [];
 
-const SKIP_FILE_CREATION = true;
+const SKIP_FILE_CREATION = false;
 
 function createMainWindow() {
   // create the browser window ...
@@ -169,6 +169,9 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
       match.sets.push({player1: 0, player2: 0});
     });
 
+    // set matches to tables
+    server.setMatchesToTables(currentMatches);
+
     // save matches into tournament file
     if(!SKIP_FILE_CREATION) {
       const filePath = file_manager.getCompetitionFilePath(competition.id);
@@ -176,8 +179,6 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
       competition_storage.createMatches(currentMatches);
     }
 
-    // set matches to tables
-    server.setMatchesToTables(currentMatches);
     console.log('Ready to play');
 
     // notify react app that import is ready and was successful
@@ -213,6 +214,17 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
     const filePath = file_manager.getCompetitionFilePath(id);
     competition_storage.open(filePath);
     currentMatches = competition_storage.getMatchesBy();
+
+    // set first set to zero
+    currentMatches.forEach(match => {
+      match.sets.push({player1: 0, player2: 0});
+      match.sets.push({player1: 0, player2: 0});
+    });
+
+    // set matches to tables
+    server.setMatchesToTables(currentMatches);
+
+    console.log('Ready to play');
   }
 
   event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matches: currentMatches })
