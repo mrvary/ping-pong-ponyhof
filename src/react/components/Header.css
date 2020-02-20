@@ -60,7 +60,7 @@
   outline: 0;
 }
 .header__upload-xml-button--true {
-  border: 0.1vh solid green;
+  border: 0.5vh solid green;
 }
 
 .header__loslegen-link {

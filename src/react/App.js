@@ -12,7 +12,6 @@ import dummyGames from '../assets/games';
 import Footer from './components/Footer';
 import Competition from './components/Competition';
 import Header from './components/Header';
-import Button from './components/Button';
 
 // electron
 const ipcRenderer = window.ipcRenderer;
@@ -25,7 +24,7 @@ const App = () => {
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState([]);
   const [linkDisabled, setLinkDisabled] = useState(true);
-  const [uploaded, setUploaded] = useState(false);
+  const [uploadedXML, setUploadedXML] = useState(false);
 
   useEffect(() => {
     getAllTournaments();
@@ -76,7 +75,7 @@ const App = () => {
       //getAllTournaments(); //vllt nicht machen damit es noch nicht in der liste auftaucht
       //setCurrentId(matchID);
       setLinkDisabled(false);
-      setUploaded(true);
+      setUploadedXML(true);
     });
   };
 
@@ -118,7 +117,7 @@ const App = () => {
         importXML={importXML}
         currentId={currentId}
         linkDisabled={linkDisabled}
-        uploaded={uploaded}
+        uploadedXML={uploadedXML}
       />
       {games.map(game => (
         <Competition key={game.id} game={game} deleteGame={deleteGame} />
