@@ -9,7 +9,6 @@ import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
 import Footer from "./components/Footer";
 import Competition from "./components/Competition";
 import Header from "./components/Header";
-import Button from "./components/Button";
 
 // electron
 import IPCService from '../shared/ipc/ipcRendererService';
@@ -18,10 +17,12 @@ import IPCService from '../shared/ipc/ipcRendererService';
 const USE_BROWSER = false;
 
 const App = () => {
-  const [competitions, setCompetitions] = useState([]);
-  const [xmlFilePath, setXMLFilePath] = useState(null);
   const [currentId, setCurrentId] = useState('');
   const [linkDisabled, setLinkDisabled] = useState(true);
+  const [uploadedXML, setUploadedXML] = useState(false);
+  const [competitions, setCompetitions] = useState([]);
+  const [xmlFilePath, setXMLFilePath] = useState(null);
+
 
   useEffect(() => {
     getAllCompetitions();
@@ -33,34 +34,35 @@ const App = () => {
       return;
     }
 
-   IPCService.getAllCompetitions((competitions) => {
+   IPCService.getAllCompetitions(competitions => {
      setCompetitions(competitions)
    });
   };
 
   const openXMLDialog = () => {
-      IPCService.openXMLDialog((filePath) => {
-          console.log(filePath);
-          setXMLFilePath(filePath);
-          setLinkDisabled(false);
-      });
+    IPCService.openXMLDialog(filePath => {
+      console.log(filePath);
+      setXMLFilePath(filePath);
+      setLinkDisabled(false);
+    });
   };
 
   const importXML = () => {
-      if (!xmlFilePath) {
-          return;
+    if (!xmlFilePath) {
+      return;
+    }
+
+    IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
+      if (!competitionId) {
+        // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
+        console.log(message);
+        setLinkDisabled(true);
+        return;
       }
-
-      IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
-          if (!competitionId) {
-              // TODO: @Frontend - Error message anzeigen
-              console.log(message);
-              setLinkDisabled(true);
-              return;
-          }
-
-          setCurrentId(competitionId);
-      })
+      setCurrentId(competitionId);
+      setLinkDisabled(false);
+      setUploadedXML(true);
+    });
   };
 
   const deleteCompetition = id => {
@@ -74,24 +76,6 @@ const App = () => {
     });
   };
 
-  /* outdated
-  const startCompetition = () => {
-    if (players.length > 0) {
-      const date = new Date();
-      setGames(
-        games.concat([
-          {
-            id: currentId,
-            date: date.toLocaleDateString(),
-            system: 'Schweizer System'
-          }
-        ])
-      );
-      setCurrentId(currentId + 1);
-    }
-  };
-  */
-
   return (
     <div className="app__container">
       <Header
@@ -101,21 +85,16 @@ const App = () => {
         xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
+        uploadedXML={uploadedXML}
       />
       {competitions.map(competition => (
-        <Competition key={competition.id} competition={competition} deleteCompetition={deleteCompetition} />
+        <Competition
+          key={competition.id}
+          competition={competition}
+          deleteCompetition={deleteCompetition}
+        />
       ))}
       <Footer title="PingPongPonyhof" />
-      <Button
-        mode="primary"
-        text="start Round"
-        onClick={() => {
-          if (USE_BROWSER) {
-            return;
-          }
-          IPCService.startRound();
-        }}
-      ></Button>
     </div>
   );
 };

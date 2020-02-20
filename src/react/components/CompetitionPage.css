@@ -2,31 +2,14 @@ body {
   background-color: var(--prim-background-color);
 }
 
-.competitionPage__header-alignment {
-  height: 10vh;
-  font-size: 2vh;
-  color: var(--tert-out-color);
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
-
-.competitionPage__competition-kind {
-  margin: 2vh 2vh;
-}
-
-.competitionPage__competition-date {
-  margin: 2vh 2vh;
-}
-
 .competitionPage__competition-time {
   margin: 2vh 2vh;
 }
 
 .competitionPage__table__first-row-style {
+  position: relative;
   margin: 2vh 0vh;
-  width: 150vh;
-  height: 7vh;
+  width: 80%;
   border-radius: 2vh;
   background: var(--sec-background-color);
   font-size: 2vh;
@@ -34,15 +17,22 @@ body {
   display: flex;
   justify-content: space-around;
 }
+
+.content {
+  position: absolute;
+  width: 100;
+  height: 100%;
+}
+
 .competitionPage__center-table {
   display: flex;
   justify-content: space-around;
 }
 
 .competitionPage__table__first-row-alignment {
+  position: relative;
   margin: 0.3vh 0vh;
-  width: 150vh;
-  height: 7vh;
+  max-width: 80%;
   border-radius: 2vh;
   background: var(--sec-background-color);
   display: flex;
@@ -61,14 +51,6 @@ body {
   justify-content: space-around;
 }
 
-.competitionPage__link-back-to-overview {
-  text-decoration: underline;
-  color: var(--prim-font-color);
-  font-size: 2vh;
-  border: none;
-  margin: 2vh 2vh;
-}
-
 .competitionPage__link-ip-adress-statistic {
   text-decoration: underline;
   color: var(--link-font-hover-color);
@@ -84,24 +66,16 @@ body {
   flex-direction: row;
 }
 
-.lcompetitionPage__ink-ip-adress-statistic:focus {
+.competitionPage__Bottom-Buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: space-between;
+}
+
+.competitionPage__link-ip-adress-statistic:focus {
   outline: 0;
 }
 
 .competitionPage__link-ip-adress-statistic:hover {
   color: var(--link-font-hover-color);
-}
-
-.lcompetitionPage__ink-back-to-overview:focus {
-  outline: 0;
-}
-
-.competitionPage__link-back-to-overview:hover {
-  color: var(--grey-out-color);
-}
-
-.competitionPage__Bottom-Buttons {
-  display: flex;
-  justify-content: space-between;
-  align-items: space-between;
 }

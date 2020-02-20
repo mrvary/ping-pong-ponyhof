@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import './CompetitionPage.css';
 import '../Colors.css';
 
@@ -7,37 +7,26 @@ import '../Colors.css';
 import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
+import CompetitionPageHeader from './CompetitionPageHeader';
 
 // shared service
 import IPCService from '../../shared/ipc/ipcRendererService';
 
 const USE_BROWSER = false;
 
-const Header = ({ kind, date, time, }) => {
-  return (
-    <div className="competitionPage__header-alignment">
-      {' '}
-      <Link className="competitionPage__link-back-to-overview" to="/">
-        {' '}
-        zur Übersicht{' '}
-      </Link>
-      <div className="competitionPage__competition-kind"> {kind}</div>
-      <div className="competitionPage__competition-date">{date}</div>
-      <div className="competitionPage__competition-time"> {time} Uhr </div>
-    </div>
-  );
-};
-
-const IpAdressAndStatisticLink = ({ openStatisticWindow }) => {
+const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
+  const statisticID = '/statisticTable/' + competitionID;
   return (
     <div className="competitionPage__link-alignment">
       <div className="competitionPage__link-ip-adress-statistic">
         {' '}
         IP-Adresse{' '}
       </div>
-      <p onClick={openStatisticWindow} className="competitionPage__link-ip-adress-statistic">
-        {' '}
-        Statistik{' '}
+      <p
+        onClick={() => openStatisticWindow(statisticID)}
+        className="competitionPage__link-ip-adress-statistic"
+      >
+        Statistik
       </p>
     </div>
   );
@@ -93,11 +82,14 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-  const set1 = match.sets[0].player1 + ' : ' + match.sets[0].player2;
-  const set2 = match.sets[1].player1 + ' : ' + match.sets[1].player2;
-  const set3 = 0; //= match.sets[2][0] + ' : ' + match.sets[2][1];
-  const set4 = 0; //= match.sets[3][0] + ' : ' + match.sets[3][1];
-  const set5 = 0; //= match.sets[4][0] + ' : ' + match.sets[4][1];
+  var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
+  var index = 0;
+
+  match.sets.forEach(set => {
+    stringSet[index] = set.player1 + ' : ' + set.player2;
+    index++;
+  });
+
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
@@ -111,11 +103,26 @@ const TableRow = ({ match }) => {
           {' '}
           {match.player2}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment"> {set1} </div>
-        <div className="competitionPage__table__column-alignment"> {set2} </div>
-        <div className="competitionPage__table__column-alignment"> {set3} </div>
-        <div className="competitionPage__table__column-alignment"> {set4} </div>
-        <div className="competitionPage__table__column-alignment"> {set5} </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[0]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[1]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[2]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[3]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment">
+          {' '}
+          {stringSet[4]}{' '}
+        </div>
         <div className="competitionPage__table__column-alignment">
           {' '}
           Ergebnis{' '}
@@ -143,7 +150,7 @@ const CompetitionPage = () => {
   const [players, setPlayer] = useState([]);
 
   useEffect(() => {
-    updateCompetition()
+    updateCompetition();
   }, []);
 
   const updateCompetition = () => {
@@ -154,8 +161,8 @@ const CompetitionPage = () => {
           player1: 'Samuel Geiger',
           player2: 'Marius Bach',
           sets: [
-            { player1: 11, player2: 13},
-            { player1: 4, player2: 11}
+            { player1: 11, player2: 13 },
+            { player1: 4, player2: 11 }
           ],
           freeTicket: false,
           compId: 1
@@ -165,8 +172,8 @@ const CompetitionPage = () => {
           player1: 'Edith Finch',
           player2: 'Finch Assozial',
           sets: [
-            { player1: 13, player2: 15},
-            { player1: 14, player2: 16}
+            { player1: 13, player2: 15 },
+            { player1: 14, player2: 16 }
           ],
           freeTicket: false,
           compId: 1
@@ -178,7 +185,7 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByCompetition(competitionID, (matchData) => {
+    IPCService.getMatchesByCompetition(competitionID, matchData => {
       console.log(matchData);
       setMatches(matchData);
 
@@ -203,16 +210,23 @@ const CompetitionPage = () => {
     handleCloseEndRound();
   };
 
-  const openStatisticWindow = () => {
-    // TODO: Statistik-Route hier eintragen
-    IPCService.createWindow('/competition/' + competitionID);
+  const openStatisticWindow = route => {
+    IPCService.createWindow(route);
   };
 
   return (
     <div>
       <p>competitionID: {competitionID}</p>
-      <Header />
-      <IpAdressAndStatisticLink openStatisticWindow={openStatisticWindow} />
+      <CompetitionPageHeader
+        playmode="Scheizer System"
+        startDate="02.02.2020"
+        linkTitle="zur Übersicht"
+        linkDestination={'/'}
+      />
+      <IpAdressAndStatisticLink
+        competitionID={competitionID}
+        openStatisticWindow={openStatisticWindow}
+      />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
@@ -237,7 +251,7 @@ const CompetitionPage = () => {
         <Popup
           show={showPopupEndRound}
           handleClose={handleCloseEndRound}
-          header="Sicher?"
+          header="Bist du dir sicher?"
           bodyText="Möchtest du wirklich die Runde beenden?"
           buttonFunk={() => handleEndRound()}
           buttonText="Beenden"
