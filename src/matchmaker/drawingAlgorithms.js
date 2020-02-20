@@ -45,11 +45,10 @@ function groupByGamesWon(players) {
 
   let groups = [];
   for (let i = 0; i < roundNr + 1; i++) {
-    let playersWithSameAmountOfGamesWon = [];
+    const playersWithSameAmountOfGamesWon = players.filter(
+      players.filter(player => player.gamesWon === i)
+    );
 
-    players.forEach(player => {
-      if (player.gamesWon === i) playersWithSameAmountOfGamesWon.push(player);
-    });
     groups.push(playersWithSameAmountOfGamesWon);
   }
   //reverser ranking so that the best players are at the beginning of the array
@@ -60,8 +59,7 @@ function groupByGamesWon(players) {
 
 // pairPlayersLaterRound : [players] -> [pairings]
 function pairPlayersLaterRound(players) {
-  pairing = basicDrawingAlgorithm(players);
-  return pairing;
+  return basicDrawingAlgorithm(players);
 }
 
 // basicDrawingAlgorithm : [players] -> [pairings]
@@ -87,13 +85,13 @@ function basicDrawingAlgorithm(players) {
       }
     }
     doLoopCounter++;
-  } while (pairingSucceeded == false && doLoopCounter < maxTries);
+  } while (pairingSucceeded === false && doLoopCounter < maxTries);
 
   if (pairingSucceeded) {
     return createPairingFromArray(dummyPlayers);
-  } else {
-    return emergencyDrawingAlgorithm(dummyPlayers);
   }
+
+  return emergencyDrawingAlgorithm(dummyPlayers);
 }
 
 // emergencyDrawingAlgorithm : [players] -> [pairings]
@@ -132,15 +130,11 @@ function createPairingFromArray(players) {
 // isRematch : [players] -> [boolean]
 function isRematch(player1, player2) {
   //find a match where player1 and player2 were involved
-  let duplicates = player1.matchIds.filter(function(val) {
-    return player2.matchIds.indexOf(val) != -1;
+  const duplicates = player1.matchIds.filter(matchId => {
+    return player2.matchIds.indexOf(matchId) !== -1;
   });
 
-  if (duplicates.length === 0) {
-    return false;
-  } else {
-    return true;
-  }
+  return duplicates.length !== 0;
 }
 
 // sortPlayersBy : [players] -> [players]
