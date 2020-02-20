@@ -54,4 +54,15 @@ function getCompetition(id) {
         .value();
 }
 
-module.exports = { open, createCompetition, deleteCompetition, getAllCompetitions, getCompetition };
+function hasCompetition(id) {
+    const competition = getCompetition(id);
+    return !!competition;
+}
+
+module.exports = {
+    open,
+    hasCompetition,
+    createCompetition,
+    deleteCompetition,
+    getAllCompetitions,
+    getCompetition };

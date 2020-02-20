@@ -25,8 +25,12 @@ const ELECTRON_START_URL =
     slashes: true
   });
 
+// lowDB config
+const USE_IN_MEMORY_STORAGE = true;
+
 module.exports = {
   SERVER_HOST,
   SERVER_PORT,
-  ELECTRON_START_URL
+  ELECTRON_START_URL,
+  USE_IN_MEMORY_STORAGE
 };

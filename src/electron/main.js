@@ -109,12 +109,24 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
     const competition = createCompetitionFromJSON(jsonObject.tournament);
 
-    // check if file exists on disk
+    // check if database is valid
     const filepath = file_manager.getCompetitionFilePath(competition.id);
-    if (file_manager.checkIfFilesExists(filepath)) {
+    const fileExistsOnDisk = file_manager.checkIfFilesExists(filepath);
+    const fileIsInFileStorage = file_storage.hasCompetition(competition.id);
+
+    if (!config.USE_IN_MEMORY_STORAGE) {
+      if (fileExistsOnDisk && fileIsInFileStorage)
+    }
+
+    // case1: No in memory used --> is file on disk && entry exists in file store
+    // case2: In memory is used -->
+    if ((!config.USE_IN_MEMORY_STORAGE && fileExistsOnDisk) || ()) {
       console.log("Competition does already exist");
       throw new Error("Das Spiel existiert bereits!");
     }
+
+    // check if file exists
+
 
     // TODO: check if file is in file database
 
