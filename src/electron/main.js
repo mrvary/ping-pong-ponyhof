@@ -109,12 +109,14 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
     const competition = createCompetitionFromJSON(jsonObject.tournament);
 
-    // check if file already exists
+    // check if file exists on disk
     const filepath = file_manager.getCompetitionFilePath(competition.id);
     if (file_manager.checkIfFilesExists(filepath)) {
       console.log("Competition does already exist");
       throw new Error("Das Spiel existiert bereits!");
     }
+
+    // TODO: check if file is in file database
 
     // use matchmaker to draw first round
     console.log("Matchmaker is drawing...");
@@ -177,6 +179,7 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
     currentMatches = competition_storage.getMatchesBy();
 
     // set first set to zero
+    // TODO: Kann der Matchmaker beim Erstellen schon machen
     currentMatches.forEach(match => {
       match.sets.push({player1: 0, player2: 0});
       match.sets.push({player1: 0, player2: 0});

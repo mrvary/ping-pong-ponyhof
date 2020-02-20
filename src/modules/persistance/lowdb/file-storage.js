@@ -12,10 +12,8 @@ const config = require("./config");
 let storage = null;
 
 function open(filePath) {
-    storage = low(
-        config.USE_IN_MEMORY_STORAGE
-        ? new Memory()
-        : new FileSync(filePath));
+    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
+    storage = low(adapter);
 
     // Set default values (required if your JSON file is empty)
     storage.defaults({ competitions: [] }).write();
@@ -23,6 +21,7 @@ function open(filePath) {
 }
 
 function createCompetition(competition) {
+    // TODO: Remove Players from json after init
     const data = getCompetition(competition.id);
 
     // if competition is found, return error
