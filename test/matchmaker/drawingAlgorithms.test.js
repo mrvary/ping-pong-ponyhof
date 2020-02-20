@@ -9,6 +9,7 @@ const { createPlayersFromJSON } = require("../../src/matchmaker/player");
 const {
   pairPlayersRoundOne,
   separateTopFromBottomPlayers,
+  groupByGamesWon,
   sortPlayersBy,
   shuffle
 } = require("../../src/matchmaker/drawingAlgorithms");
@@ -62,8 +63,8 @@ describe("pairPlayersRoundOne()", () => {
   });
 
   test("each pair contains one of the top and one of the bottom players", () => {
-    idOfTopPlayers = [];
-    idOfBottomPlayers = [];
+    let idOfTopPlayers = [];
+    let idOfBottomPlayers = [];
 
     top.forEach(e => {
       idOfTopPlayers.push(e.id);
@@ -120,5 +121,9 @@ describe("shuffle()", () => {
   });
 });
 
-//TODO
-describe("groupByGamesWon()", () => {});
+describe("groupByGamesWon()", () => {
+  const players = cleanedUpPlayers.concat(cleanedUpPlayers).map(player => {
+    return { ...player, matchIds: (player.matchIds = [1, 2, 3, 4, 5]) };
+  });
+  groupByGamesWon(players);
+});
