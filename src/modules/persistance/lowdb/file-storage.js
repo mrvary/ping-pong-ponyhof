@@ -7,7 +7,7 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const Memory = require('lowdb/adapters/Memory');
 
-const config = require("./config");
+const config = require("../../../electron/config");
 
 let storage = null;
 

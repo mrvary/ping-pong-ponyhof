@@ -114,21 +114,13 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     const fileExistsOnDisk = file_manager.checkIfFilesExists(filepath);
     const fileIsInFileStorage = file_storage.hasCompetition(competition.id);
 
-    if (!config.USE_IN_MEMORY_STORAGE) {
-      if (fileExistsOnDisk && fileIsInFileStorage)
-    }
-
-    // case1: No in memory used --> is file on disk && entry exists in file store
-    // case2: In memory is used -->
-    if ((!config.USE_IN_MEMORY_STORAGE && fileExistsOnDisk) || ()) {
+    // check if file exists
+    // case1: In memory is used --> entry exists in file store
+    // case2: No in memory used --> is file on disk
+    if ((config.USE_IN_MEMORY_STORAGE && fileIsInFileStorage) || fileExistsOnDisk) {
       console.log("Competition does already exist");
       throw new Error("Das Spiel existiert bereits!");
     }
-
-    // check if file exists
-
-
-    // TODO: check if file is in file database
 
     // use matchmaker to draw first round
     console.log("Matchmaker is drawing...");
@@ -176,7 +168,10 @@ ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
 ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   const { id } = data;
 
-  file_manager.deleteTournamentJSONFile(id);
+  if (!config.USE_IN_MEMORY_STORAGE) {
+    file_manager.deleteTournamentJSONFile(id);
+  }
+
   file_storage.deleteCompetition(id);
 
   event.sender.send(ipcChannels.DELETE_COMPETITION);
