@@ -169,7 +169,7 @@ const matches0 = [
 
 function getMatchesByCompetition(compId) {
   if (compId === 0) return matches1;
-  else return matches0;
+  return matches0;
 }
 
 module.exports = {
