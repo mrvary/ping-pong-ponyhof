@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './StatisticTable.css';
 import { useParams } from 'react-router-dom';
 import '../Colors.css';
-import CompetitionPage__Header from './CompetitionPage__Header';
+import CompetitionPageHeader from './CompetitionPageHeader';
 
 const StatisticTable = () => {
   const { competitionID } = useParams();
@@ -11,7 +11,7 @@ const StatisticTable = () => {
   return (
     <div>
       <p>{competitionID}</p>;
-      <CompetitionPage__Header
+      <CompetitionPageHeader
         playmode="Schweizer System"
         startDate="02.02.2020"
         linkTitle="zurück zum Dashboard"

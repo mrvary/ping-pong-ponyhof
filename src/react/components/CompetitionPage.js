@@ -7,14 +7,14 @@ import '../Colors.css';
 import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
-import CompetitionPage__Header from './CompetitionPage__Header';
+import CompetitionPageHeader from './CompetitionPageHeader';
 
 // shared service
 import IPCService from '../../shared/ipc/ipcRendererService';
 
 const USE_BROWSER = false;
 
-const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow })=> {
+const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
   const statisticID = '/statisticTable/' + competitionID;
   return (
     <div className="competitionPage__link-alignment">
@@ -22,7 +22,10 @@ const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow })=> {
         {' '}
         IP-Adresse{' '}
       </div>
-      <p onClick={() => openStatisticWindow(statisticID)} className="competitionPage__link-ip-adress-statistic">
+      <p
+        onClick={() => openStatisticWindow(statisticID)}
+        className="competitionPage__link-ip-adress-statistic"
+      >
         Statistik
       </p>
     </div>
@@ -79,29 +82,14 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-<<<<<<< HEAD
-  let stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
-  let index = 0;
-=======
-<<<<<<< HEAD
   var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
   var index = 0;
->>>>>>> master
+
   match.sets.forEach(set => {
     stringSet[index] = set.player1 + ' : ' + set.player2;
     index++;
   });
-  /*
-  const set1 = match.sets[0][0] + ' : ' + match.sets[0][1];
-  const set2 = match.sets[1][0] + ' : ' + match.sets[1][1];
-=======
-  const set1 = match.sets[0].player1 + ' : ' + match.sets[0].player2;
-  const set2 = match.sets[1].player1 + ' : ' + match.sets[1].player2;
->>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
-  const set3 = 0; //= match.sets[2][0] + ' : ' + match.sets[2][1];
-  const set4 = 0; //= match.sets[3][0] + ' : ' + match.sets[3][1];
-  const set5 = 0; //= match.sets[4][0] + ' : ' + match.sets[4][1];
-  */
+
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
@@ -162,7 +150,7 @@ const CompetitionPage = () => {
   const [players, setPlayer] = useState([]);
 
   useEffect(() => {
-    updateCompetition()
+    updateCompetition();
   }, []);
 
   const updateCompetition = () => {
@@ -173,8 +161,8 @@ const CompetitionPage = () => {
           player1: 'Samuel Geiger',
           player2: 'Marius Bach',
           sets: [
-            { player1: 11, player2: 13},
-            { player1: 4, player2: 11}
+            { player1: 11, player2: 13 },
+            { player1: 4, player2: 11 }
           ],
           freeTicket: false,
           compId: 1
@@ -184,8 +172,8 @@ const CompetitionPage = () => {
           player1: 'Edith Finch',
           player2: 'Finch Assozial',
           sets: [
-            { player1: 13, player2: 15},
-            { player1: 14, player2: 16}
+            { player1: 13, player2: 15 },
+            { player1: 14, player2: 16 }
           ],
           freeTicket: false,
           compId: 1
@@ -197,7 +185,7 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByCompetition(competitionID, (matchData) => {
+    IPCService.getMatchesByCompetition(competitionID, matchData => {
       console.log(matchData);
       setMatches(matchData);
 
@@ -229,13 +217,16 @@ const CompetitionPage = () => {
   return (
     <div>
       <p>competitionID: {competitionID}</p>
-      <CompetitionPage__Header
+      <CompetitionPageHeader
         playmode="Scheizer System"
         startDate="02.02.2020"
         linkTitle="zur Übersicht"
-        linkDestination="/"
+        linkDestination={'/'}
       />
-      <IpAdressAndStatisticLink competitionID={competitionID} openStatisticWindow={openStatisticWindow}  />
+      <IpAdressAndStatisticLink
+        competitionID={competitionID}
+        openStatisticWindow={openStatisticWindow}
+      />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button

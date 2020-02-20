@@ -1,5 +1,5 @@
 import React from 'react';
-import './CompetitionPage__Header.css';
+import './CompetitionPageHeader.css';
 import { Link } from 'react-router-dom';
 
 function CompetitionPage__Header({

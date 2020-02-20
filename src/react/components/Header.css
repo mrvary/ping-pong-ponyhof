@@ -60,21 +60,21 @@
   outline: 0;
 }
 .header__upload-xml-button--true {
+
   border: 0.5vh solid green;
 }
 
-<<<<<<< HEAD
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
-  color: var(--prim-font-color);
+  color: green;
   font-size: 2vh;
   border: none;
   border-radius: 2vh;
   margin: 1.5vh 0vh;
   background: var(--button-color);
+  cursor: pointer;
 }
-
 .header__link {
   display: flex;
   justify-content: center;
@@ -82,9 +82,4 @@
 }
 .header__link:hover {
   color: var(--prim-font-color);
-=======
-.disabled-link-false {
-  cursor: pointer;
-  color: green;
->>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
 }
