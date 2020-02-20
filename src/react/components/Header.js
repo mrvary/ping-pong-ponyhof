@@ -30,10 +30,12 @@ const HeaderBox = ({ importXML, currentId, linkDisabled, uploaded }) => {
 //      <Button onClick={startCompetition} mode="primary" text="loslegen" />
 
 const UploadXML = ({ importXML, uploaded }) => {
-  let xmlUploadedCss = 'header__upload-xml-button-' + uploaded;
+  let xmlUploadedCss = 'header__upload-xml-button';
   let xmlText = 'Lade hier deine XML Datei hoch!';
-  if (uploaded === 'true') {
+
+  if (uploaded) {
     xmlText = 'Upload erfolgreich';
+    xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
   }
   return (
     <button className={xmlUploadedCss} onClick={importXML}>

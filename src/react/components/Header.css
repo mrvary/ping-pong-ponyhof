@@ -38,7 +38,7 @@
   font-size: 2.5vh;
 }
 
-.header__upload-xml-button-false {
+.header__upload-xml-button {
   width: 27vh;
   height: 20vh;
   color: var(--grey-out-color);
@@ -51,33 +51,16 @@
   padding: 2vh;
 }
 
-.header__upload-xml-button-false:hover {
+.header__upload-xml-button:hover {
   color: var(--prim-font-color);
   border: 0.3vh solid var(--grey-out-color);
 }
 
-.header__upload-xml-button-false:focus {
+.header__upload-xml-button:focus {
   outline: 0;
 }
-
-.header__upload-xml-button-true {
-  width: 27vh;
-  height: 20vh;
-  color: var(--grey-out-color);
-  font-size: 2vh;
-  border: 0.1vh solid var(--prim-font-color);
-  background: var(--sec-background-color);
-  top: 60px;
-  border-radius: 2vh;
-  margin: 5vh 0vh;
-  padding: 2vh;
-}
-.header__upload-xml-button-true:focus {
-  outline: 0;
-}
-.header__upload-xml-button-true:hover {
-  color: var(--prim-font-color);
-  border: 0.3vh solid var(--grey-out-color);
+.header__upload-xml-button--true {
+  border: 0.1vh solid green;
 }
 
 .header__loslegen-link {

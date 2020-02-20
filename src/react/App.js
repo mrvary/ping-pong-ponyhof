@@ -25,7 +25,7 @@ const App = () => {
   const [players, setPlayers] = useState([]);
   const [currentId, setCurrentId] = useState([]);
   const [linkDisabled, setLinkDisabled] = useState(true);
-  const [uploaded, setUploaded] = useState(['false']);
+  const [uploaded, setUploaded] = useState(false);
 
   useEffect(() => {
     getAllTournaments();
@@ -76,7 +76,7 @@ const App = () => {
       //getAllTournaments(); //vllt nicht machen damit es noch nicht in der liste auftaucht
       //setCurrentId(matchID);
       setLinkDisabled(false);
-      setUploaded('true');
+      setUploaded(true);
     });
   };
 
