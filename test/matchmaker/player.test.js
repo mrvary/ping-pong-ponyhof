@@ -23,8 +23,7 @@ const EXPECTED_PLAYER = {
   matchIds: [],
   opponentIds: [],
   qttr: 1415,
-  active: true,
-  hadFreeTicketAlready: false
+  active: true
 };
 
 describe("createPlayer()", () => {
