@@ -6,8 +6,8 @@ const fs = require("fs");
 const config = require("../config");
 
 const {
-  createTournamentFromJSON
-} = require("../../src/modules/models/tournament");
+  createCompetitionFromJSON
+} = require("../../src/modules/models/competition");
 
 test("createTournamentFromJSON()", () => {
   const expectedTournament = {
@@ -23,7 +23,7 @@ test("createTournamentFromJSON()", () => {
   const json = JSON.parse(data);
 
   // get tournamet object from json data
-  const tournament = createTournamentFromJSON(json.tournament);
+  const tournament = createCompetitionFromJSON(json.tournament);
 
   // assert object
   expect(tournament).toEqual(expectedTournament);
