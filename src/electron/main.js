@@ -33,13 +33,8 @@ const { createPlayersFromJSON } = require("../matchmaker/player");
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
 
-let mainWindow = null;
-let statisticWindow = null;
-
 let currentMatches = [];
 let players = [];
-
-const SKIP_FILE_CREATION = false;
 
 /**
  *  init react dev tools for electron
@@ -121,14 +116,8 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
       throw new Error("Das Spiel existiert bereits!");
     }
 
-    // save tournament as json file
-    if(!SKIP_FILE_CREATION) {
-      file_manager.createTournamentJSONFile(filepath, jsonObject);
-      file_storage.createCompetition(competition);
-    }
-
     // use matchmaker to draw first round
-    console.log("Matchmaker draw matches");
+    console.log("Matchmaker is drawing...");
     players = createPlayersFromJSON(jsonObject);
     currentMatches = matchmaker.drawRound(players);
 
@@ -142,11 +131,14 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     server.setMatchesToTables(currentMatches);
 
     // save matches into tournament file
-    if(!SKIP_FILE_CREATION) {
-      const filePath = file_manager.getCompetitionFilePath(competition.id);
-      competition_storage.open(filePath);
-      competition_storage.createMatches(currentMatches);
-    }
+    const filePath = file_manager.getCompetitionFilePath(competition.id);
+    competition_storage.open(filePath);
+    // init db with json object
+    competition_storage.initCompetition(jsonObject);
+    file_storage.createCompetition(competition);
+    // save players and matches
+    competition_storage.createMatches(currentMatches);
+    competition_storage.createPlayers(players);
 
     console.log('Ready to play');
 

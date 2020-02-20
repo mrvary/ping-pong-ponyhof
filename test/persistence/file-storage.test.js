@@ -10,10 +10,6 @@ const {
 const assert = require('assert')
 
 describe("file storage tests", () => {
-    before(() => {
-        process.env.NODE_ENV = 'test';
-    });
-
     test("createTournamentEntry", () => {
         // ARRANGE: create in memory storage + load data from test file
         file_storage.open();

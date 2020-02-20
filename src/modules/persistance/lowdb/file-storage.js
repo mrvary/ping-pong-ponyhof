@@ -7,11 +7,13 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const Memory = require('lowdb/adapters/Memory');
 
+const config = require("./config");
+
 let storage = null;
 
 function open(filePath) {
     storage = low(
-        process.env.NODE_ENV === "test"
+        config.USE_IN_MEMORY_STORAGE
         ? new Memory()
         : new FileSync(filePath));
 
