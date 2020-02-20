@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const os = require('os');
 
 function getIpAddress() {

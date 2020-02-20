@@ -1,8 +1,9 @@
-const app = require('./app');
-const http = require('http');
+/**
+ * @author Marco Goebel
+ */
 
-// electron dependencies
-const log = require('electron-log');
+const http = require('http');
+const app = require('./app');
 
 // communication dependecies
 const io = require('socket.io');

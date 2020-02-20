@@ -1,48 +1,30 @@
-const { dialog } = require('electron');
-const fs = require('fs');
+/**
+ * @author Marco Goebel
+ */
 
-const parser = require('xml2json');
+const { dialog } = require("electron");
 
-function openXMLFile(callback) {
-  // open file dialog looking for xml
-  dialog
+// open file dialog looking for xml
+function openXMLFile() {
+  return dialog
     .showOpenDialog({
-      properties: ['openFile'],
-      filters: [{ name: 'XML', extensions: ['xml'] }]
+      properties: ["openFile"],
+      filters: [{ name: "XML", extensions: ["xml"] }]
     })
     .then(result => {
-      // read file from disk
-      const filePath = result.filePaths[0];
-      const fileConent = fs.readFileSync(filePath);
-
-      // convert xml content to json and create json object
-      const json = JSON.parse(parser.toJson(fileConent), {
-        reversible: false
-      });
-
-      callback(json);
+      return result.filePaths[0];
     })
     .catch(err => {
-      console.log('No file is readed');
-      console.log(err);
+      console.log("Can not get path of file", err);
     });
 }
 
-function showInfoBox(title, message, callback) {
-  dialog
-    .showMessageBox({
-      type: 'info',
-      title: title,
-      message: message
-    })
-    .then(result => {
-      if (callback) {
-        callback(result);
-      }
-    })
-    .catch(error => {
-      console.log(error);
-    });
+function showInfoBox(title, message) {
+  dialog.showMessageBox({
+    type: "info",
+    title: title,
+    message: message
+  });
 }
 
 module.exports = {

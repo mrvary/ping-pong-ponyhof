@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const competitions = [
   {
     id: 0,
