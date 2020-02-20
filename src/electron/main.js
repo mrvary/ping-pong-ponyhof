@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const { app, ipcMain, BrowserWindow, Menu } = require("electron");
+const { app, ipcMain, Menu } = require("electron");
 const path = require("path");
 
 require("electron-reload")(__dirname, {
@@ -12,6 +12,8 @@ require("electron-reload")(__dirname, {
 const config = require("./config");
 const uiActions = require("./actions/uiActions");
 const menu = require("./menu/main-menu");
+const ipcChannels = require("../shared/ipc/ipcChannels");
+const createWindow = require("./window");
 
 // server dependencies
 const server = require("../modules/server");
@@ -31,42 +33,13 @@ const { createPlayersFromJSON } = require("../matchmaker/player");
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
 
-// frontend dependencies
-const ipcChannels = require("../shared/ipc/ipcChannels");
-
-let mainWindow;
+let mainWindow = null;
+let statisticWindow = null;
 
 let currentMatches = [];
 let players = [];
 
 const SKIP_FILE_CREATION = false;
-
-function createMainWindow() {
-  // create the browser window ...
-  mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
-    icon: path.join(
-      __dirname,
-      "../assets/icons/png/app-icon/app-icon_16x16.png"
-    ),
-    webPreferences: {
-      nodeIntegration: false,
-      preload: path.join(__dirname, "preload.js")
-    }
-  });
-
-  // ...and load the frontend react app
-  mainWindow.loadURL(config.ELECTRON_START_URL);
-
-  // Emitted when the window is closed.
-  mainWindow.on("closed", () => {
-    mainWindow = null;
-  });
-
-  // set custom application menu
-  Menu.setApplicationMenu(menu);
-}
 
 /**
  *  init react dev tools for electron
@@ -83,44 +56,40 @@ function initDevTools() {
       .catch(err => console.log("An error occurred: ", err));
 }
 
-function initFileDatabase() {
-  const filePath = file_manager.getCompetitionDatabasePath();
-  file_storage.open(filePath);
-}
-
-function initHTTPServer() {
-  const port = config.SERVER_PORT;
-  server.setupHTTPServer(port);
-  server.setupSocketIO();
-}
-
 app.on("ready", () => {
   initDevTools();
 
-  initFileDatabase();
-  initHTTPServer();
+  // init competition database
+  const filePath = file_manager.getCompetitionDatabasePath();
+  file_storage.open(filePath);
 
-  createMainWindow();
+  // init http express server
+  server.setupHTTPServer(config.SERVER_PORT);
+  server.setupSocketIO();
+
+  // create the browser window ...
+  createWindow();
+
+  // set custom application menu
+  Menu.setApplicationMenu(menu);
 });
 
 app.on("before-quit", () => {
   server.shutdownServer();
 });
 
-// app.on("window-all-closed", () => {
-//   // On macOS it is common for applications and their menu bar
-//   // to stay active until the user quits explicitly with Cmd + Q
-//   if (process.platform !== "darwin") {
-//     app.quit();
-//   }
-// });
+app.on("window-all-closed", () => {
+   // On macOS it is common for applications and their menu bar
+   // to stay active until the user quits explicitly with Cmd + Q
+   if (process.platform !== "darwin") {
+     app.quit();
+  }
+});
 
-app.on("activate", () => {
+app.on('activate', (event, hasVisibleWindows) => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createMainWindow();
-  }
+  if (!hasVisibleWindows) { createWindow(); }
 });
 
 ipcMain.on(ipcChannels.START_ROUND, () => {
@@ -228,4 +197,9 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   }
 
   event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matches: currentMatches })
+});
+
+ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
+  const { route } = args;
+  createWindow(route);
 });
