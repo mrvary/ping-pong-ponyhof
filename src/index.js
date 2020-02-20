@@ -14,7 +14,7 @@ const routing = (
   <HashRouter>
     <div>
       <Switch>
-        <Route path="/" component={App} />
+        <Route exact path="/" component={App} />
         <Route path="/competition/:competitionID" component={CompetitionPage} />
         <Route
           path="/statisticTable/:competitionID"

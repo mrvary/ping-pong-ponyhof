@@ -17,7 +17,7 @@ import IPCService from '../shared/ipc/ipcRendererService';
 const USE_BROWSER = false;
 
 const App = () => {
-  const [currentId, setCurrentId] = useState([]);
+  const [currentId, setCurrentId] = useState('');
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [uploadedXML, setUploadedXML] = useState(false);
   const [competitions, setCompetitions] = useState([]);

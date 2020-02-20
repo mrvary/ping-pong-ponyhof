@@ -213,7 +213,7 @@ const CompetitionPage = () => {
         playmode="Scheizer System"
         startDate="02.02.2020"
         linkTitle="zur Übersicht"
-        linkDestination="/"
+        linkDestination={competitionID}
       />
       <IpAdressAndStatisticLink competitionID={competitionID} />
       <Table matches={matches} />

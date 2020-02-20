@@ -1,6 +1,6 @@
 import React from 'react';
 import './Header.css';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 function Header({
   openXMLDialog,
@@ -33,22 +33,20 @@ const HeaderBox = ({
   linkDisabled,
   uploadedXML
 }) => {
-  const competition = currentId !== '' ? '/competition/' + currentId : '';
-  const linkStatus = 'disabled-link-' + linkDisabled;
   return (
     <div className="header__match-box">
       <p className="header__match-box--title">Neues Turnier anlegen</p>
       <UploadXML importXML={openXMLDialog} uploadedXML={uploadedXML} />
 
-      <LoslegenLink currentId={currentId} linkDisabled={linkDisabled} />
+      <LoslegenLink
+        importXML={importXML}
+        currentId={currentId}
+        linkDisabled={linkDisabled}
+      />
     </div>
   );
 };
-//<Redirect to={competition} />
-/*<p onClick={importXML} className={linkStatus}>
-        Loslegen
-      </p>
-*/
+
 const UploadXML = ({ importXML, uploadedXML }) => {
   var xmlUploadedCss = 'header__upload-xml-button';
   var xmlText = 'Lade hier deine XML Datei hoch!';
@@ -65,15 +63,19 @@ const UploadXML = ({ importXML, uploadedXML }) => {
   );
 };
 
-const LoslegenLink = ({ currentId, linkDisabled }) => {
-  if (!linkDisabled) {
-    var competitionID = '/competition/' + currentId;
-    //var linkStatus = 'disabled-link-' + linkDisabled;
+const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
+  const competition = currentId !== '' ? '/competition/' + currentId : '';
+  const linkStatus = 'disabled-link-' + linkDisabled;
 
+  if (!linkDisabled) {
+    console.log('Hallo' + currentId);
     return (
-      <Link to={competitionID} className="header__loslegen-link header__link">
-        Loslegen
-      </Link>
+      <div>
+        <p onClick={importXML} className={linkStatus}>
+          Loslegen
+        </p>
+        <Redirect to={competition} />
+      </div>
     );
   }
   return null;
