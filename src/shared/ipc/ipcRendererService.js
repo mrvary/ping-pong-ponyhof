@@ -2,8 +2,13 @@
  * @author Marco Goebel
  */
 
+const remote = window.electron.remote;
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcChannels = require("./ipcChannels");
+
+function createWindow(route) {
+    ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
+}
 
 function openXMLDialog(callback) {
     ipcRenderer.once(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, (event, args) => {
@@ -95,6 +100,9 @@ function getPlayersByPlayerId(id) {
 }
 
 module.exports = {
+    // windows
+    createWindow,
+
     // Trigger
     startRound,
 

@@ -10,6 +10,7 @@ function Header({
   linkDisabled,
   uploadedXML
 }) {
+
   return (
     <section className="header__picture">
       <div className="header__container">
@@ -48,8 +49,8 @@ const HeaderBox = ({
 };
 
 const UploadXML = ({ importXML, uploadedXML }) => {
-  var xmlUploadedCss = 'header__upload-xml-button';
-  var xmlText = 'Lade hier deine XML Datei hoch!';
+  let xmlUploadedCss = 'header__upload-xml-button';
+  let xmlText = 'Lade hier deine XML Datei hoch!';
 
   if (uploadedXML) {
     xmlText = 'Upload erfolgreich';

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import './CompetitionPage.css';
 import '../Colors.css';
 
@@ -14,7 +14,7 @@ import IPCService from '../../shared/ipc/ipcRendererService';
 
 const USE_BROWSER = false;
 
-const IpAdressAndStatisticLink = competitionID => {
+const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow })=> {
   const statisticID = '/statisticTable/' + competitionID;
   return (
     <div className="competitionPage__link-alignment">
@@ -22,9 +22,9 @@ const IpAdressAndStatisticLink = competitionID => {
         {' '}
         IP-Adresse{' '}
       </div>
-      <Link className="competitionPage__link-back-to-overview" to={statisticID}>
+      <p onClick={() => openStatisticWindow(statisticID)} className="competitionPage__link-ip-adress-statistic">
         Statistik
-      </Link>
+      </p>
     </div>
   );
 };
@@ -79,8 +79,10 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
+
   var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
   var index = 0;
+
   match.sets.forEach(set => {
     stringSet[index] = set.player1 + ' : ' + set.player2;
     index++;
@@ -206,6 +208,10 @@ const CompetitionPage = () => {
     handleCloseEndRound();
   };
 
+  const openStatisticWindow = route => {
+    IPCService.createWindow(route);
+  };
+
   return (
     <div>
       <p>competitionID: {competitionID}</p>
@@ -215,7 +221,7 @@ const CompetitionPage = () => {
         linkTitle="zur Übersicht"
         linkDestination={competitionID}
       />
-      <IpAdressAndStatisticLink competitionID={competitionID} />
+      <IpAdressAndStatisticLink competitionID={competitionID} openStatisticWindow={openStatisticWindow}  />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button

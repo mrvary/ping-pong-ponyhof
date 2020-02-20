@@ -23,6 +23,7 @@ const App = () => {
   const [competitions, setCompetitions] = useState([]);
   const [xmlFilePath, setXMLFilePath] = useState(null);
 
+
   useEffect(() => {
     getAllCompetitions();
   }, []);
@@ -57,7 +58,6 @@ const App = () => {
         setLinkDisabled(true);
         return;
       }
-
       setCurrentId(competitionId);
       setLinkDisabled(false);
       setUploadedXML(true);
@@ -88,7 +88,8 @@ const App = () => {
         xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
-        uploaded={uploadedXML}
+
+        uploadedXML={uploadedXML}
       />
       {competitions.map(competition => (
         <Competition

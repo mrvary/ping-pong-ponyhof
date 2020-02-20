@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import MatchService from '../../services/matchService';
 import './StatisticTable.css';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import '../Colors.css';
 import CompetitionPageHeader from './CompetitionPageHeader';
 
