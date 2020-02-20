@@ -2,9 +2,6 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Colors.css';
 
-// ipc service
-import IPCService from './ipc/ipcRendererService';
-
 // dummy data
 import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
 
@@ -14,13 +11,17 @@ import Competition from "./components/Competition";
 import Header from "./components/Header";
 import Button from "./components/Button";
 
+// electron
+import IPCService from './ipc/ipcRendererService';
+
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
 const App = () => {
   const [competitions, setCompetitions] = useState([]);
-  const [currentId, setCurrentId] = useState([]);
-  const [linkDisabled, setLinkDisabled] = useState(['true']);
+  const [xmlFilePath, setXMLFilePath] = useState(null);
+  const [currentId, setCurrentId] = useState('');
+  const [linkDisabled, setLinkDisabled] = useState(true);
 
   useEffect(() => {
     getAllCompetitions();
@@ -37,15 +38,27 @@ const App = () => {
    });
   };
 
-  const importXML = () => {
-   IPCService.importXMLFile(() => {
-       //const { players } = args;
-       //const { matchID } = args;
+  const openXMLDialog = () => {
+      IPCService.openXMLDialog((filePath) => {
+          console.log(filePath);
+          setXMLFilePath(filePath);
+          setLinkDisabled(false);
+      });
+  };
 
-       getAllCompetitions(); //vllt nicht machen damit es noch nicht in der liste auftaucht
-       //setCurrentId(matchID);
-       setLinkDisabled('false');
-   })
+  const importXML = () => {
+      if (!xmlFilePath) {
+          return;
+      }
+
+      IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
+          if (!competitionId) {
+              setLinkDisabled(true);
+              return;
+          }
+
+          setCurrentId(competitionId);
+      })
   };
 
   const deleteCompetition = id => {
@@ -81,7 +94,9 @@ const App = () => {
     <div className="app__container">
       <Header
         title="PingPongPonyhof"
+        openXMLDialog={openXMLDialog}
         importXML={importXML}
+        xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
       />

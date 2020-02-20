@@ -2,14 +2,24 @@
  * @author Marco Goebel
  */
 
-const ipcRenderer = window.ipcRenderer;
+const ipcRenderer = window.electron.ipcRenderer;
 const ipcChannels = require("./ipcChannels");
 
-function importXMLFile(callback) {
-    ipcRenderer.once(ipcChannels.FILE_IMPORTED, (event, args) => {
-        callback();
+function openXMLDialog(callback) {
+    ipcRenderer.once(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, (event, args) => {
+        const { xmlFilePath } = args;
+        callback(xmlFilePath);
     });
     ipcRenderer.send(ipcChannels.OPEN_IMPORT_DIALOG);
+}
+
+function importXMLFile(xmlFilePath, callback) {
+    ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_SUCCESS, (event, args) => {
+        const { competitionId, message } = args;
+        callback(competitionId, message);
+    });
+
+    ipcRenderer.send(ipcChannels.IMPORT_XML_FILE, {xmlFilePath: xmlFilePath});
 }
 
 function startRound() {
@@ -132,9 +142,12 @@ function getPlayersByMatchId(id) {
 }
 
 module.exports = {
-    // Triggers
-    importXMLFile,
+    // Trigger
     startRound,
+
+    // Import
+    openXMLDialog,
+    importXMLFile,
 
     // Competitions
     getAllCompetitions,
