@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import MatchService from '../../services/matchService';
-import './CompetitionPage.css';
 import { Link, useParams } from 'react-router-dom';
+import './CompetitionPage.css';
 import '../Colors.css';
 
 //componenten
@@ -9,6 +8,11 @@ import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
 import CompetitionPage__Header from './CompetitionPage__Header';
+
+// shared service
+import IPCService from '../../shared/ipc/ipcRendererService';
+
+const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = competitionID => {
   const statisticID = '/statisticTable/' + competitionID;
@@ -75,6 +79,7 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
+<<<<<<< HEAD
   var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
   var index = 0;
   match.sets.forEach(set => {
@@ -84,6 +89,10 @@ const TableRow = ({ match }) => {
   /*
   const set1 = match.sets[0][0] + ' : ' + match.sets[0][1];
   const set2 = match.sets[1][0] + ' : ' + match.sets[1][1];
+=======
+  const set1 = match.sets[0].player1 + ' : ' + match.sets[0].player2;
+  const set2 = match.sets[1].player1 + ' : ' + match.sets[1].player2;
+>>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
   const set3 = 0; //= match.sets[2][0] + ' : ' + match.sets[2][1];
   const set4 = 0; //= match.sets[3][0] + ' : ' + match.sets[3][1];
   const set5 = 0; //= match.sets[4][0] + ' : ' + match.sets[4][1];
@@ -145,12 +154,52 @@ const CompetitionPage = () => {
   //dummy match
   const { competitionID } = useParams();
   const [matches, setMatches] = useState([]);
+  const [players, setPlayer] = useState([]);
 
   useEffect(() => {
-    const data = MatchService.getMatchesByCompetition(competitionID);
-    console.log(data);
-    setMatches(data);
+    updateCompetition()
   }, []);
+
+  const updateCompetition = () => {
+    if (USE_BROWSER) {
+      const matches = [
+        {
+          id: 3,
+          player1: 'Samuel Geiger',
+          player2: 'Marius Bach',
+          sets: [
+            { player1: 11, player2: 13},
+            { player1: 4, player2: 11}
+          ],
+          freeTicket: false,
+          compId: 1
+        },
+        {
+          id: 4,
+          player1: 'Edith Finch',
+          player2: 'Finch Assozial',
+          sets: [
+            { player1: 13, player2: 15},
+            { player1: 14, player2: 16}
+          ],
+          freeTicket: false,
+          compId: 1
+        }
+      ];
+
+      console.log(matches);
+      setMatches(matches);
+      return;
+    }
+
+    IPCService.getMatchesByCompetition(competitionID, (matchData) => {
+      console.log(matchData);
+      setMatches(matchData);
+
+      const playerData = IPCService.getPlayersByPlayerId();
+      setPlayer(playerData);
+    });
+  };
 
   const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
   const handleCloseEndTournament = () => setShowPopupEndTournament(false);

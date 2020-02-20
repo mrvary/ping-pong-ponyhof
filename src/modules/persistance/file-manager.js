@@ -14,44 +14,45 @@ function getApplicationDir(directoryName) {
   return appDataPath;
 }
 
-function getDatabasePath() {
-  const databaseDir = getApplicationDir("database");
-  return path.join(databaseDir, "database.db");
-}
-
-function getTournamentDatabasePath() {
-  const dataDir = getApplicationDir("data");
-  return path.join(dataDir, "tournaments.json");
-}
-
-function generateTournamentFileName(id) {
+function getFileFromAppDataPath(filename) {
   const appDataPath = getApplicationDir("data");
-  const filename = `${id}.json`;
   return path.join(appDataPath, filename);
+}
+
+function getCompetitionDatabasePath() {
+  return getFileFromAppDataPath("competitions.json")
+}
+
+function getCompetitionFilePath(id) {
+  return getFileFromAppDataPath(`${id}.json`);
+}
+
+function checkIfFilesExists(filePath) {
+    return fs.existsSync(filePath);
 }
 
 /**
  * Convert from json object to json plain text and store file
  */
- function createTournamentFile(id, jsonObject) {
-  const filepath = generateTournamentFileName(id);
-
+ function createTournamentJSONFile(filePath, jsonObject) {
   const data = JSON.stringify(jsonObject, null, 2);
-  fs.writeFileSync(filepath, data);
-  console.log("Create new tournament file:", filepath);
+  fs.writeFileSync(filePath, data);
+
+  console.log("Create new tournament JSON file:", filePath);
 }
 
-function deleteTournamentFile(id) {
-  const filePath = generateTournamentFileName(id);
+function deleteTournamentJSONFile(id) {
+  const filePath = getCompetitionFilePath(id);
 
   fs.unlinkSync(filePath);
-  console.log("Delete file:", filePath);
+  console.log("Delete tournament JSON file:", filePath);
 }
 
 module.exports = {
-  generateTournamentFileName,
-  getDatabasePath,
-  getTournamentDatabasePath,
-  createTournamentFile,
-  deleteTournamentFile
+  getCompetitionFilePath,
+  getCompetitionDatabasePath,
+  getCompetitionFilePath,
+  checkIfFilesExists,
+  createTournamentJSONFile,
+  deleteTournamentJSONFile
 };

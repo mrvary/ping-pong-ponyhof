@@ -80,6 +80,7 @@
   border: 0.3vh solid var(--grey-out-color);
 }
 
+<<<<<<< HEAD
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
@@ -98,4 +99,9 @@
 }
 .header__link:hover {
   color: var(--prim-font-color);
+=======
+.disabled-link-false {
+  cursor: pointer;
+  color: green;
+>>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
 }

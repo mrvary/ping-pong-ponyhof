@@ -1,12 +1,17 @@
 import React from 'react';
 import './Header.css';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 
+<<<<<<< HEAD
 function Header({ importXML, title, currentId, linkDisabled, uploaded }) {
+=======
+function Header({ openXMLDialog, importXML, title, currentId, linkDisabled }) {
+>>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
   return (
     <section className="header__picture">
       <div className="header__container">
         <HeaderBox
+          openXMLDialog={openXMLDialog}
           importXML={importXML}
           currentId={currentId}
           linkDisabled={linkDisabled}
@@ -18,12 +23,26 @@ function Header({ importXML, title, currentId, linkDisabled, uploaded }) {
   );
 }
 
+<<<<<<< HEAD
 const HeaderBox = ({ importXML, currentId, linkDisabled, uploaded }) => {
   return (
     <div className="header__match-box">
       <p className="header__match-box--title">Neues Turnier anlegen</p>
       <UploadXML importXML={importXML} uploaded={uploaded} />
       <LoslegenLink currentId={currentId} linkDisabled={linkDisabled} />
+=======
+const HeaderBox = ({ openXMLDialog, importXML, currentId, linkDisabled }) => {
+  const competition = currentId !== '' ? '/competition/' + currentId : '';
+  const linkStatus = 'disabled-link-' + linkDisabled;
+  return (
+    <div className="header__match-box">
+      <p className="header__match-box--title">Neues Turnier anlegen</p>
+      <UploadXML importXML={openXMLDialog} />
+      <p onClick={importXML} className={linkStatus}>
+          Loslegen
+      </p>
+      <Redirect to={competition} />
+>>>>>>> d569c61dbf64956e294761ebb9263291eefd5b06
     </div>
   );
 };
