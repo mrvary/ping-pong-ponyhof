@@ -26,7 +26,6 @@ function createCompetition(competition) {
     // if competition is found, return error
     if (data) {
         console.log("Competition does already exist");
-        throw new Error("Das Spiel existiert bereits!");
     }
 
     storage.get("competitions")

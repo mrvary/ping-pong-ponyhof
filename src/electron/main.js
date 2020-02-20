@@ -32,9 +32,14 @@ const { createPlayersFromJSON } = require("../matchmaker/player");
 const matchmaker = require("../matchmaker/drawing");
 
 // frontend dependencies
-const ipcChannels = require("../react/ipc/ipcChannels");
+const ipcChannels = require("../shared/ipc/ipcChannels");
 
 let mainWindow;
+
+let currentMatches = [];
+let players = [];
+
+const SKIP_FILE_CREATION = false;
 
 function createMainWindow() {
   // create the browser window ...
@@ -133,27 +138,48 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     const { xmlFilePath } = args;
 
     if (!xmlFilePath) {
-      return;
+      throw new Error('xml is not set');
     }
 
     // read xml file from disk and convert it to json
     const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
+    const competition = createCompetitionFromJSON(jsonObject.tournament);
+
+    // check if file already exists
+    const filepath = file_manager.getCompetitionFilePath(competition.id);
+    if (file_manager.checkIfFilesExists(filepath)) {
+      console.log("Competition does already exist");
+      throw new Error("Das Spiel existiert bereits!");
+    }
 
     // save tournament as json file
-    const competition = createCompetitionFromJSON(jsonObject.tournament);
-    file_manager.createTournamentJSONFile(competition.id, jsonObject);
-    file_storage.createCompetition(competition);
+    if(!SKIP_FILE_CREATION) {
+      file_manager.createTournamentJSONFile(filepath, jsonObject);
+      file_storage.createCompetition(competition);
+    }
 
     // use matchmaker to draw first round
     console.log("Matchmaker draw matches");
-    const players = createPlayersFromJSON(jsonObject);
-    const matches = matchmaker.drawRound(players);
-    console.log((matches));
+    players = createPlayersFromJSON(jsonObject);
+    currentMatches = matchmaker.drawRound(players);
+
+    // set first set to zero
+    currentMatches.forEach(match => {
+      match.sets.push({player1: 0, player2: 0});
+      match.sets.push({player1: 0, player2: 0});
+    });
+
+    // set matches to tables
+    server.setMatchesToTables(currentMatches);
 
     // save matches into tournament file
-    const filePath = file_manager.getCompetitionFilePath(competition.id);
-    competition_storage.open(filePath);
-    competition_storage.createMatches(matches);
+    if(!SKIP_FILE_CREATION) {
+      const filePath = file_manager.getCompetitionFilePath(competition.id);
+      competition_storage.open(filePath);
+      competition_storage.createMatches(currentMatches);
+    }
+
+    console.log('Ready to play');
 
     // notify react app that import is ready and was successful
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: competition.id, message: "success" });
@@ -179,4 +205,27 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   file_storage.deleteCompetition(id);
 
   event.sender.send(ipcChannels.DELETE_COMPETITION);
+});
+
+ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
+  const { id } = args;
+
+  if (currentMatches.length === 0) {
+    const filePath = file_manager.getCompetitionFilePath(id);
+    competition_storage.open(filePath);
+    currentMatches = competition_storage.getMatchesBy();
+
+    // set first set to zero
+    currentMatches.forEach(match => {
+      match.sets.push({player1: 0, player2: 0});
+      match.sets.push({player1: 0, player2: 0});
+    });
+
+    // set matches to tables
+    server.setMatchesToTables(currentMatches);
+
+    console.log('Ready to play');
+  }
+
+  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matches: currentMatches })
 });

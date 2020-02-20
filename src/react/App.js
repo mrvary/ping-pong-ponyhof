@@ -12,7 +12,7 @@ import Header from "./components/Header";
 import Button from "./components/Button";
 
 // electron
-import IPCService from './ipc/ipcRendererService';
+import IPCService from '../shared/ipc/ipcRendererService';
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
@@ -53,6 +53,7 @@ const App = () => {
 
       IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
           if (!competitionId) {
+              console.log(message);
               setLinkDisabled(true);
               return;
           }

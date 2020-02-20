@@ -19,7 +19,7 @@ function Header({ openXMLDialog, importXML, title, currentId, linkDisabled }) {
 }
 
 const HeaderBox = ({ openXMLDialog, importXML, currentId, linkDisabled }) => {
-  const competition = currentId !== '' ? '/competition/u' + currentId : '';
+  const competition = currentId !== '' ? '/competition/' + currentId : '';
   const linkStatus = 'disabled-link-' + linkDisabled;
   return (
     <div className="header__match-box">

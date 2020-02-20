@@ -10,7 +10,6 @@ const io = require('socket.io');
 const { clientChannels } = require('../client/src/shared/client-channels');
 
 // Matchmaker
-const { createMatches } = require('../matchmaker/match');
 const { mockedMatch } = require('../assets/mock-data/match.mock.data');
 
 // Variables
@@ -19,10 +18,10 @@ const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let server = null;
 let serverSocket = null;
-
 let connectedClients = new Map();
-let matchTableMap = null;
 
+let matchCount = 0;
+let matchTableMap = null;
 let matchStarted = false;
 
 function setupHTTPServer(port) {
@@ -114,27 +113,15 @@ function clientLogout(clientSocket) {
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
-function diceMatches(players) {
-  const matches = createDummyMatches(players);
-  //console.log('Create example matches', matches);
-
-  // map matches to tables
+// map matches to tables
+function setMatchesToTables(matches) {
   matchTableMap = new Map();
-  matchTableMap.set(1, matches[0]);
-  matchTableMap.set(2, matches[1]);
-  matchTableMap.set(3, matches[2]);
-}
 
-function createDummyMatches(players) {
-  const pairings = [
-    { player1: players[0], player2: players[1] },
-    { player1: players[2], player2: players[3] },
-    { player1: players[4], player2: players[5] },
-    { player1: players[6], player2: players[7] }
-  ];
-
-  // use imported players without matchmaker
-  return createMatches(pairings);
+  console.log(`Map matches to tables`);
+  matches.forEach(match => {
+    matchTableMap.set(++matchCount, match);
+    console.log(`Table ${matchCount} - ${match.player1} VS. ${match.player2}`)
+  });
 }
 
 function sendMatchToClient(clientSocket, data) {
@@ -181,6 +168,6 @@ module.exports = {
   setupHTTPServer,
   shutdownServer,
   setupSocketIO,
-  diceMatches,
+  setMatchesToTables,
   sendStartRoundBroadcast
 };
