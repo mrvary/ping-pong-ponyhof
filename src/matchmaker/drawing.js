@@ -31,9 +31,9 @@ function drawFirstRound(players) {
 
 // drawLaterRound : [players] -> [pairings]
 function drawLaterRound(players) {
-  const pairings = pairPlayersLaterRound(players);
+  const basicPairings = pairPlayersLaterRound(players);
 
-  return pairings;
+  return basicPairings;
 }
 
 module.exports = {
