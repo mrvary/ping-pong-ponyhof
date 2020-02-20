@@ -14,7 +14,7 @@ import IPCService from '../../shared/ipc/ipcRendererService';
 
 const USE_BROWSER = false;
 
-const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow })=> {
+const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
   const statisticID = '/statisticTable/' + competitionID;
   return (
     <div className="competitionPage__link-alignment">
@@ -22,7 +22,10 @@ const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow })=> {
         {' '}
         IP-Adresse{' '}
       </div>
-      <p onClick={() => openStatisticWindow(statisticID)} className="competitionPage__link-ip-adress-statistic">
+      <p
+        onClick={() => openStatisticWindow(statisticID)}
+        className="competitionPage__link-ip-adress-statistic"
+      >
         Statistik
       </p>
     </div>
@@ -79,7 +82,6 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-
   var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
   var index = 0;
 
@@ -219,9 +221,12 @@ const CompetitionPage = () => {
         playmode="Scheizer System"
         startDate="02.02.2020"
         linkTitle="zur Übersicht"
-        linkDestination={competitionID}
+        linkDestination={'/'}
       />
-      <IpAdressAndStatisticLink competitionID={competitionID} openStatisticWindow={openStatisticWindow}  />
+      <IpAdressAndStatisticLink
+        competitionID={competitionID}
+        openStatisticWindow={openStatisticWindow}
+      />
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button

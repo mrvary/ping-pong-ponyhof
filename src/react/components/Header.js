@@ -10,7 +10,6 @@ function Header({
   linkDisabled,
   uploadedXML
 }) {
-
   return (
     <section className="header__picture">
       <div className="header__container">
@@ -69,7 +68,6 @@ const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
   const linkStatus = 'disabled-link-' + linkDisabled;
 
   if (!linkDisabled) {
-    console.log('Hallo' + currentId);
     return (
       <div>
         <p onClick={importXML} className={linkStatus}>
