@@ -2,17 +2,17 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 import './Colors.css';
 
-import { channels } from '../shared/channels';
+import { channels } from "../shared/channels";
 
 // dummy data
-import dummyPlayers from '../assets/players';
-import dummyGames from '../assets/games';
+import dummyPlayers from "../assets/mock-data/players";
+import dummyGames from "../assets/mock-data/games";
 
 // components
-import Footer from './components/Footer';
-import Competition from './components/Competition';
-import Header from './components/Header';
-import Button from './components/Button';
+import Footer from "./components/Footer";
+import Competition from "./components/Competition";
+import Header from "./components/Header";
+import Button from "./components/Button";
 
 // electron
 const ipcRenderer = window.ipcRenderer;
@@ -45,7 +45,7 @@ const App = () => {
         return {
           id: tournament.id,
           date: tournament.start_date,
-          system: 'Schweizer System'
+          system: "Schweizer System"
         };
       });
 
@@ -56,7 +56,7 @@ const App = () => {
   };
 
   const importXML = () => {
-    console.log('XML-Event');
+    console.log("XML-Event");
     // fake backend data for browser
 
     if (USE_BROWSER) {
@@ -64,10 +64,8 @@ const App = () => {
       return;
     }
 
-    ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
-
     ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
-      const { players } = args;
+      //const { players } = args;
       //const { matchID } = args;
 
       //log.info(players);
@@ -78,6 +76,7 @@ const App = () => {
       setLinkDisabled('false');
       setUploaded('true');
     });
+    ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
   };
 
   const deleteGame = id => {
