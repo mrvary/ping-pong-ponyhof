@@ -30,8 +30,8 @@ const HeaderBox = ({ importXML, currentId, linkDisabled, uploaded }) => {
 //      <Button onClick={startCompetition} mode="primary" text="loslegen" />
 
 const UploadXML = ({ importXML, uploaded }) => {
-  var xmlUploadedCss = 'header__upload-xml-button-' + uploaded;
-  var xmlText = 'Lade hier deine XML Datei hoch!';
+  let xmlUploadedCss = 'header__upload-xml-button-' + uploaded;
+  let xmlText = 'Lade hier deine XML Datei hoch!';
   if (uploaded === 'true') {
     xmlText = 'Upload erfolgreich';
   }
@@ -43,9 +43,8 @@ const UploadXML = ({ importXML, uploaded }) => {
 };
 
 const LoslegenLink = ({ currentId, linkDisabled }) => {
-  if (linkDisabled === 'false') {
-    var competitionID = '/competition/u' + currentId;
-    //var linkStatus = 'disabled-link-' + linkDisabled;
+  if (!linkDisabled) {
+    let competitionID = '/competition/u' + currentId;
 
     return (
       <Link to={competitionID} className="header__loslegen-link header__link">

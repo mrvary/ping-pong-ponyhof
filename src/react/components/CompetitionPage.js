@@ -89,8 +89,8 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-  var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
-  var index = 0;
+  let stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
+  let index = 0;
   match.sets.forEach(set => {
     stringSet[index] = set.player1 + ' : ' + set.player2;
     index++;
