@@ -8,6 +8,7 @@ import Popup from './Popup';
 import Footer from './Footer';
 import Button from './Button';
 import CompetitionPageHeader from './CompetitionPageHeader';
+import PopupEditTable from './PopupEditTable';
 
 // shared service
 import IPCService from '../../shared/ipc/ipcRendererService';
@@ -94,6 +95,11 @@ const TableRow = ({ match }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
+  const saveChanges = () => {
+    //TODO save Changes in edit Table
+    handleCloseEditMatch();
+  };
+
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
@@ -132,15 +138,13 @@ const TableRow = ({ match }) => {
           Ergebnis{' '}
         </div>
       </div>
-      <button onClick={handleShowEditMatch}></button>
-      <Popup
+      <button onClick={handleShowEditMatch}>edit</button>
+      <PopupEditTable
         show={showPopupEditMatch}
         handleClose={handleCloseEditMatch}
-        header="Sicher?"
-        bodyText="Möchtest du wirklich das Tunier beenden?"
-        buttonText="Beenden"
-        mode="primary"
-      ></Popup>
+        sets={match.sets}
+        saveChanges={saveChanges}
+      ></PopupEditTable>
     </div>
   );
 };
