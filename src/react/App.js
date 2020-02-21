@@ -19,7 +19,6 @@ const USE_BROWSER = false;
 const App = () => {
   const [currentId, setCurrentId] = useState('');
   const [linkDisabled, setLinkDisabled] = useState(true);
-  //const [uploadedXML, setUploadedXML] = useState(false);
   const [competitions, setCompetitions] = useState([]);
   const [xmlFilePath, setXMLFilePath] = useState(null);
 
@@ -53,7 +52,6 @@ const App = () => {
 
     IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
       if (!competitionId) {
-        // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
         console.log(message);
         setLinkDisabled(true);
         handleShowError();
