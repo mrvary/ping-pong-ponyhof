@@ -138,7 +138,12 @@ const TableRow = ({ match }) => {
           Ergebnis{' '}
         </div>
       </div>
-      <button onClick={handleShowEditMatch}>edit</button>
+      <button
+        onClick={handleShowEditMatch}
+        className="competitionPage__table__bearbeiten-btn"
+      >
+        bearbeiten
+      </button>
       <PopupEditTable
         show={showPopupEditMatch}
         handleClose={handleCloseEditMatch}
