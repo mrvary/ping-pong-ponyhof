@@ -83,7 +83,13 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-  var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
+  const [stringSet, setStringSet] = useState([
+    '0:0',
+    '0:0',
+    '0:0',
+    '0:0',
+    '0:0'
+  ]);
   var index = 0;
 
   match.sets.forEach(set => {
@@ -103,7 +109,7 @@ const TableRow = ({ match }) => {
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
-        <div className="competitionPage__table__column-alignment"> </div>
+        <div className="competitionPage__table__column-alignment"></div>
         <div className="competitionPage__table__column-alignment">
           {' '}
           {match.player1}
