@@ -1,3 +1,38 @@
 body {
   background-color: var(--prim-background-color);
 }
+
+.containerHeader {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  grid-template-rows: 1fr;
+}
+
+.containerBody {
+  display: grid;
+  grid-template-columns: auto;
+  grid-auto-rows: (minmax(100px, auto));
+  align-items: center;
+  text-align: center;
+  padding: 1em;
+}
+
+.ranking {
+  grid-row: 1/3;
+}
+
+.topRow {
+  grid-column: 2/7;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.bottomRow {
+  grid-column: 2/7;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.containerBody:nth-child(odd) {
+  background-color: var(--anti-color);
+}
