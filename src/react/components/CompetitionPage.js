@@ -90,6 +90,10 @@ const TableRow = ({ match }) => {
     index++;
   });
 
+  const [showPopupEditMatch, setShowPopupEditMatch] = useState(false);
+  const handleCloseEditMatch = () => setShowPopupEditMatch(false);
+  const handleShowEditMatch = () => setShowPopupEditMatch(true);
+
   return (
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-alignment">
@@ -128,6 +132,15 @@ const TableRow = ({ match }) => {
           Ergebnis{' '}
         </div>
       </div>
+      <button onClick={handleShowEditMatch}></button>
+      <Popup
+        show={showPopupEditMatch}
+        handleClose={handleCloseEditMatch}
+        header="Sicher?"
+        bodyText="Möchtest du wirklich das Tunier beenden?"
+        buttonText="Beenden"
+        mode="primary"
+      ></Popup>
     </div>
   );
 };
