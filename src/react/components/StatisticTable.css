@@ -2,10 +2,21 @@ body {
   background-color: var(--prim-background-color);
 }
 
+.competitionPage__link-back-to-overview {
+  display: none;
+}
+
 .containerHeader {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-  grid-template-rows: 1fr;
+  /* grid-template-columns: repeat(7, 1fr); */
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr;
+  grid-auto-rows: minmax(50px, auto);
+  padding: 1em;
+  text-align: center;
+  align-items: center;
+  background-color: var(--link-font-hover-color);
+  border-bottom: 1px solid var(--grey-out-color);
+  font-weight: 700;
 }
 
 .containerBody {
@@ -15,6 +26,9 @@ body {
   align-items: center;
   text-align: center;
   padding: 1em;
+  border-bottom: 1px solid var(--grey-out-color);
+  justify-items: stretch;
+  /* align-items: stretch; */
 }
 
 .ranking {
@@ -24,13 +38,16 @@ body {
 .topRow {
   grid-column: 2/7;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: 3fr 1fr 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--grey-out-color);
+  border-left: 1px solid var(--grey-out-color);
 }
 
 .bottomRow {
   grid-column: 2/7;
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(6, 1fr);
+  border-left: 1px solid var(--grey-out-color);
 }
 
 .containerBody:nth-child(odd) {

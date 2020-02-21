@@ -4,22 +4,33 @@ import { useParams } from 'react-router-dom';
 import '../Colors.css';
 import CompetitionPageHeader from './CompetitionPageHeader';
 
+// shared service
+import IPCService from '../../shared/ipc/ipcRendererService';
+const USE_BROWSER = false;
+
 const TableHeader = () => {
-  return <div className="containerHeader"></div>;
+  return (
+    <div className="containerHeader">
+      <div>Platz</div>
+      <div>Name</div>
+      <div>S:N</div>
+      <div>BHZ</div>
+      <div>TTR</div>
+      <div>TTR-Beginn</div>
+    </div>
+  );
 };
 
-const Table = () => {
+const TableRow = ({ match }) => {
   return (
     <div className="containerBody">
-      <div className="ranking">1</div>
+      <div className="ranking">{match.id + 1}</div>
       <div className="topRow">
-        <div> 1 </div>
-        <div> 2 </div>
+        <div> {match.player1} </div>
+        <div> hi </div>
         <div> 3 </div>
         <div> 4 </div>
         <div> 5 </div>
-        <div> 6 </div>
-        <div> 7 </div>
       </div>
 
       <div className="bottomRow">
@@ -29,8 +40,18 @@ const Table = () => {
         <div> 4 </div>
         <div> 5 </div>
         <div> 6 </div>
-        <div> 7 </div>
       </div>
+    </div>
+  );
+};
+
+const Table = ({ matches }) => {
+  return (
+    <div>
+      <TableHeader />
+      {matches.map(match => {
+        return <TableRow key={match.id} match={match} />;
+      })}
     </div>
   );
 };
@@ -40,55 +61,19 @@ const StatisticTable = () => {
   const { competitionID } = useParams();
   const linkDestination = '/competition/' + competitionID;
 
-    //dummy match
-    const { competitionID } = useParams();
-    const [matches, setMatches] = useState([]);
-    const [players, setPlayer] = useState([]);
-  
-    useEffect(() => {
-      updateCompetition();
-    }, []);
-  
-    const updateCompetition = () => {
-      if (USE_BROWSER) {
-        const matches = [
-          {
-            id: 3,
-            player1: 'Samuel Geiger',
-            player2: 'Marius Bach',
-            sets: [
-              { player1: 11, player2: 13 },
-              { player1: 4, player2: 11 }
-            ],
-            freeTicket: false,
-            compId: 1
-          },
-          {
-            id: 4,
-            player1: 'Edith Finch',
-            player2: 'Finch Assozial',
-            sets: [
-              { player1: 13, player2: 15 },
-              { player1: 14, player2: 16 }
-            ],
-            freeTicket: false,
-            compId: 1
-          }
-        ];
-  
-        console.log(matches);
-        setMatches(matches);
-        return;
-      }
-  
-      IPCService.getMatchesByCompetition(competitionID, matchData => {
-        console.log(matchData);
-        setMatches(matchData);
-  
-        const playerData = IPCService.getPlayersByPlayerId();
-        setPlayer(playerData);
-      });
-    };
+  //falsche daten
+  //dummy match
+  const { competitionID_1 } = useParams();
+  const [matches, setMatches] = useState([]);
+  const [players, setPlayer] = useState([]);
+
+  IPCService.getMatchesByCompetition(competitionID_1, matchData => {
+    console.log(matchData);
+    setMatches(matchData);
+
+    const playerData = IPCService.getPlayersByPlayerId();
+    setPlayer(playerData);
+  });
 
   return (
     <div>
@@ -99,8 +84,7 @@ const StatisticTable = () => {
         linkTitle="zurück zum Dashboard"
         linkDestination={linkDestination}
       />
-      <TableHeader />
-      <Table ranking="1" />
+      <Table matches={matches} />
     </div>
   );
 };
