@@ -54,7 +54,6 @@ const DisplaySet = ({ set, index, handleInputChanged }) => {
     <div className="popupEditTable--rows">
       <p>{'Set ' + index + '  '}</p>
       <input
-        className="input"
         size="2"
         maxLength="2"
         defaultValue={set.player1}
@@ -63,7 +62,6 @@ const DisplaySet = ({ set, index, handleInputChanged }) => {
       ></input>
       <p> {' : '} </p>
       <input
-        className="input"
         size="2"
         maxLength="2"
         defaultValue={set.player2}
