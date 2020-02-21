@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './Header.css';
 import { Redirect } from 'react-router-dom';
 import Button from './Button';
+import Popup from './Popup';
 
 function Header({
   openXMLDialog,
@@ -60,14 +61,25 @@ const UploadXML = ({ openXMLDialog, linkDisabled }) => {
 const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
   const competition = currentId !== '' ? '/competition/' + currentId : '';
 
+  const [showPopupError, setShowPopupError] = useState(false);
+  const handleCloseError = () => setShowPopupError(false);
+  const handleShowError = () => setShowPopupError(true);
+
   return (
     <div>
       <Button
-        onClick={importXML}
+        onClick={() => importXML(handleShowError)}
         disableProp={linkDisabled}
         text="Loslegen"
       ></Button>
       <Redirect to={competition} />
+      <Popup
+        show={showPopupError}
+        handleClose={handleCloseError}
+        header={'Fehler'}
+        bodyText={'Das Tunier wurde bereits hochgeladen'}
+        mode={'leer'}
+      ></Popup>
     </div>
   );
 };

@@ -46,7 +46,7 @@ const App = () => {
     });
   };
 
-  const importXML = () => {
+  const importXML = handleShowError => {
     if (!xmlFilePath) {
       return;
     }
@@ -56,6 +56,7 @@ const App = () => {
         // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
         console.log(message);
         setLinkDisabled(true);
+        handleShowError();
         return;
       }
       setCurrentId(competitionId);
