@@ -35,45 +35,45 @@ const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
 
 const TableHeadline = () => {
   return (
-    <div className="competitionPage__center-table">
-      <div className="competitionPage__table__first-row-style">
-        <strong className="competitionPage__table__column-alignment">
+    <div className="centered">
+      <div className="competitionPage__table__first-row-style tablegrid">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Tisch{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Spieler 1
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           :{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Spieler 2{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Satz 1{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Satz 2{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Satz 3{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Satz 4{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Satz 5{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
+        <strong className="competitionPage__table__column-alignment centered">
           {' '}
           Ergebnis{' '}
         </strong>
@@ -107,57 +107,58 @@ const TableRow = ({ match }) => {
   };
 
   return (
-    <div>
-      <div className="competitionPage__center-table">
-        <div className="competitionPage__table__first-row-alignment">
-          <div className="competitionPage__table__column-alignment"></div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {match.player1}
-          </div>
-          <div className="competitionPage__table__column-alignment"> : </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {match.player2}{' '}
-          </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {stringSet[0]}{' '}
-          </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {stringSet[1]}{' '}
-          </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {stringSet[2]}{' '}
-          </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {stringSet[3]}{' '}
-          </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            {stringSet[4]}{' '}
-          </div>
-          <div className="competitionPage__table__column-alignment">
-            {' '}
-            Ergebnis{' '}
-          </div>
+    <div className="centered">
+      <div className="competitionPage__table__first-row-alignment tablegrid">
+        <div className="competitionPage__table__column-alignment centered"></div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {match.player1}
         </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          :{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {match.player2}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {stringSet[0]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {stringSet[1]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {stringSet[2]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {stringSet[3]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          {stringSet[4]}{' '}
+        </div>
+        <div className="competitionPage__table__column-alignment centered">
+          {' '}
+          Ergebnis{' '}
+        </div>
+        <button
+          onClick={handleShowEditMatch}
+          className="competitionPage__table__bearbeiten-btn"
+        >
+          bearbeiten
+        </button>
+        <PopupEditTable
+          show={showPopupEditMatch}
+          handleClose={handleCloseEditMatch}
+          sets={match.sets}
+          saveChanges={saveChanges}
+        ></PopupEditTable>
       </div>
-      <button
-        onClick={handleShowEditMatch}
-        className="competitionPage__table__bearbeiten-btn"
-      >
-        bearbeiten
-      </button>
-      <PopupEditTable
-        show={showPopupEditMatch}
-        handleClose={handleCloseEditMatch}
-        sets={match.sets}
-        saveChanges={saveChanges}
-      ></PopupEditTable>
     </div>
   );
 };
