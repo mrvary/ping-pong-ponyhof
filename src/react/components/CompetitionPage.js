@@ -107,41 +107,43 @@ const TableRow = ({ match }) => {
   };
 
   return (
-    <div className="competitionPage__center-table">
-      <div className="competitionPage__table__first-row-alignment">
-        <div className="competitionPage__table__column-alignment"></div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {match.player1}
-        </div>
-        <div className="competitionPage__table__column-alignment"> : </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {match.player2}{' '}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[0]}{' '}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[1]}{' '}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[2]}{' '}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[3]}{' '}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[4]}{' '}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          Ergebnis{' '}
+    <div>
+      <div className="competitionPage__center-table">
+        <div className="competitionPage__table__first-row-alignment">
+          <div className="competitionPage__table__column-alignment"></div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {match.player1}
+          </div>
+          <div className="competitionPage__table__column-alignment"> : </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {match.player2}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[0]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[1]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[2]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[3]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[4]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            Ergebnis{' '}
+          </div>
         </div>
       </div>
       <button
