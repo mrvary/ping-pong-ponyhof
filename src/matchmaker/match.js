@@ -65,8 +65,8 @@ function simulateMatches(matches) {
       player2: 11
     }
   ];
-
-  matches.forEach(e => {
+  debugger;
+  matches.forEach(matches => {
     //decide wich player will win
     let rnd = Math.floor(Math.random() * 2);
 
@@ -79,6 +79,7 @@ function simulateMatches(matches) {
       matches.sets = rnd === 0 ? player1Wins : player2Wins;
     }
   });
+  return matches;
 }
 
 // getMatchWinner : match -> id
@@ -111,5 +112,6 @@ function getMatchWinner(match) {
 module.exports = {
   createMatch,
   createMatches,
-  simulateMatches
+  simulateMatches,
+  getMatchWinner
 };
