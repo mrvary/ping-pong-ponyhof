@@ -12,8 +12,12 @@ const config = require("../../../electron/config");
 let storage = null;
 
 function open(filePath) {
-    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath)
+    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
     storage = low(adapter);
+}
+
+function initWithCompetition(jsonObject) {
+    storage.setState(jsonObject).write();
 }
 
 function createMatches(matches) {
@@ -51,14 +55,10 @@ function getMatchesBy() {
     return storage.get(elementPath).value();
 }
 
-function initCompetition(jsonObject) {
-    storage.setState(jsonObject).write();
-}
-
 module.exports = {
   open,
   createMatches,
   getMatchesBy,
   createPlayers,
-  initCompetition
+  initWithCompetition: initWithCompetition
 };

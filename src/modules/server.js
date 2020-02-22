@@ -20,7 +20,7 @@ let server = null;
 let serverSocket = null;
 let connectedClients = new Map();
 
-let matchCount = 0;
+let tableNumber = 1;
 let matchTableMap = null;
 let matchStarted = false;
 
@@ -114,15 +114,21 @@ function clientLogout(clientSocket) {
 }
 
 // map matches to tables
-function setMatchesToTables(matches) {
+function setMatchesToTables(matchesWithPlayers) {
   matchTableMap = new Map();
 
   console.log(`Map matches to tables`);
-  matches.forEach(match => {
-    matchTableMap.set(++matchCount, match);
-    console.log(`Table ${matchCount} - ${match.player1} VS. ${match.player2}`)
+  tableNumber = 1;
+  matchesWithPlayers.forEach(matchWithPlayers => {
+    matchTableMap.set(++tableNumber, matchWithPlayers);
+    console.log(`Table ${tableNumber} - ${matchWithPlayers.player1.name} VS. ${matchWithPlayers.player2.name}`)
   });
 }
+
+function getMatchTableMap() {
+  return matchTableMap;
+}
+
 
 function sendMatchToClient(clientSocket, data) {
   const { tableNumber } = data;
@@ -169,5 +175,6 @@ module.exports = {
   shutdownServer,
   setupSocketIO,
   setMatchesToTables,
-  sendStartRoundBroadcast
+  sendStartRoundBroadcast,
+  getMatchTableMap
 };

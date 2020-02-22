@@ -18,23 +18,13 @@ const createWindow = require("./window");
 // server dependencies
 const server = require("../modules/server");
 
-// import
-const { readTournamentXMLFileFromDisk } = require("../modules/import/xml-import");
+// methods
+const { importXML } = require("../modules/import/xml-import");
 
 // persistence
-const file_manager = require("../modules/persistance/file-manager");
-const file_storage = require("../modules/persistance/lowdb/file-storage");
-const competition_storage = require("../modules/persistance/lowdb/competition-storage");
-
-// models
-const { createCompetitionFromJSON } = require("../modules/models/competition");
-const { createPlayersFromJSON } = require("../matchmaker/player");
-
-// matchmaker
-const matchmaker = require("../matchmaker/drawing");
-
-let currentMatches = [];
-let players = [];
+const fileManager = require("../modules/persistance/file-manager");
+const metaStorage = require("../modules/persistance/lowdb/file-storage");
+const competitionStorage = require("../modules/persistance/lowdb/competition-storage");
 
 /**
  *  init react dev tools for electron
@@ -55,8 +45,8 @@ app.on("ready", () => {
   initDevTools();
 
   // init competition database
-  const filePath = file_manager.getCompetitionDatabasePath();
-  file_storage.open(filePath);
+  const filePath = fileManager.getCompetitionDatabasePath();
+  metaStorage.open(filePath);
 
   // init http express server
   server.setupHTTPServer(config.SERVER_PORT);
@@ -100,64 +90,25 @@ ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
 ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
   try {
     const { xmlFilePath } = args;
-
-    if (!xmlFilePath) {
-      throw new Error('xml is not set');
-    }
-
-    // read xml file from disk and convert it to json
-    const jsonObject = readTournamentXMLFileFromDisk(xmlFilePath);
-    const competition = createCompetitionFromJSON(jsonObject.tournament);
-
-    // check if database is valid
-    const filepath = file_manager.getCompetitionFilePath(competition.id);
-    const fileExistsOnDisk = file_manager.checkIfFilesExists(filepath);
-    const fileIsInFileStorage = file_storage.hasCompetition(competition.id);
-
-    // check if file exists
-    // case1: In memory is used --> entry exists in file store
-    // case2: No in memory used --> is file on disk
-    if ((config.USE_IN_MEMORY_STORAGE && fileIsInFileStorage) || fileExistsOnDisk) {
-      console.log("Competition does already exist");
-      throw new Error("Das Spiel existiert bereits!");
-    }
-
-    // use matchmaker to draw first round
-    console.log("Matchmaker is drawing...");
-    players = createPlayersFromJSON(jsonObject);
-    currentMatches = matchmaker.drawRound(players);
-
-    // set first set to zero
-    currentMatches.forEach(match => {
-      match.sets.push({player1: 0, player2: 0});
-      match.sets.push({player1: 0, player2: 0});
-    });
-
-    // set matches to tables
-    server.setMatchesToTables(currentMatches);
-
-    // save matches into tournament file
-    const filePath = file_manager.getCompetitionFilePath(competition.id);
-    competition_storage.open(filePath);
-    // init db with json object
-    competition_storage.initCompetition(jsonObject);
-    file_storage.createCompetition(competition);
-    // save players and matches
-    competition_storage.createMatches(currentMatches);
-    competition_storage.createPlayers(players);
-
-    console.log('Ready to play');
+    const { competitionId, matches, players } = importXML(xmlFilePath, fileManager, metaStorage, competitionStorage);
+    const matchesWithPlayers = initCurrentRound(matches, players);
 
     // notify react app that import is ready and was successful
-    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: competition.id, message: "success" });
+    const arguments = { competitionId: competitionId,
+                        matchesWithPlayers: matchesWithPlayers,
+                        message: "success" };
+    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
   } catch (err) {
     // notify react app that a error has happend
-    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, { competitionId: '', message: err.message })
+    const arguments = { competitionId: '',
+                        matchesWithPlayers: [],
+                        message: "err.message" };
+    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments)
   }
 });
 
 ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
-  const competitions = file_storage.getAllCompetitions();
+  const competitions = metaStorage.getAllCompetitions();
   console.log("Retrieved competitions from database", competitions.length);
 
   event.sender.send(ipcChannels.GET_ALL_COMPETITIONS, {
@@ -169,10 +120,10 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   const { id } = data;
 
   if (!config.USE_IN_MEMORY_STORAGE) {
-    file_manager.deleteTournamentJSONFile(id);
+    fileManager.deleteTournamentJSONFile(id);
   }
 
-  file_storage.deleteCompetition(id);
+  metaStorage.deleteCompetition(id);
 
   event.sender.send(ipcChannels.DELETE_COMPETITION);
 });
@@ -180,17 +131,13 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
 ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   const { id } = args;
 
-  if (currentMatches.length === 0) {
-    const filePath = file_manager.getCompetitionFilePath(id);
-    competition_storage.open(filePath);
-    currentMatches = competition_storage.getMatchesBy();
+  const matchTableMap = server.getMatchTableMap();
+  if (matchTableMap.length === 0) {
+    // init current round
+    const filePath = fileManager.getCompetitionFilePath(id);
+    competitionStorage.open(filePath);
+    currentMatches = competitionStorage.getMatchesBy();
 
-    // set first set to zero
-    // TODO: Kann der Matchmaker beim Erstellen schon machen
-    currentMatches.forEach(match => {
-      match.sets.push({player1: 0, player2: 0});
-      match.sets.push({player1: 0, player2: 0});
-    });
 
     // set matches to tables
     server.setMatchesToTables(currentMatches);
@@ -205,3 +152,20 @@ ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
   const { route } = args;
   createWindow(route);
 });
+
+function initCurrentRound(matches, players) {
+  // map match and players together
+  const matchesWithPlayers = [];
+  matches.forEach(match => {
+    const player1 = players.filter(player => player.id === match.player1);
+    const player2 = players.filter(player => player.id === match.player2);
+
+    const matchWithPlayers = {match: match, player1: player1, player2: player2};
+    matchesWithPlayers.push(matchWithPlayers);
+  });
+
+  server.setMatchesToTables(matchesWithPlayers);
+  console.log('Ready to play');
+
+  return matchesWithPlayers;
+}

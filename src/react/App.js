@@ -23,7 +23,6 @@ const App = () => {
   const [competitions, setCompetitions] = useState([]);
   const [xmlFilePath, setXMLFilePath] = useState(null);
 
-
   useEffect(() => {
     getAllCompetitions();
   }, []);
@@ -52,13 +51,16 @@ const App = () => {
       return;
     }
 
-    IPCService.importXMLFile(xmlFilePath, (competitionId, message) => {
+    IPCService.importXMLFile(xmlFilePath, (args) => {
+      const { competitionId, matchesWithPlayers, message } = args;
+
       if (!competitionId) {
         // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
         console.log(message);
         setLinkDisabled(true);
         return;
       }
+
       setCurrentId(competitionId);
       setLinkDisabled(false);
       setUploadedXML(true);

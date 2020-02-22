@@ -21,12 +21,8 @@ function open(filePath) {
 }
 
 function createCompetition(competition) {
-    // TODO: Remove Players from json after init
-    const data = getCompetition(competition.id);
-
-    // if competition is found, return error
-    if (data) {
-        console.log("Competition does already exist");
+    if (hasCompetition(competition.id)) {
+        throw new Error("Das Turnier wurde bereits angelegt.");
     }
 
     storage.get("competitions")

@@ -20,8 +20,7 @@ function openXMLDialog(callback) {
 
 function importXMLFile(xmlFilePath, callback) {
     ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_SUCCESS, (event, args) => {
-        const { competitionId, message } = args;
-        callback(competitionId, message);
+        callback(args);
     });
 
     ipcRenderer.send(ipcChannels.IMPORT_XML_FILE, {xmlFilePath: xmlFilePath});
