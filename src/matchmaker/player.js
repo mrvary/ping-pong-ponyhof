@@ -45,12 +45,6 @@ function sortPlayersBy(players, selector) {
   });
 }
 
-/*
-this function is just for testing - later the update function will be in our DB
-it updates the players matchIds and opponentIds
-and a random player gets gameWon++
-*/
-
 // updatePlayersAfterDrawing : [players], [matches] -> [players]
 // update player.matchIds and players.opponent after the drawing
 function updatePlayersAfterDrawing(players, matches) {
