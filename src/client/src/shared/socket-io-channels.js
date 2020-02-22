@@ -1,6 +1,5 @@
 // channels for the client-server communication used by socket io
 module.exports = {
-  clientChannels: {
     // io channels
     CONNECTION: 'connection',
     DISCONNECT: 'disconnect',
@@ -16,5 +15,4 @@ module.exports = {
 
     // broadcast channels
     START_ROUND: 'start-round'
-  }
 };

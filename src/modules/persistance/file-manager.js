@@ -19,26 +19,12 @@ function getFileFromAppDataPath(filename) {
   return path.join(appDataPath, filename);
 }
 
-function getCompetitionDatabasePath() {
+function getMetaStorageDatabasePath() {
   return getFileFromAppDataPath("competitions.json")
 }
 
 function getCompetitionFilePath(id) {
   return getFileFromAppDataPath(`${id}.json`);
-}
-
-function checkIfFilesExists(filePath) {
-    return fs.existsSync(filePath);
-}
-
-/**
- * Convert from json object to json plain text and store file
- */
- function createTournamentJSONFile(filePath, jsonObject) {
-  const data = JSON.stringify(jsonObject, null, 2);
-  fs.writeFileSync(filePath, data);
-
-  console.log("Create new tournament JSON file:", filePath);
 }
 
 function deleteTournamentJSONFile(id) {
@@ -50,9 +36,7 @@ function deleteTournamentJSONFile(id) {
 
 module.exports = {
   getCompetitionFilePath,
-  getCompetitionDatabasePath,
+  getMetaStorageDatabasePath,
   getCompetitionFilePath,
-  checkIfFilesExists,
-  createTournamentJSONFile,
   deleteTournamentJSONFile
 };

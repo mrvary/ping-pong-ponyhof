@@ -12,8 +12,16 @@ const config = require("../../../electron/config");
 let storage = null;
 
 function open(filePath) {
-    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath)
+    if (storage) {
+        return;
+    }
+
+    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
     storage = low(adapter);
+}
+
+function initWithCompetition(jsonObject) {
+    storage.setState(jsonObject).write();
 }
 
 function createMatches(matches) {
@@ -29,6 +37,11 @@ function createMatches(matches) {
     }
 }
 
+function getAllMatches() {
+    const elementPath = "matches";
+    return storage.get(elementPath).value();
+}
+
 function createPlayers(players) {
     const elementPath = "players";
     const hasMatchesFlag = storage.has(elementPath).value();
@@ -42,23 +55,23 @@ function createPlayers(players) {
     }
 }
 
-function getMatchesBy() {
-    if (!storage) {
-        return;
-    }
-
-    const elementPath = "matches";
+function getAllPlayers() {
+    const elementPath = "players";
     return storage.get(elementPath).value();
 }
 
-function initCompetition(jsonObject) {
-    storage.setState(jsonObject).write();
+
+function getMatchesByIds(ids) {
+    const matches = getAllMatches();
+    return matches.filter((match) => ids.include(match.id));
 }
 
 module.exports = {
   open,
+  initWithCompetition,
   createMatches,
-  getMatchesBy,
+  getAllMatches,
+  getMatchesByIds,
   createPlayers,
-  initCompetition
+  getAllPlayers,
 };

@@ -20,8 +20,7 @@ function openXMLDialog(callback) {
 
 function importXMLFile(xmlFilePath, callback) {
     ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_SUCCESS, (event, args) => {
-        const { competitionId, message } = args;
-        callback(competitionId, message);
+        callback(args);
     });
 
     ipcRenderer.send(ipcChannels.IMPORT_XML_FILE, {xmlFilePath: xmlFilePath});
@@ -50,8 +49,7 @@ function deleteCompetition(id, callback) {
 
 function getMatchesByCompetition(id, callback) {
     ipcRenderer.once(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
-        const {matches} = args;
-        callback(matches);
+        callback(args);
     });
 
     ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {id: id});

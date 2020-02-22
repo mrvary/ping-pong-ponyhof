@@ -35,8 +35,6 @@ function createWindow(route) {
         }
     });
 
-    console.log(route);
-
     // ...and load the frontend react app
     let url = config.ELECTRON_START_URL;
     if (route) {

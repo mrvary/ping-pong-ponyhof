@@ -12,21 +12,22 @@ const config = require("../../../electron/config");
 let storage = null;
 
 function open(filePath) {
+    if (storage) {
+        return;
+    }
+
     const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
     storage = low(adapter);
 
     // Set default values (required if your JSON file is empty)
-    storage.defaults({ competitions: [] }).write();
+    storage.defaults({competitions: []}).write();
     console.log("Open storage:", filePath)
 }
 
 function createCompetition(competition) {
-    // TODO: Remove Players from json after init
-    const data = getCompetition(competition.id);
-
-    // if competition is found, return error
-    if (data) {
-        console.log("Competition does already exist");
+    if (hasCompetition(competition.id)) {
+        console.log("The competition already exits");
+        throw new Error("Das Turnier wurde bereits angelegt.");
     }
 
     storage.get("competitions")
