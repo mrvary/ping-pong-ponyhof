@@ -52,7 +52,7 @@ const App = () => {
     }
 
     IPCService.importXMLFile(xmlFilePath, (args) => {
-      const { competitionId, matchesWithPlayers, message } = args;
+      const { competitionId, message } = args;
 
       if (!competitionId) {
         // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen

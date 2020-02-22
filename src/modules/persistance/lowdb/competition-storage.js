@@ -12,6 +12,10 @@ const config = require("../../../electron/config");
 let storage = null;
 
 function open(filePath) {
+    if (storage) {
+        return;
+    }
+
     const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
     storage = low(adapter);
 }
@@ -66,6 +70,7 @@ module.exports = {
   open,
   initWithCompetition,
   createMatches,
+  getAllMatches,
   getMatchesByIds,
   createPlayers,
   getAllPlayers,

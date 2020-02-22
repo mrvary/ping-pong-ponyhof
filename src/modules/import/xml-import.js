@@ -50,7 +50,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   competitionStorage.createMatches(matches);
   competitionStorage.createPlayers(players);
 
-  return {competitionId: competition.id, matches: matches, players: players}
+  return competition.id;
 }
 
 /**
