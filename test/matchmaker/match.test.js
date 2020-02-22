@@ -1,7 +1,8 @@
 const {
   createMatch,
   createMatches,
-  getMatchWinner
+  getMatchWinner,
+  simulateMatch
 } = require("../../src/matchmaker/match");
 const {
   testPairing,
@@ -12,7 +13,10 @@ const {
   match_player1Wins,
   match_player1Wins2,
   match_player2Wins,
-  match_player2Wins2
+  match_player2Wins2,
+  match_toSimulate,
+  matchResultPlayer1Won,
+  matchResultPlayer2Won
 } = require("./match.test.data");
 
 describe("createMatches()", () => {
@@ -68,4 +72,14 @@ describe("getMatchWinner()", () => {
     expect(getMatchWinner(match_player2Wins)).toBe("PLAYER2");
     expect(getMatchWinner(match_player2Wins2)).toBe("PLAYER2");
   });
+});
+
+describe("simulateMatch()", () => {
+  test("get expected match result", () => {});
+  //static test
+  const matchWithResult = simulateMatch(match_toSimulate);
+  expect(matchWithResult.sets).toStrictEqual(
+    matchResultPlayer1Won || matchResultPlayer2Won
+  );
+  expect(getMatchWinner(matchWithResult)).toEqual("PLAYER1" || "PLAYER2");
 });

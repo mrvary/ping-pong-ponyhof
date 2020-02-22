@@ -35,6 +35,14 @@ function createMatch({ player1, player2 }) {
 // this function will just be used in our tests
 // simulateMatches : [matches] -> [matches]
 function simulateMatches(matches) {
+  matches.forEach(match => {
+    simulateMatch(match);
+  });
+  return matches;
+}
+
+// simulateMatch : match -> match
+function simulateMatch(match) {
   //create possible results
   let player1Wins = [
     {
@@ -65,21 +73,20 @@ function simulateMatches(matches) {
       player2: 11
     }
   ];
-  debugger;
-  matches.forEach(matches => {
-    //decide wich player will win
-    let rnd = Math.floor(Math.random() * 2);
 
-    if (matches.player1 === "FreeTicket") {
-      matches.sets = player2Wins;
-    } else if (matches.player2 === "FreeTicket") {
-      matches.sets = player1Wins;
-    } else {
-      //no freeticket player in match -> random player wins
-      matches.sets = rnd === 0 ? player1Wins : player2Wins;
-    }
-  });
-  return matches;
+  //decide wich player will win --> 0 for p1, 1 for p2
+  let rnd = Math.floor(Math.random() * 2);
+
+  if (match.player1 === "FreeTicket") {
+    match.sets = player2Wins;
+  } else if (match.player2 === "FreeTicket") {
+    match.sets = player1Wins;
+  } else {
+    //no freeticket player in match -> random player wins
+    match.sets = rnd === 0 ? player1Wins : player2Wins;
+  }
+
+  return match;
 }
 
 // getMatchWinner : match -> id
@@ -113,5 +120,6 @@ module.exports = {
   createMatch,
   createMatches,
   simulateMatches,
+  simulateMatch,
   getMatchWinner
 };

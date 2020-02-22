@@ -164,6 +164,43 @@ const match_player2Wins2 = {
   ]
 };
 
+const match_toSimulate = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: []
+};
+
+const matchResultPlayer1Won = [
+  {
+    player1: 11,
+    player2: 1
+  },
+  {
+    player1: 11,
+    player2: 2
+  },
+  {
+    player1: 11,
+    player2: 3
+  }
+];
+
+const matchResultPlayer2Won = [
+  {
+    player1: 4,
+    player2: 11
+  },
+  {
+    player1: 5,
+    player2: 11
+  },
+  {
+    player1: 6,
+    player2: 11
+  }
+];
+
 module.exports = {
   testPairing,
   testPairingWithFreeTicket,
@@ -173,5 +210,8 @@ module.exports = {
   match_player1Wins,
   match_player1Wins2,
   match_player2Wins,
-  match_player2Wins2
+  match_player2Wins2,
+  match_toSimulate,
+  matchResultPlayer1Won,
+  matchResultPlayer2Won
 };
