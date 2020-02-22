@@ -1,13 +1,16 @@
-const { drawFirstRound, drawRound } = require("../../src/matchmaker/drawing");
+const { drawRound } = require("../../src/matchmaker/drawing");
 
 const {
   tournamentJSON,
   tournamentJSON15Players
 } = require("./player.test.data");
 
+const { simulateMatches } = require("../../src/matchmaker/match");
+
 const {
   createPlayersFromJSON,
-  updatePlayersAfterDrawing
+  updatePlayersAfterDrawing,
+  updateWinner
 } = require("../../src/matchmaker/player");
 
 let players = createPlayersFromJSON(tournamentJSON15Players);
@@ -16,8 +19,17 @@ describe("playCompetition", () => {
   const roundsToPlay = 6;
 
   for (let round = 1; round <= roundsToPlay; round++) {
+    //1. create new matches for the round (drawing)
     let matches = drawRound(players);
+    debugger;
+    //2. update the players with the created matches
     players = updatePlayersAfterDrawing(players, matches);
+
+    //3. simulate matches
+    matches = simulateMatches(matches);
+
+    //4.update winner
+    players = updateWinner(players, matches);
 
     test("match length", () => {
       expect(matches.length).toEqual(players.length / 2);
