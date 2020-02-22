@@ -81,6 +81,33 @@ function simulateMatches(matches) {
   });
 }
 
+// getMatchWinner : match -> id
+// id = id of playerWon or if noone has won so far id = "0"
+function getMatchWinner(match) {
+  let player1SetsWon = 0;
+  let player2SetsWon = 0;
+
+  match.sets.forEach(e => {
+    //the first set is init. with 0:0
+    //in this case e.player1 = e.player2 and noone gets setWon++
+
+    //player1 has more points
+    if (e.player1 > e.player2) {
+      player1SetsWon++;
+    }
+    //player2 has more points
+    if (e.player1 < e.player2) {
+      player2SetsWon++;
+    }
+  });
+
+  if (player1SetsWon === 3) return match.player1;
+
+  if (player2SetsWon === 3) return match.player2;
+
+  return "0";
+}
+
 module.exports = {
   createMatch,
   createMatches,
