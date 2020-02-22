@@ -75,11 +75,26 @@ describe("getMatchWinner()", () => {
 });
 
 describe("simulateMatch()", () => {
-  test("get expected match result", () => {});
-  //static test
-  const matchWithResult = simulateMatch(match_toSimulate);
-  expect(matchWithResult.sets).toStrictEqual(
-    matchResultPlayer1Won || matchResultPlayer2Won
-  );
-  expect(getMatchWinner(matchWithResult)).toEqual("PLAYER1" || "PLAYER2");
+  test("get expected match result", () => {
+    const matchWithResult = simulateMatch(match_toSimulate);
+    expect(matchWithResult.sets).toStrictEqual(
+      matchResultPlayer1Won || matchResultPlayer2Won
+    );
+    expect(getMatchWinner(matchWithResult)).not.toEqual("0");
+  });
+});
+
+describe("simulateMatches()", () => {
+  //init 8 matches
+  let matchesToSimulate = [];
+  for (let i = 0; i < 4; i++) {
+    matchesToSimulate.push(match_toSimulate);
+    matchesToSimulate.push(match_init);
+  }
+  test("get winner for each match", () => {
+    matchesToSimulate.forEach(match => {
+      match = simulateMatch(match);
+      expect(getMatchWinner(match)).not.toEqual("0");
+    });
+  });
 });
