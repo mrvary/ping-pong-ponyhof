@@ -1,3 +1,5 @@
+const { getMatchWinner } = require("./match.js");
+
 // createPlayersFromJSON : JSON -> [players]
 function createPlayersFromJSON(json) {
   // players are deeply nested in the input json
@@ -85,6 +87,21 @@ function updatePlayersAfterDrawing(players, matches) {
   return players;
 }
 
+// updateWinner : [players], [matches] -> [players]
+// get the winner of each match and gamesWon++
+function updateWinner(players, matches) {
+  matches.forEach(match => {
+    const winnerId = getMatchWinner(match);
+    players.forEach(player => {
+      if (player.id === winnerId) {
+        player.gamesWon++;
+      }
+    });
+  });
+
+  return players;
+}
+
 // isFreeticketPlayerInMatch : [match] -> [boolean]
 function isFreeticketPlayerInMatch(match) {
   if (match.player1 === "FreeTicket" || match.player2 === "FreeTicket")
@@ -95,9 +112,10 @@ function isFreeticketPlayerInMatch(match) {
 module.exports = {
   // pubic
   createPlayersFromJSON,
+  updateWinner,
+  updatePlayersAfterDrawing,
 
   // private
   createPlayer,
-  sortPlayersBy,
-  updatePlayersAfterDrawing
+  sortPlayersBy
 };
