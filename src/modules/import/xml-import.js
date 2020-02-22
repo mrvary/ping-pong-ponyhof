@@ -5,7 +5,7 @@
 const fs = require("fs");
 const parser = require("xml2json");
 
-const { createCompetitionFromJSON } = require("../../modules/models/competition");
+const { createCompetitionFromJSON, STATUS } = require("../../modules/models/competition");
 const { createPlayersFromJSON } = require("../../matchmaker/player");
 
 const matchmaker = require("../../matchmaker/drawing");
@@ -23,7 +23,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   const jsonObject = readTournamentXMLFileFromDisk(filePath);
 
   // store meta data about the competition in meta database
-  const competition = createCompetitionFromJSON(jsonObject.tournament);
+  const competition = createCompetitionFromJSON(jsonObject.tournament, [], STATUS.COMPETITION_START);
   metaStorage.createCompetition(competition);
 
   // create competition database and store the competition
@@ -50,7 +50,12 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   competitionStorage.createMatches(matches);
   competitionStorage.createPlayers(players);
 
-  return competition.id;
+  // store match id of the current round
+  const matchIds = matches.map(match => match.id);
+  competition.round_matchIds = matchIds;
+  metaStorage.updateCompetition(competition);
+
+  return competition;
 }
 
 /**

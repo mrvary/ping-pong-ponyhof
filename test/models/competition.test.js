@@ -6,13 +6,13 @@ const fs = require("fs");
 const path = require("path");
 const config = require("../config");
 
-const { createCompetitionFromJSON, PLAYMODES } = require("../../src/modules/models/competition");
+const { createCompetitionFromJSON, PLAYMODE } = require("../../src/modules/models/competition");
 
 const expectedCompetition = {
   id: "d5lK%2BhCCjzbPE4bd9mBdQKIx1P%2FxYXr0",
   name: "BTTV Bavarian TT-Race",
   date: "2019-05-25",
-  playmode: PLAYMODES.SCHWEIZER_SYSTEM
+  playmode: PLAYMODE.SCHWEIZER_SYSTEM
 };
 
 describe("createCompetitionFromJSON()", () => {
