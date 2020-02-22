@@ -60,6 +60,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
  */
 function readTournamentXMLFileFromDisk(filePath) {
   if (!filePath) {
+    console.log("The competition already exists");
     throw new Error(`Die XML-Datei konnte nicht gefunden werden.`)
   }
 

@@ -102,7 +102,7 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
     // notify react app that a error has happend
     const arguments = { competitionId: '',
                         matchesWithPlayers: [],
-                        message: "err.message" };
+                        message: err.message };
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments)
   }
 });
@@ -132,20 +132,29 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   const { id } = args;
 
   const matchTableMap = server.getMatchTableMap();
-  if (matchTableMap.length === 0) {
-    // init current round
+
+  let matchesWithPlayers = [];
+  if (matchTableMap.size > 0) {
+    // loop over values
+    for (let matchWithPlayers of matchTableMap.values()) {
+      console.log(matchWithPlayers);
+      matchesWithPlayers.push(matchWithPlayers);
+    }
+  } else {
+    // open competition storage
     const filePath = fileManager.getCompetitionFilePath(id);
     competitionStorage.open(filePath);
-    currentMatches = competitionStorage.getMatchesBy();
 
+    // TODO: Get Round and get match id of current round
 
-    // set matches to tables
-    server.setMatchesToTables(currentMatches);
+    // get players and matches by round
+    matches = competitionStorage.getMatchesByIds();
+    players = competitionStorage.getAllPlayers();
 
-    console.log('Ready to play');
+    matchesWithPlayers = initCurrentRound(matches, players);
   }
 
-  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matches: currentMatches })
+  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matchesWithPlayers: matchesWithPlayers })
 });
 
 ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
@@ -157,8 +166,8 @@ function initCurrentRound(matches, players) {
   // map match and players together
   const matchesWithPlayers = [];
   matches.forEach(match => {
-    const player1 = players.filter(player => player.id === match.player1);
-    const player2 = players.filter(player => player.id === match.player2);
+    const player1 = players.find(player => player.id === match.player1);
+    const player2 = players.find(player => player.id === match.player2);
 
     const matchWithPlayers = {match: match, player1: player1, player2: player2};
     matchesWithPlayers.push(matchWithPlayers);
@@ -169,3 +178,4 @@ function initCurrentRound(matches, players) {
 
   return matchesWithPlayers;
 }
+

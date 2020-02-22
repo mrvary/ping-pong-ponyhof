@@ -11,6 +11,7 @@ import CompetitionPageHeader from './CompetitionPageHeader';
 
 // shared service
 import IPCService from '../../shared/ipc/ipcRendererService';
+import {forEach} from "react-bootstrap/cjs/ElementChildren";
 
 const USE_BROWSER = false;
 
@@ -161,8 +162,8 @@ const CompetitionPage = () => {
           player1: 'Samuel Geiger',
           player2: 'Marius Bach',
           sets: [
-            { player1: 11, player2: 13 },
-            { player1: 4, player2: 11 }
+            {player1: 11, player2: 13},
+            {player1: 4, player2: 11}
           ],
           freeTicket: false,
           compId: 1
@@ -172,8 +173,8 @@ const CompetitionPage = () => {
           player1: 'Edith Finch',
           player2: 'Finch Assozial',
           sets: [
-            { player1: 13, player2: 15 },
-            { player1: 14, player2: 16 }
+            {player1: 13, player2: 15},
+            {player1: 14, player2: 16}
           ],
           freeTicket: false,
           compId: 1
@@ -185,12 +186,18 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByCompetition(competitionID, matchData => {
-      console.log(matchData);
-      setMatches(matchData);
+    IPCService.getMatchesByCompetition(competitionID, args => {
+      const  { matchesWithPlayers } = args;
 
-      const playerData = IPCService.getPlayersByPlayerId();
-      setPlayer(playerData);
+      // map names to players
+      const matches = matchesWithPlayers.map(matchWithPlayers => {
+        const {match, player1, player2} = matchWithPlayers;
+        match.player1 = player1.firstname + ' ' + player1.lastname;
+        match.player2 = player2.firstname + ' ' + player2.lastname;
+        return match
+      });
+
+      setMatches(matches);
     });
   };
 

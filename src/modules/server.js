@@ -13,7 +13,7 @@ const { clientChannels } = require('../client/src/shared/client-channels');
 const { mockedMatch } = require('../assets/mock-data/match.mock.data');
 
 // Variables
-const MAX_AMOUNT_TABLE = 4;
+const MAX_AMOUNT_TABLE = 16;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 
 let server = null;
@@ -121,7 +121,7 @@ function setMatchesToTables(matchesWithPlayers) {
   tableNumber = 1;
   matchesWithPlayers.forEach(matchWithPlayers => {
     matchTableMap.set(++tableNumber, matchWithPlayers);
-    console.log(`Table ${tableNumber} - ${matchWithPlayers.player1.name} VS. ${matchWithPlayers.player2.name}`)
+    console.log(`Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`)
   });
 }
 

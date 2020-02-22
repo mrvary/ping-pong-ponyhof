@@ -33,6 +33,11 @@ function createMatches(matches) {
     }
 }
 
+function getAllMatches() {
+    const elementPath = "matches";
+    return storage.get(elementPath).value();
+}
+
 function createPlayers(players) {
     const elementPath = "players";
     const hasMatchesFlag = storage.has(elementPath).value();
@@ -46,19 +51,22 @@ function createPlayers(players) {
     }
 }
 
-function getMatchesBy() {
-    if (!storage) {
-        return;
-    }
-
-    const elementPath = "matches";
+function getAllPlayers() {
+    const elementPath = "players";
     return storage.get(elementPath).value();
+}
+
+
+function getMatchesByIds(ids) {
+    const matches = getAllMatches();
+    return matches.filter((match) => ids.include(match.id));
 }
 
 module.exports = {
   open,
+  initWithCompetition,
   createMatches,
-  getMatchesBy,
+  getMatchesByIds,
   createPlayers,
-  initWithCompetition: initWithCompetition
+  getAllPlayers,
 };

@@ -49,8 +49,7 @@ function deleteCompetition(id, callback) {
 
 function getMatchesByCompetition(id, callback) {
     ipcRenderer.once(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
-        const {matches} = args;
-        callback(matches);
+        callback(args);
     });
 
     ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {id: id});
