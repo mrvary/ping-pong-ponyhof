@@ -7,16 +7,14 @@ const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 const Memory = require('lowdb/adapters/Memory');
 
-const config = require("../../../electron/config");
-
 let storage = null;
 
-function open(filePath) {
+function open(filePath, useInMemory) {
     if (storage) {
         return;
     }
 
-    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
+    const adapter = useInMemory ? new Memory() : new FileSync(filePath);
     storage = low(adapter);
 }
 

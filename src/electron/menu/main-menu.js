@@ -143,4 +143,10 @@ const template = [
     ]
   }
 ];
-module.exports = Menu.buildFromTemplate(template);
+
+function createMenu() {
+  const mainMenu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(mainMenu);
+}
+
+module.exports = createMenu;

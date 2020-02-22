@@ -3,34 +3,49 @@
  */
 
 const low = require("lowdb");
-
 const FileSync = require("lowdb/adapters/FileSync");
 const Memory = require('lowdb/adapters/Memory');
 
-const config = require("../../../electron/config");
+const DEFAULT_STATE = { competitions: [] };
+const ELEMENT_PATHS = { Competitions: "competitions"};
+const ERROR_MESSAGES = {
+    Error1: "file path is not defined",
+    Error2: "competition already exits"
+};
 
 let storage = null;
 
-function open(filePath) {
+function open(filePath, useInMemory) {
     if (storage) {
         return;
     }
 
-    const adapter = config.USE_IN_MEMORY_STORAGE ? new Memory() : new FileSync(filePath);
+    if (!useInMemory && !filePath) {
+        throw new Error(ERROR_MESSAGES.Error1);
+    }
+
+    const adapter = useInMemory ? new Memory() : new FileSync(filePath);
     storage = low(adapter);
 
     // Set default values (required if your JSON file is empty)
-    storage.defaults({competitions: []}).write();
+    storage.defaults({ competitions: [] }).write();
     console.log("Open storage:", filePath)
+}
+
+function clear() {
+    storage.setState({ competitions: [] }).write();
+}
+
+function getState() {
+    return storage.getState();
 }
 
 function createCompetition(competition) {
     if (hasCompetition(competition.id)) {
-        console.log("The competition already exits");
-        throw new Error("Das Turnier wurde bereits angelegt.");
+        throw new Error(ERROR_MESSAGES.Error2);
     }
 
-    storage.get("competitions")
+    storage.get(ELEMENT_PATHS.Competitions)
         .push(competition)
         .write();
 
@@ -45,8 +60,7 @@ function updateCompetition(competition) {
         return;
     }
 
-    const elementPath = "competitions";
-    storage.get(elementPath)
+    storage.get(ELEMENT_PATHS.Competitions)
         .find({id: competition.id})
         .assign(competition)
         .write();
@@ -55,19 +69,20 @@ function updateCompetition(competition) {
 }
 
 function deleteCompetition(id) {
-    storage.get("competitions")
-        .remove({id: id})
+    storage.get(ELEMENT_PATHS.Competitions)
+        .remove({ id: id })
         .write();
 
-    console.log("Delete tournament with id: ", id)
+    console.log("Delete competition: ", id)
 }
 
 function getAllCompetitions() {
-    return storage.get("competitions").value();
+    return storage.get(ELEMENT_PATHS.Competitions)
+        .value();
 }
 
 function getCompetition(id) {
-    return storage.get("competitions")
+    return storage.get(ELEMENT_PATHS.Competitions)
         .find({id: id})
         .value();
 }
@@ -78,9 +93,15 @@ function hasCompetition(id) {
 }
 
 module.exports = {
+    DEFAULT_STATE,
+    ERROR_MESSAGES,
+
     open,
+    clear,
+    getState,
     createCompetition,
     updateCompetition,
     deleteCompetition,
     getAllCompetitions,
-    getCompetition };
+    getCompetition
+};
