@@ -26,12 +26,13 @@ const socketIO = require('socket.io');
 // xml import
 const { importXML } = require("../modules/import/xml-import");
 
-// mock data
+// models
 const { mockedMatches } = require("../assets/mock-data/match.mock.data");
+const { STATUS } = require("../modules/models/competition");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
-const metaStorage = require("../modules/persistance/lowdb/file-storage");
+const metaStorage = require("../modules/persistance/lowdb/meta-storage");
 const competitionStorage = require("../modules/persistance/lowdb/competition-storage");
 
 // ipc communication
@@ -46,6 +47,7 @@ let server = null;
 let serverSocket = null;
 let connectedClients = new Map();
 
+let competition = null;
 let matchTableMap = new Map();
 let tableNumber = 1;
 let matchStarted = false;
@@ -106,13 +108,14 @@ ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
 ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
   try {
     const { xmlFilePath } = args;
-    const competitionId = importXML(xmlFilePath, fileManager, metaStorage, competitionStorage);
+    competition = importXML(xmlFilePath, fileManager, metaStorage, competitionStorage);
 
     // notify react app that import is ready and was successful
-    const arguments = { competitionId: competitionId, message: "success" };
+    const arguments = { competitionId: competition.id, message: "success" };
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
   } catch (err) {
     // notify react app that a error has happend
+    console.log(err.message);
     const arguments = { competitionId: '', message: err.message };
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments)
   }
@@ -124,14 +127,15 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   // map matches to tables
   let matchesWithPlayers = [];
   if (matchTableMap.size === 0) {
+    // get meta data of competition
+    competition = metaStorage.getCompetition(id);
+
     // open competition storage
     const filePath = fileManager.getCompetitionFilePath(id);
     competitionStorage.open(filePath);
 
-    // TODO: Get Round and get match id of current round
-
     // get players and matches by round
-    const matches = competitionStorage.getAllMatches();
+    const matches = competitionStorage.getMatchesByIds(competition.round_matchIds);
     const players = competitionStorage.getAllPlayers();
 
     matchesWithPlayers = mapPlayersToMatches(matches, players);
@@ -143,10 +147,15 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
     }
   }
 
-  // send match start broadcast
-  if (!matchStarted) {
+  // init competition status
+  if (competition.status === STATUS.COMPETITION_START) {
+    competition.status = STATUS.ROUND_STARTED;
+    metaStorage.updateCompetition(competition);
     matchStarted = true;
+
     sendBroadcast(socketIOChannels.START_ROUND, null);
+  } else if (competition.status === STATUS.ROUND_STARTED) {
+    matchStarted = true;
   }
 
   event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matchesWithPlayers: matchesWithPlayers })
