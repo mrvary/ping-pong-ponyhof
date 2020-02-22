@@ -7,7 +7,7 @@ const {
 
 const {
   createPlayersFromJSON,
-  updatePlayers
+  updatePlayersAfterDrawing
 } = require("../../src/matchmaker/player");
 
 let players = createPlayersFromJSON(tournamentJSON15Players);
@@ -17,7 +17,7 @@ describe("playCompetition", () => {
 
   for (let round = 1; round <= roundsToPlay; round++) {
     let matches = drawRound(players);
-    players = updatePlayers(players, matches);
+    players = updatePlayersAfterDrawing(players, matches);
 
     test("match length", () => {
       expect(matches.length).toEqual(players.length / 2);

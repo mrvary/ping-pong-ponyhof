@@ -2,7 +2,7 @@ const {
   createPlayer,
   sortPlayersBy,
   createPlayersFromJSON,
-  updatePlayers
+  updatePlayersAfterDrawing
 } = require("../../src/matchmaker/player");
 
 const {
@@ -75,10 +75,10 @@ describe("sortPlayersBy()", () => {
   });
 });
 
-describe("updatePlayers()", () => {
-  test.todo("returns an array of all players from an array of matches");
-
-  test.todo("check gamesWon changed for winners");
+describe("updatePlayersAfterDrawing()", () => {
+  test.todo(
+    "returns an array of all players from an array of players and matches"
+  );
 
   test.todo("match Id added to each player");
 

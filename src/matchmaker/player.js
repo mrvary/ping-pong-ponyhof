@@ -51,26 +51,19 @@ it updates the players matchIds and opponentIds
 and a random player gets gameWon++
 */
 
-// updatePlayers : [players], [matches] -> [players]
-function updatePlayers(players, matches) {
+// updatePlayersAfterDrawing : [players], [matches] -> [players]
+// update player.matchIds and players.opponent after the drawing
+function updatePlayersAfterDrawing(players, matches) {
   matches.forEach(match => {
     if (!isFreeticketPlayerInMatch(match)) {
-      // 0 -> player1 wins, 1 -> player2 wins
-      let rnd = Math.floor(Math.random() * 2);
       players.forEach(player => {
         if (match.player1 === player.id) {
           player.opponentIds.push(match.player2);
           player.matchIds.push(match.id);
-          if (rnd === 0) {
-            player.gamesWon++;
-          }
         }
         if (match.player2 === player.id) {
           player.opponentIds.push(match.player1);
           player.matchIds.push(match.id);
-          if (rnd === 1) {
-            player.gamesWon++;
-          }
         }
       });
     } else {
@@ -78,14 +71,11 @@ function updatePlayers(players, matches) {
         if (player.id === match.player1 && player.id !== "FreeTicket") {
           player.opponentIds.push(match.player2);
           player.matchIds.push(match.id);
-          player.gamesWon++;
         }
         if (player.id === match.player2 && player.id !== "FreeTicket") {
           player.opponentIds.push(match.player1);
           player.matchIds.push(match.id);
-          player.gamesWon++;
         }
-
         if (player.id === match.player1 && player.id === "FreeTicket") {
           player.opponentIds.push(match.player2);
           player.matchIds.push(match.id);
@@ -115,5 +105,5 @@ module.exports = {
   // private
   createPlayer,
   sortPlayersBy,
-  updatePlayers
+  updatePlayersAfterDrawing
 };
