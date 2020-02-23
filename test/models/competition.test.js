@@ -37,10 +37,10 @@ describe("setCompetitionStatus", () => {
     const isCompleted = false;
 
     // ACT: Set competition state after import xml
-    const modifiedCompetition = setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_READY_ROUND_READY);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_READY_ROUND_READY);
   });
 
   test("When_CompetitionIsReadyAndRoundIsReady_Expect_CompetitionIsActiveAndRoundIsReady", () => {
@@ -51,10 +51,10 @@ describe("setCompetitionStatus", () => {
     const isCompleted = false;
 
     // ACT: Set competition state after confirm a competition
-    const modifiedCompetition = setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY);
   });
 
   test("When_CompetitionIsActiveAndRoundIsReady_Expect_CompetitionIsActiveAndRoundIsActive", () => {
@@ -65,10 +65,10 @@ describe("setCompetitionStatus", () => {
     const isCompleted = false;
 
     // ACT: Set competition state after starting round
-    const modifiedCompetition = setCompetitionStatus(competition, isCompleted);
+    setCompetitionStatus(competition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE);
   });
 
   test("When_CompetitionIsActiveAndRoundIsActive_Expect_CompetitionIsActiveAndRoundIsReady", () => {
@@ -79,10 +79,10 @@ describe("setCompetitionStatus", () => {
     const isCompleted = false;
 
     // ACT: Set competition state after all clients completed their match and the new round is drew
-    const modifiedCompetition = setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY);
   });
 
   test("When_CompetitionIsActiveAndRoundIsActiveAndLastRound_Expect_CompetitionIsCompleted", () => {
@@ -94,10 +94,10 @@ describe("setCompetitionStatus", () => {
 
     // ACT: Set competition state after all clients completed their match
     //      and the last round was played
-    const modifiedCompetition = setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_COMPLETED);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_COMPLETED);
   });
 
   test("When_CompetitionIsActiveAndRoundIsReadyAndUserChangedCompetition_Expect_CompetitionIsReadyAndRoundIsReady", () => {
@@ -108,10 +108,10 @@ describe("setCompetitionStatus", () => {
     const isCompleted = false;
 
     // ACT: Set competition state after after matches are drew and user changed competition
-    const modifiedCompetition = setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_READY_ROUND_READY);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_READY_ROUND_READY);
   });
 
   test("When_CompetitionIsActiveAndRoundIsActiveAndUserChangedCompetition_Expect_CompetitionIsReadyAndRoundIsActive", () => {
@@ -122,10 +122,24 @@ describe("setCompetitionStatus", () => {
     const isCompleted = false;
 
     // ACT: Set competition state after clients playing matches and user changed competition
-    const modifiedCompetition = setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
 
     // ARRANGE: check the competition state
-    expect(modifiedCompetition.status).toBe(COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE);
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE);
+  });
+
+  test("When_CompetitionIsReadyAndRoundIsActive_Expect_CompetitionIsActiveAndRoundIsActive", () => {
+    // ARRANGE: all clients are playing their match
+    const competition = createCompetitionFromJSON(jsonObject.tournament);
+    competition.status = COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE;
+    const userChangedCompetition = false;
+    const isCompleted = false;
+
+    // ACT: Set competition state after clients playing matches and user changed competition
+    setCompetitionStatus(competition, userChangedCompetition, isCompleted);
+
+    // ARRANGE: check the competition state
+    expect(competition.status).toBe(COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE);
   });
 });
 

@@ -17,18 +17,24 @@ const COMPETITION_STATUS = {
 /**
  * createCompetitionFromJSON: dataFromJSON -> Competition
  */
- function createCompetitionFromJSON(dataFromJSON) {
+function createCompetitionFromJSON(dataFromJSON) {
     return {
         id: dataFromJSON["tournament-id"],
         name: dataFromJSON["name"],
         date: dataFromJSON["start-date"],
         playmode: dataFromJSON.competition["preliminary-round-playmode"],
         round_matchIds: [],
-        status: null
+        status: COMPETITION_STATUS.COMP_CREATED
     };
 }
 
+function setMatchesOfCurrentRound(competition, matches) {
+    competition.round_matchIds = matches.map(match => match.id);
+}
+
 function setCompetitionStatus(competition, userChangedCompetition, isCompleted) {
+    const oldState = competition.status;
+
      if (competition.status === COMPETITION_STATUS.COMP_CREATED) {
          competition.status = COMPETITION_STATUS.COMP_READY_ROUND_READY;
      } else if (competition.status === COMPETITION_STATUS.COMP_READY_ROUND_READY) {
@@ -47,16 +53,19 @@ function setCompetitionStatus(competition, userChangedCompetition, isCompleted) 
          } else {
              competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY;
          }
+     } else if (competition.status === COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE) {
+         competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE;
      } else {
          competition.status = COMPETITION_STATUS.COMP_CREATED;
      }
 
-    console.log("new competition status: ", competition.status);
+    console.log("competition status:", oldState, "-->", competition.status);
 }
 
 module.exports = {
     PLAYMODE,
     COMPETITION_STATUS,
     createCompetitionFromJSON,
+    setMatchesOfCurrentRound,
     setCompetitionStatus
 };
