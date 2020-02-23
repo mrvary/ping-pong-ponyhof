@@ -6,42 +6,36 @@ body {
   margin: 2vh 2vh;
 }
 
-.centered {
+.competitionPage__centered {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-.tablegrid {
+.competitionPage__table {
+  width: 80%;
+  border-radius: 2vh;
+  background: var(--sec-background-color);
+  font-size: 2vh;
+  color: var(--prim-font-color);
   display: grid;
   grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
 }
-
-.competitionPage__table__first-row-style {
+.competitionPage__table--def {
   margin: 2vh 0vh;
-  width: 80%;
-  border-radius: 2vh;
-  background: var(--sec-background-color);
-  font-size: 2vh;
-  color: var(--prim-font-color);
 }
-.competitionPage__table__first-row-alignment {
+.competitionPage__table--values {
   margin: 0.3vh 0vh;
-  width: 80%;
-  border-radius: 2vh;
-  background: var(--sec-background-color);
-  font-size: 2vh;
-  color: var(--prim-font-color);
 }
-.competitionPage__table__column-alignment {
+.competitionPage__table--elements {
   color: var(--prim-font-color);
-  width: 14vh;
   height: 7vh;
+  font: 10vw;
 }
 /*
-border: 0.1vh solid var(--grey-out-color);
-*/
+  border: 0.1vh solid var(--grey-out-color);
 
+*/
 .competitionPage__table__bearbeiten-btn {
   font-size: 2vh;
   border: none;
