@@ -1,0 +1,2 @@
+# files that will be excluded from linting with prettier
+src/client/build/*

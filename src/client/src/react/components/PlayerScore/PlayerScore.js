@@ -1,14 +1,13 @@
-import React from 'react';
-import './PlayerScore.css';
+import React from "react";
+import "./PlayerScore.css";
 
-import Player from '../Player/Player';
+import Player from "../Player/Player";
 
 function Score({ score }) {
   return <div className="player-score__score">{score ? score : 0}</div>;
 }
 
 function PlayerScore({ player, score }) {
-
   return (
     <div className="player-score__container">
       <Player player={player} />

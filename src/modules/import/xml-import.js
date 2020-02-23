@@ -8,7 +8,8 @@ const parser = require("xml2json");
 const {
   createCompetitionFromJSON,
   setCompetitionStatus,
-  setMatchesOfCurrentRound } = require("../../modules/models/competition");
+  setMatchesOfCurrentRound
+} = require("../../modules/models/competition");
 const { createPlayersFromJSON } = require("../../matchmaker/player");
 
 const matchmaker = require("../../matchmaker/drawing");
@@ -30,7 +31,9 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   metaStorage.createCompetition(competition);
 
   // create competition database for xml file and store the jsonObject of the competition
-  const competitionFilePath = fileManager.getCompetitionFilePath(competition.id);
+  const competitionFilePath = fileManager.getCompetitionFilePath(
+    competition.id
+  );
   competitionStorage.open(competitionFilePath);
   competitionStorage.initWithCompetition(jsonObject);
 
@@ -46,7 +49,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
 
   // init first set of each match with zero points
   matches.forEach(match => {
-    match.sets.push({player1: 0, player2: 0});
+    match.sets.push({ player1: 0, player2: 0 });
   });
 
   // store matches and players into the competition database
@@ -71,7 +74,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
 function readTournamentXMLFileFromDisk(filePath) {
   if (!filePath) {
     console.log("The competition already exists");
-    throw new Error(`Die XML-Datei konnte nicht gefunden werden.`)
+    throw new Error(`Die XML-Datei konnte nicht gefunden werden.`);
   }
 
   // read file from disk

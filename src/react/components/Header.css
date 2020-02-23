@@ -6,7 +6,7 @@
 
 .header__picture {
   height: 70vh;
-  background-image: url('../../assets/images/header_background.jpg');
+  background-image: url("../../assets/images/header_background.jpg");
 }
 
 .header__title {
@@ -60,7 +60,6 @@
   outline: 0;
 }
 .header__upload-xml-button--true {
-
   border: 0.5vh solid green;
 }
 
