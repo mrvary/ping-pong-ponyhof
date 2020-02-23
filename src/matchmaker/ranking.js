@@ -1,23 +1,26 @@
-const { getMatchWinner } = require("./match.js");
-
 // calculateBHZ : [players], [matches] -> [rankning]
 function createCurrentRanking(players, matches) {
   let ranking = [];
 
+  //copy call by value
+  let dummyMatches = JSON.parse(JSON.stringify(matches));
+  addMatchDetails(players, dummyMatches);
+
   players.forEach(player => {
     ranking.push({
       place: 0,
+      id: player.id,
       firstname: player.firstname,
       lastname: player.lastname,
       gamesWon: player.gamesWon,
       gamesLost: player.matchIds.length - player.gamesWon,
-      bhz: calculateBHZ(player, matches),
+      bhz: calculateBHZ(player, players),
       qttr: player.qttr,
       //ToDo feature - live ttr
       ttr_beginn: 1000,
       ttr_now: 1123,
       ttr_diff: 123,
-      matches: getMatchesInvolved(player, matches)
+      matches: getMatchesInvolved(player, dummyMatches)
     });
   });
 
@@ -43,7 +46,6 @@ function createCurrentRanking(players, matches) {
   for (let i = 0; i < ranking.length; i++) {
     ranking[i].place = i + 1;
   }
-
   return ranking;
 }
 
@@ -56,17 +58,6 @@ function logRanking(ranking) {
     "|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde\n";
 
   ranking.forEach(player => {
-    // let matchesString = "";
-    // player.matches.forEach(match => {
-    //   matchesString +=
-    //     match.opponentName.substring(0, 7) +
-    //     " " +
-    //     match.ownSets +
-    //     ":" +
-    //     match.opponentSets +
-    //     "\t";
-    // });
-
     log +=
       player.place +
       "\t\t" +
@@ -83,16 +74,29 @@ function logRanking(ranking) {
       player.ttr_now +
       "\t\t" +
       player.ttr_diff +
-      "\t\t|\t" +
-      "matchesString\n";
+      "\t\t|\t";
+
+    // create for each match a summary -> Krause 3:0
+    player.matches.forEach(match => {
+      if (match.player1 === player.id) {
+        log += match.player2lastname + " ";
+      } else {
+        log += match.player1lastname + " ";
+      }
+      log += match.result.player1 + ":" + match.result.player2 + "\t";
+    });
+    log += "\n";
   });
   console.log(log);
 }
 // calculateBHZ : player, [matches] -> bhz
-function calculateBHZ(player, matches) {
+function calculateBHZ(playerToCalculate, players) {
   let bhz = 0;
-  matches.forEach(match => {
-    if (getMatchWinner(match) === player.id) bhz++;
+  //bhz = the sum of all games your opponents you have played against have won
+  players.forEach(player => {
+    if (playerToCalculate.opponentIds.includes(player.id)) {
+      bhz += player.gamesWon;
+    }
   });
   return bhz;
 }
@@ -101,10 +105,61 @@ function calculateBHZ(player, matches) {
 function getMatchesInvolved(player, matches) {
   let mactchesInvolved = matches.filter(function(match) {
     if (match.player1 === player.id || match.player2 === player.id) return true;
-
     return false;
   });
   return mactchesInvolved;
 }
 
-module.exports = { createCurrentRanking, logRanking };
+// addMatchDetails : [players], [matches] -> [matchesWithDetail]
+function addMatchDetails(players, matches) {
+  matches.forEach(match => {
+    match.player1firstname = getFirstNameOfPlayerId(match.player1, players);
+    match.player2firstname = getFirstNameOfPlayerId(match.player2, players);
+    match.player1lastname = getLastNameOfPlayerId(match.player1, players);
+    match.player2lastname = getLastNameOfPlayerId(match.player2, players);
+    match.result = createMatchResult(match);
+  });
+}
+
+// getFirstNameOfPlayerId : playerId, [players] -> firstname
+function getFirstNameOfPlayerId(playerId, players) {
+  let firstname = "";
+  players.forEach(player => {
+    if (player.id === playerId) {
+      firstname = player.firstname;
+    }
+  });
+  return firstname;
+}
+
+// getLastNameOfPlayerId : playerId, [players] -> lastname
+function getLastNameOfPlayerId(playerId, players) {
+  let lastname = "";
+  players.forEach(player => {
+    if (player.id === playerId) {
+      lastname = player.lastname;
+    }
+  });
+  return lastname;
+}
+
+// createMatchResult : match -> JSON
+function createMatchResult(match) {
+  let player1SetsWon = 0;
+  let player2SetsWon = 0;
+
+  match.sets.forEach(set => {
+    //player1 has more points
+    if (set.player1 > set.player2) {
+      player1SetsWon++;
+    }
+    //player2 has more points
+    if (set.player1 < set.player2) {
+      player2SetsWon++;
+    }
+  });
+
+  return { player1: player1SetsWon, player2: player2SetsWon };
+}
+
+module.exports = { createCurrentRanking, logRanking, createMatchResult };
