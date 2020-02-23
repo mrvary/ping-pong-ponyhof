@@ -64,6 +64,7 @@
     "electron-rebuild": "^1.8.8",
     "eslint": "^6.8.0",
     "nodemon": "^2.0.1",
+    "prettier": "^1.19.1",
     "wait-on": "^3.3.0"
   },
   "dependencies": {
