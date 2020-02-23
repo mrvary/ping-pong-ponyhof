@@ -35,45 +35,45 @@ const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
 
 const TableHeadline = () => {
   return (
-    <div className="centered">
-      <div className="competitionPage__table__first-row-style tablegrid">
-        <strong className="competitionPage__table__column-alignment centered">
+    <div className="competitionPage__centered">
+      <div className="competitionPage__table competitionPage__table--def">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Tisch{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Spieler 1
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           :{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Spieler 2{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Satz 1{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Satz 2{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Satz 3{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Satz 4{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Satz 5{' '}
         </strong>
-        <strong className="competitionPage__table__column-alignment centered">
+        <strong className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Ergebnis{' '}
         </strong>
@@ -90,7 +90,7 @@ const TableRow = ({ match }) => {
     '0:0',
     '0:0'
   ]);
-  var index = 0;
+  let index = 0;
 
   match.sets.forEach(set => {
     stringSet[index] = set.player1 + ' : ' + set.player2;
@@ -107,42 +107,42 @@ const TableRow = ({ match }) => {
   };
 
   return (
-    <div className="centered">
-      <div className="competitionPage__table__first-row-alignment tablegrid">
-        <div className="competitionPage__table__column-alignment centered"></div>
-        <div className="competitionPage__table__column-alignment centered">
+    <div className="competitionPage__centered">
+      <div className="competitionPage__table competitionPage__table--values">
+        <div className="competitionPage__table--elements competitionPage__centered"></div>
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {match.player1}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           :{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {match.player2}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {stringSet[0]}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {stringSet[1]}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {stringSet[2]}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {stringSet[3]}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           {stringSet[4]}{' '}
         </div>
-        <div className="competitionPage__table__column-alignment centered">
+        <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
           Ergebnis{' '}
         </div>
