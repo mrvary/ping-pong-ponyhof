@@ -21,7 +21,7 @@ describe("playCompetition", () => {
   for (let round = 1; round <= roundsToPlay; round++) {
     //1. create new matches for the round (drawing)
     let matches = drawRound(players);
-    debugger;
+
     //2. update the players with the created matches
     players = updatePlayersAfterDrawing(players, matches);
 
