@@ -29,13 +29,17 @@ const COMPETITION_STATUS = {
      return setCompetitionStatus(competition);
 }
 
-function setCompetitionStatus(competition, isCompleted) {
+function setCompetitionStatus(competition, userChangedCompetition, isCompleted) {
      if (competition.status === COMPETITION_STATUS.COMP_CREATED) {
          competition.status = COMPETITION_STATUS.COMP_READY_ROUND_READY;
      } else if (competition.status === COMPETITION_STATUS.COMP_READY_ROUND_READY) {
          competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY;
      } else if (competition.status === COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY) {
-         competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE;
+         if (userChangedCompetition) {
+             competition.status = COMPETITION_STATUS.COMP_READY_ROUND_READY;
+         } else {
+             competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE;
+         }
      } else if (competition.status === COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE) {
          if (isCompleted) {
              competition.status = COMPETITION_STATUS.COMP_COMPLETED;
