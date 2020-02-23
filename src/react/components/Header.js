@@ -78,7 +78,7 @@ const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
         handleClose={handleCloseError}
         header={'Fehler'}
         bodyText={'Das Tunier wurde bereits hochgeladen'}
-        mode={'leer'}
+        mode={'noBtn'}
       ></Popup>
     </div>
   );

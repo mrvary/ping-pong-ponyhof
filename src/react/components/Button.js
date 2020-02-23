@@ -2,7 +2,7 @@ import React from 'react';
 import './Button.css';
 
 function Button({ text, onClick, mode, disableProp }) {
-  if (mode === 'leer') {
+  if (mode === 'noBtn') {
     return null;
   }
   let css =
