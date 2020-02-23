@@ -28,7 +28,7 @@ const { importXML } = require("../modules/import/xml-import");
 
 // models
 const { mockedMatches } = require("../assets/mock-data/match.mock.data");
-const { COMPETITION_STATUS } = require("../modules/models/competition");
+const { setCompetitionStatus } = require("../modules/models/competition");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -58,7 +58,6 @@ app.on("ready", () => {
   initHTTPServer(config.SERVER_PORT);
   initSocketIO();
 
-  // create the browser window with menu ...
   createWindow();
   createMenu();
 });
@@ -149,17 +148,9 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
     }
   }
 
-  // init competition status
-  if (competition.status === COMPETITION_STATUS.COMPETITION_START) {
-    competition.status = COMPETITION_STATUS.ROUND_STARTED;
-    metaStorage.updateCompetition(competition);
-    matchStarted = true;
-
-    sendBroadcast(socketIOChannels.START_ROUND, null);
-  } else if (competition.status === COMPETITION_STATUS.ROUND_STARTED) {
-    matchStarted = true;
-  }
-
+  // set competition status
+  setCompetitionStatus(competition, false, false);
+  metaStorage.updateCompetition(competition);
   event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matchesWithPlayers: matchesWithPlayers })
 });
 
@@ -325,7 +316,6 @@ function initCurrentRound(matchesWithPlayers) {
     matchTableMap.set(tableNumber++, matchWithPlayers);
     console.log(`Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`)
   });
-  console.log('Ready to play');
 }
 
 function mapHasValue(inputMap, searchedValue) {

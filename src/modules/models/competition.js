@@ -18,15 +18,14 @@ const COMPETITION_STATUS = {
  * createCompetitionFromJSON: dataFromJSON -> Competition
  */
  function createCompetitionFromJSON(dataFromJSON) {
-     const competition = {
-         id: dataFromJSON["tournament-id"],
-         name: dataFromJSON["name"],
-         date: dataFromJSON["start-date"],
-         playmode: dataFromJSON.competition["preliminary-round-playmode"],
-         round_matchIds: [],
-         status: null
-     };
-     return setCompetitionStatus(competition);
+    return {
+        id: dataFromJSON["tournament-id"],
+        name: dataFromJSON["name"],
+        date: dataFromJSON["start-date"],
+        playmode: dataFromJSON.competition["preliminary-round-playmode"],
+        round_matchIds: [],
+        status: null
+    };
 }
 
 function setCompetitionStatus(competition, userChangedCompetition, isCompleted) {
@@ -52,7 +51,7 @@ function setCompetitionStatus(competition, userChangedCompetition, isCompleted) 
          competition.status = COMPETITION_STATUS.COMP_CREATED;
      }
 
-    return competition;
+    console.log("new competition status: ", competition.status);
 }
 
 module.exports = {
