@@ -80,7 +80,7 @@ function simulateMatch(match) {
     match.sets = player1Wins;
   } else {
     //no freeticket player in match -> random player wins
-    match.sets = Math.random() < 0.5 ? player1wins : player2wins;
+    match.sets = Math.random() < 0.5 ? player1Wins : player2Wins;
   }
 
   return match;

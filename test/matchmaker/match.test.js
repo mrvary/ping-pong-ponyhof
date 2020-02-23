@@ -4,6 +4,7 @@ const {
   getMatchWinner,
   simulateMatch
 } = require("../../src/matchmaker/match");
+
 const {
   testPairing,
   testPairingWithFreeTicket,
@@ -77,9 +78,13 @@ describe("getMatchWinner()", () => {
 describe("simulateMatch()", () => {
   test("get expected match result", () => {
     const matchWithResult = simulateMatch(match_toSimulate);
-    expect(matchWithResult.sets).toStrictEqual(
-      matchResultPlayer1Won || matchResultPlayer2Won
-    );
+    //easiest way to test if two arrays are equal to each other --> compare their strings
+    expect(
+      JSON.stringify(matchWithResult.sets) ==
+        JSON.stringify(matchResultPlayer1Won) ||
+        JSON.stringify(matchWithResult.sets) ==
+          JSON.stringify(matchResultPlayer2Won)
+    ).toBe(true);
     expect(getMatchWinner(matchWithResult)).not.toEqual("0");
   });
 });
