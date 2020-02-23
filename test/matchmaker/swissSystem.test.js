@@ -8,6 +8,11 @@ const {
 const { simulateMatches } = require("../../src/matchmaker/match");
 
 const {
+  createCurrentRanking,
+  logRanking
+} = require("../../src/matchmaker/ranking");
+
+const {
   createPlayersFromJSON,
   updatePlayersAfterDrawing,
   updateWinner
@@ -28,8 +33,15 @@ describe("playCompetition", () => {
     //3. simulate matches
     matches = simulateMatches(matches);
 
-    //4.update winner
+    //4. update winner
     players = updateWinner(players, matches);
+
+    //5. create ranking
+    let ranking = createCurrentRanking(players, matches);
+    debugger;
+
+    //6. log ranking
+    logRanking(ranking);
 
     test("match length", () => {
       expect(matches.length).toEqual(players.length / 2);
