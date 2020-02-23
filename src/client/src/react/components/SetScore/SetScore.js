@@ -1,5 +1,5 @@
-import React from 'react';
-import './SetScore.css';
+import React from "react";
+import "./SetScore.css";
 
 function Score({ score }) {
   return <div className="set-score__score">{score ? score : 0}</div>;

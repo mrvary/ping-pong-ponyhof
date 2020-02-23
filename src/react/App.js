@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import './App.css';
-import './Colors.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
+import "./Colors.css";
 
 // dummy data
 import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
@@ -11,13 +11,13 @@ import Competition from "./components/Competition";
 import Header from "./components/Header";
 
 // electron
-import IPCService from '../shared/ipc/ipcRendererService';
+import IPCService from "../shared/ipc/ipcRendererService";
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
 const App = () => {
-  const [currentId, setCurrentId] = useState('');
+  const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [uploadedXML, setUploadedXML] = useState(false);
   const [competitions, setCompetitions] = useState([]);
@@ -33,9 +33,9 @@ const App = () => {
       return;
     }
 
-   IPCService.getAllCompetitions(competitions => {
-     setCompetitions(competitions)
-   });
+    IPCService.getAllCompetitions(competitions => {
+      setCompetitions(competitions);
+    });
   };
 
   const openXMLDialog = () => {
@@ -51,7 +51,7 @@ const App = () => {
       return;
     }
 
-    IPCService.importXMLFile(xmlFilePath, (args) => {
+    IPCService.importXMLFile(xmlFilePath, args => {
       const { competitionId, message } = args;
 
       if (!competitionId) {
@@ -69,12 +69,16 @@ const App = () => {
 
   const deleteCompetition = id => {
     if (USE_BROWSER) {
-      setCompetitions(competitions.filter(competition => competition.id !== id));
+      setCompetitions(
+        competitions.filter(competition => competition.id !== id)
+      );
       return;
     }
 
     IPCService.deleteCompetition(id, () => {
-      setCompetitions(competitions.filter(competition => competition.id !== id));
+      setCompetitions(
+        competitions.filter(competition => competition.id !== id)
+      );
     });
   };
 

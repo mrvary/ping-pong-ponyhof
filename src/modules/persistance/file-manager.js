@@ -20,7 +20,7 @@ function getFileFromAppDataPath(filename) {
 }
 
 function getMetaStorageDatabasePath() {
-  return getFileFromAppDataPath("competitions.json")
+  return getFileFromAppDataPath("competitions.json");
 }
 
 function getCompetitionFilePath(id) {

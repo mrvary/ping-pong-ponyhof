@@ -38,27 +38,24 @@ function drawFirstRound(competition) {
       bottomPlayers[Math.floor(Math.random() * bottomPlayers.length)];
 
     //remove choosenPlayer out of top- and bottomPlayers
-    topPlayers = topPlayers.filter(
-      player => player !== choosenBetterPlayer);
+    topPlayers = topPlayers.filter(player => player !== choosenBetterPlayer);
     bottomPlayers = bottomPlayers.filter(
       player => player !== choosenWorsePlayer
     );
 
     playerList.push(choosenBetterPlayer);
     playerList.push(choosenWorsePlayer);
-
   }
 
   //check for ungeradeTN -- this will be the last player in playerList
   if (topPlayers.length === 1) {
-    playerList.push(topPlayers[0])
-  };
+    playerList.push(topPlayers[0]);
+  }
 
   createMatches(playerList, competition);
 }
 
 function drawSecondRound(competition) {
-
   let players = [];
 
   competition.players.forEach(element => {
@@ -67,18 +64,16 @@ function drawSecondRound(competition) {
       ...element
     });
   });
-  
- //schaue ob array a und b ein gemeinsames Element haben
- //kann benutzt werden um zu schauen ob sie
- //bereits gegeneinander gespielt haben
- //a.some(e => b.includes(e))
- 
+
+  //schaue ob array a und b ein gemeinsames Element haben
+  //kann benutzt werden um zu schauen ob sie
+  //bereits gegeneinander gespielt haben
+  //a.some(e => b.includes(e))
 
   players = shuffle(players);
   let sortedPlayers = sortBy(players, ["gamesWon"]);
 
   createMatches(sortedPlayers, competition);
-
 }
 
 function createMatches(playerList, competition) {
@@ -132,9 +127,7 @@ function createMatches(playerList, competition) {
   }
   competition.players = updatedPlayers;
   competition.rounds.push(matches);
-
 }
-
 
 //sort our playerArray by gamesWon f.ex
 function sortBy(players, selector) {
@@ -174,10 +167,8 @@ function createGamesWonGroups(allPlayers, roundNr) {
   return groups;
 }
 
-
 function printGroups(gamesWonGroups) {
   gamesWonGroups.forEach(group => {
-
     if (group.length !== 0) {
       let string = group[0].gamesWon + " Siege Spieler -> ";
 
@@ -189,6 +180,5 @@ function printGroups(gamesWonGroups) {
     }
   });
 }
-
 
 module.exports.drawNextRound = drawNextRound;

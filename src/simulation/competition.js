@@ -39,7 +39,6 @@ class Competition {
   logRanking() {
     this.logger.logRanking(this);
   }
-
 }
 
 function initPlayers(players) {
@@ -62,6 +61,5 @@ function initPlayers(players) {
     };
   });
 }
-
 
 module.exports = Competition;
