@@ -38,6 +38,11 @@ function createCurrentRanking(players, matches) {
     //-> worse qttr
   });
 
+  //after the ranking is sorted the place can be set by position in ranking
+  for (let i = 0; i < ranking.length; i++) {
+    ranking[i].place = i + 1;
+  }
+
   return ranking;
 }
 
