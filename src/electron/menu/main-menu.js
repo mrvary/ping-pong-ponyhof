@@ -21,6 +21,11 @@ const openClient = () => {
   shell.openExternal(url);
 };
 
+const openRepositoryOnGitHub = () => {
+  const url = "https://github.com/mrvary/ping-pong-ponyhof";
+  shell.openExternal(url);
+}
+
 const showURL = () => {
   const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
   uiActions.showInfoBox("URL-Info", `URL: ${url}`);
@@ -28,6 +33,25 @@ const showURL = () => {
 
 // main menu template
 const template = [
+  {
+    label: app.getName(),
+    submenu: [
+      {
+        label: "Client öffnen",
+        click: openClient
+      },
+      {
+        label: "Server URL anzeigen",
+        click: showURL
+      },
+      {
+        type: 'separator'
+      },
+      {
+        role: 'quit'
+      }
+    ]
+  },
   {
     label: "Bearbeiten",
     submenu: [
@@ -108,17 +132,6 @@ const template = [
           process.platform === "darwin" ? "Alt+Command+I" : "Ctrl+Shift+I",
         click: toggleDevTools
       },
-      {
-        type: "separator"
-      },
-      {
-        label: "Client öffnen",
-        click: openClient
-      },
-      {
-        label: "Server URL anzeigen",
-        click: showURL
-      }
     ]
   },
   {
@@ -138,7 +151,8 @@ const template = [
     label: "Hilfe",
     submenu: [
       {
-        label: `Über ${app.name}`
+        label: "GitHub",
+        click: openRepositoryOnGitHub
       }
     ]
   }
