@@ -1,10 +1,10 @@
 const mockedMatch = {
   id: 0,
   player1: {
-    id: 'PLAYER20',
-    firstname: 'Achim',
-    lastname: 'Amthor',
-    clubname: 'SC Baldham-Vaterstetten',
+    id: "PLAYER20",
+    firstname: "Achim",
+    lastname: "Amthor",
+    clubname: "SC Baldham-Vaterstetten",
     gamesWon: 5,
     matchIds: [0],
     qttr: 1351,
@@ -12,10 +12,10 @@ const mockedMatch = {
     hasFreeTicket: false
   },
   player2: {
-    id: 'PLAYER3',
-    firstname: 'Ulrich',
-    lastname: 'Dietzel',
-    clubname: 'TTC Friedberg',
+    id: "PLAYER3",
+    firstname: "Ulrich",
+    lastname: "Dietzel",
+    clubname: "TTC Friedberg",
     gamesWon: 1,
     matchIds: [0],
     qttr: 1111,

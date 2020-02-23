@@ -1,4 +1,4 @@
-.main-score__container{
+.main-score__container {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -8,5 +8,5 @@
 }
 
 .main-score__delimiter {
-  margin-top: 5%
+  margin-top: 5%;
 }

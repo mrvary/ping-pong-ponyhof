@@ -3,7 +3,7 @@
  */
 
 const { app, ipcMain, Menu } = require("electron");
-const http = require('http');
+const http = require("http");
 const path = require("path");
 
 // electron reload
@@ -20,8 +20,8 @@ const createWindow = require("./window");
 const config = require("./config");
 
 // server dependencies
-const expressApp = require('../modules/app');
-const socketIO = require('socket.io');
+const expressApp = require("../modules/app");
+const socketIO = require("socket.io");
 
 // xml import
 const { importXML } = require("../modules/import/xml-import");
@@ -36,7 +36,7 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // ipc communication
 const ipcChannels = require("../shared/ipc/ipcChannels");
-const socketIOChannels = require('../client/src/shared/socket-io-channels');
+const socketIOChannels = require("../client/src/shared/socket-io-channels");
 
 // variables
 const MAX_AMOUNT_TABLE = 16;
@@ -63,17 +63,19 @@ app.on("before-quit", () => {
 });
 
 app.on("window-all-closed", () => {
-   // On macOS it is common for applications and their menu bar
-   // to stay active until the user quits explicitly with Cmd + Q
-   if (process.platform !== "darwin") {
-     app.quit();
+  // On macOS it is common for applications and their menu bar
+  // to stay active until the user quits explicitly with Cmd + Q
+  if (process.platform !== "darwin") {
+    app.quit();
   }
 });
 
-app.on('activate', (event, hasVisibleWindows) => {
+app.on("activate", (event, hasVisibleWindows) => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (!hasVisibleWindows) { createWindow(); }
+  if (!hasVisibleWindows) {
+    createWindow();
+  }
 });
 
 ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
@@ -98,23 +100,30 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
 });
 
 ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
-  uiActions.openXMLFile().then((xmlFilePath) => {
-    event.sender.send(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, { xmlFilePath: xmlFilePath })
+  uiActions.openXMLFile().then(xmlFilePath => {
+    event.sender.send(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, {
+      xmlFilePath: xmlFilePath
+    });
   });
 });
 
 ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
   try {
     const { xmlFilePath } = args;
-    const competitionId = importXML(xmlFilePath, fileManager, metaStorage, competitionStorage);
+    const competitionId = importXML(
+      xmlFilePath,
+      fileManager,
+      metaStorage,
+      competitionStorage
+    );
 
     // notify react app that import is ready and was successful
     const arguments = { competitionId: competitionId, message: "success" };
     event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
   } catch (err) {
     // notify react app that a error has happend
-    const arguments = { competitionId: '', message: err.message };
-    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments)
+    const arguments = { competitionId: "", message: err.message };
+    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
   }
 });
 
@@ -149,7 +158,9 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
     sendBroadcast(socketIOChannels.START_ROUND, null);
   }
 
-  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { matchesWithPlayers: matchesWithPlayers })
+  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
+    matchesWithPlayers: matchesWithPlayers
+  });
 });
 
 ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
@@ -168,8 +179,8 @@ function initDevTools() {
   } = require("electron-devtools-installer");
 
   installExtension(REACT_DEVELOPER_TOOLS)
-      .then(name => console.log(`Added Extension:  ${name}`))
-      .catch(err => console.log("An error occurred: ", err));
+    .then(name => console.log(`Added Extension:  ${name}`))
+    .catch(err => console.log("An error occurred: ", err));
 }
 
 function initMetaStorage() {
@@ -281,10 +292,10 @@ function sendMatchToClient(clientSocket, data) {
 
 function availableTables() {
   const takenTables = Array.from(connectedClients.values()).map(x =>
-      parseInt(x, 10)
+    parseInt(x, 10)
   );
   const availableTables = ALL_POTENTIAL_TABLES.filter(
-      key => !takenTables.includes(key)
+    key => !takenTables.includes(key)
   );
   return availableTables;
 }
@@ -305,7 +316,11 @@ function mapPlayersToMatches(matches, players) {
     const player1 = players.find(player => player.id === match.player1);
     const player2 = players.find(player => player.id === match.player2);
 
-    const matchWithPlayers = {match: match, player1: player1, player2: player2};
+    const matchWithPlayers = {
+      match: match,
+      player1: player1,
+      player2: player2
+    };
     matchesWithPlayers.push(matchWithPlayers);
   });
 
@@ -318,9 +333,11 @@ function initCurrentRound(matchesWithPlayers) {
   tableNumber = 1;
   matchesWithPlayers.forEach(matchWithPlayers => {
     matchTableMap.set(tableNumber++, matchWithPlayers);
-    console.log(`Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`)
+    console.log(
+      `Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`
+    );
   });
-  console.log('Ready to play');
+  console.log("Ready to play");
 }
 
 function mapHasValue(inputMap, searchedValue) {
@@ -331,4 +348,3 @@ function mapHasValue(inputMap, searchedValue) {
 function range(start, exclusiveEnd) {
   return [...Array(exclusiveEnd).keys()].slice(start);
 }
-
