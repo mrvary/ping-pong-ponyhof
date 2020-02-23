@@ -1,5 +1,6 @@
 const { getMatchWinner } = require("./match.js");
 
+// calculateBHZ : [players], [matches] -> [rankning]
 function createCurrentRanking(players, matches) {
   let ranking = [];
 
@@ -40,6 +41,48 @@ function createCurrentRanking(players, matches) {
   return ranking;
 }
 
+// logRanking : [ranking] -> console.log(ranking)
+function logRanking(ranking) {
+  const round = ranking[0].matches.length;
+  let log = "---------Ranking after Round " + round + " --------\n";
+  log +=
+    "Platz\tName\t\tS:N\tBHZ\tTTR-Start\tTTR-Aktuell\tTTR-Diff\t" +
+    "|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde\n";
+
+  ranking.forEach(player => {
+    // let matchesString = "";
+    // player.matches.forEach(match => {
+    //   matchesString +=
+    //     match.opponentName.substring(0, 7) +
+    //     " " +
+    //     match.ownSets +
+    //     ":" +
+    //     match.opponentSets +
+    //     "\t";
+    // });
+
+    log +=
+      player.place +
+      "\t\t" +
+      player.lastname.substring(0, 7) +
+      "\t\t" +
+      player.gamesWon +
+      ":" +
+      player.gamesLost +
+      "\t" +
+      player.bhz +
+      "\t" +
+      player.qttr +
+      "\t\t" +
+      player.ttr_now +
+      "\t\t" +
+      player.ttr_diff +
+      "\t\t|\t" +
+      "matchesString\n";
+  });
+  console.log(log);
+}
+// calculateBHZ : player, [matches] -> bhz
 function calculateBHZ(player, matches) {
   let bhz = 0;
   matches.forEach(match => {
@@ -48,6 +91,7 @@ function calculateBHZ(player, matches) {
   return bhz;
 }
 
+// getMatchesInvolved : player, [matches] -> [mactchesInvolved]
 function getMatchesInvolved(player, matches) {
   let mactchesInvolved = matches.filter(function(match) {
     if (match.player1 === player.id || match.player2 === player.id) return true;
@@ -57,4 +101,4 @@ function getMatchesInvolved(player, matches) {
   return mactchesInvolved;
 }
 
-module.exports = { createCurrentRanking };
+module.exports = { createCurrentRanking, logRanking };
