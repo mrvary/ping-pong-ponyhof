@@ -24,7 +24,7 @@ const openClient = () => {
 const openRepositoryOnGitHub = () => {
   const url = "https://github.com/mrvary/ping-pong-ponyhof";
   shell.openExternal(url);
-}
+};
 
 const showURL = () => {
   const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
@@ -34,7 +34,7 @@ const showURL = () => {
 // main menu template
 const template = [
   {
-    label: app.getName(),
+    label: app.name,
     submenu: [
       {
         label: "Client öffnen",
@@ -45,10 +45,10 @@ const template = [
         click: showURL
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        role: 'quit'
+        role: "quit"
       }
     ]
   },
@@ -131,7 +131,7 @@ const template = [
         accelerator:
           process.platform === "darwin" ? "Alt+Command+I" : "Ctrl+Shift+I",
         click: toggleDevTools
-      },
+      }
     ]
   },
   {
