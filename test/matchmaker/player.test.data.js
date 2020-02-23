@@ -822,9 +822,22 @@ const tournamentJSON15Players = {
   }
 };
 
+const EXPECTED_PLAYER = {
+  id: "PLAYER1",
+  firstname: "Gerhard",
+  lastname: "Acker",
+  clubname: "ESV SF Neuaubing",
+  gamesWon: 0,
+  matchIds: [],
+  opponentIds: [],
+  qttr: 1415,
+  active: true
+};
+
 module.exports = {
   inputPlayers,
   tournamentJSON,
   cleanedUpPlayers,
-  tournamentJSON15Players
+  tournamentJSON15Players,
+  EXPECTED_PLAYER
 };
