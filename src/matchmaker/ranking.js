@@ -7,6 +7,7 @@ function createCurrentRanking(players, matches) {
   players.forEach(player => {
     ranking.push({
       place: 0,
+      firstname: player.firstname,
       lastname: player.lastname,
       gamesWon: player.gamesWon,
       gamesLost: player.matchIds.length - player.gamesWon,
@@ -38,7 +39,7 @@ function createCurrentRanking(players, matches) {
     //-> worse qttr
   });
 
-  //after the ranking is sorted the place can be set by position in ranking
+  //after the ranking is sorted the place can be set by the position in ranking
   for (let i = 0; i < ranking.length; i++) {
     ranking[i].place = i + 1;
   }
