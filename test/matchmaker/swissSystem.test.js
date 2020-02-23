@@ -38,7 +38,6 @@ describe("playCompetition", () => {
 
     //5. create ranking
     let ranking = createCurrentRanking(players, matches);
-    debugger;
 
     //6. log ranking
     logRanking(ranking);
