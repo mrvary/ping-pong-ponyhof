@@ -1,4 +1,6 @@
 // TODO: use hash?
+const { createMatchResult } = require("./ranking.js");
+
 let matchId = 0;
 
 // createMatches : [{player1: Player, player2: Player}] -> [Match]
@@ -113,10 +115,28 @@ function getMatchWinner(match) {
   return "0";
 }
 
+function logMatches(matches) {
+  let log = "";
+  matches.forEach(match => {
+    const res = createMatchResult(match);
+    log +=
+      match.player1 +
+      " - " +
+      match.player2 +
+      " " +
+      res.player1 +
+      ":" +
+      res.player2 +
+      "\n";
+  });
+  console.log(log);
+}
+
 module.exports = {
   createMatch,
   createMatches,
   simulateMatches,
   simulateMatch,
-  getMatchWinner
+  getMatchWinner,
+  logMatches
 };
