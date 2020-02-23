@@ -28,7 +28,7 @@ const { importXML } = require("../modules/import/xml-import");
 
 // models
 const { mockedMatches } = require("../assets/mock-data/match.mock.data");
-const { STATUS } = require("../modules/models/competition");
+const { COMPETITION_STATUS } = require("../modules/models/competition");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -150,13 +150,13 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   }
 
   // init competition status
-  if (competition.status === STATUS.COMPETITION_START) {
-    competition.status = STATUS.ROUND_STARTED;
+  if (competition.status === COMPETITION_STATUS.COMPETITION_START) {
+    competition.status = COMPETITION_STATUS.ROUND_STARTED;
     metaStorage.updateCompetition(competition);
     matchStarted = true;
 
     sendBroadcast(socketIOChannels.START_ROUND, null);
-  } else if (competition.status === STATUS.ROUND_STARTED) {
+  } else if (competition.status === COMPETITION_STATUS.ROUND_STARTED) {
     matchStarted = true;
   }
 

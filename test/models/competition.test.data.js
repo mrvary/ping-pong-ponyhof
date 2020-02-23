@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const { PLAYMODE, STATUS } = require("../../src/modules/models/competition");
+const { PLAYMODE, COMPETITION_STATUS } = require("../../src/modules/models/competition");
 
 const expectedCompetitionWithDefaultValues = {
     id: "d5lK%2BhCCjzbPE4bd9mBdQKIx1P%2FxYXr0",
@@ -10,7 +10,7 @@ const expectedCompetitionWithDefaultValues = {
     date: "2019-05-25",
     playmode: PLAYMODE.SCHWEIZER_SYSTEM,
     round_matchIds: [],
-    status: STATUS.COMPETITION_START
+    status: COMPETITION_STATUS.COMP_CREATED
 };
 
 const expectedUpdatedCompetition = {
@@ -19,7 +19,7 @@ const expectedUpdatedCompetition = {
     date: "2019-05-25",
     playmode: PLAYMODE.SCHWEIZER_SYSTEM,
     round_matchIds: [0, 1, 2, 3, 4, 5],
-    status: STATUS.ROUND_STARTED
+    status: COMPETITION_STATUS.ROUND_STARTED
 };
 
 const expectedAllCompetitions = [
@@ -29,7 +29,7 @@ const expectedAllCompetitions = [
         date: "2018-05-20",
         playmode: PLAYMODE.SCHWEIZER_SYSTEM,
         round_matchIds: [],
-        status: STATUS.COMPETITION_FINISHED
+        status: COMPETITION_STATUS.COMPETITION_FINISHED
     },
     {
         id: "jtoindo3ß1%",
@@ -37,7 +37,7 @@ const expectedAllCompetitions = [
         date: "2018-05-22",
         playmode: PLAYMODE.SCHWEIZER_SYSTEM,
         round_matchIds: [0, 1, 2, 3, 4, 5],
-        status: STATUS.ROUND_COMPLETED
+        status: COMPETITION_STATUS.ROUND_COMPLETED
     }
 ];
 
