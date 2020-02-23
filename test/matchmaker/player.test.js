@@ -2,29 +2,18 @@ const {
   createPlayer,
   sortPlayersBy,
   createPlayersFromJSON,
-  updatePlayers
+  updatePlayersAfterDrawing
 } = require("../../src/matchmaker/player");
 
 const {
   inputPlayers,
   cleanedUpPlayers,
   tournamentJSON,
-  tournamentJSON15Players
+  tournamentJSON15Players,
+  EXPECTED_PLAYER
 } = require("./player.test.data");
 
 const { testMatches } = require("./match.test.data");
-
-const EXPECTED_PLAYER = {
-  id: "PLAYER1",
-  firstname: "Gerhard",
-  lastname: "Acker",
-  clubname: "ESV SF Neuaubing",
-  gamesWon: 0,
-  matchIds: [],
-  opponentIds: [],
-  qttr: 1415,
-  active: true
-};
 
 describe("createPlayer()", () => {
   test("returns the correct object", () => {
@@ -75,10 +64,10 @@ describe("sortPlayersBy()", () => {
   });
 });
 
-describe("updatePlayers()", () => {
-  test.todo("returns an array of all players from an array of matches");
-
-  test.todo("check gamesWon changed for winners");
+describe("updatePlayersAfterDrawing()", () => {
+  test.todo(
+    "returns an array of all players from an array of players and matches"
+  );
 
   test.todo("match Id added to each player");
 

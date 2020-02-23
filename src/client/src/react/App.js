@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 // import shared
-import io from 'socket.io-client';
-import socketIOChannels from '../shared/socket-io-channels';
+import io from "socket.io-client";
+import socketIOChannels from "../shared/socket-io-channels";
 
 // import routing components
-import Login from './pages/Login/Login';
-import WaitForRound from './pages/WaitForRound/WaitForRound';
-import Match from './pages/Match';
+import Login from "./pages/Login/Login";
+import WaitForRound from "./pages/WaitForRound/WaitForRound";
+import Match from "./pages/Match";
 
-const appTitle = 'TTRace';
+const appTitle = "TTRace";
 
 // for development: the requested server is the webserver
 //                  from the electron app and not the
@@ -18,14 +18,14 @@ const appTitle = 'TTRace';
 // for production:  the requested server is the one and only
 const isDev = true;
 const getServerURL = () => {
-  let url = isDev ? 'localhost:4000' : document.location.host;
-  console.log('Requested server: ', url);
+  let url = isDev ? "localhost:4000" : document.location.host;
+  console.log("Requested server: ", url);
   return url;
 };
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState('login');
+  const [page, setPage] = useState("login");
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
@@ -37,7 +37,7 @@ function App() {
   };
 
   const content = () => {
-    if (page === 'login') {
+    if (page === "login") {
       return (
         <Login
           appTitle={appTitle}
@@ -48,9 +48,9 @@ function App() {
           tableNumberChanged={handleTableNumberChange}
         />
       );
-    } else if (page === 'wait') {
+    } else if (page === "wait") {
       return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
-    } else if (page === 'match') {
+    } else if (page === "match") {
       return (
         <Match appTitle={appTitle} isConnected={isConnected} match={match} />
       );
@@ -84,8 +84,10 @@ function App() {
       console.log(data);
       setIsConnected(true);
 
-      console.log('matchStart ->', matchStarted);
-      matchStarted ? connection.emit(socketIOChannels.GET_MATCH, { tableNumber }) : toPage('wait');
+      console.log("matchStart ->", matchStarted);
+      matchStarted
+        ? connection.emit(socketIOChannels.GET_MATCH, { tableNumber })
+        : toPage("wait");
 
       connection.on(socketIOChannels.START_ROUND, () => {
         connection.emit(socketIOChannels.GET_MATCH, { tableNumber });
@@ -95,8 +97,8 @@ function App() {
         const { match } = data;
         setMatch(match);
 
-        toPage('match');
-      })
+        toPage("match");
+      });
     });
 
     connection.on(socketIOChannels.LOGIN_ERROR, data => {

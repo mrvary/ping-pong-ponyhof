@@ -1,6 +1,6 @@
-import React from 'react';
-import './Header.css';
-import { Redirect } from 'react-router-dom';
+import React from "react";
+import "./Header.css";
+import { Redirect } from "react-router-dom";
 
 function Header({
   openXMLDialog,
@@ -48,12 +48,12 @@ const HeaderBox = ({
 };
 
 const UploadXML = ({ importXML, uploadedXML }) => {
-  let xmlUploadedCss = 'header__upload-xml-button';
-  let xmlText = 'Lade hier deine XML Datei hoch!';
+  let xmlUploadedCss = "header__upload-xml-button";
+  let xmlText = "Lade hier deine XML Datei hoch!";
 
   if (uploadedXML) {
-    xmlText = 'Upload erfolgreich';
-    xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
+    xmlText = "Upload erfolgreich";
+    xmlUploadedCss = xmlUploadedCss + " header__upload-xml-button--true";
   }
 
   return (
@@ -64,8 +64,8 @@ const UploadXML = ({ importXML, uploadedXML }) => {
 };
 
 const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
-  const competition = currentId !== '' ? '/competition/' + currentId : '';
-  const linkStatus = 'disabled-link-' + linkDisabled;
+  const competition = currentId !== "" ? "/competition/" + currentId : "";
+  const linkStatus = "disabled-link-" + linkDisabled;
 
   if (!linkDisabled) {
     return (
