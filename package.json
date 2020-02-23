@@ -40,8 +40,8 @@
     "postinstall": "electron-rebuild electron-builder install-app-deps",
     "test": "jest",
     "electron-rebuild": "electron-rebuild",
-    "lint": "prettier 'src/**/*.{js,css,html}' --list-different && echo '🌈 all files linted!' || (echo '⚡️ please check the above files' && exit 1)",
-    "prettier": "prettier --write 'src/**/*.{js,css,html}'"
+    "lint": "prettier 'src/**/*.{js,css,html}' --list-different && echo '🌈 all files look fabulous!' || (echo '⚡️ please check the above files' && exit 1)",
+    "prettify-files": "prettier --write 'src/**/*.{js,css,html}'"
   },
   "eslintConfig": {
     "extends": "react-app"
