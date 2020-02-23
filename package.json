@@ -18,6 +18,7 @@
     "url": "https://github.com/mrvary/ping-pong-ponyhof.git"
   },
   "scripts": {
+    "pre-push": "yarn -s lint",
     "start": "yarn build && yarn start-electron",
     "start-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel",
     "start-dev-mac": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel-mac",
@@ -38,7 +39,9 @@
     "electron-pack": "electron-builder build --win -c.extraMetadata.main=build/electron/main.js --publish never",
     "postinstall": "electron-rebuild electron-builder install-app-deps",
     "test": "jest",
-    "electron-rebuild": "electron-rebuild"
+    "electron-rebuild": "electron-rebuild",
+    "lint": "prettier 'src/**/*.{js,css,html}' --list-different && echo '🌈 all files linted!' || (echo '⚡️ please check the above files' && exit 1)",
+    "prettier": "prettier --write 'src/**/*.{js,css,html}'"
   },
   "eslintConfig": {
     "extends": "react-app"
