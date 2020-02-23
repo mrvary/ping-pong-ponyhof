@@ -2,12 +2,12 @@
  * @author Marco Goebel
  */
 
-const os = require('os');
+const os = require("os");
 
 function getIpAddress() {
-  let ipAddress = getInterfaceByName('Ethernet') || getInterfaceByName('WLAN');
+  let ipAddress = getInterfaceByName("Ethernet") || getInterfaceByName("WLAN");
   if (!ipAddress) {
-    throw new Error('ip address could not be determined');
+    throw new Error("ip address could not be determined");
   }
 
   return ipAddress;
@@ -25,7 +25,7 @@ function getInterfaceByName(name) {
   let address;
   const adapter = netInterface[0];
   ifaces[adapter].forEach(details => {
-    if (details.family === 'IPv4' && details.internal === false) {
+    if (details.family === "IPv4" && details.internal === false) {
       address = details.address;
     }
   });

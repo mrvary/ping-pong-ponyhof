@@ -2,8 +2,8 @@
  * @author Marco Goebel
  */
 
-const { remote, ipcRenderer } = require('electron');
-const log = require('electron-log');
+const { remote, ipcRenderer } = require("electron");
+const log = require("electron-log");
 
 window.electron = {};
 window.electron.ipcRenderer = ipcRenderer;
