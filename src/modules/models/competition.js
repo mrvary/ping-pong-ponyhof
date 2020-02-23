@@ -41,7 +41,9 @@ function setCompetitionStatus(competition, userChangedCompetition, isCompleted) 
              competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE;
          }
      } else if (competition.status === COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE) {
-         if (isCompleted) {
+         if (userChangedCompetition) {
+             competition.status = COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE;
+         } else if (isCompleted) {
              competition.status = COMPETITION_STATUS.COMP_COMPLETED;
          } else {
              competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY;
