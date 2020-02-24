@@ -1,0 +1,12 @@
+.popupEditTable--columns {
+  display: flex;
+  flex-direction: column;
+}
+.popupEditTable--rows {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  align-items: center;
+  background-color: var(--prim-background-color);
+  margin-bottom: 2vh;
+}

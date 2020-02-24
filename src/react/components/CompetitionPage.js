@@ -4,10 +4,12 @@ import "./CompetitionPage.css";
 import "../Colors.css";
 
 //componenten
-import Popup from "./Popup";
-import Footer from "./Footer";
-import Button from "./Button";
-import CompetitionPageHeader from "./CompetitionPageHeader";
+import Popup from './Popup';
+import Footer from './Footer';
+import Button from './Button';
+import CompetitionPageHeader from './CompetitionPageHeader';
+import PopupEditTable from './PopupEditTable';
+
 
 // shared service
 import IPCService from "../../shared/ipc/ipcRendererService";
@@ -83,6 +85,7 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
+
   var stringSet = ["0:0", "0:0", "0:0", "0:0", "0:0"];
   var index = 0;
 
@@ -91,44 +94,67 @@ const TableRow = ({ match }) => {
     index++;
   });
 
+  const [showPopupEditMatch, setShowPopupEditMatch] = useState(false);
+  const handleCloseEditMatch = () => setShowPopupEditMatch(false);
+  const handleShowEditMatch = () => setShowPopupEditMatch(true);
+
+  const saveChanges = () => {
+    //TODO save Changes from edited Table
+    handleCloseEditMatch();
+  };
+
   return (
-    <div className="competitionPage__center-table">
-      <div className="competitionPage__table__first-row-alignment">
-        <div className="competitionPage__table__column-alignment"> </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {match.player1}
-        </div>
-        <div className="competitionPage__table__column-alignment"> : </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {match.player2}{" "}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {stringSet[0]}{" "}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {stringSet[1]}{" "}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {stringSet[2]}{" "}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {stringSet[3]}{" "}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          {stringSet[4]}{" "}
-        </div>
-        <div className="competitionPage__table__column-alignment">
-          {" "}
-          Ergebnis{" "}
+    <div>
+      <div className="competitionPage__center-table">
+        <div className="competitionPage__table__first-row-alignment">
+          <div className="competitionPage__table__column-alignment"></div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {match.player1}
+          </div>
+          <div className="competitionPage__table__column-alignment"> : </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {match.player2}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[0]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[1]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[2]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[3]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            {stringSet[4]}{' '}
+          </div>
+          <div className="competitionPage__table__column-alignment">
+            {' '}
+            Ergebnis{' '}
+          </div>
         </div>
       </div>
+      <button
+        onClick={handleShowEditMatch}
+        className="competitionPage__table__bearbeiten-btn"
+      >
+        bearbeiten
+      </button>
+      <PopupEditTable
+        show={showPopupEditMatch}
+        handleClose={handleCloseEditMatch}
+        sets={match.sets}
+        saveChanges={saveChanges}
+      ></PopupEditTable>
     </div>
   );
 };

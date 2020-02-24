@@ -26,7 +26,7 @@ body {
 
 .competitionPage__center-table {
   display: flex;
-  justify-content: space-around;
+  justify-content: center;
 }
 
 .competitionPage__table__first-row-alignment {
@@ -49,6 +49,18 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-around;
+}
+
+.competitionPage__table__bearbeiten-btn {
+  font-size: 2vh;
+  border: none;
+  background: var(--prim-background-color);
+}
+.competitionPage__table__bearbeiten-btn:hover {
+  color: var(--grey-out-color);
+}
+.competitionPage__table__bearbeiten-btn:focus {
+  outline: 0;
 }
 
 .competitionPage__link-ip-adress-statistic {
