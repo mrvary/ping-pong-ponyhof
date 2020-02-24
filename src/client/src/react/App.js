@@ -144,6 +144,11 @@ function App() {
       setPage("MATCH");
     });
 
+    connection.on(socketIOMessages.CANCEL_ROUND, () => {
+      console.log("SERVER->CLIENT: CANCEL_ROUND");
+      // page -> WAITING
+    });
+
     connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
       console.log("SERVER->CLIENT: COMPETITION_CANCELED");
       // page -> NO-COMP
