@@ -49,6 +49,7 @@ const UploadXML = ({ openXMLDialog, linkDisabled }) => {
   if (!linkDisabled) {
     xmlText = 'Upload erfolgreich';
     xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
+
   }
 
   return (
@@ -78,7 +79,7 @@ const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
         handleClose={handleCloseError}
         header={'Fehler'}
         bodyText={'Das Tunier wurde bereits hochgeladen'}
-        mode={'leer'}
+        mode={'noBtn'}
       ></Popup>
     </div>
   );

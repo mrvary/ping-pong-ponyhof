@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 
-import Title from '../components/Title';
-import ConnectionStatus from '../components/ConnectionStatus/ConnectionStatus';
-import ScoreBoard from '../components/ScoreBoard/ScoreBoard';
+import Title from "../components/Title";
+import ConnectionStatus from "../components/ConnectionStatus/ConnectionStatus";
+import ScoreBoard from "../components/ScoreBoard/ScoreBoard";
 
-function Match({ appTitle, isConnected, match}) {
+function Match({ appTitle, isConnected, match }) {
   return (
     <div>
       <Title title={appTitle} />

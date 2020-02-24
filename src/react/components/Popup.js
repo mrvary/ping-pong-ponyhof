@@ -1,7 +1,7 @@
-import { Modal } from 'react-bootstrap';
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from './Button';
+import { Modal } from "react-bootstrap";
+import React from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Button from "./Button";
 
 function Popup({
   show,
@@ -21,11 +21,21 @@ function Popup({
       <Modal.Body>
         <div>
           <p className="popup__body-small-text">{bodyText}</p>
-          <Button text={buttonText} onClick={buttonFunk} mode={mode}></Button>
+          <InsertButton
+            mode={mode}
+            buttonText={buttonText}
+            buttonFunk={buttonFunk}
+          ></InsertButton>
         </div>
       </Modal.Body>
     </Modal>
   );
 }
+const InsertButton = ({ mode, buttonText, buttonFunk }) => {
+  if (mode === 'noBtn') {
+    return null;
+  }
+  return <Button text={buttonText} onClick={buttonFunk}></Button>;
+};
 
 export default Popup;

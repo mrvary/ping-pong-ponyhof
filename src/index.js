@@ -1,14 +1,14 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import App from './react/App';
-import { Route, HashRouter, Switch } from 'react-router-dom';
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./react/App";
+import { Route, HashRouter, Switch } from "react-router-dom";
 
-import 'normalize.css';
-import './index.css';
+import "normalize.css";
+import "./index.css";
 
-import NotFound from './react/NotFound';
-import CompetitionPage from './react/components/CompetitionPage';
-import StatisticTable from './react/components/StatisticTable';
+import NotFound from "./react/NotFound";
+import CompetitionPage from "./react/components/CompetitionPage";
+import StatisticTable from "./react/components/StatisticTable";
 
 const routing = (
   <HashRouter>
@@ -26,4 +26,4 @@ const routing = (
   </HashRouter>
 );
 
-ReactDOM.render(routing, document.getElementById('root'));
+ReactDOM.render(routing, document.getElementById("root"));

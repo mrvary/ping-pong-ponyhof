@@ -1,10 +1,10 @@
-import React from 'react';
-import './WaitForRound.css';
+import React from "react";
+import "./WaitForRound.css";
 
-import ConnectionStatus from '../../components/ConnectionStatus/ConnectionStatus';
-import Title from '../../components/Title';
+import ConnectionStatus from "../../components/ConnectionStatus/ConnectionStatus";
+import Title from "../../components/Title";
 
-function WaitForRound({appTitle, isConnected}) {
+function WaitForRound({ appTitle, isConnected }) {
   return (
     <div>
       <Title title={appTitle} />
