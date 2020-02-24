@@ -32,7 +32,7 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const socketIOChannels = require("../client/src/shared/socket-io-channels");
+const socketIOMessages = require("../client/src/shared/socket-io-messages");
 const ipcChannels = require("../shared/ipc/ipcChannels");
 
 let competition = null;
@@ -189,11 +189,11 @@ function initMetaStorage() {
 function initHTTPServer(port) {
   server.initHTTPServer(port);
 
-  server.SocketIOInputEmitter.on(socketIOChannels.GET_MATCH, args => {
+  server.SocketIOInputEmitter.on(socketIOMessages.GET_MATCH, args => {
     const { tableNumber } = args;
     const matchWithPlayers = getMatchByTableNumber(tableNumber);
     console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
-    server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, {
+    server.SocketIOOutputEmitter.emit(socketIOMessages.SEND_MATCH, {
       matchWithPlayers
     });
   });
