@@ -188,6 +188,8 @@ const CompetitionPage = () => {
 
     IPCService.getMatchesByCompetition(competitionID, args => {
       const { matchesWithPlayers } = args;
+      console.log("Received matches from main ipc");
+      console.log(matchesWithPlayers);
 
       // map names to players
       const matches = matchesWithPlayers.map(matchWithPlayers => {

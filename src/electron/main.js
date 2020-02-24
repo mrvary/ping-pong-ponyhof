@@ -35,7 +35,7 @@ const socketIOChannels = require("../client/src/shared/socket-io-channels");
 const ipcChannels = require("../shared/ipc/ipcChannels");
 
 let competition = null;
-let tables = null;
+let matchesWithPlayers = [];
 
 app.on("ready", () => {
   initDevTools();
@@ -122,7 +122,11 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
   }
 });
 
-function getMatchesWithPlayersFromCompetition(id) {
+function initializeMatchesByCompetitionId(id) {
+  if (matchesWithPlayers.length > 0) {
+    return;
+  }
+
   // 1. open competition storage
   const filePath = fileManager.getCompetitionFilePath(id);
   competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
@@ -132,8 +136,29 @@ function getMatchesWithPlayersFromCompetition(id) {
   const matches = competitionStorage.getMatchesByIds(currentRoundMatchIds);
   const players = competitionStorage.getAllPlayers();
 
-  // 3. map players to match
-  return mapPlayersToMatches(matches, players);
+  // 3. map communication object
+  let tableNumber = 1;
+  matches.forEach(match => {
+    const player1 = players.find(player => player.id === match.player1);
+    const player2 = players.find(player => player.id === match.player2);
+
+    const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
+
+    const matchWithPlayers = {
+      tableNumber: tableNumber,
+      connectedDevice: uuid,
+      match: match,
+      player1: player1,
+      player2: player2
+    };
+
+    matchesWithPlayers.push(matchWithPlayers);
+    tableNumber++;
+  });
+
+  // 4. update competition status
+  setCompetitionStatus(competition, false, false);
+  metaStorage.updateCompetition(competition);
 }
 
 ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
@@ -142,35 +167,10 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   // 1. initialize competition
   competition = metaStorage.getCompetition(id);
 
-  // 2. check if tables are initialized ...
-  let matchesWithPlayers = [];
-  if (tables) {
-    // .. return matchesWithPlayers of tables
-    for (let matchWithPlayer of tables.values()) {
-      matchesWithPlayers.push(matchesWithPlayers);
-    }
-  } else {
-    // get matches and players from competition
-    matchesWithPlayers = getMatchesWithPlayersFromCompetition(id);
+  // 2. initialize matches of competition
+  initializeMatchesByCompetitionId(id);
 
-    tables = new Map();
-    let tableNumber = 1;
-
-    // add for each match a table
-    matchesWithPlayers.forEach(matchWithPlayers => {
-      tables.set(tableNumber, matchWithPlayers);
-
-      console.log(
-        `Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`
-      );
-      tableNumber++;
-    });
-  }
-
-  // set competition status
-  setCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
-
+  // 3. send matches to renderer
   event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
     matchesWithPlayers: matchesWithPlayers
   });
@@ -205,46 +205,14 @@ function initHTTPServer(port) {
   server.initHTTPServer(port);
 
   server.SocketIOInputEmitter.on(socketIOChannels.GET_MATCH, args => {
-    const { tableNumber } = args;
-    const matchWithPlayers = getMatchByTableNumber(tableNumber);
+    const {tableNumber} = args;
+
+    const matchWithPlayers = matchesWithPlayers.find(matchWithPlayers => matchWithPlayers.tableNumber === tableNumber);
     console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
+
     server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, {
-      matchWithPlayers
+      matchWithPlayers: matchWithPlayers
     });
   });
 }
 
-function getMatchByTableNumber(tableNumber) {
-  // use mocked match as default
-  let matchWithPlayers = {};
-  if (tables.size > 0) {
-    matchWithPlayers = tables.get(tableNumber);
-  }
-
-  return matchWithPlayers;
-}
-
-function mapPlayersToMatches(matches, players) {
-  const matchesWithPlayers = [];
-
-  matches.forEach(match => {
-    const player1 = players.find(player => player.id === match.player1);
-    const player2 = players.find(player => player.id === match.player2);
-
-    const matchWithPlayers = {
-      match: match,
-      player1: player1,
-      player2: player2
-    };
-
-    matchesWithPlayers.push(matchWithPlayers);
-  });
-
-  return matchesWithPlayers;
-}
-
-function initCurrentRound(matchesWithPlayers) {
-  // map matches to available tables
-  console.log(`Map matches to tables`);
-  tableNumber = 1;
-}

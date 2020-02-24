@@ -79,6 +79,11 @@ function listenToClientEvent(clientSocket) {
   });
 }
 
+function getConnectedDeviceByTableNumber(tableNumber) {
+  const clientId = getKeyByValue(connectedClients, tableNumber);
+  return clientId ? clientId : null;
+}
+
 function sendStartRoundBroadcast() {
   if (matchStarted) {
     return;
@@ -104,7 +109,7 @@ function sendBroadcast(eventName, data) {
 }
 
 function clientLogin(clientSocket, data) {
-  const { tableNumber } = data;
+  const {tableNumber} = data;
 
   // verify if max amount of connected devices/table is reached
   if (connectedClients.size === MAX_AMOUNT_TABLE) {
@@ -162,6 +167,14 @@ function mapHasValue(inputMap, searchedValue) {
   return values.some(([_, value]) => value === searchedValue);
 }
 
+function getKeyByValue(map, searchValue) {
+  for (let [key, value] of map.entries()) {
+    if (value === searchValue) {
+      return key;
+    }
+  }
+}
+
 function range(start, exclusiveEnd) {
   return [...Array(exclusiveEnd).keys()].slice(start);
 }
@@ -172,6 +185,8 @@ module.exports = {
 
   initHTTPServer,
   shutdownServer,
+
+  getConnectedDeviceByTableNumber,
 
   sendStartRoundBroadcast
 };
