@@ -11,7 +11,7 @@ const expressApp = require("../server/app");
 const socketIOMessages = require("../../client/src/shared/socket-io-messages");
 
 // constants
-const MAX_AMOUNT_TABLE = 16;
+const MAX_AMOUNT_TABLE = 8;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
 const connectedClients = new Map();
 
