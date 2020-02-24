@@ -1,16 +1,16 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
 // import shared
-import io from 'socket.io-client';
-import { clientChannels } from '../shared/client-channels';
+import io from "socket.io-client";
+import socketIOChannels from "../shared/socket-io-channels";
 
 // import routing components
-import Login from './pages/Login/Login';
-import WaitForRound from './pages/WaitForRound/WaitForRound';
-import Match from './pages/Match';
+import Login from "./pages/Login/Login";
+import WaitForRound from "./pages/WaitForRound/WaitForRound";
+import Match from "./pages/Match";
 
-const appTitle = 'TTRace';
+const appTitle = "TTRace";
 
 // for development: the requested server is the webserver
 //                  from the electron app and not the
@@ -18,14 +18,14 @@ const appTitle = 'TTRace';
 // for production:  the requested server is the one and only
 const isDev = true;
 const getServerURL = () => {
-  let url = isDev ? 'localhost:4000' : document.location.host;
-  console.log('Requested server: ', url);
+  let url = isDev ? "localhost:4000" : document.location.host;
+  console.log("Requested server: ", url);
   return url;
 };
 
 function App() {
   const [socket, setSocket] = useState(null);
-  const [page, setPage] = useState('login');
+  const [page, setPage] = useState("login");
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
@@ -37,7 +37,7 @@ function App() {
   };
 
   const content = () => {
-    if (page === 'login') {
+    if (page === "login") {
       return (
         <Login
           appTitle={appTitle}
@@ -48,9 +48,9 @@ function App() {
           tableNumberChanged={handleTableNumberChange}
         />
       );
-    } else if (page === 'wait') {
+    } else if (page === "wait") {
       return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
-    } else if (page === 'match') {
+    } else if (page === "match") {
       return (
         <Match appTitle={appTitle} isConnected={isConnected} match={match} />
       );
@@ -60,7 +60,7 @@ function App() {
   const sendTableNumber = event => {
     event.preventDefault();
     if (tableNumber >= 1) {
-      socket.emit(clientChannels.LOGIN_TABLE, { tableNumber });
+      socket.emit(socketIOChannels.LOGIN_TABLE, { tableNumber });
     }
   };
 
@@ -72,34 +72,36 @@ function App() {
     const base_url = getServerURL();
     const connection = io(base_url);
 
-    connection.on(clientChannels.AVAILABLE_TABLES, tables => {
+    connection.on(socketIOChannels.AVAILABLE_TABLES, tables => {
       console.log(tables);
 
       setAvailableTables(tables);
       setTableNumber(tables[0]);
     });
 
-    connection.on(clientChannels.LOGIN_TABLE, data => {
+    connection.on(socketIOChannels.LOGIN_TABLE, data => {
       const { tableNumber, matchStarted } = data;
       console.log(data);
       setIsConnected(true);
 
-      console.log('matchStart ->', matchStarted);
-      matchStarted ? connection.emit(clientChannels.GET_MATCH, { tableNumber }) : toPage('wait');
+      console.log("matchStart ->", matchStarted);
+      matchStarted
+        ? connection.emit(socketIOChannels.GET_MATCH, { tableNumber })
+        : toPage("wait");
 
-      connection.on(clientChannels.START_ROUND, () => {
-        connection.emit(clientChannels.GET_MATCH, { tableNumber });
+      connection.on(socketIOChannels.START_ROUND, () => {
+        connection.emit(socketIOChannels.GET_MATCH, { tableNumber });
       });
 
-      connection.on(clientChannels.SEND_MATCH, data => {
+      connection.on(socketIOChannels.SEND_MATCH, data => {
         const { match } = data;
         setMatch(match);
 
-        toPage('match');
-      })
+        toPage("match");
+      });
     });
 
-    connection.on(clientChannels.LOGIN_ERROR, data => {
+    connection.on(socketIOChannels.LOGIN_ERROR, data => {
       const { tableNumber } = data;
       alert(
         `A device is already connected with the table ${tableNumber} or all slots are busy`

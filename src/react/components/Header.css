@@ -62,3 +62,22 @@
 .header__upload-xml-button--true {
   border: 0.5vh solid var(--success-color);
 }
+.header__loslegen-link {
+  width: 27vh;
+  height: 6.5vh;
+  color: green;
+  font-size: 2vh;
+  border: none;
+  border-radius: 2vh;
+  margin: 1.5vh 0vh;
+  background: var(--button-color);
+  cursor: pointer;
+}
+.header__link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.header__link:hover {
+  color: var(--prim-font-color);
+}

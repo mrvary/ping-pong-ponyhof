@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-import './Competition.css';
+import "./Competition.css";
 
 // components
-import Popup from './Popup';
+import Popup from "./Popup";
 
 function Competition(props) {
   const {
@@ -15,7 +15,7 @@ function Competition(props) {
   const [showPopupDelete, setShowPopupDelete] = useState(false);
   const handleClose = () => setShowPopupDelete(false);
   const handleShow = () => setShowPopupDelete(true);
-  const competitionID = '/competition/' + id;
+  const competitionID = "/competition/" + id;
   return (
     <div className="competition__container">
       <Link
