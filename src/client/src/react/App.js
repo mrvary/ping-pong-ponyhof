@@ -80,17 +80,20 @@ function App() {
 
   const sendTableNumber = event => {
     event.preventDefault();
+    console.log("CLIENT->SERVER: LOGIN_TABLE (FINISHED) ");
     socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
     setPage("WAITING");
   };
 
   const sendFinishedMatch = match => event => {
+    console.log("CLIENT->SERVER: SEND_MATCH (FINISHED) ");
     socket.emit(socketIOMessages.SEND_MATCH, { match });
     setPage("WAITING");
   };
 
   const sendSets = sets => event => {
-    socket.emit(socketIOMessages.SEND_MATCH, { tableNumber, sets });
+    console.log("CLIENT->SERVER: SEND_SET");
+    socket.emit(socketIOMessages.SEND_SET, { tableNumber, sets });
   };
 
   const handleTableNumberChange = event => {
@@ -102,6 +105,7 @@ function App() {
     const connection = io(base_url);
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
+      console.log("SERVER->CLIENT: AVAILABLE_TABLES");
       console.log(tables);
 
       setAvailableTables(tables);
@@ -111,21 +115,27 @@ function App() {
     connection.on(socketIOMessages.LOGIN_TABLE, data => {
       // const { tableNumber, competitionStatus } = data;
 
-      console.log(`data: ${data}`);
+      console.log("data: ");
+      console.log(data);
       setIsConnected(true);
 
+      // why not also send_match?
+      console.log("CLIENT->SERVER: GET_MATCH");
       connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, () => {
+      console.log("SERVER->CLIENT: NEXT_ROUND");
       setPage("NEXT_PLAYERS");
     });
 
     connection.on(socketIOMessages.START_ROUND, () => {
+      console.log("SERVER->CLIENT: START_ROUND");
       setPage("MATCH");
     });
 
     connection.on(socketIOMessages.SEND_MATCH, data => {
+      console.log("SERVER->CLIENT: SEND_MATCH");
       const { matchWithPlayers, competitionStatus } = data;
       console.log(matchWithPlayers);
       console.log("competition status ->", competitionStatus);
