@@ -5,7 +5,7 @@ import "../Colors.css";
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
 // shared service
-import IPCService from '../../shared/ipc/ipcRendererService';
+import IPCService from "../../shared/ipc/ipcRendererService";
 const USE_BROWSER = false;
 
 const TableHeader = () => {
