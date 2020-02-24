@@ -3,7 +3,7 @@ import "./App.css";
 
 // import shared
 import io from "socket.io-client";
-import socketIOChannels from "../shared/socket-io-channels";
+import socketIOMessages from "../shared/socket-io-messages";
 
 // import routing components
 import Login from "./pages/Login/Login";
@@ -64,7 +64,7 @@ function App() {
   const sendTableNumber = event => {
     event.preventDefault();
     if (tableNumber >= 1) {
-      socket.emit(socketIOChannels.LOGIN_TABLE, { tableNumber });
+      socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
     }
   };
 
@@ -76,28 +76,28 @@ function App() {
     const base_url = getServerURL();
     const connection = io(base_url);
 
-    connection.on(socketIOChannels.AVAILABLE_TABLES, tables => {
+    connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
       console.log(tables);
 
       setAvailableTables(tables);
       setTableNumber(tables[0]);
     });
 
-    connection.on(socketIOChannels.LOGIN_TABLE, data => {
+    connection.on(socketIOMessages.LOGIN_TABLE, data => {
       const { tableNumber, matchStarted } = data;
       console.log(data);
       setIsConnected(true);
 
       console.log("matchStart ->", matchStarted);
       matchStarted
-        ? connection.emit(socketIOChannels.GET_MATCH, { tableNumber })
+        ? connection.emit(socketIOMessages.GET_MATCH, { tableNumber })
         : toPage("wait");
 
-      connection.on(socketIOChannels.START_ROUND, () => {
-        connection.emit(socketIOChannels.GET_MATCH, { tableNumber });
+      connection.on(socketIOMessages.START_ROUND, () => {
+        connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
       });
 
-      connection.on(socketIOChannels.SEND_MATCH, data => {
+      connection.on(socketIOMessages.SEND_MATCH, data => {
         const { matchWithPlayers } = data;
         console.log(matchWithPlayers);
 
@@ -106,7 +106,7 @@ function App() {
       });
     });
 
-    connection.on(socketIOChannels.LOGIN_ERROR, data => {
+    connection.on(socketIOMessages.LOGIN_ERROR, data => {
       const { tableNumber } = data;
       alert(
         `A device is already connected with the table ${tableNumber} or all slots are busy`

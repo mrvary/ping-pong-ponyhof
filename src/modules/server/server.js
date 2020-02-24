@@ -8,7 +8,7 @@ const EventEmitter = require("events");
 
 // server application
 const expressApp = require("../server/app");
-const socketIOChannels = require("../../client/src/shared/socket-io-channels");
+const socketIOMessages = require("../../client/src/shared/socket-io-messages");
 
 // constants
 const MAX_AMOUNT_TABLE = 16;
@@ -52,7 +52,7 @@ function initSocketIO() {
   serverSocket = socketIO(server);
 
   // event fired every time a new client connects (Browser window was opened)
-  serverSocket.on(socketIOChannels.CONNECTION, clientSocket => {
+  serverSocket.on(socketIOMessages.CONNECTION, clientSocket => {
     console.info(`Client connected [id=${clientSocket.id}]`);
     sendAvailableTablesToClient();
     listenToClientEvent(clientSocket);
@@ -61,20 +61,20 @@ function initSocketIO() {
 
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
-  clientSocket.on(socketIOChannels.LOGIN_TABLE, data => {
+  clientSocket.on(socketIOMessages.LOGIN_TABLE, data => {
     clientLogin(clientSocket, data);
   });
 
   // event fired when a start round is triggered
-  clientSocket.on(socketIOChannels.GET_MATCH, data => {
-    SocketIOOutputEmitter.once(socketIOChannels.SEND_MATCH, data => {
-      clientSocket.emit(socketIOChannels.SEND_MATCH, data);
+  clientSocket.on(socketIOMessages.GET_MATCH, data => {
+    SocketIOOutputEmitter.once(socketIOMessages.SEND_MATCH, data => {
+      clientSocket.emit(socketIOMessages.SEND_MATCH, data);
     });
-    SocketIOInputEmitter.emit(socketIOChannels.GET_MATCH, data);
+    SocketIOInputEmitter.emit(socketIOMessages.GET_MATCH, data);
   });
 
   // event fired when a client disconnects, remove it from the list
-  clientSocket.on(socketIOChannels.DISCONNECT, () => {
+  clientSocket.on(socketIOMessages.DISCONNECT, () => {
     clientLogout(clientSocket);
   });
 }
@@ -85,11 +85,11 @@ function sendStartRoundBroadcast() {
   }
 
   matchStarted = true;
-  sendBroadcast(socketIOChannels.START_ROUND, null);
+  sendBroadcast(socketIOMessages.START_ROUND, null);
 }
 
 function sendAvailableTablesToClient() {
-  sendBroadcast(socketIOChannels.AVAILABLE_TABLES, getAvailableTables());
+  sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 }
 
 // this method is used to submit a broadcast event to all clients
@@ -108,13 +108,13 @@ function clientLogin(clientSocket, data) {
 
   // verify if max amount of connected devices/table is reached
   if (connectedClients.size === MAX_AMOUNT_TABLE) {
-    clientSocket.emit(socketIOChannels.LOGIN_ERROR, data);
+    clientSocket.emit(socketIOMessages.LOGIN_ERROR, data);
     return;
   }
 
   // verify if a client is already connected to a table
   if (mapHasValue(connectedClients, tableNumber)) {
-    clientSocket.emit(socketIOChannels.LOGIN_ERROR, data);
+    clientSocket.emit(socketIOMessages.LOGIN_ERROR, data);
     return;
   }
 
@@ -123,7 +123,7 @@ function clientLogin(clientSocket, data) {
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
   // send login response to client with his table number
-  clientSocket.emit(socketIOChannels.LOGIN_TABLE, {
+  clientSocket.emit(socketIOMessages.LOGIN_TABLE, {
     tableNumber: tableNumber,
     matchStarted: matchStarted
   });

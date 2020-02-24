@@ -19,6 +19,7 @@
   },
   "scripts": {
     "pre-push": "yarn -s lint",
+    "post-merge": "yarn",
     "start": "yarn build && yarn start-electron",
     "start-dev": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel",
     "start-dev-mac": "cross-env ELECTRON_START_URL=http://localhost:3000 CLIENT_START_URL=http://localhost:3001 yarn start-dev-parallel-mac",
@@ -106,6 +107,8 @@
   },
   "jest": {
     "collectCoverage": true,
-    "coverageReporters": ["html"]
+    "coverageReporters": [
+      "html"
+    ]
   }
 }
