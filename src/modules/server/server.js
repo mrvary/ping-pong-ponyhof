@@ -9,6 +9,7 @@ const EventEmitter = require("events");
 // server application
 const expressApp = require("../server/app");
 const socketIOMessages = require("../../client/src/shared/socket-io-messages");
+const { COMPETITION_STATE } = require("../models/competition");
 
 // constants
 const MAX_AMOUNT_TABLE = 8;
@@ -61,8 +62,8 @@ function initSocketIO() {
 
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
-  clientSocket.on(socketIOMessages.LOGIN_REQUEST, data => {
-    clientLogin(clientSocket, data);
+  clientSocket.on(socketIOMessages.LOGIN_REQUEST, ({ tableNumber }) => {
+    clientLogin(clientSocket, tableNumber);
   });
 
   // TODO: remove
@@ -104,9 +105,7 @@ function sendBroadcast(eventName, data) {
   console.log(`--- data was ${data}`);
 }
 
-function clientLogin(clientSocket, data) {
-  const { tableNumber } = data;
-
+function clientLogin(clientSocket, tableNumber) {
   // verify if max amount of connected devices/table is reached
   if (connectedClients.size === MAX_AMOUNT_TABLE) {
     clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, {
@@ -125,16 +124,37 @@ function clientLogin(clientSocket, data) {
 
   // save client socket
   connectedClients.set(clientSocket.id, tableNumber);
-  console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
-
-  // send login response to client with his table number
-  clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, {
-    tableNumber: tableNumber,
-    matchStarted: matchStarted
-  });
 
   // send available tables to clients
   sendAvailableTablesToClient();
+
+  console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
+
+  // send login response to client with his table number
+  clientSocket.emit(
+    socketIOMessages.LOGIN_RESPONSE,
+    createLoginResponseData(tableNumber)
+  );
+}
+
+function createLoginResponseData(tableNumber) {
+  const state = "TODO";
+
+  if (
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+  ) {
+    return {
+      roundAvailable: false,
+      tableNumber,
+      match: {}
+    };
+  }
+
+  return {
+    roundAvailable: false,
+    tableNumber
+  };
 }
 
 function clientLogout(clientSocket) {
