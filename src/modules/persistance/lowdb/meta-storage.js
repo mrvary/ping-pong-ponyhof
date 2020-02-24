@@ -9,8 +9,8 @@ const Memory = require("lowdb/adapters/Memory");
 const DEFAULT_STATE = { competitions: [] };
 const ELEMENT_PATHS = { Competitions: "competitions" };
 const ERROR_MESSAGES = {
-  Error1: "file path is not defined",
-  Error2: "competition already exits"
+  FilePathIsNotDefined: "file path is not defined",
+  CompetitionExists: "competition already exits"
 };
 
 let storage = null;
@@ -21,7 +21,7 @@ function open(filePath, useInMemory) {
   }
 
   if (!useInMemory && !filePath) {
-    throw new Error(ERROR_MESSAGES.Error1);
+    throw new Error(ERROR_MESSAGES.FilePathIsNotDefined);
   }
 
   const adapter = useInMemory ? new Memory() : new FileSync(filePath);
@@ -42,7 +42,7 @@ function getState() {
 
 function createCompetition(competition) {
   if (hasCompetition(competition.id)) {
-    throw new Error(ERROR_MESSAGES.Error2);
+    throw new Error(ERROR_MESSAGES.CompetitionExists);
   }
 
   storage
