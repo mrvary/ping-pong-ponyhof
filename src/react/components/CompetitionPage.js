@@ -1,26 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import './CompetitionPage.css';
-import '../Colors.css';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import "./CompetitionPage.css";
+import "../Colors.css";
 
 //componenten
-import Popup from './Popup';
-import Footer from './Footer';
-import Button from './Button';
-import CompetitionPageHeader from './CompetitionPageHeader';
+import Popup from "./Popup";
+import Footer from "./Footer";
+import Button from "./Button";
+import CompetitionPageHeader from "./CompetitionPageHeader";
+import PopupEditTable from "./PopupEditTable";
 
 // shared service
-import IPCService from '../../shared/ipc/ipcRendererService';
+import IPCService from "../../shared/ipc/ipcRendererService";
+import { forEach } from "react-bootstrap/cjs/ElementChildren";
 
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
-  const statisticID = '/statisticTable/' + competitionID;
+  const statisticID = "/statisticTable/" + competitionID;
   return (
     <div className="competitionPage__link-alignment">
       <div className="competitionPage__link-ip-adress-statistic">
-        {' '}
-        IP-Adresse{' '}
+        {" "}
+        IP-Adresse{" "}
       </div>
       <p
         onClick={() => openStatisticWindow(statisticID)}
@@ -34,47 +36,47 @@ const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
 
 const TableHeadline = () => {
   return (
-    <div className="competitionPage__center-table">
-      <div className="competitionPage__table__first-row-style">
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Tisch{' '}
+    <div className="competitionPage__centered">
+      <div className="competitionPage__table competitionPage__table--def">
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Tisch{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
           Spieler 1
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          :{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          :{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Spieler 2{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Spieler 2{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 1{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Satz 1{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 2{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Satz 2{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 3{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Satz 3{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 4{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Satz 4{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 5{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Satz 5{" "}
         </strong>
-        <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Ergebnis{' '}
+        <strong className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Ergebnis{" "}
         </strong>
       </div>
     </div>
@@ -82,51 +84,81 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-  var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
-  var index = 0;
+  const [stringSet, setStringSet] = useState([
+    "0 : 0",
+    "0 : 0",
+    "0 : 0",
+    "0 : 0",
+    "0 : 0"
+  ]);
+  let index = 0;
 
   match.sets.forEach(set => {
-    stringSet[index] = set.player1 + ' : ' + set.player2;
+    stringSet[index] = set.player1 + " : " + set.player2;
     index++;
   });
 
+  const [showPopupEditMatch, setShowPopupEditMatch] = useState(false);
+  const handleCloseEditMatch = () => setShowPopupEditMatch(false);
+  const handleShowEditMatch = () => setShowPopupEditMatch(true);
+
+  const saveChanges = () => {
+    //TODO save Changes from edited Table
+    handleCloseEditMatch();
+  };
+
   return (
-    <div className="competitionPage__center-table">
-      <div className="competitionPage__table__first-row-alignment">
-        <div className="competitionPage__table__column-alignment"> </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
+    <div className="competitionPage__centered">
+      <div className="competitionPage__table competitionPage__table--values">
+        <div className="competitionPage__table--elements competitionPage__centered"></div>
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
           {match.player1}
         </div>
-        <div className="competitionPage__table__column-alignment"> : </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {match.player2}{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          :{" "}
         </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[0]}{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          {match.player2}{" "}
         </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[1]}{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          {stringSet[0]}{" "}
         </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[2]}{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          {stringSet[1]}{" "}
         </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[3]}{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          {stringSet[2]}{" "}
         </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[4]}{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          {stringSet[3]}{" "}
         </div>
-        <div className="competitionPage__table__column-alignment">
-          {' '}
-          Ergebnis{' '}
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          {stringSet[4]}{" "}
         </div>
+        <div className="competitionPage__table--elements competitionPage__centered">
+          {" "}
+          Ergebnis{" "}
+        </div>
+        <button
+          onClick={handleShowEditMatch}
+          className="competitionPage__table__bearbeiten-btn"
+        >
+          bearbeiten
+        </button>
+        <PopupEditTable
+          show={showPopupEditMatch}
+          handleClose={handleCloseEditMatch}
+          sets={match.sets}
+          saveChanges={saveChanges}
+        ></PopupEditTable>
       </div>
     </div>
   );
@@ -158,8 +190,8 @@ const CompetitionPage = () => {
       const matches = [
         {
           id: 3,
-          player1: 'Samuel Geiger',
-          player2: 'Marius Bach',
+          player1: "Samuel Geiger",
+          player2: "Marius Bach",
           sets: [
             { player1: 11, player2: 13 },
             { player1: 4, player2: 11 }
@@ -169,8 +201,8 @@ const CompetitionPage = () => {
         },
         {
           id: 4,
-          player1: 'Edith Finch',
-          player2: 'Finch Assozial',
+          player1: "Edith Finch",
+          player2: "Finch Assozial",
           sets: [
             { player1: 13, player2: 15 },
             { player1: 14, player2: 16 }
@@ -185,12 +217,18 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByCompetition(competitionID, matchData => {
-      console.log(matchData);
-      setMatches(matchData);
+    IPCService.getMatchesByCompetition(competitionID, args => {
+      const { matchesWithPlayers } = args;
 
-      const playerData = IPCService.getPlayersByPlayerId();
-      setPlayer(playerData);
+      // map names to players
+      const matches = matchesWithPlayers.map(matchWithPlayers => {
+        const { match, player1, player2 } = matchWithPlayers;
+        match.player1 = player1.firstname + " " + player1.lastname;
+        match.player2 = player2.firstname + " " + player2.lastname;
+        return match;
+      });
+
+      setMatches(matches);
     });
   };
 
@@ -221,7 +259,7 @@ const CompetitionPage = () => {
         playmode="Scheizer System"
         startDate="02.02.2020"
         linkTitle="zur Übersicht"
-        linkDestination={'/'}
+        linkDestination={"/"}
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}

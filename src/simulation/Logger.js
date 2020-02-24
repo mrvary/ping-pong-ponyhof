@@ -8,7 +8,9 @@ function log(competition) {
 
 function logRanking(competition) {
   let ranking = competition.ranking;
-  console.log("---------Ranking after Round " + competition.rounds.length + " --------")
+  console.log(
+    "---------Ranking after Round " + competition.rounds.length + " --------"
+  );
   console.log(
     "Platz \t Name \t\tS:N\tBHZ\tTTR-Start\tTTR-Aktuell\tTTR-Diff\t|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde"
   );
@@ -27,31 +29,33 @@ function logRanking(competition) {
 
     console.log(
       player.place +
-      "\t" +
-      player.lastname.substring(0, 7) +
-      "\t\t" +
-      player.gamesWon +
-      ":" +
-      player.gamesLost +
-      "\t" +
-      player.bhz +
-      "\t" +
-      player.qttr +
-      "\t\t" +
-      player.ttr_now +
-      "\t\t" +
-      player.ttr_diff +
-      "\t\t|\t" +
-      matchesString
+        "\t" +
+        player.lastname.substring(0, 7) +
+        "\t\t" +
+        player.gamesWon +
+        ":" +
+        player.gamesLost +
+        "\t" +
+        player.bhz +
+        "\t" +
+        player.qttr +
+        "\t\t" +
+        player.ttr_now +
+        "\t\t" +
+        player.ttr_diff +
+        "\t\t|\t" +
+        matchesString
     );
   });
-
 }
 
 // format -> (AnzahlSiege) Spieler1Name  3 - 2  Spieler2Name (AnzahlSiege)
 function logLatestRound(competition) {
   let latestRound = competition.rounds[competition.rounds.length - 1];
-  console.log("-------Match Ergebnisse von Runde ", competition.rounds.length + " --------");
+  console.log(
+    "-------Match Ergebnisse von Runde ",
+    competition.rounds.length + " --------"
+  );
 
   latestRound.forEach(match => {
     let p1 =
@@ -61,17 +65,18 @@ function logLatestRound(competition) {
       match.player1.lastname +
       " " +
       match.result[0];
-      
+
     let p2 = "";
     if (!match.freeTicket) {
-      p2 = match.result[1] +
+      p2 =
+        match.result[1] +
         "  " +
         match.player2.lastname +
         " (" +
         match.player2.gamesWon +
         ")";
     } else {
-      p2 = " freilos "
+      p2 = " freilos ";
     }
     console.log(p1 + " - " + p2);
   });
