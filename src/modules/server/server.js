@@ -12,7 +12,7 @@ const socketIOMessages = require("../../client/src/shared/socket-io-messages");
 
 // constants
 const MAX_AMOUNT_TABLE = 8;
-const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
+const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
 const connectedClients = new Map();
 
 const SocketIOInputEmitter = new EventEmitter();
