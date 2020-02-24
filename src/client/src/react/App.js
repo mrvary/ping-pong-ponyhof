@@ -144,6 +144,10 @@ function App() {
       setPage("MATCH");
     });
 
+    connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
+      console.log("SERVER->CLIENT: COMPETITION_CANCELED");
+      // page -> NO-COMP
+    });
     // remove
     // connection.on(socketIOMessages.UPDATE_SETS, data => {
     //   console.log("SERVER->CLIENT: UPDATE_SETS");

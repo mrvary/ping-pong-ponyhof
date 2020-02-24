@@ -10,5 +10,6 @@ module.exports = {
   AVAILABLE_TABLES: "available-tables",
   START_ROUND: "start-round",
   NEXT_ROUND: "next-round",
-  LOGIN_RESPONSE: "login-response"
+  LOGIN_RESPONSE: "login-response",
+  COMPETITION_CANCELED: "competition-canceled"
 };
