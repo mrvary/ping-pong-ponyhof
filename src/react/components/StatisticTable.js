@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from "react";
-import "./StatisticTable.css";
-import { useParams } from "react-router-dom";
-import "../Colors.css";
-import CompetitionPageHeader from "./CompetitionPageHeader";
+import React, { useState, useEffect } from 'react';
+import './StatisticTable.css';
+import { useParams } from 'react-router-dom';
+import '../Colors.css';
+import CompetitionPageHeader from './CompetitionPageHeader';
 
 // shared service
-import IPCService from "../../shared/ipc/ipcRendererService";
+import IPCService from '../../shared/ipc/ipcRendererService';
 const USE_BROWSER = false;
 
 const TableHeader = () => {
@@ -26,7 +26,7 @@ const TableRow = ({ match }) => {
     <div className="containerBody">
       <div className="ranking">{match.id + 1}</div>
       <div className="topRow">
-        <div> {match.player1} </div>
+        <div> {match.lastname} </div>
         <div> hi </div>
         <div> 3 </div>
         <div> 4 </div>
@@ -59,7 +59,7 @@ const Table = ({ matches }) => {
 const StatisticTable = () => {
   //link to competitionPage
   const { competitionID } = useParams();
-  const linkDestination = "/competition/" + competitionID;
+  const linkDestination = '/competition/' + competitionID;
 
   //falsche daten
   //dummy match
@@ -68,8 +68,8 @@ const StatisticTable = () => {
   const [players, setPlayer] = useState([]);
 
   IPCService.getMatchesByCompetition(competitionID_1, matchData => {
-    console.log(matchData);
-    setMatches(matchData);
+    console.log(matchData.matchesWithPlayers);
+    setMatches(matchData.matchesWithPlayers);
 
     const playerData = IPCService.getPlayersByPlayerId();
     setPlayer(playerData);
