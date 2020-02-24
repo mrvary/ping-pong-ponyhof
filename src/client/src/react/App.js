@@ -87,15 +87,15 @@ function App() {
 
   const sendFinishedMatch = match => event => {
     // todo -> { sets: [], finished: true }
-    // console.log("CLIENT->SERVER: UPDATE_SETS (FINISHED) ");
-    // socket.emit(socketIOMessages.UPDATE_SETS { match });
+    // console.log("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
+    // socket.emit(socketIOMessages.UPDATE_SETS_REQUEST { match });
     setPage("WAITING");
   };
 
   const sendSets = sets => event => {
     // todo -> { sets: [], finished: false }
-    console.log("CLIENT->SERVER: UPDATE_SETS");
-    socket.emit(socketIOMessages.UPDATE_SETS, { tableNumber, sets });
+    console.log("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, { tableNumber, sets });
   };
 
   const handleTableNumberChange = event => {
@@ -147,6 +147,11 @@ function App() {
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
       console.log("SERVER->CLIENT: CANCEL_ROUND");
       // page -> WAITING
+    });
+
+    connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
+      console.log("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
+      // error handling, probably send sets again
     });
 
     connection.on(socketIOMessages.COMPETITION_CANCELED, () => {

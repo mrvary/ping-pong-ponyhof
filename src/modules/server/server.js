@@ -79,6 +79,27 @@ function listenToClientEvent(clientSocket) {
   clientSocket.on(socketIOMessages.DISCONNECT, () => {
     clientLogout(clientSocket);
   });
+
+  clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, updateSets);
+}
+
+function updateSets({ sets, tableNumber, finished }) {
+  // todo
+  let clientSocket = null;
+  if ("error") {
+    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
+      message: "something went wrong."
+    });
+    return;
+  }
+  // update match in memory
+  // emit message to app: new ranking / new match data
+  // save to DB
+
+  clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
+    message: "🎉 ???"
+  });
+  return;
 }
 
 function sendStartRoundBroadcast() {

@@ -4,7 +4,8 @@ module.exports = {
   CONNECTION: "connection",
   DISCONNECT: "disconnect",
   LOGIN_REQUEST: "login-request",
-  UPDATE_SETS: "send-set-to-server",
+  UPDATE_SETS_REQUEST: "send-set-to-server",
+  UPDATE_SETS_RESPONSE: "send-set-to-server",
 
   // server -> client messages
   AVAILABLE_TABLES: "available-tables",
