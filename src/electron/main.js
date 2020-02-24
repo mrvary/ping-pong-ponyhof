@@ -189,11 +189,11 @@ function initMetaStorage() {
 function initHTTPServer(port) {
   server.initHTTPServer(port);
 
-  server.SocketIOInputEmitter.on(socketIOMessages.GET_MATCH, args => {
+  server.SocketIOInputEmitter.on(socketIOMessages.MATCH_REQUEST, args => {
     const { tableNumber } = args;
     const matchWithPlayers = getMatchByTableNumber(tableNumber);
     console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
-    server.SocketIOOutputEmitter.emit(socketIOMessages.SEND_MATCH, {
+    server.SocketIOOutputEmitter.emit(socketIOMessages.MATCH_RESPONSE, {
       matchWithPlayers
     });
   });

@@ -6,14 +6,15 @@ module.exports = {
   // client -> server messages
   CONNECTION: "connection",
   DISCONNECT: "disconnect",
-  LOGIN_TABLE: "login-table",
-  GET_MATCH: "get-match-by-tablenumber",
-  SEND_MATCH: "send-match-to-client",
-  SEND_SET: "send-set-to-server",
+  LOGIN_REQUEST: "login-request",
+  MATCH_REQUEST: "get-match-by-tablenumber",
+  MATCH_RESPONSE: "send-match-to-client",
+  UPDATE_SETS: "send-set-to-server",
 
   // server -> client messages
   AVAILABLE_TABLES: "available-tables",
   START_ROUND: "start-round",
   LOGIN_ERROR: "login-error",
-  NEXT_ROUND: "next-round"
+  NEXT_ROUND: "next-round",
+  LOGIN_RESPONSE: "login-response"
 };

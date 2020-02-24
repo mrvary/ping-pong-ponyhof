@@ -80,20 +80,21 @@ function App() {
 
   const sendTableNumber = event => {
     event.preventDefault();
-    console.log("CLIENT->SERVER: LOGIN_TABLE");
-    socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
+    console.log("CLIENT->SERVER: LOGIN_REQUEST");
+    socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
     setPage("WAITING");
   };
 
   const sendFinishedMatch = match => event => {
-    console.log("CLIENT->SERVER: SEND_MATCH (FINISHED) ");
-    socket.emit(socketIOMessages.SEND_MATCH, { match });
+    // todo
+    // console.log("CLIENT->SERVER: MATCH_REQUEST (FINISHED) ");
+    // socket.emit(socketIOMessages.MATCH_REQUEST { match });
     setPage("WAITING");
   };
 
   const sendSets = sets => event => {
-    console.log("CLIENT->SERVER: SEND_SET");
-    socket.emit(socketIOMessages.SEND_SET, { tableNumber, sets });
+    console.log("CLIENT->SERVER: UPDATE_SETS");
+    socket.emit(socketIOMessages.UPDATE_SETS, { tableNumber, sets });
   };
 
   const handleTableNumberChange = event => {
@@ -112,20 +113,23 @@ function App() {
       setTableNumber(tables[0]);
     });
 
-    connection.on(socketIOMessages.LOGIN_TABLE, data => {
-      console.log("SERVER->CLIENT: LOGIN_TABLE");
+    connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
+      console.log("SERVER->CLIENT: LOGIN_RESPONSE");
       // const { tableNumber, competitionStatus } = data;
 
       console.log("data: ");
       console.log(data);
       setIsConnected(true);
 
-      // why not also send_match?
-      console.log("CLIENT->SERVER: GET_MATCH");
-      connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
+      // why not also MATCH_RESPONSE?
+      console.log("CLIENT->SERVER: MATCH_REQUEST");
+      connection.emit(socketIOMessages.MATCH_REQUEST, { tableNumber });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, () => {
+      if (page === "MATCH" || page === "LOGIN") {
+        return;
+      }
       console.log("SERVER->CLIENT: NEXT_ROUND");
       setPage("NEXT_PLAYERS");
     });
@@ -135,8 +139,8 @@ function App() {
       setPage("MATCH");
     });
 
-    connection.on(socketIOMessages.SEND_MATCH, data => {
-      console.log("SERVER->CLIENT: SEND_MATCH");
+    connection.on(socketIOMessages.MATCH_RESPONSE, data => {
+      console.log("SERVER->CLIENT: MATCH_RESPONSE");
       const { matchWithPlayers, roundStarted } = data;
       console.log(matchWithPlayers);
       console.log(data);

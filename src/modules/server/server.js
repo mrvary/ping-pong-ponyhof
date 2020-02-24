@@ -61,16 +61,16 @@ function initSocketIO() {
 
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
-  clientSocket.on(socketIOMessages.LOGIN_TABLE, data => {
+  clientSocket.on(socketIOMessages.LOGIN_REQUEST, data => {
     clientLogin(clientSocket, data);
   });
 
   // event fired when a start round is triggered
-  clientSocket.on(socketIOMessages.GET_MATCH, data => {
-    SocketIOOutputEmitter.once(socketIOMessages.SEND_MATCH, data => {
-      clientSocket.emit(socketIOMessages.SEND_MATCH, data);
+  clientSocket.on(socketIOMessages.MATCH_REQUEST, data => {
+    SocketIOOutputEmitter.once(socketIOMessages.MATCH_RESPONSE, data => {
+      clientSocket.emit(socketIOMessages.MATCH_RESPONSE, data);
     });
-    SocketIOInputEmitter.emit(socketIOMessages.GET_MATCH, data);
+    SocketIOInputEmitter.emit(socketIOMessages.MATCH_REQUEST, data);
   });
 
   // event fired when a client disconnects, remove it from the list
@@ -123,7 +123,7 @@ function clientLogin(clientSocket, data) {
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
   // send login response to client with his table number
-  clientSocket.emit(socketIOMessages.LOGIN_TABLE, {
+  clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, {
     tableNumber: tableNumber,
     matchStarted: matchStarted
   });
