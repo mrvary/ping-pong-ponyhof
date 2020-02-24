@@ -80,7 +80,7 @@ function App() {
 
   const sendTableNumber = event => {
     event.preventDefault();
-    console.log("CLIENT->SERVER: LOGIN_TABLE (FINISHED) ");
+    console.log("CLIENT->SERVER: LOGIN_TABLE");
     socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
     setPage("WAITING");
   };
@@ -113,6 +113,7 @@ function App() {
     });
 
     connection.on(socketIOMessages.LOGIN_TABLE, data => {
+      console.log("SERVER->CLIENT: LOGIN_TABLE");
       // const { tableNumber, competitionStatus } = data;
 
       console.log("data: ");
@@ -136,14 +137,17 @@ function App() {
 
     connection.on(socketIOMessages.SEND_MATCH, data => {
       console.log("SERVER->CLIENT: SEND_MATCH");
-      const { matchWithPlayers, competitionStatus } = data;
+      const { matchWithPlayers, roundStarted } = data;
       console.log(matchWithPlayers);
-      console.log("competition status ->", competitionStatus);
+      console.log(data);
 
       setMatchWithPlayers(matchWithPlayers);
+
+      // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
     });
 
     connection.on(socketIOMessages.LOGIN_ERROR, data => {
+      console.log("SERVER->CLIENT: LOGIN_ERROR");
       const { tableNumber } = data;
       alert(
         `A device is already connected with the table ${tableNumber} or all slots are busy`
