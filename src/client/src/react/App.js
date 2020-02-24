@@ -129,6 +129,7 @@ function App() {
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, () => {
+      // todo: get match from matches
       if (page === "MATCH" || page === "LOGIN") {
         return;
       }

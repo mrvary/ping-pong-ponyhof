@@ -59,7 +59,6 @@ function initSocketIO() {
     listenToClientEvent(clientSocket);
   });
 }
-
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
   clientSocket.on(socketIOMessages.LOGIN_REQUEST, ({ tableNumber }) => {
@@ -80,12 +79,16 @@ function listenToClientEvent(clientSocket) {
     clientLogout(clientSocket);
   });
 
-  clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, updateSets);
+  clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, data =>
+    updateSets(clientSocket, data)
+  );
 }
 
-function updateSets({ sets, tableNumber, finished }) {
+// CLIENT -> SERVER COMMUNICATION
+
+function updateSets(clientSocket, data) {
+  const { sets, tableNumber, finished } = data;
   // todo
-  let clientSocket = null;
   if ("error") {
     clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
       message: "something went wrong."
@@ -102,28 +105,20 @@ function updateSets({ sets, tableNumber, finished }) {
   return;
 }
 
-function sendStartRoundBroadcast() {
-  if (matchStarted) {
-    return;
-  }
-
-  matchStarted = true;
-  sendBroadcast(socketIOMessages.START_ROUND, null);
-}
-
 function sendAvailableTablesToClient() {
   sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 }
 
-// this method is used to submit a broadcast event to all clients
-function sendBroadcast(eventName, data) {
-  if (!serverSocket) {
-    return;
-  }
+function getAvailableTables() {
+  const takenTables = Array.from(connectedClients.values()).map(x =>
+    parseInt(x, 10)
+  );
 
-  serverSocket.sockets.emit(eventName, data);
-  console.log(`server emit broadcast: ${eventName}`);
-  console.log(`--- data was ${data}`);
+  const availableTables = ALL_POTENTIAL_TABLES.filter(
+    key => !takenTables.includes(key)
+  );
+
+  return availableTables;
 }
 
 function clientLogin(clientSocket, tableNumber) {
@@ -156,6 +151,11 @@ function clientLogin(clientSocket, tableNumber) {
     socketIOMessages.LOGIN_RESPONSE,
     createLoginResponseData(tableNumber)
   );
+}
+
+function mapHasValue(inputMap, searchedValue) {
+  const values = Array.from(inputMap.entries());
+  return values.some(([_, value]) => value === searchedValue);
 }
 
 function createLoginResponseData(tableNumber) {
@@ -191,23 +191,44 @@ function clientLogout(clientSocket) {
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
-function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(x =>
-    parseInt(x, 10)
-  );
+// SERVER -> CLIENT COMMUNICATION
 
-  const availableTables = ALL_POTENTIAL_TABLES.filter(
-    key => !takenTables.includes(key)
-  );
+function sendNextRoundBroadcast() {
+  // send match to each client
+  const data = { matches: [] };
 
-  return availableTables;
+  sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
-function mapHasValue(inputMap, searchedValue) {
-  const values = Array.from(inputMap.entries());
-  return values.some(([_, value]) => value === searchedValue);
+function sendCompetitionCanceledBroadcast() {
+  sendBroadcast(socketIOMessages.COMPETITION_CANCELED);
 }
 
+function sendCancelRoundBroadcast() {
+  sendBroadcast(socketIOMessages.CANCEL_ROUND);
+}
+
+function sendStartRoundBroadcast() {
+  if (matchStarted) {
+    return;
+  }
+
+  matchStarted = true;
+  sendBroadcast(socketIOMessages.START_ROUND);
+}
+
+// this method is used to submit a broadcast event to all clients
+function sendBroadcast(eventName, data) {
+  if (!serverSocket) {
+    return;
+  }
+
+  serverSocket.sockets.emit(eventName, data);
+  console.log(`server emit broadcast: ${eventName}`);
+  console.log(`--- data was ${data}`);
+}
+
+// helper functions
 function range(start, exclusiveEnd) {
   return [...Array(exclusiveEnd).keys()].slice(start);
 }
