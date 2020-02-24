@@ -144,25 +144,25 @@ const template = [
   }
 ];
 
-if (process.platform === 'darwin') {
+if (process.platform === "darwin") {
   const name = app.getName();
   template.unshift({
     label: name,
     submenu: [
       {
-        role: 'hide'
+        role: "hide"
       },
       {
-        role: 'hideothers'
+        role: "hideothers"
       },
       {
-        role: 'unhide'
+        role: "unhide"
       },
       {
-        type: 'separator'
+        type: "separator"
       },
       {
-        role: 'quit'
+        role: "quit"
       }
     ]
   });
