@@ -37,14 +37,12 @@ const ipcChannels = require("../shared/ipc/ipcChannels");
 let competition = null;
 let matchesWithPlayers = [];
 
+initMetaStorage();
+registerIPCEvent();
+initHTTPServer();
+
 app.on("ready", () => {
   initDevTools();
-
-  // initialize modules
-  initMetaStorage();
-  initHTTPServer(config.SERVER_PORT);
-
-  // create GUI
   createWindow();
   createMenu();
 });
@@ -69,58 +67,117 @@ app.on("activate", (event, hasVisibleWindows) => {
   }
 });
 
-ipcMain.on(ipcChannels.START_ROUND, () => {
-  server.sendStartRoundBroadcast();
-});
+/**
+ *  init react dev tools for electron
+ *  @author Felix Breitenbach
+ */
+function initDevTools() {
+  const {
+    default: installExtension,
+    REACT_DEVELOPER_TOOLS
+  } = require("electron-devtools-installer");
 
-ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
-  const competitions = metaStorage.getAllCompetitions();
-  console.log("Retrieved competitions from database", competitions.length);
+  installExtension(REACT_DEVELOPER_TOOLS)
+    .then(name => console.log(`Added Extension:  ${name}`))
+    .catch(err => console.log("An error occurred: ", err));
+}
 
-  event.sender.send(ipcChannels.GET_ALL_COMPETITIONS, {
-    competitions: competitions
-  });
-});
+function initMetaStorage() {
+  const filePath = fileManager.getMetaStorageDatabasePath();
+  metaStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+}
 
-ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
-  const { id } = data;
+function initHTTPServer() {
+  server.initHTTPServer(config.SERVER_PORT);
 
-  if (!config.USE_IN_MEMORY_STORAGE) {
-    fileManager.deleteTournamentJSONFile(id);
-  }
-  metaStorage.deleteCompetition(id);
+  server.SocketIOInputEmitter.on(socketIOChannels.GET_MATCH, args => {
+    const { tableNumber } = args;
 
-  event.sender.send(ipcChannels.DELETE_COMPETITION);
-});
+    const matchWithPlayers = matchesWithPlayers.find(
+      matchWithPlayers => matchWithPlayers.tableNumber === tableNumber
+    );
+    console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
 
-ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
-  uiActions.openXMLFile().then(xmlFilePath => {
-    event.sender.send(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, {
-      xmlFilePath: xmlFilePath
+    server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, {
+      matchWithPlayers: matchWithPlayers
     });
   });
-});
+}
 
-ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
-  try {
-    const { xmlFilePath } = args;
-    competition = importXML(
-      xmlFilePath,
-      fileManager,
-      metaStorage,
-      competitionStorage
-    );
+function registerIPCEvent() {
+  ipcMain.on(ipcChannels.START_ROUND, () => {
+    server.sendStartRoundBroadcast();
+  });
 
-    // notify react app that import is ready and was successful
-    const arguments = { competitionId: competition.id, message: "success" };
-    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
-  } catch (err) {
-    // notify react app that a error has happend
-    console.log(err.message);
-    const arguments = { competitionId: "", message: err.message };
-    event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
-  }
-});
+  ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
+    const competitions = metaStorage.getAllCompetitions();
+    console.log("Retrieved competitions from database", competitions.length);
+
+    event.sender.send(ipcChannels.GET_ALL_COMPETITIONS, {
+      competitions: competitions
+    });
+  });
+
+  ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
+    const { id } = data;
+
+    if (!config.USE_IN_MEMORY_STORAGE) {
+      fileManager.deleteTournamentJSONFile(id);
+    }
+    metaStorage.deleteCompetition(id);
+
+    event.sender.send(ipcChannels.DELETE_COMPETITION);
+  });
+
+  ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
+    uiActions.openXMLFile().then(xmlFilePath => {
+      event.sender.send(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, {
+        xmlFilePath: xmlFilePath
+      });
+    });
+  });
+
+  ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
+    try {
+      const { xmlFilePath } = args;
+      competition = importXML(
+        xmlFilePath,
+        fileManager,
+        metaStorage,
+        competitionStorage
+      );
+
+      // notify react app that import is ready and was successful
+      const arguments = { competitionId: competition.id, message: "success" };
+      event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
+    } catch (err) {
+      // notify react app that a error has happend
+      console.log(err.message);
+      const arguments = { competitionId: "", message: err.message };
+      event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
+    }
+  });
+
+  ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
+    const { id } = args;
+
+    // 1. initialize competition
+    competition = metaStorage.getCompetition(id);
+
+    // 2. initialize matches of competition
+    initializeMatchesByCompetitionId(id);
+
+    // 3. send matches to renderer
+    event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
+      matchesWithPlayers: matchesWithPlayers
+    });
+  });
+
+  ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
+    const { route } = args;
+    createWindow(route);
+  });
+}
 
 function initializeMatchesByCompetitionId(id) {
   if (matchesWithPlayers.length > 0) {
@@ -159,61 +216,4 @@ function initializeMatchesByCompetitionId(id) {
   // 4. update competition status
   setCompetitionStatus(competition, false, false);
   metaStorage.updateCompetition(competition);
-}
-
-ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
-  const { id } = args;
-
-  // 1. initialize competition
-  competition = metaStorage.getCompetition(id);
-
-  // 2. initialize matches of competition
-  initializeMatchesByCompetitionId(id);
-
-  // 3. send matches to renderer
-  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
-    matchesWithPlayers: matchesWithPlayers
-  });
-});
-
-ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
-  const { route } = args;
-  createWindow(route);
-});
-
-/**
- *  init react dev tools for electron
- *  @author Felix Breitenbach
- */
-function initDevTools() {
-  const {
-    default: installExtension,
-    REACT_DEVELOPER_TOOLS
-  } = require("electron-devtools-installer");
-
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then(name => console.log(`Added Extension:  ${name}`))
-    .catch(err => console.log("An error occurred: ", err));
-}
-
-function initMetaStorage() {
-  const filePath = fileManager.getMetaStorageDatabasePath();
-  metaStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-}
-
-function initHTTPServer(port) {
-  server.initHTTPServer(port);
-
-  server.SocketIOInputEmitter.on(socketIOChannels.GET_MATCH, args => {
-    const { tableNumber } = args;
-
-    const matchWithPlayers = matchesWithPlayers.find(
-      matchWithPlayers => matchWithPlayers.tableNumber === tableNumber
-    );
-    console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
-
-    server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, {
-      matchWithPlayers: matchWithPlayers
-    });
-  });
 }
