@@ -6,7 +6,7 @@
 
 .header__picture {
   height: 70vh;
-  background-image: url("../../assets/images/header_background.jpg");
+  background-image: url('../../assets/images/header_background.jpg');
 }
 
 .header__title {
@@ -61,7 +61,7 @@
 }
 .header__upload-xml-button--true {
   border: 0.5vh solid var(--success-color);
-
+}
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
