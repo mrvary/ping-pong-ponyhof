@@ -109,7 +109,7 @@ function sendBroadcast(eventName, data) {
 }
 
 function clientLogin(clientSocket, data) {
-  const {tableNumber} = data;
+  const { tableNumber } = data;
 
   // verify if max amount of connected devices/table is reached
   if (connectedClients.size === MAX_AMOUNT_TABLE) {

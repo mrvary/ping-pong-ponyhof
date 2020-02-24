@@ -205,9 +205,11 @@ function initHTTPServer(port) {
   server.initHTTPServer(port);
 
   server.SocketIOInputEmitter.on(socketIOChannels.GET_MATCH, args => {
-    const {tableNumber} = args;
+    const { tableNumber } = args;
 
-    const matchWithPlayers = matchesWithPlayers.find(matchWithPlayers => matchWithPlayers.tableNumber === tableNumber);
+    const matchWithPlayers = matchesWithPlayers.find(
+      matchWithPlayers => matchWithPlayers.tableNumber === tableNumber
+    );
     console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
 
     server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, {
@@ -215,4 +217,3 @@ function initHTTPServer(port) {
     });
   });
 }
-
