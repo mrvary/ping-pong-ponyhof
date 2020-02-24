@@ -217,6 +217,10 @@ const CompetitionPage = () => {
     handleCloseEndRound();
   };
 
+  const handleStartRound = () => {
+    IPCService.startRound();
+  };
+
   const openStatisticWindow = route => {
     IPCService.createWindow(route);
   };
@@ -264,6 +268,11 @@ const CompetitionPage = () => {
           buttonText="Beenden"
           mode="primary"
         ></Popup>
+        <Button
+            onClick={handleStartRound}
+            text="Runde starten"
+            mode="primary"
+        ></Button>
       </div>
       <Footer title="Die Tabelle" />
     </div>

@@ -30,7 +30,7 @@ function App() {
 
   const [availableTables, setAvailableTables] = useState([]);
   const [tableNumber, setTableNumber] = useState(-1);
-  const [match, setMatch] = useState(null);
+  const [matchWithPlayers, setMatchWithPlayers] = useState(null);
 
   const toPage = page => {
     setPage(page);
@@ -52,7 +52,7 @@ function App() {
       return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
     } else if (page === "match") {
       return (
-        <Match appTitle={appTitle} isConnected={isConnected} match={match} />
+        <Match appTitle={appTitle} isConnected={isConnected} matchWithPlayers={matchWithPlayers} />
       );
     }
   };
@@ -94,9 +94,10 @@ function App() {
       });
 
       connection.on(socketIOChannels.SEND_MATCH, data => {
-        const { match } = data;
-        setMatch(match);
+        const { matchWithPlayers } = data;
+        console.log(matchWithPlayers);
 
+        setMatchWithPlayers(matchWithPlayers);
         toPage("match");
       });
     });
