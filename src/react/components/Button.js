@@ -2,6 +2,7 @@ import React from "react";
 import "./Button.css";
 
 function Button({ text, onClick, mode, disableProp }) {
+
   const css =
     "button " + (mode === "primary" ? "button--primary" : "button--secondary");
 

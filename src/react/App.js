@@ -3,12 +3,12 @@ import "./App.css";
 import "./Colors.css";
 
 // dummy data
-import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
+import dummyCompetitions from '../assets/mock-data/competitions.mock.data';
 
 // components
-import Footer from "./components/Footer";
-import Competition from "./components/Competition";
-import Header from "./components/Header";
+import Footer from './components/Footer';
+import Competition from './components/Competition';
+import Header from './components/Header';
 
 // electron
 import IPCService from "../shared/ipc/ipcRendererService";
@@ -19,7 +19,6 @@ const USE_BROWSER = false;
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
-  const [uploadedXML, setUploadedXML] = useState(false);
   const [competitions, setCompetitions] = useState([]);
   const [xmlFilePath, setXMLFilePath] = useState(null);
 
@@ -46,7 +45,7 @@ const App = () => {
     });
   };
 
-  const importXML = () => {
+  const importXML = handleShowError => {
     if (!xmlFilePath) {
       return;
     }
@@ -55,15 +54,14 @@ const App = () => {
       const { competitionId, message } = args;
 
       if (!competitionId) {
-        // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
         console.log(message);
         setLinkDisabled(true);
+        handleShowError();
         return;
       }
 
       setCurrentId(competitionId);
-      setLinkDisabled(false);
-      setUploadedXML(true);
+      return;
     });
   };
 
@@ -91,7 +89,6 @@ const App = () => {
         xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
-        uploadedXML={uploadedXML}
       />
       {competitions.map(competition => (
         <Competition

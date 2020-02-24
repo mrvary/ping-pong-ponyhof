@@ -17,3 +17,8 @@
 .button:focus {
   outline: 0;
 }
+.button--disabled {
+  background: var(--sec-background-color);
+  border: 0.1vh solid var(--grey-out-color);
+  color: var(--grey-out-color);
+}

@@ -1,6 +1,8 @@
-import React from "react";
-import "./Header.css";
-import { Redirect } from "react-router-dom";
+import React, { useState } from 'react';
+import './Header.css';
+import { Redirect } from 'react-router-dom';
+import Button from './Button';
+import Popup from './Popup';
 
 function Header({
   openXMLDialog,
@@ -8,7 +10,7 @@ function Header({
   title,
   currentId,
   linkDisabled,
-  uploadedXML
+  xmlFilePath
 }) {
   return (
     <section className="header__picture">
@@ -18,7 +20,6 @@ function Header({
           importXML={importXML}
           currentId={currentId}
           linkDisabled={linkDisabled}
-          uploadedXML={uploadedXML}
         />
         <strong className="header__title">{title}</strong>
       </div>
@@ -26,17 +27,11 @@ function Header({
   );
 }
 
-const HeaderBox = ({
-  openXMLDialog,
-  importXML,
-  currentId,
-  linkDisabled,
-  uploadedXML
-}) => {
+const HeaderBox = ({ openXMLDialog, importXML, currentId, linkDisabled }) => {
   return (
     <div className="header__match-box">
       <p className="header__match-box--title">Neues Turnier anlegen</p>
-      <UploadXML importXML={openXMLDialog} uploadedXML={uploadedXML} />
+      <UploadXML openXMLDialog={openXMLDialog} linkDisabled={linkDisabled} />
 
       <LoslegenLink
         importXML={importXML}
@@ -47,37 +42,47 @@ const HeaderBox = ({
   );
 };
 
-const UploadXML = ({ importXML, uploadedXML }) => {
-  let xmlUploadedCss = "header__upload-xml-button";
-  let xmlText = "Lade hier deine XML Datei hoch!";
+const UploadXML = ({ openXMLDialog, linkDisabled }) => {
+  let xmlText = 'Lade hier deine XML Datei hoch!';
+  let xmlUploadedCss = 'header__upload-xml-button';
 
-  if (uploadedXML) {
-    xmlText = "Upload erfolgreich";
-    xmlUploadedCss = xmlUploadedCss + " header__upload-xml-button--true";
+  if (!linkDisabled) {
+    xmlText = 'Upload erfolgreich';
+    xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
+
   }
 
   return (
-    <button className={xmlUploadedCss} onClick={importXML}>
+    <button className={xmlUploadedCss} onClick={openXMLDialog}>
       {xmlText}
     </button>
   );
 };
 
 const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
-  const competition = currentId !== "" ? "/competition/" + currentId : "";
-  const linkStatus = "disabled-link-" + linkDisabled;
+  const competition = currentId !== '' ? '/competition/' + currentId : '';
 
-  if (!linkDisabled) {
-    return (
-      <div>
-        <p onClick={importXML} className={linkStatus}>
-          Loslegen
-        </p>
-        <Redirect to={competition} />
-      </div>
-    );
-  }
-  return null;
+  const [showPopupError, setShowPopupError] = useState(false);
+  const handleCloseError = () => setShowPopupError(false);
+  const handleShowError = () => setShowPopupError(true);
+
+  return (
+    <div>
+      <Button
+        onClick={() => importXML(handleShowError)}
+        disableProp={linkDisabled}
+        text="Loslegen"
+      ></Button>
+      <Redirect to={competition} />
+      <Popup
+        show={showPopupError}
+        handleClose={handleCloseError}
+        header={'Fehler'}
+        bodyText={'Das Tunier wurde bereits hochgeladen'}
+        mode={'noBtn'}
+      ></Popup>
+    </div>
+  );
 };
 
 export default Header;
