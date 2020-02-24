@@ -10,6 +10,8 @@ import Login from "./pages/Login/Login";
 import WaitForRound from "./pages/WaitForRound/WaitForRound";
 import Match from "./pages/Match";
 
+import Title from "./components/Title";
+
 const appTitle = "TTRace";
 
 // for development: the requested server is the webserver
@@ -18,7 +20,7 @@ const appTitle = "TTRace";
 // for production:  the requested server is the one and only
 const isDev = true;
 const getServerURL = () => {
-  let url = isDev ? "localhost:4000" : document.location.host;
+  const url = isDev ? "localhost:4000" : document.location.host;
   console.log("Requested server: ", url);
   return url;
 };
@@ -50,6 +52,12 @@ function App() {
       );
     } else if (page === "wait") {
       return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
+    } else if (page === "no-competition") {
+      return (
+        <div>
+          <Title title="No competition started yet, please wait."></Title>
+        </div>
+      );
     } else if (page === "match") {
       return (
         <Match
@@ -63,9 +71,7 @@ function App() {
 
   const sendTableNumber = event => {
     event.preventDefault();
-    if (tableNumber >= 1) {
-      socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
-    }
+    socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
   };
 
   const handleTableNumberChange = event => {
