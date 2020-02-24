@@ -40,6 +40,24 @@ function createCompetition(competition) {
   console.log(`Created new competition: ${competition.id}`);
 }
 
+function updateCompetition(competition) {
+  const storedCompetition = getCompetition(competition.id);
+
+  if (!storedCompetition) {
+    createCompetition(competition);
+    return;
+  }
+
+  const elementPath = "competitions";
+  storage
+    .get(elementPath)
+    .find({ id: competition.id })
+    .assign(competition)
+    .write();
+
+  console.log(`Updated competition: ${competition.id}`);
+}
+
 function deleteCompetition(id) {
   storage
     .get("competitions")
@@ -67,8 +85,8 @@ function hasCompetition(id) {
 
 module.exports = {
   open,
-  hasCompetition,
   createCompetition,
+  updateCompetition,
   deleteCompetition,
   getAllCompetitions,
   getCompetition

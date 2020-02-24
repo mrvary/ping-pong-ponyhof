@@ -70,7 +70,7 @@ function getAllPlayers() {
 
 function getMatchesByIds(ids) {
   const matches = getAllMatches();
-  return matches.filter(match => ids.include(match.id));
+  return matches.filter(match => ids.includes(match.id));
 }
 
 module.exports = {
