@@ -1,26 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import './CompetitionPage.css';
-import '../Colors.css';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import "./CompetitionPage.css";
+import "../Colors.css";
 
 //componenten
-import Popup from './Popup';
-import Footer from './Footer';
-import Button from './Button';
-import CompetitionPageHeader from './CompetitionPageHeader';
+import Popup from "./Popup";
+import Footer from "./Footer";
+import Button from "./Button";
+import CompetitionPageHeader from "./CompetitionPageHeader";
 
 // shared service
-import IPCService from '../../shared/ipc/ipcRendererService';
+import IPCService from "../../shared/ipc/ipcRendererService";
+import { forEach } from "react-bootstrap/cjs/ElementChildren";
 
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
-  const statisticID = '/statisticTable/' + competitionID;
+  const statisticID = "/statisticTable/" + competitionID;
   return (
     <div className="competitionPage__link-alignment">
       <div className="competitionPage__link-ip-adress-statistic">
-        {' '}
-        IP-Adresse{' '}
+        {" "}
+        IP-Adresse{" "}
       </div>
       <p
         onClick={() => openStatisticWindow(statisticID)}
@@ -37,44 +38,44 @@ const TableHeadline = () => {
     <div className="competitionPage__center-table">
       <div className="competitionPage__table__first-row-style">
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Tisch{' '}
+          {" "}
+          Tisch{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
+          {" "}
           Spieler 1
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          :{' '}
+          {" "}
+          :{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Spieler 2{' '}
+          {" "}
+          Spieler 2{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 1{' '}
+          {" "}
+          Satz 1{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 2{' '}
+          {" "}
+          Satz 2{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 3{' '}
+          {" "}
+          Satz 3{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 4{' '}
+          {" "}
+          Satz 4{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Satz 5{' '}
+          {" "}
+          Satz 5{" "}
         </strong>
         <strong className="competitionPage__table__column-alignment">
-          {' '}
-          Ergebnis{' '}
+          {" "}
+          Ergebnis{" "}
         </strong>
       </div>
     </div>
@@ -82,11 +83,11 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ match }) => {
-  var stringSet = ['0:0', '0:0', '0:0', '0:0', '0:0'];
+  var stringSet = ["0:0", "0:0", "0:0", "0:0", "0:0"];
   var index = 0;
 
   match.sets.forEach(set => {
-    stringSet[index] = set.player1 + ' : ' + set.player2;
+    stringSet[index] = set.player1 + " : " + set.player2;
     index++;
   });
 
@@ -95,37 +96,37 @@ const TableRow = ({ match }) => {
       <div className="competitionPage__table__first-row-alignment">
         <div className="competitionPage__table__column-alignment"> </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
+          {" "}
           {match.player1}
         </div>
         <div className="competitionPage__table__column-alignment"> : </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          {match.player2}{' '}
+          {" "}
+          {match.player2}{" "}
         </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[0]}{' '}
+          {" "}
+          {stringSet[0]}{" "}
         </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[1]}{' '}
+          {" "}
+          {stringSet[1]}{" "}
         </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[2]}{' '}
+          {" "}
+          {stringSet[2]}{" "}
         </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[3]}{' '}
+          {" "}
+          {stringSet[3]}{" "}
         </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          {stringSet[4]}{' '}
+          {" "}
+          {stringSet[4]}{" "}
         </div>
         <div className="competitionPage__table__column-alignment">
-          {' '}
-          Ergebnis{' '}
+          {" "}
+          Ergebnis{" "}
         </div>
       </div>
     </div>
@@ -158,8 +159,8 @@ const CompetitionPage = () => {
       const matches = [
         {
           id: 3,
-          player1: 'Samuel Geiger',
-          player2: 'Marius Bach',
+          player1: "Samuel Geiger",
+          player2: "Marius Bach",
           sets: [
             { player1: 11, player2: 13 },
             { player1: 4, player2: 11 }
@@ -169,8 +170,8 @@ const CompetitionPage = () => {
         },
         {
           id: 4,
-          player1: 'Edith Finch',
-          player2: 'Finch Assozial',
+          player1: "Edith Finch",
+          player2: "Finch Assozial",
           sets: [
             { player1: 13, player2: 15 },
             { player1: 14, player2: 16 }
@@ -185,12 +186,18 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByCompetition(competitionID, matchData => {
-      console.log(matchData);
-      setMatches(matchData);
+    IPCService.getMatchesByCompetition(competitionID, args => {
+      const { matchesWithPlayers } = args;
 
-      const playerData = IPCService.getPlayersByPlayerId();
-      setPlayer(playerData);
+      // map names to players
+      const matches = matchesWithPlayers.map(matchWithPlayers => {
+        const { match, player1, player2 } = matchWithPlayers;
+        match.player1 = player1.firstname + " " + player1.lastname;
+        match.player2 = player2.firstname + " " + player2.lastname;
+        return match;
+      });
+
+      setMatches(matches);
     });
   };
 
@@ -221,7 +228,7 @@ const CompetitionPage = () => {
         playmode="Scheizer System"
         startDate="02.02.2020"
         linkTitle="zur Übersicht"
-        linkDestination={'/'}
+        linkDestination={"/"}
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}

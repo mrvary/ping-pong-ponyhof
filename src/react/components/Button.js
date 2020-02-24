@@ -1,10 +1,11 @@
-import React from 'react';
-import './Button.css';
+import React from "react";
+import "./Button.css";
 
 function Button({ text, onClick, mode, disableProp }) {
-  let css =
-    'button ' + (mode === 'primary' ? 'button--primary' : 'button--secondary');
-  css = css + (disableProp ? ' button--disabled' : '');
+
+  const css =
+    "button " + (mode === "primary" ? "button--primary" : "button--secondary");
+
   return (
     <button className={css} onClick={onClick} disabled={disableProp}>
       {text}

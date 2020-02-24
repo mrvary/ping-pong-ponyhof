@@ -3,29 +3,29 @@
  */
 
 const fs = require("fs");
+const path = require("path");
 const config = require("../config");
 
-const Competition = require("../../src/modules/models/competition");
+const { createCompetitionFromJSON, PLAYMODE } = require("../../src/modules/models/competition");
 
-test("createCompetitionFromJSON()", () => {
-  const expectedCompetition = {
-    id: -1,
-    ageGroup: Competition.AGE_GROUPS.DAMEN_HERREN,
-    type: Competition.TYPES.EINZEL,
-    playmode: Competition.PLAYMODES.SCHWEIZER_SYSTEM,
-    startDate: "2019-05-25 13:00",
-    tournamentId: -1
-  };
+const expectedCompetition = {
+  id: "d5lK%2BhCCjzbPE4bd9mBdQKIx1P%2FxYXr0",
+  name: "BTTV Bavarian TT-Race",
+  date: "2019-05-25",
+  playmode: PLAYMODE.SCHWEIZER_SYSTEM
+};
 
-  // Read json data from file
-  const data = fs.readFileSync(config.JSON_FILE);
-  const json = JSON.parse(data);
+describe("createCompetitionFromJSON()", () => {
+  test("returns the correct object", () => {
+    // Read json data from file
+    const data = fs.readFileSync(path.join(__dirname, config.JSON_FILE));
+    const json = JSON.parse(data);
 
-  // get competiton object from json data
-  const competition = Competition.createCompetitionFromJSON(
-    json.tournament.competition
-  );
+    // get competiton object from json data
+    const competition = createCompetitionFromJSON(json.tournament);
 
-  // assert object
-  expect(competition).toEqual(expectedCompetition);
+    // assert object
+    expect(competition).toEqual(expectedCompetition);
+  })
 });
+

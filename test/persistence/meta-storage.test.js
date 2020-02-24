@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const file_storage = require("../../src/modules/persistance/lowdb/file-storage");
+const file_storage = require("../../src/modules/persistance/lowdb/meta-storage");
 const config = require("../config");
 const {
     createCompetitionFromJSON

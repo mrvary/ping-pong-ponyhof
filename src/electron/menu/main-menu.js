@@ -2,12 +2,10 @@
  * @author Marco Goebel
  */
 
-const { app, ipcMain, Menu, shell } = require("electron");
+const { app, Menu, shell } = require("electron");
 
 const config = require("../config");
 const uiActions = require("../actions/uiActions");
-const server = require("../../modules/server");
-const { channels } = require("../../shared/ipc/ipcChannels");
 
 // Event handler
 const reload = (item, focusedWindow) => {
@@ -28,34 +26,8 @@ const showURL = () => {
   uiActions.showInfoBox("URL-Info", `URL: ${url}`);
 };
 
-const openXMLFile = () => {
-  uiActions.openXMLFile(json => {
-    console.log(json);
-
-    // notify main window
-    ipcMain.emit(channels.FILE_IMPORTED, json);
-  });
-};
-
-const startRound = () => {
-  server.sendStartRoundBroadcast();
-};
-
 // main menu template
 const template = [
-  {
-    label: "Turnier",
-    submenu: [
-      {
-        label: "XML importieren",
-        click: openXMLFile
-      },
-      {
-        label: "Runde starten",
-        click: startRound
-      }
-    ]
-  },
   {
     label: "Bearbeiten",
     submenu: [
@@ -171,5 +143,29 @@ const template = [
     ]
   }
 ];
+
+if (process.platform === "darwin") {
+  const name = app.getName();
+  template.unshift({
+    label: name,
+    submenu: [
+      {
+        role: "hide"
+      },
+      {
+        role: "hideothers"
+      },
+      {
+        role: "unhide"
+      },
+      {
+        type: "separator"
+      },
+      {
+        role: "quit"
+      }
+    ]
+  });
+}
 
 module.exports = Menu.buildFromTemplate(template);
