@@ -32,7 +32,7 @@ function Popup({
   );
 }
 const InsertButton = ({ mode, buttonText, buttonFunk }) => {
-  if (mode === 'noBtn') {
+  if (mode === "noBtn") {
     return null;
   }
   return <Button text={buttonText} onClick={buttonFunk}></Button>;

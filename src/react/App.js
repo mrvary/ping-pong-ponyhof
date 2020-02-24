@@ -3,12 +3,12 @@ import "./App.css";
 import "./Colors.css";
 
 // dummy data
-import dummyCompetitions from '../assets/mock-data/competitions.mock.data';
+import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
 
 // components
-import Footer from './components/Footer';
-import Competition from './components/Competition';
-import Header from './components/Header';
+import Footer from "./components/Footer";
+import Competition from "./components/Competition";
+import Header from "./components/Header";
 
 // electron
 import IPCService from "../shared/ipc/ipcRendererService";

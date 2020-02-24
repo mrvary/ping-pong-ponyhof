@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const { app, ipcMain, Menu } = require("electron");
+const { app, ipcMain } = require("electron");
 const http = require("http");
 const path = require("path");
 
@@ -13,7 +13,7 @@ require("electron-reload")(__dirname, {
 
 // browser windows
 const uiActions = require("./actions/uiActions");
-const mainMenu = require("./menu/main-menu");
+const createMenu = require("./menu/main-menu");
 const createWindow = require("./window");
 
 // configuration
@@ -57,7 +57,10 @@ app.on("ready", () => {
   initMetaStorage();
   initHTTPServer(config.SERVER_PORT);
   initSocketIO();
-  createMainWindow();
+
+  // create the browser window with menu ...
+  createWindow();
+  createMenu();
 });
 
 app.on("before-quit", () => {
@@ -95,7 +98,6 @@ ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
   if (!config.USE_IN_MEMORY_STORAGE) {
     fileManager.deleteTournamentJSONFile(id);
   }
-
   metaStorage.deleteCompetition(id);
 
   event.sender.send(ipcChannels.DELETE_COMPETITION);
@@ -240,12 +242,6 @@ function initSocketIO() {
       clientLogout(clientSocket);
     });
   });
-}
-
-function createMainWindow() {
-  // create the browser window with menu ...
-  createWindow();
-  Menu.setApplicationMenu(mainMenu);
 }
 
 function clientLogin(clientSocket, data) {

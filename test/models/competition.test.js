@@ -6,26 +6,29 @@ const fs = require("fs");
 const path = require("path");
 const config = require("../config");
 
-const { createCompetitionFromJSON, PLAYMODE } = require("../../src/modules/models/competition");
+const { createCompetitionFromJSON, } = require("../../src/modules/models/competition");
 
-const expectedCompetition = {
-  id: "d5lK%2BhCCjzbPE4bd9mBdQKIx1P%2FxYXr0",
-  name: "BTTV Bavarian TT-Race",
-  date: "2019-05-25",
-  playmode: PLAYMODE.SCHWEIZER_SYSTEM
-};
+let jsonObject = null;
+
+const { expectedCompetitionWithDefaultValues } = require("./competition.test.data");
 
 describe("createCompetitionFromJSON()", () => {
-  test("returns the correct object", () => {
-    // Read json data from file
-    const data = fs.readFileSync(path.join(__dirname, config.JSON_FILE));
-    const json = JSON.parse(data);
+  beforeAll(() => {
+    readJSONObjectFromDisk();
+  });
 
+  test("init with default values", () => {
     // get competiton object from json data
-    const competition = createCompetitionFromJSON(json.tournament);
+    const competition = createCompetitionFromJSON(jsonObject.tournament);
 
     // assert object
-    expect(competition).toEqual(expectedCompetition);
-  })
+    expect(competition).toEqual(expectedCompetitionWithDefaultValues);
+  });
 });
+
+function readJSONObjectFromDisk() {
+  // Read json data from file
+  const filePath = path.join(__dirname, config.JSON_FILE);
+  jsonObject = JSON.parse(fs.readFileSync(filePath));
+}
 

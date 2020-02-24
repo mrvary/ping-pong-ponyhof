@@ -14,19 +14,19 @@ const STATUS = {
 /**
  * createCompetitionFromJSON: dataFromJSON -> Competition
  */
-function createCompetitionFromJSON(dataFromJSON, matchIds, status) {
+function createCompetitionFromJSON(dataFromJSON) {
   return {
     id: dataFromJSON["tournament-id"],
     name: dataFromJSON["name"],
     date: dataFromJSON["start-date"],
     playmode: dataFromJSON.competition["preliminary-round-playmode"],
-    round_matchIds: matchIds,
-    status: status
+    round_matchIds: [],
+    status: STATUS.COMPETITION_START
   };
 }
 
 module.exports = {
-  PLAYMODE: PLAYMODE,
+  PLAYMODE,
   STATUS,
   createCompetitionFromJSON
 };

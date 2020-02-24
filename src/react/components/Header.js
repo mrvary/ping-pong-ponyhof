@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import './Header.css';
-import { Redirect } from 'react-router-dom';
-import Button from './Button';
-import Popup from './Popup';
+import React, { useState } from "react";
+import "./Header.css";
+import { Redirect } from "react-router-dom";
+import Button from "./Button";
+import Popup from "./Popup";
 
 function Header({
   openXMLDialog,
@@ -43,12 +43,12 @@ const HeaderBox = ({ openXMLDialog, importXML, currentId, linkDisabled }) => {
 };
 
 const UploadXML = ({ openXMLDialog, linkDisabled }) => {
-  let xmlText = 'Lade hier deine XML Datei hoch!';
-  let xmlUploadedCss = 'header__upload-xml-button';
+  let xmlText = "Lade hier deine XML Datei hoch!";
+  let xmlUploadedCss = "header__upload-xml-button";
 
   if (!linkDisabled) {
-    xmlText = 'Upload erfolgreich';
-    xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
+    xmlText = "Upload erfolgreich";
+    xmlUploadedCss = xmlUploadedCss + " header__upload-xml-button--true";
   }
   return (
     <button className={xmlUploadedCss} onClick={openXMLDialog}>
@@ -58,7 +58,7 @@ const UploadXML = ({ openXMLDialog, linkDisabled }) => {
 };
 
 const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
-  const competition = currentId !== '' ? '/competition/' + currentId : '';
+  const competition = currentId !== "" ? "/competition/" + currentId : "";
 
   const [showPopupError, setShowPopupError] = useState(false);
   const handleCloseError = () => setShowPopupError(false);
@@ -75,9 +75,9 @@ const LoslegenLink = ({ importXML, currentId, linkDisabled }) => {
       <Popup
         show={showPopupError}
         handleClose={handleCloseError}
-        header={'Fehler'}
-        bodyText={'Das Tunier wurde bereits hochgeladen'}
-        mode={'noBtn'}
+        header={"Fehler"}
+        bodyText={"Das Tunier wurde bereits hochgeladen"}
+        mode={"noBtn"}
       ></Popup>
     </div>
   );

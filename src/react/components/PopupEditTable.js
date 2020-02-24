@@ -1,8 +1,8 @@
-import { Modal } from 'react-bootstrap';
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './PopupEditTable.css';
-import Button from './Button';
+import { Modal } from "react-bootstrap";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./PopupEditTable.css";
+import Button from "./Button";
 
 function PopupEditTable({ show, handleClose, sets, saveChanges }) {
   const [inputChanged, setInputChanged] = useState(false);
@@ -52,7 +52,7 @@ const DisplaySetHandler = ({ sets, handleInputChanged }) => {
 const DisplaySet = ({ set, index, handleInputChanged }) => {
   return (
     <div className="popupEditTable--rows">
-      <p>{'Set ' + index + '  '}</p>
+      <p>{"Set " + index + "  "}</p>
       <input
         size="2"
         maxLength="2"
@@ -60,7 +60,7 @@ const DisplaySet = ({ set, index, handleInputChanged }) => {
         def
         onChange={handleInputChanged}
       ></input>
-      <p> {' : '} </p>
+      <p> {" : "} </p>
       <input
         size="2"
         maxLength="2"

@@ -103,5 +103,9 @@
     "win": {
       "icon": "build/src/assets/icons/win/app-icon.ico"
     }
+  },
+  "jest": {
+    "collectCoverage": true,
+    "coverageReporters": ["html"]
   }
 }
