@@ -7,7 +7,6 @@ module.exports = {
   UPDATE_SETS_REQUEST: "send-set-to-server",
   UPDATE_SETS_RESPONSE: "send-set-to-server",
 
-  // server -> client messages
   AVAILABLE_TABLES: "available-tables",
   START_ROUND: "start-round",
   NEXT_ROUND: "next-round",
