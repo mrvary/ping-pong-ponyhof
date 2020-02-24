@@ -86,13 +86,14 @@ function App() {
   };
 
   const sendFinishedMatch = match => event => {
-    // todo
-    // console.log("CLIENT->SERVER: MATCH_REQUEST (FINISHED) ");
-    // socket.emit(socketIOMessages.MATCH_REQUEST { match });
+    // todo -> { sets: [], finished: true }
+    // console.log("CLIENT->SERVER: UPDATE_SETS (FINISHED) ");
+    // socket.emit(socketIOMessages.UPDATE_SETS { match });
     setPage("WAITING");
   };
 
   const sendSets = sets => event => {
+    // todo -> { sets: [], finished: false }
     console.log("CLIENT->SERVER: UPDATE_SETS");
     socket.emit(socketIOMessages.UPDATE_SETS, { tableNumber, sets });
   };
@@ -115,15 +116,16 @@ function App() {
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
       console.log("SERVER->CLIENT: LOGIN_RESPONSE");
-      // const { tableNumber, competitionStatus } = data;
+      // check message for error
+      // response: { tableNumber, roundStarted, match, message }
+      // if (match && match finished) WAITING
+      // if (roundStarted && match) MATCH;
+      // if (match) NEXT_PLAYERS
+      // NO_COMP
 
       console.log("data: ");
       console.log(data);
       setIsConnected(true);
-
-      // why not also MATCH_RESPONSE?
-      console.log("CLIENT->SERVER: MATCH_REQUEST");
-      connection.emit(socketIOMessages.MATCH_REQUEST, { tableNumber });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, () => {
@@ -131,6 +133,9 @@ function App() {
         return;
       }
       console.log("SERVER->CLIENT: NEXT_ROUND");
+      setMatchWithPlayers(matchWithPlayers);
+
+      // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
       setPage("NEXT_PLAYERS");
     });
 
@@ -139,24 +144,23 @@ function App() {
       setPage("MATCH");
     });
 
-    connection.on(socketIOMessages.MATCH_RESPONSE, data => {
-      console.log("SERVER->CLIENT: MATCH_RESPONSE");
-      const { matchWithPlayers, roundStarted } = data;
-      console.log(matchWithPlayers);
-      console.log(data);
+    // remove
+    // connection.on(socketIOMessages.UPDATE_SETS, data => {
+    //   console.log("SERVER->CLIENT: UPDATE_SETS");
+    //   const { matchWithPlayers, roundStarted } = data;
+    //   console.log(matchWithPlayers);
+    //   console.log(data);
 
-      setMatchWithPlayers(matchWithPlayers);
+    // });
 
-      // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
-    });
-
-    connection.on(socketIOMessages.LOGIN_ERROR, data => {
-      console.log("SERVER->CLIENT: LOGIN_ERROR");
-      const { tableNumber } = data;
-      alert(
-        `A device is already connected with the table ${tableNumber} or all slots are busy`
-      );
-    });
+    // remove
+    // connection.on(socketIOMessages.LOGIN_ERROR, data => {
+    //   console.log("SERVER->CLIENT: LOGIN_ERROR");
+    //   const { tableNumber } = data;
+    //   alert(
+    //     `A device is already connected with the table ${tableNumber} or all slots are busy`
+    //   );
+    // });
 
     setSocket(connection);
   }

@@ -65,13 +65,14 @@ function listenToClientEvent(clientSocket) {
     clientLogin(clientSocket, data);
   });
 
+  // TODO: remove
   // event fired when a start round is triggered
-  clientSocket.on(socketIOMessages.MATCH_REQUEST, data => {
-    SocketIOOutputEmitter.once(socketIOMessages.MATCH_RESPONSE, data => {
-      clientSocket.emit(socketIOMessages.MATCH_RESPONSE, data);
-    });
-    SocketIOInputEmitter.emit(socketIOMessages.MATCH_REQUEST, data);
-  });
+  // clientSocket.on(socketIOMessages.UPDATE_SETS, data => {
+  //   SocketIOOutputEmitter.once(socketIOMessages.UPDATE_SETS, data => {
+  //     clientSocket.emit(socketIOMessages.UPDATE_SETS, data);
+  //   });
+  //   SocketIOInputEmitter.emit(socketIOMessages.UPDATE_SETS, data);
+  // });
 
   // event fired when a client disconnects, remove it from the list
   clientSocket.on(socketIOMessages.DISCONNECT, () => {
@@ -108,13 +109,17 @@ function clientLogin(clientSocket, data) {
 
   // verify if max amount of connected devices/table is reached
   if (connectedClients.size === MAX_AMOUNT_TABLE) {
-    clientSocket.emit(socketIOMessages.LOGIN_ERROR, data);
+    clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, {
+      message: "No free tables available."
+    });
     return;
   }
 
   // verify if a client is already connected to a table
   if (mapHasValue(connectedClients, tableNumber)) {
-    clientSocket.emit(socketIOMessages.LOGIN_ERROR, data);
+    clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, {
+      message: `Table ${tableNumber} is already taken.`
+    });
     return;
   }
 
