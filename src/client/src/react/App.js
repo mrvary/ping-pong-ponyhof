@@ -52,7 +52,11 @@ function App() {
       return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
     } else if (page === "match") {
       return (
-        <Match appTitle={appTitle} isConnected={isConnected} matchWithPlayers={matchWithPlayers} />
+        <Match
+          appTitle={appTitle}
+          isConnected={isConnected}
+          matchWithPlayers={matchWithPlayers}
+        />
       );
     }
   };

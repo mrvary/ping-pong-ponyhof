@@ -269,9 +269,9 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
         <Button
-            onClick={handleStartRound}
-            text="Runde starten"
-            mode="primary"
+          onClick={handleStartRound}
+          text="Runde starten"
+          mode="primary"
         ></Button>
       </div>
       <Footer title="Die Tabelle" />

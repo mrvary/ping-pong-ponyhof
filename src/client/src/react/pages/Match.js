@@ -9,7 +9,11 @@ function Match({ appTitle, isConnected, matchWithPlayers }) {
     <div>
       <Title title={appTitle} />
       <ConnectionStatus isConnected={isConnected} />
-      <ScoreBoard match={matchWithPlayers.match} player1={matchWithPlayers.player1} player2={matchWithPlayers.player2} />
+      <ScoreBoard
+        match={matchWithPlayers.match}
+        player1={matchWithPlayers.player1}
+        player2={matchWithPlayers.player2}
+      />
     </div>
   );
 }

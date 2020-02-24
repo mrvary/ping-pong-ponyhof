@@ -193,7 +193,9 @@ function initHTTPServer(port) {
     const { tableNumber } = args;
     const matchWithPlayers = getMatchByTableNumber(tableNumber);
     console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
-    server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, { matchWithPlayers });
+    server.SocketIOOutputEmitter.emit(socketIOChannels.SEND_MATCH, {
+      matchWithPlayers
+    });
   });
 }
 
