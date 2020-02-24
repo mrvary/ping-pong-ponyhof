@@ -85,11 +85,11 @@ const TableHeadline = () => {
 
 const TableRow = ({ match }) => {
   const [stringSet, setStringSet] = useState([
-    '0:0',
-    '0:0',
-    '0:0',
-    '0:0',
-    '0:0'
+    '0 : 0',
+    '0 : 0',
+    '0 : 0',
+    '0 : 0',
+    '0 : 0'
   ]);
   let index = 0;
 
