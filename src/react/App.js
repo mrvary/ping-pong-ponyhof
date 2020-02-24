@@ -1,177 +1,106 @@
-import Popup from "./components/Popup";
-import React, { useState } from "react";
-import { channels } from "../shared/channels";
-import dummyPlayers from "../assets/players";
+import React, { useState, useEffect } from "react";
 import "./App.css";
+import "./Colors.css";
 
-const log = window.log;
-const ipcRenderer = window.ipcRenderer;
+// dummy data
+import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
 
-const USE_BROWSER = true;
+// components
+import Footer from "./components/Footer";
+import Competition from "./components/Competition";
+import Header from "./components/Header";
 
-const Header = ({ importXML, title, startCompetition }) => {
-  return (
-    <section className="hero-size">
-      <div className="header-box-container">
-        <HeaderBox importXML={importXML} startCompetition={startCompetition} />
-        <strong className="title-header">{title}</strong>
-      </div>
-    </section>
-  );
-};
+// electron
+import IPCService from "../shared/ipc/ipcRendererService";
 
-const HeaderBox = ({ importXML, startCompetition }) => {
-  return (
-    <div className="container-box">
-      <p className="text">Neues Turnier anlegen</p>
-      <UploadXML importXML={importXML} />
-      <StartCompetitionButton startCompetition={startCompetition} />
-    </div>
-  );
-};
-
-const UploadXML = ({ importXML }) => {
-  return (
-    <button className="button-upload-xml" onClick={importXML}>
-      Lade hier deine XML Datei hoch!
-    </button>
-  );
-};
-
-const StartCompetitionButton = ({ startCompetition }) => {
-  return (
-    <button className="start-competition-button" onClick={startCompetition}>
-      Loslegen
-    </button>
-  );
-};
-
-//  TODO: Angabe der Tunierart fehlt
-const ButtonRow = props => {
-  const {
-    game: { id, date },
-    deleteGame
-  } = props;
-
-  const [showPopupDelete, setShowPopupDelete] = useState(false);
-  const handleClose = () => setShowPopupDelete(false);
-  const handleShow = () => setShowPopupDelete(true);
-  const header = 
-    <p className="popup__header-text">Achtung!</p>
-    
-  const body = 
-    <div>
-      <p className="popup__body-small-text">Willst du dieses Spiel wirklich löschen?</p>
-      <button className="start-competition-button" onClick={() => deleteGame(id)}>Löschen</button>
-    </div>
-
-  return (
-    <div className="list-element">
-      <button className="list-element__btn-game">Spiel vom {date}</button>
-      <div className="list-element__btn-game" />
-      <button className="list-element__btn-delete" onClick={handleShow}>
-        Löschen
-      </button>
-      <Popup
-        show={showPopupDelete}
-        handleClose={handleClose}
-        header={header}
-        body={body}
-      ></Popup>
-    </div>
-  );
-};
-
-const ButtonList = props => {
-  const { games, deleteGame } = props;
-
-  return games.map(game => (
-    <ButtonRow key={game.id} game={game} deleteGame={deleteGame} />
-  ));
-};
-
-const Footer = ({ title }) => {
-  return (
-    <footer className="center">
-      <p className="footer-text">
-        <strong>{title}</strong> by coolest guys ever.
-      </p>
-    </footer>
-  );
-};
+// set to true for fake backend data and skip IPC calls
+const USE_BROWSER = false;
 
 const App = () => {
-  const [games, setGames] = useState([
-    { id: 0, date: "23.7.2019" },
-    { id: 1, date: "11.8.2019" },
-    { id: 2, date: "7.9.2019" },
-    { id: 3, date: "22.9.2019" },
-    { id: 4, date: "2.10.2019" },
-    { id: 5, date: "21.11.2019" }
-  ]);
-  const [players, setPlayers] = useState([]);
-  const [currentId, setCurrentId] = useState(games.length + 1);
+  const [currentId, setCurrentId] = useState("");
+  const [linkDisabled, setLinkDisabled] = useState(true);
+  const [uploadedXML, setUploadedXML] = useState(false);
+  const [competitions, setCompetitions] = useState([]);
+  const [xmlFilePath, setXMLFilePath] = useState(null);
 
-  const importXML = () => {
-    // fake backend data for browser
+  useEffect(() => {
+    getAllCompetitions();
+  }, []);
+
+  const getAllCompetitions = () => {
     if (USE_BROWSER) {
-      setPlayers(dummyPlayers);
+      setCompetitions(dummyCompetitions);
       return;
     }
 
-    ipcRenderer.send(channels.OPEN_IMPORT_DIALOG);
-    ipcRenderer.on(channels.FILE_IMPORTED, (event, args) => {
-      const { players } = args;
-      log.info(players);
-      setPlayers(players);
+    IPCService.getAllCompetitions(competitions => {
+      setCompetitions(competitions);
     });
   };
 
-  const deleteGame = id => {
-    setGames(games.filter(game => game.id !== id));
+  const openXMLDialog = () => {
+    IPCService.openXMLDialog(filePath => {
+      console.log(filePath);
+      setXMLFilePath(filePath);
+      setLinkDisabled(false);
+    });
   };
 
-  const startCompetition = () => {
-    if (players.length > 0) {
-      const date = new Date();
-      setGames(
-        games.concat([{ id: currentId, date: date.toLocaleDateString() }])
-      );
-      setCurrentId(currentId + 1);
+  const importXML = () => {
+    if (!xmlFilePath) {
+      return;
     }
+
+    IPCService.importXMLFile(xmlFilePath, args => {
+      const { competitionId, message } = args;
+
+      if (!competitionId) {
+        // TODO: @Frontend - Hier bitte die Anzeige einer Fehlermeldung einfügen
+        console.log(message);
+        setLinkDisabled(true);
+        return;
+      }
+
+      setCurrentId(competitionId);
+      setLinkDisabled(false);
+      setUploadedXML(true);
+    });
+  };
+
+  const deleteCompetition = id => {
+    if (USE_BROWSER) {
+      setCompetitions(
+        competitions.filter(competition => competition.id !== id)
+      );
+      return;
+    }
+
+    IPCService.deleteCompetition(id, () => {
+      setCompetitions(
+        competitions.filter(competition => competition.id !== id)
+      );
+    });
   };
 
   return (
-    <div>
+    <div className="app__container">
       <Header
         title="PingPongPonyhof"
+        openXMLDialog={openXMLDialog}
         importXML={importXML}
-        startCompetition={startCompetition}
+        xmlFilePath={xmlFilePath}
+        currentId={currentId}
+        linkDisabled={linkDisabled}
+        uploadedXML={uploadedXML}
       />
-      <ButtonList games={games} deleteGame={deleteGame} />
+      {competitions.map(competition => (
+        <Competition
+          key={competition.id}
+          competition={competition}
+          deleteCompetition={deleteCompetition}
+        />
+      ))}
       <Footer title="PingPongPonyhof" />
-      <div>
-        {players.map(({ person, id }) => (
-          <p key={id}>
-            {person.firstname} {person.lastname}{" "}
-            {person.ttr > 1400 ? "🍑" : "💩"}
-          </p>
-        ))}
-      </div>
-      <div className="center">
-        <button
-          className="start-competition-button"
-          id="startRound"
-          onClick={() => {
-            if (USE_BROWSER) {
-              return;
-            }
-            ipcRenderer.send(channels.START_ROUND);
-          }}
-        >
-          start round
-        </button>
-      </div>
     </div>
   );
 };

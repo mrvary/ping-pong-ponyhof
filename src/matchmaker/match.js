@@ -16,31 +16,107 @@ function createMatches(pairings) {
 
 // createMatch : {player1: Player, player2: Player} -> Match
 function createMatch({ player1, player2 }) {
-  // early return when no second player
-  if (!player2 && !player2.id) {
-    const freeTicketMatch = {
-      id: matchId,
-      player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
-      sets: [],
-      freeTicket: true
-    };
-    matchId++;
-    return freeTicketMatch;
-  }
-
   const match = {
     id: matchId,
-    player1: { ...player1, matchIds: player1.matchIds.concat(matchId) },
-    player2: { ...player2, matchIds: player2.matchIds.concat(matchId) },
-    sets: [],
-    freeTicket: false
+    player1: player1,
+    player2: player2,
+    sets: [
+      {
+        player1: 0,
+        player2: 0
+      }
+    ]
   };
 
   matchId++;
   return match;
 }
 
+// this function will just be used in our tests
+// simulateMatches : [matches] -> [matches]
+function simulateMatches(matches) {
+  matches.forEach(match => {
+    simulateMatch(match);
+  });
+  return matches;
+}
+
+// simulateMatch : match -> match
+function simulateMatch(match) {
+  //create possible results
+  const player1Wins = [
+    {
+      player1: 11,
+      player2: 1
+    },
+    {
+      player1: 11,
+      player2: 2
+    },
+    {
+      player1: 11,
+      player2: 3
+    }
+  ];
+
+  const player2Wins = [
+    {
+      player1: 4,
+      player2: 11
+    },
+    {
+      player1: 5,
+      player2: 11
+    },
+    {
+      player1: 6,
+      player2: 11
+    }
+  ];
+
+  if (match.player1 === "FreeTicket") {
+    match.sets = player2Wins;
+  } else if (match.player2 === "FreeTicket") {
+    match.sets = player1Wins;
+  } else {
+    //no freeticket player in match -> random player wins
+    match.sets = Math.random() < 0.5 ? player1Wins : player2Wins;
+  }
+
+  return match;
+}
+
+// getMatchWinner : match -> id
+// id = id of playerWon or if noone has won so far id = "0"
+function getMatchWinner(match) {
+  let player1SetsWon = 0;
+  let player2SetsWon = 0;
+
+  match.sets.forEach(set => {
+    //the first set is init. with 0:0
+    //in this case e.player1 = e.player2 and noone gets setWon++
+
+    //player1 has more points
+    if (set.player1 > set.player2) {
+      player1SetsWon++;
+    }
+    //player2 has more points
+    if (set.player1 < set.player2) {
+      player2SetsWon++;
+    }
+  });
+
+  if (player1SetsWon === 3) return match.player1;
+
+  if (player2SetsWon === 3) return match.player2;
+
+  return "0";
+}
+
 module.exports = {
   createMatch,
-  createMatches
+  createMatches,
+  simulateMatches,
+  simulateMatch,
+  getMatchWinner
 };

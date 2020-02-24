@@ -1,148 +1,217 @@
-const testMatches = [
+const testPairing = [
+  { player1: "PLAYER13", player2: "PLAYER4" },
+  { player1: "PLAYER6", player2: "PLAYER5" },
+  { player1: "PLAYER11", player2: "PLAYER8" },
+  { player1: "PLAYER9", player2: "PLAYER12" },
+  { player1: "PLAYER16", player2: "PLAYER7" },
+  { player1: "PLAYER14", player2: "PLAYER2" },
+  { player1: "PLAYER15", player2: "PLAYER3" },
+  { player1: "PLAYER10", player2: "PLAYER1" }
+];
+
+const testPairingWithFreeTicket = [
+  { player1: "PLAYER15", player2: "PLAYER3" },
+  { player1: "PLAYER12", player2: "PLAYER1" },
+  { player1: "PLAYER9", player2: "PLAYER4" },
+  { player1: "PLAYER14", player2: "PLAYER5" },
+  { player1: "PLAYER13", player2: "FreeTicket" },
+  { player1: "PLAYER10", player2: "PLAYER2" },
+  { player1: "PLAYER6", player2: "PLAYER7" },
+  { player1: "PLAYER11", player2: "PLAYER8" }
+];
+
+const match_init = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 0,
+      player2: 0
+    }
+  ]
+};
+
+const match_noWinner = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 11,
+      player2: 9
+    },
+    {
+      player1: 11,
+      player2: 7
+    }
+  ]
+};
+
+const match_noWinner2 = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 11,
+      player2: 9
+    },
+    {
+      player1: 11,
+      player2: 13
+    },
+    {
+      player1: 1,
+      player2: 11
+    },
+    {
+      player1: 11,
+      player2: 5
+    }
+  ]
+};
+
+const match_player1Wins = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 11,
+      player2: 6
+    },
+    {
+      player1: 16,
+      player2: 14
+    },
+    {
+      player1: 11,
+      player2: 0
+    }
+  ]
+};
+
+const match_player1Wins2 = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 8,
+      player2: 11
+    },
+    {
+      player1: 11,
+      player2: 3
+    },
+    {
+      player1: 11,
+      player2: 13
+    },
+    {
+      player1: 11,
+      player2: 0
+    },
+    {
+      player1: 22,
+      player2: 20
+    }
+  ]
+};
+
+const match_player2Wins = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 8,
+      player2: 11
+    },
+    {
+      player1: 13,
+      player2: 15
+    },
+    {
+      player1: 1,
+      player2: 11
+    }
+  ]
+};
+
+const match_player2Wins2 = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 8,
+      player2: 11
+    },
+    {
+      player1: 11,
+      player2: 13
+    },
+    {
+      player1: 11,
+      player2: 0
+    },
+    {
+      player1: 4,
+      player2: 11
+    }
+  ]
+};
+
+const match_toSimulate = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: []
+};
+
+const matchResultPlayer1Won = [
   {
-    id: 0,
-    player1: {
-      id: "PLAYER10",
-      firstname: "Gerhard Copy",
-      lastname: "Acker",
-      clubname: "ESV SF Neuaubing",
-      gamesWon: 3,
-      matchIds: [0],
-      opponentIds: [],
-      qttr: 1515,
-      active: true,
-      hasFreeTicket: false
-    },
-    player2: {
-      id: "PLAYER30",
-      firstname: "Ulrich Copy",
-      lastname: "Dietzel",
-      clubname: "TTC Friedberg ",
-      gamesWon: 1,
-      matchIds: [0],
-      opponentIds: [],
-      qttr: 1211,
-      active: true,
-      hasFreeTicket: false
-    },
-    sets: [
-      {
-        set1: {
-          p1Points: 11,
-          p2Points: 4
-        },
-        set2: {
-          p1Points: 15,
-          p2Points: 13
-        },
-        set3: {
-          p1Points: 11,
-          p2Points: 5
-        }
-      }
-    ],
-    freeTicket: false
+    player1: 11,
+    player2: 1
   },
   {
-    id: 1,
-    player1: {
-      id: "PLAYER1",
-      firstname: "Gerhard",
-      lastname: "Acker",
-      clubname: "ESV SF Neuaubing",
-      gamesWon: 3,
-      matchIds: [1],
-      opponentIds: [],
-      qttr: 1415,
-      active: true,
-      hasFreeTicket: false
-    },
-    player2: {
-      id: "PLAYER2",
-      firstname: "Achim",
-      lastname: "Amthor",
-      clubname: "SC Baldham-Vaterstetten ",
-      gamesWon: 5,
-      matchIds: [1],
-      opponentIds: [],
-      qttr: 1251,
-      active: true,
-      hasFreeTicket: false
-    },
-    sets: [
-      {
-        set1: {
-          p1Points: 11,
-          p2Points: 4
-        },
-        set2: {
-          p1Points: 2,
-          p2Points: 11
-        },
-        set3: {
-          p1Points: 0,
-          p2Points: 11
-        },
-        set4: {
-          p1Points: 11,
-          p2Points: 13
-        }
-      }
-    ],
-    freeTicket: false
+    player1: 11,
+    player2: 2
   },
   {
-    id: 2,
-    player1: {
-      id: "PLAYER20",
-      firstname: "Achim Copy",
-      lastname: "Amthor",
-      clubname: "SC Baldham-Vaterstetten ",
-      gamesWon: 5,
-      matchIds: [2],
-      opponentIds: [],
-      qttr: 1351,
-      active: true,
-      hasFreeTicket: false
-    },
-    player2: {
-      id: "PLAYER3",
-      firstname: "Ulrich",
-      lastname: "Dietzel",
-      clubname: "TTC Friedberg ",
-      gamesWon: 1,
-      matchIds: [2],
-      opponentIds: [],
-      qttr: 1111,
-      active: true,
-      hasFreeTicket: false
-    },
-    sets: [
-      {
-        set1: {
-          p1Points: 11,
-          p2Points: 4
-        },
-        set2: {
-          p1Points: 2,
-          p2Points: 11
-        },
-        set3: {
-          p1Points: 0,
-          p2Points: 11
-        },
-        set4: {
-          p1Points: 11,
-          p2Points: 9
-        },
-        set5: {
-          p1Points: 11,
-          p2Points: 5
-        }
-      }
-    ],
-    freeTicket: false
+    player1: 11,
+    player2: 3
   }
 ];
 
-module.exports = { testMatches };
+const matchResultPlayer2Won = [
+  {
+    player1: 4,
+    player2: 11
+  },
+  {
+    player1: 5,
+    player2: 11
+  },
+  {
+    player1: 6,
+    player2: 11
+  }
+];
+
+module.exports = {
+  testPairing,
+  testPairingWithFreeTicket,
+  match_init,
+  match_noWinner,
+  match_noWinner2,
+  match_player1Wins,
+  match_player1Wins2,
+  match_player2Wins,
+  match_player2Wins2,
+  match_toSimulate,
+  matchResultPlayer1Won,
+  matchResultPlayer2Won
+};
