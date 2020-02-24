@@ -59,16 +59,15 @@ function App() {
       );
     }
 
-    if (currentPage === "NEXT_PLAYERS") {
-      return;
-    }
-
-    if (currentPage === "MATCH") {
+    if (currentPage === "NEXT_PLAYERS" || currentPage === "MATCH") {
       return (
         <Match
           appTitle={appTitle}
           isConnected={isConnected}
+          onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
           matchWithPlayers={matchWithPlayers}
+          sendFinishedMatch={sendFinishedMatch}
+          sendSets={sendSets}
         />
       );
     }
@@ -82,6 +81,16 @@ function App() {
   const sendTableNumber = event => {
     event.preventDefault();
     socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
+    setPage("WAITING");
+  };
+
+  const sendFinishedMatch = match => event => {
+    socket.emit(socketIOMessages.SEND_MATCH, { match });
+    setPage("WAITING");
+  };
+
+  const sendSets = sets => event => {
+    socket.emit(socketIOMessages.SEND_MATCH, { tableNumber, sets });
   };
 
   const handleTableNumberChange = event => {
@@ -100,36 +109,28 @@ function App() {
     });
 
     connection.on(socketIOMessages.LOGIN_TABLE, data => {
-      const { tableNumber, competitionStatus } = data;
-      console.log(data);
+      // const { tableNumber, competitionStatus } = data;
+
+      console.log(`data: ${data}`);
       setIsConnected(true);
 
-      setCompetitionStatus(competitionStatus);
-      console.log("competition status ->", competitionStatus);
-
-      if (
-        competitionStatus === "comp-active-round-ready" ||
-        competitionStatus === "comp-active-round-active"
-      ) {
-        connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
-      }
+      connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, () => {
-      connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
+      setPage("NEXT_PLAYERS");
     });
 
     connection.on(socketIOMessages.START_ROUND, () => {
-      connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
+      setPage("MATCH");
     });
 
     connection.on(socketIOMessages.SEND_MATCH, data => {
       const { matchWithPlayers, competitionStatus } = data;
       console.log(matchWithPlayers);
+      console.log("competition status ->", competitionStatus);
 
       setMatchWithPlayers(matchWithPlayers);
-
-      toPage("match");
     });
 
     connection.on(socketIOMessages.LOGIN_ERROR, data => {
