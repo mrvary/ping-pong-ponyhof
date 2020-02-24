@@ -49,9 +49,7 @@ const UploadXML = ({ openXMLDialog, linkDisabled }) => {
   if (!linkDisabled) {
     xmlText = 'Upload erfolgreich';
     xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
-
   }
-
   return (
     <button className={xmlUploadedCss} onClick={openXMLDialog}>
       {xmlText}
