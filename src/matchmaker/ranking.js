@@ -94,7 +94,7 @@ function calculateNewTTR(playerToCalculate, players) {
     ttrDifference - (opponentTTR.length - playerToCalculate.gamesWon) * 16
   );
 
-  debugger;
+
   //5. check for Freeticket games
   if (opponents.length !== playerToCalculate.opponentIds.length)
     ttrDifference -= 16;
