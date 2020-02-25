@@ -2,7 +2,8 @@ const {
   createPlayer,
   sortPlayersBy,
   createPlayersFromJSON,
-  updatePlayersAfterDrawing
+  updatePlayersAfterDrawing,
+  isFreeticketPlayerInMatch
 } = require("../../src/matchmaker/player");
 
 const {
@@ -10,7 +11,11 @@ const {
   cleanedUpPlayers,
   tournamentJSON15Players,
   tournamentJSON16Players,
-  EXPECTED_PLAYER
+  EXPECTED_PLAYER,
+  match_noFreeticket,
+  match_noFreeticket2,
+  match_withFreeticket,
+  match_withFreeticket2
 } = require("./player.test.data");
 
 const { testMatches } = require("./match.test.data");
@@ -72,4 +77,16 @@ describe("updatePlayersAfterDrawing()", () => {
   test.todo("match Id added to each player");
 
   test.todo("opponent Id added to each player");
+});
+
+describe("isFreeticketPlayerInMatch()", () => {
+  test("no FreeTicket player in match", () => {
+    expect(isFreeticketPlayerInMatch(match_noFreeticket)).toBe(false);
+    expect(isFreeticketPlayerInMatch(match_noFreeticket2)).toBe(false);
+  });
+
+  test("recognice FreeTicket player in match", () => {
+    expect(isFreeticketPlayerInMatch(match_withFreeticket)).toBe(true);
+    expect(isFreeticketPlayerInMatch(match_withFreeticket2)).toBe(true);
+  });
 });

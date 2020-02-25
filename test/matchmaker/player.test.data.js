@@ -822,6 +822,78 @@ const tournamentJSON15Players = {
   }
 };
 
+const match_noFreeticket = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 0,
+      player2: 0
+    }
+  ]
+};
+
+const match_noFreeticket2 = {
+  id: 5,
+  player1: "PLAYER13",
+  player2: "PLAYER8",
+  sets: [
+    {
+      player1: 8,
+      player2: 11
+    },
+    {
+      player1: 11,
+      player2: 3
+    },
+    {
+      player1: 11,
+      player2: 13
+    },
+    {
+      player1: 11,
+      player2: 0
+    },
+    {
+      player1: 22,
+      player2: 20
+    }
+  ]
+};
+
+const match_withFreeticket = {
+  id: 1,
+  player1: "FreeTicket",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 0,
+      player2: 0
+    }
+  ]
+};
+
+const match_withFreeticket2 = {
+  id: 1,
+  player1: "PLAYER9",
+  player2: "FreeTicket",
+  sets: [
+    {
+      player1: 11,
+      player2: 6
+    },
+    {
+      player1: 6,
+      player2: 11
+    },
+    {
+      player1: 5,
+      player2: 11
+    }
+  ]
+};
+
 const EXPECTED_PLAYER = {
   id: "PLAYER1",
   firstname: "Gerhard",
@@ -839,5 +911,9 @@ module.exports = {
   cleanedUpPlayers,
   tournamentJSON15Players,
   tournamentJSON16Players,
-  EXPECTED_PLAYER
+  EXPECTED_PLAYER,
+  match_noFreeticket,
+  match_noFreeticket2,
+  match_withFreeticket,
+  match_withFreeticket2
 };
