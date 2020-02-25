@@ -26,7 +26,7 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const ipcChannels = require("../shared/ipc/ipcChannels");
+const ipcChannels = require("../shared/ipc-messages");
 
 // windows actions
 const uiActions = require("./actions/uiActions");

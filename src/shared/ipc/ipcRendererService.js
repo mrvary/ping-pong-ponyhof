@@ -3,7 +3,7 @@
  */
 
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcChannels = require("./ipcChannels");
+const ipcChannels = require("../ipc-messages");
 
 function createWindow(route) {
   ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
