@@ -137,6 +137,17 @@ function getLastNameOfPlayerId(playerId, players) {
   return lastname;
 }
 
+// getParameterByPlayerId : playerId, [players], parameter -> value
+function getParameterByPlayerId(playerId, players, parameter) {
+  let value;
+  players.forEach(player => {
+    if (player.id === playerId) {
+      value = player[parameter];
+    }
+  });
+  return value;
+}
+
 // createMatchResult : match -> JSON
 function createMatchResult(match) {
   let player1SetsWon = 0;
@@ -197,4 +208,10 @@ function logRanking(ranking) {
   console.log(log);
 }
 
-module.exports = { createCurrentRanking, logRanking, createMatchResult };
+module.exports = {
+  createCurrentRanking,
+  logRanking,
+  createMatchResult,
+  getLastNameOfPlayerId,
+  getParameterByPlayerId
+};
