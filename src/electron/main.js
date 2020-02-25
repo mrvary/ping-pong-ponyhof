@@ -31,7 +31,6 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const socketIOMessages = require("../client/src/shared/socket-io-messages");
 const ipcChannels = require("../shared/ipc/ipcChannels");
 
 let mainWindow = null;
@@ -124,45 +123,6 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
   }
 });
 
-function initializeMatchesByCompetitionId(id) {
-  if (matchesWithPlayers.length > 0) {
-    return;
-  }
-
-  // 1. open competition storage
-  const filePath = fileManager.getCompetitionFilePath(id);
-  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-
-  // 2. get players and current matches from competition
-  const currentRoundMatchIds = competition.round_matchIds;
-  const matches = competitionStorage.getMatchesByIds(currentRoundMatchIds);
-  const players = competitionStorage.getAllPlayers();
-
-  // 3. map communication object
-  let tableNumber = 1;
-  matches.forEach(match => {
-    const player1 = players.find(player => player.id === match.player1);
-    const player2 = players.find(player => player.id === match.player2);
-
-    const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
-
-    const matchWithPlayers = {
-      tableNumber: tableNumber,
-      connectedDevice: uuid,
-      match: match,
-      player1: player1,
-      player2: player2
-    };
-
-    matchesWithPlayers.push(matchWithPlayers);
-    tableNumber++;
-  });
-
-  // 4. update competition status
-  setCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
-}
-
 ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   const { id } = args;
 
@@ -231,18 +191,43 @@ function initHTTPServer(port) {
       });
     }
   );
+}
 
-  server.SocketIOInputEmitter.on(socketIOMessages.GET_MATCH, args => {
-    const { tableNumber } = args;
+function initializeMatchesByCompetitionId(id) {
+  if (matchesWithPlayers.length > 0) {
+    return;
+  }
 
-    const matchWithPlayers = matchesWithPlayers.find(
-      matchWithPlayers => matchWithPlayers.tableNumber === tableNumber
-    );
+  // 1. open competition storage
+  const filePath = fileManager.getCompetitionFilePath(id);
+  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
 
-    console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
+  // 2. get players and current matches from competition
+  const currentRoundMatchIds = competition.round_matchIds;
+  const matches = competitionStorage.getMatchesByIds(currentRoundMatchIds);
+  const players = competitionStorage.getAllPlayers();
 
-    server.SocketIOOutputEmitter.emit(socketIOMessages.SEND_MATCH, {
-      matchWithPlayers
-    });
+  // 3. map communication object
+  let tableNumber = 1;
+  matches.forEach(match => {
+    const player1 = players.find(player => player.id === match.player1);
+    const player2 = players.find(player => player.id === match.player2);
+
+    const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
+
+    const matchWithPlayers = {
+      tableNumber: tableNumber,
+      connectedDevice: uuid,
+      match: match,
+      player1: player1,
+      player2: player2
+    };
+
+    matchesWithPlayers.push(matchWithPlayers);
+    tableNumber++;
   });
+
+  // 4. update competition status
+  setCompetitionStatus(competition, false, false);
+  metaStorage.updateCompetition(competition);
 }
