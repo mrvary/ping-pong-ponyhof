@@ -18,7 +18,10 @@ const connectedClients = new Map();
 const SocketIOInputEmitter = new EventEmitter();
 const SocketIOOutputEmitter = new EventEmitter();
 
-// server variables
+const SERVER_MESSAGES = {
+  UPDATE_CONNECTION_STATUS: "update-connection-status"
+};
+
 let server = null;
 let serverSocket = null;
 
@@ -125,10 +128,7 @@ function clientLogin(clientSocket, data) {
 
   // save client socket
   connectedClients.set(clientSocket.id, tableNumber);
-  SocketIOInputEmitter.emit(socketIOChannels.LOGIN_TABLE, {
-    connectedDevice: clientSocket.id,
-    tableNumber: tableNumber
-  });
+  notifyConnectionStatusToMainIPC(clientSocket.id, tableNumber);
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
   // send login response to client with his table number
@@ -141,16 +141,27 @@ function clientLogin(clientSocket, data) {
   sendAvailableTablesToClient();
 }
 
+function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
+  console.log(connectedDevice);
+  SocketIOInputEmitter.emit(SERVER_MESSAGES.UPDATE_CONNECTION_STATUS, {
+    connectedDevice,
+    tableNumber
+  });
+}
+
 function clientLogout(clientSocket) {
   // check if client is logged in
   if (connectedClients.has(clientSocket.id)) {
-    // delete client from active connections
+    // delete client from active connections and notify renderer
+    const tableNumber = connectedClients.get(clientSocket.id);
     connectedClients.delete(clientSocket.id);
+    notifyConnectionStatusToMainIPC(null, tableNumber);
     console.info(`Client logout [id=${clientSocket.id}]`);
 
     // update clients with available tables
     sendAvailableTablesToClient();
   }
+
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
@@ -184,6 +195,7 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
+  SERVER_MESSAGES,
   SocketIOInputEmitter,
   SocketIOOutputEmitter,
 

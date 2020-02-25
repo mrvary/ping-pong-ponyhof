@@ -151,7 +151,7 @@ const CompetitionPage = () => {
 
   useEffect(() => {
     function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
-      console.log("Server-->App", matchesWithPlayers);
+      console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
       const matches = mapPlayerNamesToMatch(matchesWithPlayers);
       setMatches(matches);
     }
@@ -199,6 +199,7 @@ const CompetitionPage = () => {
       return;
     }
 
+    // trigger initialize competition
     ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
       id: competitionID
     });
