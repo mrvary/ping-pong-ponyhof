@@ -8,8 +8,8 @@ const {
 const {
   inputPlayers,
   cleanedUpPlayers,
-  tournamentJSON,
   tournamentJSON15Players,
+  tournamentJSON16Players,
   EXPECTED_PLAYER
 } = require("./player.test.data");
 
@@ -24,7 +24,7 @@ describe("createPlayer()", () => {
 });
 
 describe("createPlayers()", () => {
-  const players = createPlayersFromJSON(tournamentJSON);
+  const players = createPlayersFromJSON(tournamentJSON16Players);
   test("returns a list of players", () => {
     expect(players).toHaveLength(16);
   });

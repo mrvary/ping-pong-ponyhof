@@ -97,7 +97,7 @@ const cleanedUpPlayers = [
   }
 ];
 
-const tournamentJSON = {
+const tournamentJSON16Players = {
   tournament: {
     "end-date": "2019-05-25",
     "multiple-participations-same-day": "false",
@@ -836,8 +836,8 @@ const EXPECTED_PLAYER = {
 
 module.exports = {
   inputPlayers,
-  tournamentJSON,
   cleanedUpPlayers,
   tournamentJSON15Players,
+  tournamentJSON16Players,
   EXPECTED_PLAYER
 };
