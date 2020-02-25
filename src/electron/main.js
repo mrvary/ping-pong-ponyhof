@@ -3,7 +3,6 @@
  */
 
 const { app, ipcMain } = require("electron");
-const http = require("http");
 const path = require("path");
 
 // electron reload
@@ -19,10 +18,6 @@ const createWindow = require("./window");
 // configuration
 const config = require("./config");
 
-// server dependencies
-const expressApp = require("../modules/app");
-const socketIO = require("socket.io");
-
 // xml import
 const { importXML } = require("../modules/import/xml-import");
 
@@ -35,35 +30,29 @@ const fileManager = require("../modules/persistance/file-manager");
 const metaStorage = require("../modules/persistance/lowdb/meta-storage");
 const competitionStorage = require("../modules/persistance/lowdb/competition-storage");
 
-// ipc communication
+// communication
+const server = require("../modules/server/server");
+const socketIOMessages = require("../client/src/shared/socket-io-messages");
 const ipcChannels = require("../shared/ipc/ipcChannels");
-const socketIOChannels = require("../client/src/shared/socket-io-channels");
-
-// variables
-const MAX_AMOUNT_TABLE = 16;
-const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE);
-
-let server = null;
-let serverSocket = null;
-let connectedClients = new Map();
 
 let competition = null;
 let matchTableMap = new Map();
 let tableNumber = 1;
-let matchStarted = false;
 
 app.on("ready", () => {
   initDevTools();
+
+  // initialize modules
   initMetaStorage();
   initHTTPServer(config.SERVER_PORT);
-  initSocketIO();
 
+  // create GUI
   createWindow();
   createMenu();
 });
 
 app.on("before-quit", () => {
-  shutdownServer();
+  server.shutdownServer();
 });
 
 app.on("window-all-closed", () => {
@@ -80,6 +69,10 @@ app.on("activate", (event, hasVisibleWindows) => {
   if (!hasVisibleWindows) {
     createWindow();
   }
+});
+
+ipcMain.on(ipcChannels.START_ROUND, () => {
+  server.sendStartRoundBroadcast();
 });
 
 ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
@@ -142,7 +135,7 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
 
     // open competition storage
     const filePath = fileManager.getCompetitionFilePath(id);
-    competitionStorage.open(filePath);
+    competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
 
     // get players and matches by round
     const matches = competitionStorage.getMatchesByIds(
@@ -162,6 +155,7 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   // set competition status
   setCompetitionStatus(competition, false, false);
   metaStorage.updateCompetition(competition);
+
   event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
     matchesWithPlayers: matchesWithPlayers
   });
@@ -189,122 +183,30 @@ function initDevTools() {
 
 function initMetaStorage() {
   const filePath = fileManager.getMetaStorageDatabasePath();
-  metaStorage.open(filePath);
+  metaStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
 }
 
 function initHTTPServer(port) {
-  server = http.createServer(expressApp);
-  server.listen(port, () => {
-    console.log(`Server: is running on port ${port}`);
-  });
-}
+  server.initHTTPServer(port);
 
-function shutdownServer() {
-  if (server) {
-    console.log("Server: gracefully shutting down...");
-    server.kill();
-    server = null;
-  }
-}
-
-function initSocketIO() {
-  // open server socket
-  serverSocket = socketIO(server);
-
-  // event fired every time a new client connects (Browser window was opened)
-  serverSocket.on(socketIOChannels.CONNECTION, clientSocket => {
-    console.info(`Client connected [id=${clientSocket.id}]`);
-
-    // send current server state to client
-    clientSocket.emit(socketIOChannels.AVAILABLE_TABLES, availableTables());
-
-    // event fired every time a client sends a table number
-    clientSocket.on(socketIOChannels.LOGIN_TABLE, data => {
-      clientLogin(clientSocket, data);
-    });
-
-    // event fired when a start round is triggered
-    clientSocket.on(socketIOChannels.GET_MATCH, data => {
-      sendMatchToClient(clientSocket, data);
-    });
-
-    // event fired when a client disconnects, remove it from the list
-    clientSocket.on(socketIOChannels.DISCONNECT, data => {
-      clientLogout(clientSocket);
+  server.SocketIOInputEmitter.on(socketIOMessages.GET_MATCH, args => {
+    const { tableNumber } = args;
+    const matchWithPlayers = getMatchByTableNumber(tableNumber);
+    console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
+    server.SocketIOOutputEmitter.emit(socketIOMessages.SEND_MATCH, {
+      matchWithPlayers
     });
   });
 }
 
-function clientLogin(clientSocket, data) {
-  const { tableNumber } = data;
-
-  // verify if max amount of connected devices/table is reached
-  if (connectedClients.size === MAX_AMOUNT_TABLE) {
-    clientSocket.emit(socketIOChannels.LOGIN_ERROR, data);
-    return;
-  }
-
-  // verify if a client is already connected to a table
-  if (mapHasValue(connectedClients, tableNumber)) {
-    clientSocket.emit(socketIOChannels.LOGIN_ERROR, data);
-    return;
-  }
-
-  // login client
-  connectedClients.set(clientSocket.id, tableNumber);
-  console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
-
-  // send current server state to clients
-  sendBroadcast(socketIOChannels.AVAILABLE_TABLES, availableTables());
-
-  // send data to client
-  clientSocket.emit(socketIOChannels.LOGIN_TABLE, {
-    tableNumber: tableNumber,
-    matchStarted: matchStarted
-  });
-}
-
-function clientLogout(clientSocket) {
-  if (connectedClients.has(clientSocket.id)) {
-    connectedClients.delete(clientSocket.id);
-    console.info(`Client logout [id=${clientSocket.id}]`);
-
-    sendBroadcast(socketIOChannels.AVAILABLE_TABLES, availableTables());
-  }
-  console.log(`Client gone [id=${clientSocket.id}]`);
-}
-
-function sendMatchToClient(clientSocket, data) {
-  const { tableNumber } = data;
-  console.log(tableNumber);
-
+function getMatchByTableNumber(tableNumber) {
   // use mocked match as default
-  let match = mockedMatches;
-  if (matchTableMap) {
-    const matchWithPlayers = matchTableMap.get(tableNumber);
-    match = matchWithPlayers.match;
+  let matchWithPlayers = {};
+  if (matchTableMap.size > 0) {
+    matchWithPlayers = matchTableMap.get(tableNumber);
   }
 
-  clientSocket.emit(socketIOChannels.SEND_MATCH, { match });
-}
-
-function availableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(x =>
-    parseInt(x, 10)
-  );
-  const availableTables = ALL_POTENTIAL_TABLES.filter(
-    key => !takenTables.includes(key)
-  );
-  return availableTables;
-}
-
-// this method is used to submit a broadcast event to all clients
-function sendBroadcast(eventName, data) {
-  if (serverSocket) {
-    serverSocket.sockets.emit(eventName, data);
-    console.log(`server emit broadcast: ${eventName}`);
-    console.log(`--- data was ${data}`);
-  }
+  return matchWithPlayers;
 }
 
 function mapPlayersToMatches(matches, players) {
@@ -331,18 +233,10 @@ function initCurrentRound(matchesWithPlayers) {
   console.log(`Map matches to tables`);
   tableNumber = 1;
   matchesWithPlayers.forEach(matchWithPlayers => {
-    matchTableMap.set(tableNumber++, matchWithPlayers);
+    matchTableMap.set(tableNumber, matchWithPlayers);
     console.log(
       `Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`
     );
+    tableNumber++;
   });
-}
-
-function mapHasValue(inputMap, searchedValue) {
-  const values = Array.from(inputMap.entries());
-  return values.some(([_, value]) => value === searchedValue);
-}
-
-function range(start, exclusiveEnd) {
-  return [...Array(exclusiveEnd).keys()].slice(start);
 }

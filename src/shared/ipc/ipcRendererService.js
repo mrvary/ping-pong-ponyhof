@@ -2,7 +2,6 @@
  * @author Marco Goebel
  */
 
-const remote = window.electron.remote;
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcChannels = require("./ipcChannels");
 

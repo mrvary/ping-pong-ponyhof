@@ -12,6 +12,7 @@ const {
 } = require("../../modules/models/competition");
 const { createPlayersFromJSON } = require("../../matchmaker/player");
 
+const config = require("../../electron/config");
 const matchmaker = require("../../matchmaker/drawing");
 
 /**
@@ -34,7 +35,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   const competitionFilePath = fileManager.getCompetitionFilePath(
     competition.id
   );
-  competitionStorage.open(competitionFilePath);
+  competitionStorage.open(competitionFilePath, config.USE_IN_MEMORY_STORAGE);
   competitionStorage.initWithCompetition(jsonObject);
 
   // TODO: init meta data object about current competition
@@ -46,11 +47,6 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
 
   // TODO: use "matchmaker.updatePlayers()"
   // TODO: update player data with match id's
-
-  // init first set of each match with zero points
-  matches.forEach(match => {
-    match.sets.push({ player1: 0, player2: 0 });
-  });
 
   // store matches and players into the competition database
   competitionStorage.createMatches(matches);
