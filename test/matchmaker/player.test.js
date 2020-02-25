@@ -17,6 +17,8 @@ const {
   match_noFreeticket2,
   match_withFreeticket,
   match_withFreeticket2,
+  playersBeforeUpdateDrawing,
+  matchesToPlay,
   playersBeforeUpdateWinner,
   matchesToUseForUpdatingWinner,
   playersAfterUpdateWinner
@@ -50,6 +52,7 @@ describe("createPlayers()", () => {
     expect(playersWithFreeTicketPlayer).toContainEqual({
       id: "FreeTicket",
       gamesWon: 0,
+      lastname: "FREILOS",
       matchIds: [],
       opponentIds: [],
       qttr: 0
@@ -74,13 +77,13 @@ describe("sortPlayersBy()", () => {
 });
 
 describe("updatePlayersAfterDrawing()", () => {
-  test.todo(
-    "returns an array of all players from an array of players and matches"
+  const updatedPlayers = updatePlayersAfterDrawing(
+    playersBeforeUpdateDrawing,
+    matchesToPlay
   );
-
-  test.todo("match Id added to each player");
-
-  test.todo("opponent Id added to each player");
+  test("update players with matches drawn", () => {
+    expect(updatedPlayers).toEqual(playersBeforeUpdateWinner);
+  });
 });
 
 describe("isFreeticketPlayerInMatch()", () => {
