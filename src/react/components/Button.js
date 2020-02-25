@@ -2,9 +2,11 @@ import React from "react";
 import "./Button.css";
 
 function Button({ text, onClick, mode, disableProp }) {
-  const css =
+  let css =
     "button " + (mode === "primary" ? "button--primary" : "button--secondary");
-
+  if (disableProp) {
+    css = css + " button--disabled";
+  }
   return (
     <button className={css} onClick={onClick} disabled={disableProp}>
       {text}
