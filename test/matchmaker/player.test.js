@@ -3,7 +3,8 @@ const {
   sortPlayersBy,
   createPlayersFromJSON,
   updatePlayersAfterDrawing,
-  isFreeticketPlayerInMatch
+  isFreeticketPlayerInMatch,
+  updateWinner
 } = require("../../src/matchmaker/player");
 
 const {
@@ -15,7 +16,10 @@ const {
   match_noFreeticket,
   match_noFreeticket2,
   match_withFreeticket,
-  match_withFreeticket2
+  match_withFreeticket2,
+  playersBeforeUpdateWinner,
+  matchesToUseForUpdatingWinner,
+  playersAfterUpdateWinner
 } = require("./player.test.data");
 
 const { testMatches } = require("./match.test.data");
@@ -88,5 +92,13 @@ describe("isFreeticketPlayerInMatch()", () => {
   test("recognice FreeTicket player in match", () => {
     expect(isFreeticketPlayerInMatch(match_withFreeticket)).toBe(true);
     expect(isFreeticketPlayerInMatch(match_withFreeticket2)).toBe(true);
+  });
+});
+
+describe("updateWinner()", () => {
+  test("correct output from updateWinner", () => {
+    expect(
+      updateWinner(playersBeforeUpdateWinner, matchesToUseForUpdatingWinner)
+    ).toEqual(playersAfterUpdateWinner);
   });
 });
