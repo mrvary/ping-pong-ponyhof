@@ -1,8 +1,4 @@
-// TODO: use hash?
-const {
-  createMatchResult,
-  getParameterByPlayerId
-} = require("./ranking.js");
+const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
 
 let matchId = 0;
 
