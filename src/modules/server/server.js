@@ -125,6 +125,10 @@ function clientLogin(clientSocket, data) {
 
   // save client socket
   connectedClients.set(clientSocket.id, tableNumber);
+  SocketIOInputEmitter.emit(socketIOChannels.LOGIN_TABLE, {
+    connectedDevice: clientSocket.id,
+    tableNumber: tableNumber
+  });
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
   // send login response to client with his table number

@@ -2,6 +2,8 @@ module.exports = {
   // Windows
   OPEN_NEW_WINDOW: "open-new-window",
 
+  UPDATE_MATCHES: "update-matches",
+
   // XML IMPORT
   OPEN_IMPORT_DIALOG: "open-import-dialog",
   OPEN_IMPORT_DIALOG_SUCCESS: "open-import-dialog-success",

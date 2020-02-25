@@ -9,9 +9,10 @@ import Footer from "./Footer";
 import Button from "./Button";
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
-// shared service
+// ipc communication
 import IPCService from "../../shared/ipc/ipcRendererService";
-import { forEach } from "react-bootstrap/cjs/ElementChildren";
+const ipcRenderer = window.electron.ipcRenderer;
+const ipcChannels = require("../../shared/ipc/ipcChannels");
 
 const USE_BROWSER = false;
 
@@ -145,13 +146,25 @@ const Table = ({ matches }) => {
 };
 
 const CompetitionPage = () => {
-  //dummy match
   const { competitionID } = useParams();
   const [matches, setMatches] = useState([]);
-  const [players, setPlayer] = useState([]);
 
   useEffect(() => {
+    function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
+      console.log("Server-->App", matchesWithPlayers);
+      const matches = mapPlayerNamesToMatch(matchesWithPlayers);
+      setMatches(matches);
+    }
+
+    ipcRenderer.on(ipcChannels.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
+
+    return () => {
+      ipcRenderer.removeListener(
+        ipcChannels.UPDATE_MATCHES,
+        handleMatchesStatusChanged
+      );
+    };
   }, []);
 
   const updateCompetition = () => {
@@ -186,22 +199,19 @@ const CompetitionPage = () => {
       return;
     }
 
-    IPCService.getMatchesByCompetition(competitionID, args => {
-      const { matchesWithPlayers } = args;
-      console.log("Received matches from main ipc");
-      console.log(matchesWithPlayers);
-
-      // map names to players
-      const matches = matchesWithPlayers.map(matchWithPlayers => {
-        const { match, player1, player2 } = matchWithPlayers;
-        match.player1 = player1.firstname + " " + player1.lastname;
-        match.player2 = player2.firstname + " " + player2.lastname;
-        return match;
-      });
-
-      setMatches(matches);
+    ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
+      id: competitionID
     });
   };
+
+  function mapPlayerNamesToMatch(matchesWithPlayers) {
+    return matchesWithPlayers.map(matchWithPlayers => {
+      const { match, player1, player2 } = matchWithPlayers;
+      match.player1 = player1.firstname + " " + player1.lastname;
+      match.player2 = player2.firstname + " " + player2.lastname;
+      return match;
+    });
+  }
 
   const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
   const handleCloseEndTournament = () => setShowPopupEndTournament(false);

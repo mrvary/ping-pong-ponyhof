@@ -46,14 +46,6 @@ function deleteCompetition(id, callback) {
   ipcRenderer.send(ipcChannels.DELETE_COMPETITION, { id: id });
 }
 
-function getMatchesByCompetition(id, callback) {
-  ipcRenderer.once(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
-    callback(args);
-  });
-
-  ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, { id: id });
-}
-
 function getPlayersByPlayerId(id) {
   const players = [
     {
@@ -109,8 +101,5 @@ module.exports = {
 
   // Competitions
   getAllCompetitions,
-  deleteCompetition,
-
-  getMatchesByCompetition,
-  getPlayersByPlayerId
+  deleteCompetition
 };

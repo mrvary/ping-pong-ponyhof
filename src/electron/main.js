@@ -34,6 +34,8 @@ const server = require("../modules/server/server");
 const socketIOChannels = require("../client/src/shared/socket-io-channels");
 const ipcChannels = require("../shared/ipc/ipcChannels");
 
+let mainWindow = null;
+
 let competition = null;
 let matchesWithPlayers = [];
 
@@ -45,7 +47,7 @@ app.on("ready", () => {
   initHTTPServer(config.SERVER_PORT);
 
   // create GUI
-  createWindow();
+  mainWindow = createWindow();
   createMenu();
 });
 
@@ -171,7 +173,7 @@ ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   initializeMatchesByCompetitionId(id);
 
   // 3. send matches to renderer
-  event.sender.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
+  event.sender.send(ipcChannels.UPDATE_MATCHES, {
     matchesWithPlayers: matchesWithPlayers
   });
 });
@@ -203,6 +205,25 @@ function initMetaStorage() {
 
 function initHTTPServer(port) {
   server.initHTTPServer(port);
+
+  server.SocketIOInputEmitter.on(socketIOChannels.LOGIN_TABLE, args => {
+    console.log("Client-->Server:", args);
+    const { connectedDevice, tableNumber } = args;
+
+    if (matchesWithPlayers.length > 0) {
+      matchesWithPlayers = matchesWithPlayers.map(match => {
+        if (match.tableNumber === tableNumber) {
+          return { ...match, connectedDevice };
+        }
+
+        return match;
+      });
+    }
+
+    mainWindow.webContents.send(ipcChannels.UPDATE_MATCHES, {
+      matchesWithPlayers: matchesWithPlayers
+    });
+  });
 
   server.SocketIOInputEmitter.on(socketIOChannels.GET_MATCH, args => {
     const { tableNumber } = args;
