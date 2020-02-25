@@ -6,23 +6,39 @@ const fs = require("fs");
 const path = require("path");
 const config = require("../config");
 
-const { createCompetitionFromJSON, } = require("../../src/modules/models/competition");
+const {
+  COMPETITION_STATUS,
+  createCompetitionFromJSON,
+  setCompetitionStatus,  } = require("../../src/modules/models/competition");
 
 let jsonObject = null;
 
 const { expectedCompetitionWithDefaultValues } = require("./competition.test.data");
 
-describe("createCompetitionFromJSON()", () => {
-  beforeAll(() => {
-    readJSONObjectFromDisk();
-  });
+beforeAll(() => {
+  readJSONObjectFromDisk();
+});
 
-  test("init with default values", () => {
-    // get competiton object from json data
+describe("createCompetitionFromJSON()", () => {
+  test("When_CreateNewCompetition_Expect_CompetitionIsInitializedWithDefaultValues", () => {
+    // ACT: create data structure of a competition
     const competition = createCompetitionFromJSON(jsonObject.tournament);
 
-    // assert object
+    // ASSERT: data structure is equal to expected
     expect(competition).toEqual(expectedCompetitionWithDefaultValues);
+  });
+});
+
+describe("setCompetitionStatus", () => {
+  test("Set new competition state", () => {
+    // ARRANGE: Create new competition
+    let competition = createCompetitionFromJSON(jsonObject.tournament);
+
+    // ACT: Set new competition state
+    competition = setCompetitionStatus(competition, COMPETITION_STATUS.COMP_READY_ROUND_READY);
+
+    // ARRANGE: check the competition state
+    expect(competition.state).toBe(COMPETITION_STATUS.COMP_READY_ROUND_READY);
   });
 });
 
