@@ -7,6 +7,7 @@ function createCurrentRanking(players, matches) {
   addMatchDetails(players, dummyMatches);
 
   players.forEach(player => {
+    const newTTR = calculateNewTTR(player, players);
     ranking.push({
       place: 0,
       id: player.id,
@@ -16,10 +17,9 @@ function createCurrentRanking(players, matches) {
       gamesLost: player.matchIds.length - player.gamesWon,
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
-      //ToDo feature - live ttr
-      ttr_beginn: 1000,
-      ttr_now: 1123,
-      ttr_diff: 123,
+      ttr_beginn: player.qttr,
+      ttr_now: newTTR,
+      ttr_diff: newTTR - player.qttr,
       matches: getMatchesInvolved(player, dummyMatches)
     });
   });
@@ -99,6 +99,40 @@ function calculateBHZ(playerToCalculate, players) {
     }
   });
   return bhz;
+}
+
+// calculateNewTTR : playerToCalculate, [players] -> newTTR
+function calculateNewTTR(playerToCalculate, players) {
+  //1. get all "real" opponents
+  const opponents = playerToCalculate.opponentIds.filter(
+    opponentId => opponentId !== "FreeTicket"
+  );
+
+  //2. get of all opponents their ttr value
+  let opponentTTR = [];
+  players.forEach(player => {
+    if (opponents.includes(player.id)) {
+      //ToDO in future use player.ttr
+      opponentTTR.push(player.qttr);
+    }
+  });
+
+  //3. calculate the new ttr of the player
+  //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
+  let ttrDifference = 0;
+  opponentTTR.forEach(ttr => {
+    //calc Pa for each opponent
+    let exp = (ttr - playerToCalculate.qttr) / 150;
+    let n = 1 + Math.pow(10, exp);
+    let Pa = 1 / n;
+    Pa = parseFloat(Pa.toFixed(3));
+    ttrDifference += (1 - Pa) * 16;
+  });
+
+  ttrDifference = Math.round(
+    ttrDifference - (opponentTTR.length - playerToCalculate.gamesWon) * 16
+  );
+  return playerToCalculate.qttr + ttrDifference;
 }
 
 // getMatchesInvolved : player, [matches] -> [mactchesInvolved]
