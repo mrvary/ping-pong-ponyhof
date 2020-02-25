@@ -6,49 +6,46 @@ body {
   margin: 2vh 2vh;
 }
 
-.competitionPage__table__first-row-style {
-  position: relative;
-  margin: 2vh 0vh;
+.competitionPage__centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.competitionPage__table {
   width: 80%;
   border-radius: 2vh;
   background: var(--sec-background-color);
   font-size: 2vh;
   color: var(--prim-font-color);
-  display: flex;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
 }
-
-.content {
-  position: absolute;
-  width: 100;
-  height: 100%;
+.competitionPage__table--def {
+  margin: 2vh 0vh;
 }
-
-.competitionPage__center-table {
-  display: flex;
-  justify-content: space-around;
-}
-
-.competitionPage__table__first-row-alignment {
-  position: relative;
+.competitionPage__table--values {
   margin: 0.3vh 0vh;
-  max-width: 80%;
-  border-radius: 2vh;
-  background: var(--sec-background-color);
-  display: flex;
-  font-size: 2vh;
-  color: var(--prim-font-color);
-  justify-content: space-around;
-  align-items: center;
 }
-
-.competitionPage__table__column-alignment {
+.competitionPage__table--elements {
   color: var(--prim-font-color);
-  width: 14vh;
   height: 7vh;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
+  font: 10vw;
+}
+/*
+  border: 0.1vh solid var(--grey-out-color);
+
+*/
+.competitionPage__table__bearbeiten-btn {
+  font-size: 2vh;
+  border: none;
+  background: var(--prim-background-color);
+}
+.competitionPage__table__bearbeiten-btn:hover {
+  color: var(--grey-out-color);
+}
+.competitionPage__table__bearbeiten-btn:focus {
+  outline: 0;
 }
 
 .competitionPage__link-ip-adress-statistic {

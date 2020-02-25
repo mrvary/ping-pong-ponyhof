@@ -32,44 +32,14 @@ function setMatchesOfCurrentRound(competition, matches) {
   competition.round_matchIds = matches.map(match => match.id);
 }
 
-function setCompetitionStatus(
-  competition,
-  userChangedCompetition,
-  isCompleted
-) {
-  const oldState = competition.status;
-
-  if (competition.status === COMPETITION_STATUS.COMP_CREATED) {
-    competition.status = COMPETITION_STATUS.COMP_READY_ROUND_READY;
-  } else if (competition.status === COMPETITION_STATUS.COMP_READY_ROUND_READY) {
-    competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY;
-  } else if (
-    competition.status === COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY
-  ) {
-    if (userChangedCompetition) {
-      competition.status = COMPETITION_STATUS.COMP_READY_ROUND_READY;
-    } else {
-      competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE;
-    }
-  } else if (
-    competition.status === COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE
-  ) {
-    if (userChangedCompetition) {
-      competition.status = COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE;
-    } else if (isCompleted) {
-      competition.status = COMPETITION_STATUS.COMP_COMPLETED;
-    } else {
-      competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_READY;
-    }
-  } else if (
-    competition.status === COMPETITION_STATUS.COMP_READY_ROUND_ACTIVE
-  ) {
-    competition.status = COMPETITION_STATUS.COMP_ACTIVE_ROUND_ACTIVE;
-  } else {
-    competition.status = COMPETITION_STATUS.COMP_CREATED;
-  }
-
-  console.log("competition status:", oldState, "-->", competition.status);
+function setCompetitionStatus(competition, newStatus) {
+  console.log(
+    "Set new competition status:",
+    competition.status,
+    "-->",
+    newStatus
+  );
+  return { ...competition, state: newStatus };
 }
 
 module.exports = {

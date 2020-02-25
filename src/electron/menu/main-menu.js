@@ -158,6 +158,30 @@ const template = [
   }
 ];
 
+if (process.platform === "darwin") {
+  const name = app.getName();
+  template.unshift({
+    label: name,
+    submenu: [
+      {
+        role: "hide"
+      },
+      {
+        role: "hideothers"
+      },
+      {
+        role: "unhide"
+      },
+      {
+        type: "separator"
+      },
+      {
+        role: "quit"
+      }
+    ]
+  });
+}
+
 function createMenu() {
   const mainMenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(mainMenu);

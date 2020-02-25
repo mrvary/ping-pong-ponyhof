@@ -35,7 +35,7 @@ describe("open()", () => {
             message = e.message;
         } finally {
             // ASSERT: check if error message is the same
-            expect(message).toEqual(metaStorage.ERROR_MESSAGES.Error1)
+            expect(message).toEqual(metaStorage.ERROR_MESSAGES.FilePathIsNotDefined)
         }
     });
 
@@ -107,7 +107,7 @@ describe("createCompetition()", () => {
             message = e.message;
         } finally {
             // ASSERT: compare exception message
-            expect(message).toEqual(metaStorage.ERROR_MESSAGES.Error2);
+            expect(message).toEqual(metaStorage.ERROR_MESSAGES.CompetitionExists);
         }
     });
 });

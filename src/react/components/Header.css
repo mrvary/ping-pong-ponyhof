@@ -41,9 +41,9 @@
 .header__upload-xml-button {
   width: 27vh;
   height: 20vh;
-  color: var(--grey-out-color);
+  color: var(--prim-font-color);
   font-size: 2vh;
-  border: 0.1vh solid var(--prim-font-color);
+  border: 0.3vh solid var(--prim-font-color);
   background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
@@ -52,17 +52,16 @@
 }
 
 .header__upload-xml-button:hover {
-  color: var(--prim-font-color);
-  border: 0.3vh solid var(--grey-out-color);
+  color: var(--grey-out-color);
+  border: 0.1vh solid var(--grey-out-color);
 }
 
 .header__upload-xml-button:focus {
   outline: 0;
 }
 .header__upload-xml-button--true {
-  border: 0.5vh solid green;
+  border: 0.5vh solid var(--success-color);
 }
-
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
