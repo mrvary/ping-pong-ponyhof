@@ -22,7 +22,6 @@ const config = require("./config");
 const { importXML } = require("../modules/import/xml-import");
 
 // models
-const { mockedMatches } = require("../assets/mock-data/match.mock.data");
 const { setCompetitionStatus } = require("../modules/models/competition");
 
 // persistence
@@ -36,8 +35,7 @@ const socketIOMessages = require("../client/src/shared/socket-io-messages");
 const ipcChannels = require("../shared/ipc/ipcChannels");
 
 let competition = null;
-let matchTableMap = new Map();
-let tableNumber = 1;
+let tables = null;
 
 app.on("ready", () => {
   initDevTools();
@@ -124,32 +122,49 @@ ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
   }
 });
 
+function getMatchesWithPlayersFromCompetition(id) {
+  // 1. open competition storage
+  const filePath = fileManager.getCompetitionFilePath(id);
+  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+
+  // 2. get players and current matches from competition
+  const currentRoundMatchIds = competition.round_matchIds;
+  const matches = competitionStorage.getMatchesByIds(currentRoundMatchIds);
+  const players = competitionStorage.getAllPlayers();
+
+  // 3. map players to match
+  return mapPlayersToMatches(matches, players);
+}
+
 ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
   const { id } = args;
 
-  // map matches to tables
+  // 1. initialize competition
+  competition = metaStorage.getCompetition(id);
+
+  // 2. check if tables are initialized ...
   let matchesWithPlayers = [];
-  if (matchTableMap.size === 0) {
-    // get meta data of competition
-    competition = metaStorage.getCompetition(id);
-
-    // open competition storage
-    const filePath = fileManager.getCompetitionFilePath(id);
-    competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-
-    // get players and matches by round
-    const matches = competitionStorage.getMatchesByIds(
-      competition.round_matchIds
-    );
-    const players = competitionStorage.getAllPlayers();
-
-    matchesWithPlayers = mapPlayersToMatches(matches, players);
-    initCurrentRound(matchesWithPlayers);
-  } else {
-    // loop over values
-    for (let matchWithPlayers of matchTableMap.values()) {
-      matchesWithPlayers.push(matchWithPlayers);
+  if (tables) {
+    // .. return matchesWithPlayers of tables
+    for (let matchWithPlayer of tables.values()) {
+      matchesWithPlayers.push(matchesWithPlayers);
     }
+  } else {
+    // get matches and players from competition
+    matchesWithPlayers = getMatchesWithPlayersFromCompetition(id);
+
+    tables = new Map();
+    let tableNumber = 1;
+
+    // add for each match a table
+    matchesWithPlayers.forEach(matchWithPlayers => {
+      tables.set(tableNumber, matchWithPlayers);
+
+      console.log(
+        `Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`
+      );
+      tableNumber++;
+    });
   }
 
   // set competition status
@@ -189,22 +204,21 @@ function initMetaStorage() {
 function initHTTPServer(port) {
   server.initHTTPServer(port);
 
-  // TODO: maybe remove emitter?
-  // server.SocketIOInputEmitter.on(socketIOMessages.UPDATE_SETS, args => {
-  //   const { tableNumber } = args;
-  //   const matchWithPlayers = getMatchByTableNumber(tableNumber);
-  //   console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
-  //   server.SocketIOOutputEmitter.emit(socketIOMessages.UPDATE_SETS, {
-  //     matchWithPlayers
-  //   });
-  // });
+  server.SocketIOInputEmitter.on(socketIOMessages.GET_MATCH, args => {
+    const { tableNumber } = args;
+    const matchWithPlayers = getMatchByTableNumber(tableNumber);
+    console.log(`Table ${tableNumber} execute get match`, matchWithPlayers);
+    server.SocketIOOutputEmitter.emit(socketIOMessages.SEND_MATCH, {
+      matchWithPlayers
+    });
+  });
 }
 
 function getMatchByTableNumber(tableNumber) {
   // use mocked match as default
   let matchWithPlayers = {};
-  if (matchTableMap.size > 0) {
-    matchWithPlayers = matchTableMap.get(tableNumber);
+  if (tables.size > 0) {
+    matchWithPlayers = tables.get(tableNumber);
   }
 
   return matchWithPlayers;
@@ -233,11 +247,4 @@ function initCurrentRound(matchesWithPlayers) {
   // map matches to available tables
   console.log(`Map matches to tables`);
   tableNumber = 1;
-  matchesWithPlayers.forEach(matchWithPlayers => {
-    matchTableMap.set(tableNumber, matchWithPlayers);
-    console.log(
-      `Table ${tableNumber} - ${matchWithPlayers.match.player1} VS. ${matchWithPlayers.match.player2}`
-    );
-    tableNumber++;
-  });
 }
