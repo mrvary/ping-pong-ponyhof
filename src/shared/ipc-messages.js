@@ -1,24 +1,41 @@
+/**
+ * @author Marco Goebel
+ */
+
+// messages for the ipc-communication in the electron application
 module.exports = {
-  // Windows
+  // ********************************
+  // ipc-renderer -> ipc-main
+  // ********************************
+  GET_COMPETITIONS_REQUEST: "get-competitions-request",
+  DELETE_COMPETITION_REQUEST: "delete-competition-request",
+
+  OPEN_FILE_DIALOG_REQUEST: "open-import-dialog-request",
+  GET_SINGLE_COMPETITION_REQUEST: "get-single-competition-request",
+  IMPORT_XML_FILE_REQUEST: "import-xml-file-request",
+
+  GET_MATCHES: "get-matches",
+  UPDATE_SETS: "update-sets",
+
+  START_COMPETITION: "start-competition",
+  CANCEL_COMPETITION: "cancel-competition",
+  COMPLETE_COMPETITION: "complete-competition",
+
+  START_ROUND: "start-round",
+  NEXT_ROUND: "next-round",
+  CANCEL_ROUND: "cancel-round",
+
   OPEN_NEW_WINDOW: "open-new-window",
 
-  UPDATE_MATCHES: "update-matches",
+  // ********************************
+  // ipc-main -> ipc-renderer
+  // ********************************
+  GET_COMPETITIONS_RESPONSE: "get-competitions-response",
+  DELETE_COMPETITION_RESPONSE: "delete-competition-request",
 
-  // XML IMPORT
-  OPEN_IMPORT_DIALOG: "open-import-dialog",
-  OPEN_IMPORT_DIALOG_SUCCESS: "open-import-dialog-success",
-  IMPORT_XML_FILE: "import-xml-file",
-  IMPORT_XML_FILE_SUCCESS: "import-xml-file_success",
-  IMPORT_XML_FILE_EXCEPTION: "import-xml-file_exception",
+  OPEN_FILE_DIALOG_RESPONSE: "open-import-dialog-response",
+  GET_SINGLE_COMPETITION_RESPONSE: "get-single-competition-response",
+  IMPORT_XML_FILE_RESPONSE: "import-xml-file_response",
 
-  // Competitions
-  GET_ALL_COMPETITIONS: "get-all-tournaments",
-  DELETE_COMPETITION: "delete-tournament",
-  GET_MATCHES_BY_COMPETITON_ID: "get-matches-by-competition-id",
-
-  // Matches
-  GET_MATCHES_BY_ROUND: "get-matches-for-round",
-
-  // Trigger
-  START_ROUND: "start-round"
+  UPDATE_MATCHES: "update-matches"
 };

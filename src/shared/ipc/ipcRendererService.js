@@ -10,19 +10,21 @@ function createWindow(route) {
 }
 
 function openXMLDialog(callback) {
-  ipcRenderer.once(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, (event, args) => {
+  ipcRenderer.once(ipcChannels.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
     const { xmlFilePath } = args;
     callback(xmlFilePath);
   });
-  ipcRenderer.send(ipcChannels.OPEN_IMPORT_DIALOG);
+  ipcRenderer.send(ipcChannels.OPEN_FILE_DIALOG_REQUEST);
 }
 
 function importXMLFile(xmlFilePath, callback) {
-  ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_SUCCESS, (event, args) => {
+  ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_RESPONSE, (event, args) => {
     callback(args);
   });
 
-  ipcRenderer.send(ipcChannels.IMPORT_XML_FILE, { xmlFilePath: xmlFilePath });
+  ipcRenderer.send(ipcChannels.IMPORT_XML_FILE_REQUEST, {
+    xmlFilePath: xmlFilePath
+  });
 }
 
 function startRound() {
@@ -30,20 +32,20 @@ function startRound() {
 }
 
 function getAllCompetitions(callback) {
-  ipcRenderer.once(ipcChannels.GET_ALL_COMPETITIONS, (event, args) => {
+  ipcRenderer.once(ipcChannels.GET_COMPETITIONS_REQUEST, (event, args) => {
     const { competitions } = args;
     callback(competitions);
   });
 
-  ipcRenderer.send(ipcChannels.GET_ALL_COMPETITIONS);
+  ipcRenderer.send(ipcChannels.GET_COMPETITIONS_REQUEST);
 }
 
 function deleteCompetition(id, callback) {
-  ipcRenderer.once(ipcChannels.DELETE_COMPETITION, (event, args) => {
+  ipcRenderer.once(ipcChannels.DELETE_COMPETITION_REQUEST, (event, args) => {
     callback();
   });
 
-  ipcRenderer.send(ipcChannels.DELETE_COMPETITION, { id: id });
+  ipcRenderer.send(ipcChannels.DELETE_COMPETITION_REQUEST, { id: id });
 }
 
 function getPlayersByPlayerId(id) {

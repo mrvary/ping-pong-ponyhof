@@ -231,7 +231,7 @@ const CompetitionPage = () => {
     }
 
     // trigger initialize competition
-    ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
+    ipcRenderer.send(ipcChannels.GET_MATCHES, {
       id: competitionID
     });
   };

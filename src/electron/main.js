@@ -26,7 +26,8 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const ipcChannels = require("../shared/ipc-messages");
+const serverMessages = require("../modules/server/server-messages");
+const ipcMessages = require("../shared/ipc-messages");
 
 // windows actions
 const uiActions = require("./actions/uiActions");
@@ -97,11 +98,11 @@ function initHTTPServer() {
   server.initHTTPServer(config.SERVER_PORT);
 
   server.SocketIOInputEmitter.on(
-    server.SERVER_MESSAGES.UPDATE_CONNECTION_STATUS,
+    serverMessages.UPDATE_CONNECTION_STATUS,
     args => {
       console.log(
         "Server-->IPC-Main:",
-        server.SERVER_MESSAGES.UPDATE_CONNECTION_STATUS
+        serverMessages.UPDATE_CONNECTION_STATUS
       );
       console.log(args);
       const { connectedDevice, tableNumber } = args;
@@ -116,7 +117,7 @@ function initHTTPServer() {
         });
       }
 
-      mainWindow.webContents.send(ipcChannels.UPDATE_MATCHES, {
+      mainWindow.webContents.send(ipcMessages.UPDATE_MATCHES, {
         matchesWithPlayers: matchesWithPlayers
       });
     }
@@ -124,20 +125,16 @@ function initHTTPServer() {
 }
 
 function registerIPCMainEvents() {
-  ipcMain.on(ipcChannels.START_ROUND, () => {
-    server.sendStartRoundBroadcast();
-  });
-
-  ipcMain.on(ipcChannels.GET_ALL_COMPETITIONS, event => {
+  ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, event => {
     const competitions = metaStorage.getAllCompetitions();
     console.log("Retrieved competitions from database", competitions.length);
 
-    event.sender.send(ipcChannels.GET_ALL_COMPETITIONS, {
+    event.sender.send(ipcMessages.GET_COMPETITIONS_REQUEST, {
       competitions: competitions
     });
   });
 
-  ipcMain.on(ipcChannels.DELETE_COMPETITION, (event, data) => {
+  ipcMain.on(ipcMessages.DELETE_COMPETITION_REQUEST, (event, data) => {
     const { id } = data;
 
     if (!config.USE_IN_MEMORY_STORAGE) {
@@ -145,18 +142,18 @@ function registerIPCMainEvents() {
     }
     metaStorage.deleteCompetition(id);
 
-    event.sender.send(ipcChannels.DELETE_COMPETITION);
+    event.sender.send(ipcMessages.DELETE_COMPETITION_REQUEST);
   });
 
-  ipcMain.on(ipcChannels.OPEN_IMPORT_DIALOG, event => {
+  ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
     uiActions.openXMLFile().then(xmlFilePath => {
-      event.sender.send(ipcChannels.OPEN_IMPORT_DIALOG_SUCCESS, {
+      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, {
         xmlFilePath: xmlFilePath
       });
     });
   });
 
-  ipcMain.on(ipcChannels.IMPORT_XML_FILE, (event, args) => {
+  ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, (event, args) => {
     try {
       const { xmlFilePath } = args;
       competition = importXML(
@@ -168,16 +165,16 @@ function registerIPCMainEvents() {
 
       // notify react app that import is ready and was successful
       const arguments = { competitionId: competition.id, message: "success" };
-      event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
     } catch (err) {
       // notify react app that a error has happend
       console.log(err.message);
       const arguments = { competitionId: "", message: err.message };
-      event.sender.send(ipcChannels.IMPORT_XML_FILE_SUCCESS, arguments);
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
     }
   });
 
-  ipcMain.on(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, (event, args) => {
+  ipcMain.on(ipcMessages.GET_MATCHES, (event, args) => {
     const { id } = args;
 
     // 1. initialize competition
@@ -187,12 +184,16 @@ function registerIPCMainEvents() {
     initializeMatchesByCompetitionId(id);
 
     // 3. send matches to renderer
-    event.sender.send(ipcChannels.UPDATE_MATCHES, {
+    event.sender.send(ipcMessages.UPDATE_MATCHES, {
       matchesWithPlayers: matchesWithPlayers
     });
   });
 
-  ipcMain.on(ipcChannels.OPEN_NEW_WINDOW, (event, args) => {
+  ipcMain.on(ipcMessages.START_ROUND, () => {
+    server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
     const { route } = args;
     createWindow(route);
   });
