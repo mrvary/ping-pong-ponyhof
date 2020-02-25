@@ -172,8 +172,8 @@ function createLoginResponseData(tableNumber) {
   const state = "TODO";
 
   if (
-      state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-      state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
   ) {
     return {
       roundAvailable: false,

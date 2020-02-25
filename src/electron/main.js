@@ -207,29 +207,30 @@ function initHTTPServer(port) {
   server.initHTTPServer(port);
 
   server.SocketIOInputEmitter.on(
-      server.SERVER_MESSAGES.UPDATE_CONNECTION_STATUS,
-      args => {
-        console.log(
-            "Server-->IPC-Main:",
-            server.SERVER_MESSAGES.UPDATE_CONNECTION_STATUS
-        );
-        console.log(args);
-        const { connectedDevice, tableNumber } = args;
+    server.SERVER_MESSAGES.UPDATE_CONNECTION_STATUS,
+    args => {
+      console.log(
+        "Server-->IPC-Main:",
+        server.SERVER_MESSAGES.UPDATE_CONNECTION_STATUS
+      );
+      console.log(args);
+      const { connectedDevice, tableNumber } = args;
 
-        if (matchesWithPlayers.length > 0) {
-          matchesWithPlayers = matchesWithPlayers.map(match => {
-            if (match.tableNumber === tableNumber) {
-              return { ...match, connectedDevice };
-            }
+      if (matchesWithPlayers.length > 0) {
+        matchesWithPlayers = matchesWithPlayers.map(match => {
+          if (match.tableNumber === tableNumber) {
+            return { ...match, connectedDevice };
+          }
 
-            return match;
-          });
-        }
-
-        mainWindow.webContents.send(ipcChannels.UPDATE_MATCHES, {
-          matchesWithPlayers: matchesWithPlayers
+          return match;
         });
+      }
+
+      mainWindow.webContents.send(ipcChannels.UPDATE_MATCHES, {
+        matchesWithPlayers: matchesWithPlayers
       });
+    }
+  );
 
   server.SocketIOInputEmitter.on(socketIOMessages.GET_MATCH, args => {
     const { tableNumber } = args;
