@@ -77,7 +77,7 @@ function calculateNewTTR(playerToCalculate, players) {
     }
   });
 
-  //3. calculate the new ttr of the player
+  //3. calculate Pa of the player
   //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
   let ttrDifference = 0;
   opponentTTR.forEach(ttr => {
@@ -89,9 +89,16 @@ function calculateNewTTR(playerToCalculate, players) {
     ttrDifference += (1 - Pa) * 16;
   });
 
+  //4. calculate ttr difference
   ttrDifference = Math.round(
     ttrDifference - (opponentTTR.length - playerToCalculate.gamesWon) * 16
   );
+
+  debugger;
+  //5. check for Freeticket games
+  if (opponents.length !== playerToCalculate.opponentIds.length)
+    ttrDifference -= 16;
+
   return playerToCalculate.qttr + ttrDifference;
 }
 
