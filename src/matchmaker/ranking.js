@@ -195,7 +195,12 @@ function logRanking(ranking) {
       } else {
         log += match.player1lastname + " ";
       }
-      log += match.result.player1 + ":" + match.result.player2 + "\t";
+
+      if (match.player1 === player.id) {
+        log += match.result.player1 + ":" + match.result.player2 + "\t";
+      } else {
+        log += match.result.player2 + ":" + match.result.player1 + "\t";
+      }
     });
     log += "\n";
   });
