@@ -107,34 +107,28 @@ function getMatchesInvolved(player, matches) {
 // addMatchDetails : [players], [matches] -> [matchesWithDetail]
 function addMatchDetails(players, matches) {
   matches.forEach(match => {
-    match.player1firstname = getFirstNameOfPlayerId(match.player1, players);
-    match.player2firstname = getFirstNameOfPlayerId(match.player2, players);
-    match.player1lastname = getLastNameOfPlayerId(match.player1, players);
-    match.player2lastname = getLastNameOfPlayerId(match.player2, players);
+    match.player1firstname = getParameterByPlayerId(
+      match.player1,
+      players,
+      "firstname"
+    );
+    match.player2firstname = getParameterByPlayerId(
+      match.player2,
+      players,
+      "firstname"
+    );
+    match.player1lastname = getParameterByPlayerId(
+      match.player1,
+      players,
+      "lastname"
+    );
+    match.player2lastname = getParameterByPlayerId(
+      match.player2,
+      players,
+      "lastname"
+    );
     match.result = createMatchResult(match);
   });
-}
-
-// getFirstNameOfPlayerId : playerId, [players] -> firstname
-function getFirstNameOfPlayerId(playerId, players) {
-  let firstname = "";
-  players.forEach(player => {
-    if (player.id === playerId) {
-      firstname = player.firstname;
-    }
-  });
-  return firstname;
-}
-
-// getLastNameOfPlayerId : playerId, [players] -> lastname
-function getLastNameOfPlayerId(playerId, players) {
-  let lastname = "";
-  players.forEach(player => {
-    if (player.id === playerId) {
-      lastname = player.lastname;
-    }
-  });
-  return lastname;
 }
 
 // getParameterByPlayerId : playerId, [players], parameter -> value
@@ -212,6 +206,5 @@ module.exports = {
   createCurrentRanking,
   logRanking,
   createMatchResult,
-  getLastNameOfPlayerId,
   getParameterByPlayerId
 };
