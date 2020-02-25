@@ -5,7 +5,7 @@
 // Constants
 const PLAYMODE = { SCHWEIZER_SYSTEM: "Schweizer System" };
 
-const COMPETITION_STATUS = {
+const COMPETITION_STATE = {
   COMP_CREATED: "comp-created",
   COMP_READY_ROUND_READY: "comp-ready-round-ready",
   COMP_READY_ROUND_ACTIVE: "comp-ready-round-active",
@@ -24,7 +24,7 @@ function createCompetitionFromJSON(dataFromJSON) {
     date: dataFromJSON["start-date"],
     playmode: dataFromJSON.competition["preliminary-round-playmode"],
     round_matchIds: [],
-    status: COMPETITION_STATUS.COMP_CREATED
+    status: COMPETITION_STATE.COMP_CREATED
   };
 }
 
@@ -44,7 +44,7 @@ function setCompetitionStatus(competition, newStatus) {
 
 module.exports = {
   PLAYMODE,
-  COMPETITION_STATUS,
+  COMPETITION_STATE,
   createCompetitionFromJSON,
   setMatchesOfCurrentRound,
   setCompetitionStatus
