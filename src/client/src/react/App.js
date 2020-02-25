@@ -10,8 +10,6 @@ import Login from "./pages/Login/Login";
 import WaitForRound from "./pages/WaitForRound/WaitForRound";
 import Match from "./pages/Match";
 
-import Title from "./components/Title";
-
 const appTitle = "TTRace";
 
 // for development: the requested server is the webserver
@@ -20,25 +18,26 @@ const appTitle = "TTRace";
 // for production:  the requested server is the one and only
 const isDev = true;
 const getServerURL = () => {
-  const url = isDev ? "localhost:4000" : document.location.host;
+  let url = isDev ? "localhost:4000" : document.location.host;
   console.log("Requested server: ", url);
   return url;
 };
 
 function App() {
   const [socket, setSocket] = useState(null);
-
-  // possibilities: LOGIN | NO_COMP | NEXT_PLAYERS | MATCH | WAITING
-  const [page, setPage] = useState("LOGIN");
+  const [page, setPage] = useState("login");
   const [isConnected, setIsConnected] = useState(false);
 
   const [availableTables, setAvailableTables] = useState([]);
   const [tableNumber, setTableNumber] = useState(-1);
   const [matchWithPlayers, setMatchWithPlayers] = useState(null);
 
+  const toPage = page => {
+    setPage(page);
+  };
+
   const content = () => {
-    const currentPage = page;
-    if (currentPage === "LOGIN") {
+    if (page === "login") {
       return (
         <Login
           appTitle={appTitle}
@@ -49,53 +48,24 @@ function App() {
           tableNumberChanged={handleTableNumberChange}
         />
       );
-    }
-
-    if (currentPage === "NO_COMP") {
-      return (
-        <div>
-          <Title title="No competition started yet, please wait."></Title>
-        </div>
-      );
-    }
-
-    if (currentPage === "NEXT_PLAYERS" || currentPage === "MATCH") {
+    } else if (page === "wait") {
+      return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
+    } else if (page === "match") {
       return (
         <Match
           appTitle={appTitle}
           isConnected={isConnected}
-          onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
           matchWithPlayers={matchWithPlayers}
-          sendFinishedMatch={sendFinishedMatch}
-          sendSets={sendSets}
         />
       );
     }
-
-    if (currentPage === "WAITING") {
-      return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
-    }
-    return <></>;
   };
 
   const sendTableNumber = event => {
     event.preventDefault();
-    console.log("CLIENT->SERVER: LOGIN_REQUEST");
-    socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
-    setPage("WAITING");
-  };
-
-  const sendFinishedMatch = match => event => {
-    // todo -> { sets: [], finished: true }
-    // console.log("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
-    // socket.emit(socketIOMessages.UPDATE_SETS_REQUEST { match });
-    setPage("WAITING");
-  };
-
-  const sendSets = sets => event => {
-    // todo -> { sets: [], finished: false }
-    console.log("CLIENT->SERVER: UPDATE_SETS_REQUEST");
-    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, { tableNumber, sets });
+    if (tableNumber >= 1) {
+      socket.emit(socketIOMessages.LOGIN_TABLE, { tableNumber });
+    }
   };
 
   const handleTableNumberChange = event => {
@@ -107,75 +77,41 @@ function App() {
     const connection = io(base_url);
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
-      console.log("SERVER->CLIENT: AVAILABLE_TABLES");
       console.log(tables);
 
       setAvailableTables(tables);
       setTableNumber(tables[0]);
     });
 
-    connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
-      console.log("SERVER->CLIENT: LOGIN_RESPONSE");
-      // check message for error
-      // response: { tableNumber, roundStarted, match, message }
-      // if (match && match finished) WAITING
-      // if (roundStarted && match) MATCH;
-      // if (match) NEXT_PLAYERS
-      // NO_COMP
-
-      console.log("data: ");
+    connection.on(socketIOMessages.LOGIN_TABLE, data => {
+      const { tableNumber, matchStarted } = data;
       console.log(data);
       setIsConnected(true);
+
+      console.log("matchStart ->", matchStarted);
+      matchStarted
+        ? connection.emit(socketIOMessages.GET_MATCH, { tableNumber })
+        : toPage("wait");
+
+      connection.on(socketIOMessages.START_ROUND, () => {
+        connection.emit(socketIOMessages.GET_MATCH, { tableNumber });
+      });
+
+      connection.on(socketIOMessages.SEND_MATCH, data => {
+        const { matchWithPlayers } = data;
+        console.log(matchWithPlayers);
+
+        setMatchWithPlayers(matchWithPlayers);
+        toPage("match");
+      });
     });
 
-    connection.on(socketIOMessages.NEXT_ROUND, () => {
-      // todo: get match from matches
-      if (page === "MATCH" || page === "LOGIN") {
-        return;
-      }
-      console.log("SERVER->CLIENT: NEXT_ROUND");
-      setMatchWithPlayers(matchWithPlayers);
-
-      // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
-      setPage("NEXT_PLAYERS");
+    connection.on(socketIOMessages.LOGIN_ERROR, data => {
+      const { tableNumber } = data;
+      alert(
+        `A device is already connected with the table ${tableNumber} or all slots are busy`
+      );
     });
-
-    connection.on(socketIOMessages.START_ROUND, () => {
-      console.log("SERVER->CLIENT: START_ROUND");
-      setPage("MATCH");
-    });
-
-    connection.on(socketIOMessages.CANCEL_ROUND, () => {
-      console.log("SERVER->CLIENT: CANCEL_ROUND");
-      // page -> WAITING
-    });
-
-    connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
-      console.log("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
-      // error handling, probably send sets again
-    });
-
-    connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
-      console.log("SERVER->CLIENT: COMPETITION_CANCELED");
-      // page -> NO-COMP
-    });
-    // remove
-    // connection.on(socketIOMessages.UPDATE_SETS, data => {
-    //   console.log("SERVER->CLIENT: UPDATE_SETS");
-    //   const { matchWithPlayers, roundStarted } = data;
-    //   console.log(matchWithPlayers);
-    //   console.log(data);
-
-    // });
-
-    // remove
-    // connection.on(socketIOMessages.LOGIN_ERROR, data => {
-    //   console.log("SERVER->CLIENT: LOGIN_ERROR");
-    //   const { tableNumber } = data;
-    //   alert(
-    //     `A device is already connected with the table ${tableNumber} or all slots are busy`
-    //   );
-    // });
 
     setSocket(connection);
   }
