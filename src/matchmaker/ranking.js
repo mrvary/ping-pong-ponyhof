@@ -49,46 +49,6 @@ function createCurrentRanking(players, matches) {
   return ranking;
 }
 
-// logRanking : [ranking] -> console.log(ranking)
-function logRanking(ranking) {
-  const round = ranking[0].matches.length;
-  let log = "---------Ranking after Round " + round + " --------\n";
-  log +=
-    "Platz\tName\t\tS:N\tBHZ\tTTR-Start\tTTR-Aktuell\tTTR-Diff\t" +
-    "|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde\n";
-
-  ranking.forEach(player => {
-    log +=
-      player.place +
-      "\t\t" +
-      player.lastname.substring(0, 7) +
-      "\t\t" +
-      player.gamesWon +
-      ":" +
-      player.gamesLost +
-      "\t" +
-      player.bhz +
-      "\t" +
-      player.qttr +
-      "\t\t" +
-      player.ttr_now +
-      "\t\t" +
-      player.ttr_diff +
-      "\t\t|\t";
-
-    // create for each match a summary -> Krause 3:0
-    player.matches.forEach(match => {
-      if (match.player1 === player.id) {
-        log += match.player2lastname + " ";
-      } else {
-        log += match.player1lastname + " ";
-      }
-      log += match.result.player1 + ":" + match.result.player2 + "\t";
-    });
-    log += "\n";
-  });
-  console.log(log);
-}
 // calculateBHZ : player, [matches] -> bhz
 function calculateBHZ(playerToCalculate, players) {
   let bhz = 0;
@@ -194,6 +154,47 @@ function createMatchResult(match) {
   });
 
   return { player1: player1SetsWon, player2: player2SetsWon };
+}
+
+// logRanking : [ranking] -> console.log(ranking)
+function logRanking(ranking) {
+  const round = ranking[0].matches.length;
+  let log = "---------Ranking after Round " + round + " --------\n";
+  log +=
+    "Platz\tName\t\tS:N\tBHZ\tTTR-Start\tTTR-Aktuell\tTTR-Diff\t" +
+    "|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde\n";
+
+  ranking.forEach(player => {
+    log +=
+      player.place +
+      "\t\t" +
+      player.lastname.substring(0, 7) +
+      "\t\t" +
+      player.gamesWon +
+      ":" +
+      player.gamesLost +
+      "\t" +
+      player.bhz +
+      "\t" +
+      player.qttr +
+      "\t\t" +
+      player.ttr_now +
+      "\t\t" +
+      player.ttr_diff +
+      "\t\t|\t";
+
+    // create for each match a summary -> Krause 3:0
+    player.matches.forEach(match => {
+      if (match.player1 === player.id) {
+        log += match.player2lastname + " ";
+      } else {
+        log += match.player1lastname + " ";
+      }
+      log += match.result.player1 + ":" + match.result.player2 + "\t";
+    });
+    log += "\n";
+  });
+  console.log(log);
 }
 
 module.exports = { createCurrentRanking, logRanking, createMatchResult };
