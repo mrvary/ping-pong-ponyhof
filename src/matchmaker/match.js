@@ -1,5 +1,4 @@
-// TODO: use hash?
-const { createMatchResult } = require("./ranking.js");
+const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
 
 let matchId = 0;
 
@@ -115,14 +114,20 @@ function getMatchWinner(match) {
   return "0";
 }
 
-function logMatches(matches) {
+function logMatches(matches, players) {
   let log = "";
   matches.forEach(match => {
     const res = createMatchResult(match);
     log +=
-      match.player1 +
+      "(" +
+      getParameterByPlayerId(match.player1, players, "gamesWon") +
+      ")" +
+      getParameterByPlayerId(match.player1, players, "lastname") +
       " - " +
-      match.player2 +
+      "(" +
+      getParameterByPlayerId(match.player2, players, "gamesWon") +
+      ")" +
+      getParameterByPlayerId(match.player2, players, "lastname") +
       " " +
       res.player1 +
       ":" +

@@ -40,7 +40,7 @@ describe("playCompetition", () => {
     });
 
     //3.3 log matches
-    logMatches(currentMatches);
+    logMatches(currentMatches, players);
 
     //4. update winner
     players = updateWinner(players, currentMatches);
