@@ -19,7 +19,10 @@ const connectedClients = new Map();
 const SocketIOInputEmitter = new EventEmitter();
 const SocketIOOutputEmitter = new EventEmitter();
 
-// server variables
+const SERVER_MESSAGES = {
+  UPDATE_CONNECTION_STATUS: "update-connection-status"
+};
+
 let server = null;
 let serverSocket = null;
 
@@ -59,6 +62,7 @@ function initSocketIO() {
     listenToClientEvent(clientSocket);
   });
 }
+
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
   clientSocket.on(socketIOMessages.LOGIN_REQUEST, ({ tableNumber }) => {
@@ -84,6 +88,11 @@ function listenToClientEvent(clientSocket) {
   );
 }
 
+function getConnectedDeviceByTableNumber(tableNumber) {
+  const clientId = getKeyByValue(connectedClients, tableNumber);
+  return clientId ? clientId : null;
+}
+
 // CLIENT -> SERVER COMMUNICATION
 
 function updateSets(clientSocket, data) {
@@ -102,7 +111,6 @@ function updateSets(clientSocket, data) {
   clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
     message: "🎉 ???"
   });
-  return;
 }
 
 function sendAvailableTablesToClient() {
@@ -144,6 +152,8 @@ function clientLogin(clientSocket, tableNumber) {
   // send available tables to clients
   sendAvailableTablesToClient();
 
+  notifyConnectionStatusToMainIPC(clientSocket.id, tableNumber);
+
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
   // send login response to client with his table number
@@ -178,16 +188,27 @@ function createLoginResponseData(tableNumber) {
   };
 }
 
+function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
+  console.log(connectedDevice);
+  SocketIOInputEmitter.emit(SERVER_MESSAGES.UPDATE_CONNECTION_STATUS, {
+    connectedDevice,
+    tableNumber
+  });
+}
+
 function clientLogout(clientSocket) {
   // check if client is logged in
   if (connectedClients.has(clientSocket.id)) {
-    // delete client from active connections
+    // delete client from active connections and notify renderer
+    const tableNumber = connectedClients.get(clientSocket.id);
     connectedClients.delete(clientSocket.id);
+    notifyConnectionStatusToMainIPC(null, tableNumber);
     console.info(`Client logout [id=${clientSocket.id}]`);
 
     // update clients with available tables
     sendAvailableTablesToClient();
   }
+
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
@@ -228,17 +249,28 @@ function sendBroadcast(eventName, data) {
   console.log(`--- data was ${data}`);
 }
 
+function getKeyByValue(map, searchValue) {
+  for (let [key, value] of map.entries()) {
+    if (value === searchValue) {
+      return key;
+    }
+  }
+}
+
 // helper functions
 function range(start, exclusiveEnd) {
   return [...Array(exclusiveEnd).keys()].slice(start);
 }
 
 module.exports = {
+  SERVER_MESSAGES,
   SocketIOInputEmitter,
   SocketIOOutputEmitter,
 
   initHTTPServer,
   shutdownServer,
+
+  getConnectedDeviceByTableNumber,
 
   sendStartRoundBroadcast
 };

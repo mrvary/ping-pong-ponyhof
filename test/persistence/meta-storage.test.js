@@ -13,7 +13,7 @@ const {
     expectedUpdatedCompetition,
     expectedAllCompetitions
 } = require("../models/competition.test.data");
-const { createCompetitionFromJSON, COMPETITION_STATUS } = require("../../src/modules/models/competition");
+const { createCompetitionFromJSON, COMPETITION_STATE } = require("../../src/modules/models/competition");
 
 let jsonObject = null;
 
@@ -141,7 +141,7 @@ describe("updateCompetition()", () => {
         const competition = createCompetitionFromJSON(jsonObject.tournament);
         metaStorage.createCompetition(competition);
         competition.round_matchIds = [ 0, 1, 2, 3, 4, 5 ];
-        competition.status = COMPETITION_STATUS.ROUND_STARTED;
+        competition.status = COMPETITION_STATE.ROUND_STARTED;
 
         // ACT:
         metaStorage.updateCompetition(competition);

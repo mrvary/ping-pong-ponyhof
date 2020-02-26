@@ -61,7 +61,6 @@ const App = () => {
       }
 
       setCurrentId(competitionId);
-      return;
     });
   };
 
