@@ -7,7 +7,7 @@ function createCurrentRanking(players, matches) {
   addMatchDetails(players, dummyMatches);
 
   players.forEach(player => {
-    const newTTR = calculateNewTTR(player, players);
+    const ttrDifference = calculateTTRDifference(player, players);
     ranking.push({
       place: 0,
       id: player.id,
@@ -18,8 +18,8 @@ function createCurrentRanking(players, matches) {
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
       ttr_beginn: player.qttr,
-      ttr_now: newTTR,
-      ttr_diff: newTTR - player.qttr,
+      ttr_now: player.qttr + ttrDifference,
+      ttr_diff: ttrDifference,
       matches: getMatchesInvolved(player.matchIds, dummyMatches)
     });
   });
@@ -61,8 +61,8 @@ function calculateBHZ(playerToCalculate, players) {
   return bhz;
 }
 
-// calculateNewTTR : playerToCalculate, [players] -> newTTR
-function calculateNewTTR(playerToCalculate, players) {
+// calculateTTRDifference : playerToCalculate, [players] -> newTTR
+function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
   const opponents = playerToCalculate.opponentIds.filter(
     opponentId => opponentId !== "FreeTicket"
@@ -98,7 +98,7 @@ function calculateNewTTR(playerToCalculate, players) {
   if (opponents.length !== playerToCalculate.opponentIds.length)
     ttrDifference -= 16;
 
-  return playerToCalculate.qttr + ttrDifference;
+  return ttrDifference;
 }
 
 // getMatchesInvolved : player, [matches] -> [mactchesInvolved]
@@ -217,7 +217,7 @@ function logRanking(ranking) {
 module.exports = {
   createCurrentRanking,
   calculateBHZ,
-  calculateNewTTR,
+  calculateTTRDifference,
   getMatchesInvolved,
   addMatchDetails,
   logRanking,
