@@ -23,6 +23,7 @@ const {
 
 let competitions = null;
 const initialTableNumber = 4;
+const matchesWithPlayers = { 4: expectedMatchWithPLayers };
 
 beforeAll(() => {
   competitions = [expectedCompetitionWithDefaultValues];
@@ -34,7 +35,7 @@ describe("createStateResponseData()", () => {
     const responseData = createStateResponseData({
       tableNumber: initialTableNumber,
       competitions,
-      matchesWithPlayers: expectedMatchWithPLayers
+      matchesWithPlayers
     });
 
     // ASSERT
@@ -48,8 +49,10 @@ describe("createStateResponseData()", () => {
     // ACT
     const responseData = createStateResponseData({
       tableNumber: initialTableNumber,
-      competitions: competitions.map(c => (c.status = COMP_READY_ROUND_READY)),
-      matchesWithPlayers: expectedMatchWithPLayers
+      competitions: competitions.map(competition => {
+        return { ...competition, status: COMP_READY_ROUND_READY };
+      }),
+      matchesWithPlayers
     });
 
     // ASSERT
@@ -58,8 +61,30 @@ describe("createStateResponseData()", () => {
     expect(tableNumber).toBe(initialTableNumber);
     expect(roundStarted).toBeFalsy();
   });
-  test.todo(
-    "COMP_ACTIVE_ROUND_READY returns {roundStarted, tableNumber, match}"
+
+  test(
+    COMP_ACTIVE_ROUND_READY + " returns {roundStarted, tableNumber, match}",
+    () => {
+      // ACT
+      const responseData = createStateResponseData({
+        tableNumber: initialTableNumber,
+        competitions: competitions.map(competition => {
+          return { ...competition, status: COMP_ACTIVE_ROUND_READY };
+        }),
+        matchesWithPlayers
+      });
+
+      // ASSERT
+      const { roundStarted, tableNumber, match } = responseData;
+      console.log("\n");
+      console.log("\n");
+      console.log(match);
+      console.log("\n");
+      console.log("\n");
+      expect(match).toEqual(expectedResponseMatch);
+      expect(tableNumber).toBe(initialTableNumber);
+      expect(roundStarted).toBeFalsy();
+    }
   );
   test.todo(
     "COMP_ACTIVE_ROUND_ACTIVE return {roundStarted, tableNumber, match}"
