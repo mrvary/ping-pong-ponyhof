@@ -85,7 +85,7 @@ const twoPlayers = [
     lastname: "Hof",
     clubname: "Einhornhausen",
     gamesWon: 9000,
-    matchIds: [],
+    matchIds: [4, 5, 6, 7],
     opponentIds: [],
     qttr: 2020,
     active: true
@@ -96,7 +96,7 @@ const twoPlayers = [
     lastname: "Acker",
     clubname: "ESV SF Neuaubing",
     gamesWon: 0,
-    matchIds: [],
+    matchIds: [1, 4, 9],
     opponentIds: [],
     qttr: 1415,
     active: true
@@ -128,11 +128,45 @@ const matchesToUpdate = [
   }
 ];
 
+const dummyMatches = [
+  {
+    id: 1
+  },
+  {
+    id: 2
+  },
+  {
+    id: 3
+  },
+  {
+    id: 4
+  },
+  {
+    id: 5
+  },
+  {
+    id: 6
+  },
+  {
+    id: 7
+  },
+  {
+    id: 8
+  },
+  {
+    id: 9
+  },
+  {
+    id: 10
+  }
+];
+
 module.exports = {
   matchWithResult_13,
   matchWithResult_12,
   matchWithResult_10,
   matchWithWrongSets,
   twoPlayers,
-  matchesToUpdate
+  matchesToUpdate,
+  dummyMatches
 };

@@ -16,7 +16,8 @@ const {
   matchWithResult_10,
   matchWithWrongSets,
   twoPlayers,
-  matchesToUpdate
+  matchesToUpdate,
+  dummyMatches
 } = require("./ranking.test.data");
 
 describe("createCurrentRanking()", () => {});
@@ -32,8 +33,14 @@ describe("calculateBHZ()", () => {
 });
 
 describe("calculateNewTTR()", () => {});
+
 describe("getMatchesInvolved()", () => {
-  test("get the correct matches back", () => {});
+  test("get the correct matches back", () => {
+    twoPlayers.forEach(player => {
+      player.matches = getMatchesInvolved(player.matchIds, dummyMatches);
+      expect(player.matchIds.length).toBe(player.matches.length);
+    });
+  });
 });
 
 describe("addMatchDetails()", () => {
