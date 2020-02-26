@@ -223,9 +223,7 @@ function getCompetitionsFromDatabase() {
 
 // Delete competitions from meta storage and the corresponding competition database file
 function deleteCompetition(competitionId) {
-  if (!config.USE_IN_MEMORY_STORAGE) {
-    fileManager.deleteTournamentJSONFile(competitionId);
-  }
+  fileManager.deleteTournamentJSONFile(competitionId);
   metaStorage.deleteCompetition(competitionId);
 }
 

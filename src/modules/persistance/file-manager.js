@@ -39,7 +39,7 @@ function deleteTournamentJSONFile(id) {
       console.log("Delete competition JSON file:", filePath);
     }
   } catch (err) {
-    console.error(err);
+    console.log(err);
   }
 }
 
