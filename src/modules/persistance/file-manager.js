@@ -3,6 +3,9 @@ const { app } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
+const dataFolderName = "data";
+const metaStorageFilename = "competitions.json";
+
 function getApplicationDir(directoryName) {
   const appPath = app.getPath("userData");
   const appDataPath = path.join(appPath, directoryName);
@@ -15,12 +18,12 @@ function getApplicationDir(directoryName) {
 }
 
 function getFileFromAppDataPath(filename) {
-  const appDataPath = getApplicationDir("data");
+  const appDataPath = getApplicationDir(dataFolderName);
   return path.join(appDataPath, filename);
 }
 
 function getMetaStorageDatabasePath() {
-  return getFileFromAppDataPath("competitions.json");
+  return getFileFromAppDataPath(metaStorageFilename);
 }
 
 function getCompetitionFilePath(id) {
@@ -30,12 +33,17 @@ function getCompetitionFilePath(id) {
 function deleteTournamentJSONFile(id) {
   const filePath = getCompetitionFilePath(id);
 
-  fs.unlinkSync(filePath);
-  console.log("Delete tournament JSON file:", filePath);
+  try {
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+      console.log("Delete competition JSON file:", filePath);
+    }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 module.exports = {
-  getCompetitionFilePath,
   getMetaStorageDatabasePath,
   getCompetitionFilePath,
   deleteTournamentJSONFile

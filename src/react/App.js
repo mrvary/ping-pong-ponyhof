@@ -82,10 +82,21 @@ const App = () => {
       return;
     }
 
-    IPCService.deleteCompetition(id, () => {
+    // TODO: Prüfung einbauen
+    // Prüfen, ob die Competition im Zustand "Aktiv" ist (siehe 'modules/models/competition.js' --> COMPETITION_STATE)
+    // COMPETITION_STATE.COMP_ACTIVE_ ...
+    // Je nachdem Popup mit entsprechender Warnung anzeigen
+
+    // listen to ipc-renderer event to update the ui
+    ipcRenderer.once(ipcMessages.DELETE_COMPETITION_RESPONSE, event => {
       setCompetitions(
         competitions.filter(competition => competition.id !== id)
       );
+    });
+
+    // trigger delete event to
+    ipcRenderer.send(ipcMessages.DELETE_COMPETITION_REQUEST, {
+      competitionId: id
     });
   };
 

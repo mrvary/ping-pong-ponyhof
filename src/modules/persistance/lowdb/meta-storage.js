@@ -76,7 +76,7 @@ function deleteCompetition(id) {
     .remove({ id: id })
     .write();
 
-  console.log("Delete competition: ", id);
+  console.log("Delete competition:", id);
 }
 
 function getAllCompetitions() {
