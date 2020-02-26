@@ -31,14 +31,6 @@ function startRound() {
   ipcRenderer.send(ipcChannels.START_ROUND);
 }
 
-function deleteCompetition(id, callback) {
-  ipcRenderer.once(ipcChannels.DELETE_COMPETITION_REQUEST, (event, args) => {
-    callback();
-  });
-
-  ipcRenderer.send(ipcChannels.DELETE_COMPETITION_REQUEST, { id: id });
-}
-
 function getPlayersByPlayerId(id) {
   const players = [
     {
@@ -90,8 +82,5 @@ module.exports = {
 
   // Import
   openXMLDialog,
-  importXMLFile,
-
-  // Competitions
-  deleteCompetition
+  importXMLFile
 };

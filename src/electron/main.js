@@ -17,7 +17,10 @@ const config = require("./config");
 const { importXML } = require("../modules/import/xml-import");
 
 // models
-const { setCompetitionStatus } = require("../modules/models/competition");
+const {
+  setCompetitionStatus,
+  COMPETITION_STATE
+} = require("../modules/models/competition");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -39,6 +42,7 @@ let mainWindow = null;
 
 // application state variables
 let competitions = null;
+
 let competition = null;
 let matchesWithPlayers = [];
 
@@ -119,24 +123,38 @@ function initHTTPServer() {
 
 function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, event => {
-    // init competitions
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.GET_COMPETITIONS_REQUEST
+    );
+    // check if competitions are loaded from database
     if (!competitions) {
+      // init competitions from database
       competitions = getCompetitionsFromDatabase();
     }
 
-    // send elements to renderer process
+    // send competitions to renderer process
     event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, { competitions });
   });
 
   ipcMain.on(ipcMessages.DELETE_COMPETITION_REQUEST, (event, data) => {
-    const { id } = data;
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.DELETE_COMPETITION_REQUEST
+    );
+    const { competitionId } = data;
 
-    if (!config.USE_IN_MEMORY_STORAGE) {
-      fileManager.deleteTournamentJSONFile(id);
+    // check if a competition is selected ...
+    if (competition) {
+      // ... than reset application state
+      competition = null;
+      matchesWithPlayers = [];
+      console.log("Reset application state");
     }
-    metaStorage.deleteCompetition(id);
 
-    event.sender.send(ipcMessages.DELETE_COMPETITION_REQUEST);
+    deleteCompetition(competitionId);
+
+    event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
   });
 
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
@@ -161,7 +179,7 @@ function registerIPCMainEvents() {
       const arguments = { competitionId: competition.id, message: "success" };
       event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
     } catch (err) {
-      // notify react app that a error has happend
+      // notify react app that a error has happened
       console.log(err.message);
       const arguments = { competitionId: "", message: err.message };
       event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
@@ -201,6 +219,12 @@ function getCompetitionsFromDatabase() {
   console.log(`Get ${competitions.length} elements from database`);
 
   return competitions;
+}
+
+// Delete competitions from meta storage and the corresponding competition database file
+function deleteCompetition(competitionId) {
+  fileManager.deleteTournamentJSONFile(competitionId);
+  metaStorage.deleteCompetition(competitionId);
 }
 
 function initializeMatchesByCompetitionId(id) {
