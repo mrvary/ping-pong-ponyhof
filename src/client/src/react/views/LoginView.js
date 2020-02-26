@@ -1,30 +1,16 @@
 import React from "react";
-import "./Login.css";
+import "./LoginView.css";
 
-import ConnectionStatus from "../../components/ConnectionStatus/ConnectionStatus";
-import Title from "../../components/Title";
-
-function Login({
-  appTitle,
-  isConnected,
+function LoginView({
   tableNumber,
   sendTableNumber,
   tableNumberChanged,
   availableTables
 }) {
   return (
-    <div>
-      <Title title={appTitle} />
-      <ConnectionStatus isConnected={isConnected} />
+    <>
       <div className="login">
         <form className="login-form">
-          <datalist id="table-numbers">
-            <option value="0" />
-            <option value="1" />
-            <option value="2" />
-            <option value="3" />
-            <option value="4" />
-          </datalist>
           <label htmlFor="login-input-field" className="login-text">
             Tischnummer
           </label>
@@ -47,8 +33,8 @@ function Login({
           </button>
         </form>
       </div>
-    </div>
+    </>
   );
 }
 
-export default Login;
+export default LoginView;

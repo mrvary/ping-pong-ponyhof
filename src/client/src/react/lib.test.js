@@ -1,7 +1,7 @@
-const { setsWonPlayer1, setsWonPlayer2 } = require("./main-score-state-func");
+const { setsWonPlayer1, setsWonPlayer2, isMatchFinished } = require("./lib.js");
 
-describe("setsWon", () => {
-  test("sets is empty -> pl1: 0, pl2: 0", () => {
+describe("Testing setsWon()", () => {
+  test("no wins if sets are empty -> pl1: 0, pl2: 0", () => {
     const match = { sets: [] };
 
     const setsPlayer1 = setsWonPlayer1(match);
@@ -51,7 +51,7 @@ describe("setsWon", () => {
     expect(setsPlayer2).toBe(1);
   });
 
-  test("player1 does not won with 11 to 10 -> pl1: 0, pl2: 0", () => {
+  test("player1 does not win with 11 to 10 -> pl1: 0, pl2: 0", () => {
     const match = { sets: [{ player1: 11, player2: 10 }] };
 
     const setsPlayer1 = setsWonPlayer1(match);
@@ -61,7 +61,7 @@ describe("setsWon", () => {
     expect(setsPlayer2).toBe(0);
   });
 
-  test("player2 does not won with 11 to 10 -> pl1: 0, pl2: 0", () => {
+  test("player2 does not win with 11 to 10 -> pl1: 0, pl2: 0", () => {
     const match = { sets: [{ player1: 10, player2: 11 }] };
 
     const setsPlayer1 = setsWonPlayer1(match);
@@ -91,7 +91,7 @@ describe("setsWon", () => {
     expect(setsPlayer2).toBe(1);
   });
 
-  test("player1 does not won with 15 to 14 -> pl1: 0, pl2: 0", () => {
+  test("player1 does not win with 15 to 14 -> pl1: 0, pl2: 0", () => {
     const match = { sets: [{ player1: 15, player2: 14 }] };
 
     const setsPlayer1 = setsWonPlayer1(match);
@@ -101,7 +101,7 @@ describe("setsWon", () => {
     expect(setsPlayer2).toBe(0);
   });
 
-  test("player2 does not won with 15 to 14 -> pl1: 0, pl2: 0", () => {
+  test("player2 does not win with 15 to 14 -> pl1: 0, pl2: 0", () => {
     const match = { sets: [{ player1: 14, player2: 15 }] };
 
     const setsPlayer1 = setsWonPlayer1(match);
@@ -109,5 +109,22 @@ describe("setsWon", () => {
 
     expect(setsPlayer1).toBe(0);
     expect(setsPlayer2).toBe(0);
+  });
+
+  test.todo("test with more than one set");
+});
+
+describe("test isMatchFinished()", () => {
+  test("one of the players has won three matches", () => {
+    const match = {
+      sets: [
+        { player1: 11, player2: 0 },
+        { player1: 2, player2: 11 },
+        { player1: 11, player2: 8 },
+        { player1: 12, player2: 10 }
+      ]
+    };
+
+    expect(isMatchFinished(match)).toBe(true);
   });
 });

@@ -57,7 +57,7 @@ function initSocketIO() {
   // event fired every time a new client connects (Browser window was opened)
   serverSocket.on(socketIOMessages.CONNECTION, clientSocket => {
     console.info(`Client connected [id=${clientSocket.id}]`);
-    sendAvailableTablesToClient();
+    sendAvailableTablesToClients();
     listenToClientEvent(clientSocket);
   });
 }
@@ -103,13 +103,13 @@ function getConnectedDeviceByTableNumber(tableNumber) {
   return clientId ? clientId : null;
 }
 
-function sendAvailableTablesToClient() {
+function sendAvailableTablesToClients() {
   sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 }
 
 function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(x =>
-    parseInt(x, 10)
+  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
+    parseInt(tableNumber, 10)
   );
 
   const availableTables = ALL_POTENTIAL_TABLES.filter(
@@ -140,7 +140,7 @@ function clientLogin(clientSocket, tableNumber) {
   connectedClients.set(clientSocket.id, tableNumber);
 
   // send available tables to clients
-  sendAvailableTablesToClient();
+  sendAvailableTablesToClients();
 
   notifyConnectionStatusToMainIPC(clientSocket.id, tableNumber);
 
@@ -159,21 +159,30 @@ function mapHasValue(inputMap, searchedValue) {
 }
 
 function createLoginResponseData(tableNumber) {
-  const state = "TODO";
+  const state = "comp-active-round-ready";
 
-  if (
-    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-  ) {
+  // todo: get match from DB
+  const { mockedMatch } = require("../../assets/mock-data/match.mock.data.js");
+  const match = { ...mockedMatch };
+
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
-      roundAvailable: false,
+      roundStarted: false,
       tableNumber,
-      match: {}
+      match
+    };
+  }
+
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+    return {
+      roundStarted: true,
+      tableNumber,
+      match
     };
   }
 
   return {
-    roundAvailable: false,
+    roundStarted: false,
     tableNumber
   };
 }
@@ -196,7 +205,7 @@ function clientLogout(clientSocket) {
     console.info(`Client logout [id=${clientSocket.id}]`);
 
     // update clients with available tables
-    sendAvailableTablesToClient();
+    sendAvailableTablesToClients();
   }
 
   console.log(`Client gone [id=${clientSocket.id}]`);
