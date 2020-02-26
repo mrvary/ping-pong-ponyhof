@@ -1,8 +1,8 @@
-import { Modal } from 'react-bootstrap';
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './PopupEditTable.css';
-import Button from './Button';
+import { Modal } from "react-bootstrap";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./PopupEditTable.css";
+import Button from "./Button";
 
 function PopupEditTable({ show, handleClose, sets, saveChanges }) {
   const [inputChanged, setInputChanged] = useState(false);
@@ -50,12 +50,12 @@ const DisplaySetHandler = ({ sets, setInputChanged }) => {
 const DisplaySet = ({ set, index, setInputChanged }) => {
   let [player1Set, setPlayer1Set] = useState(set.player1);
   let [player2Set, setPlayer2Set] = useState(set.player2);
-  let [css, setCss] = useState('');
+  let [css, setCss] = useState("");
 
   const checkInput1 = event => {
     setPlayer1Set(event.target.value);
 
-    console.log(player1Set + ' ' + player2Set);
+    console.log(player1Set + " " + player2Set);
     if (
       (player1Set === 11 && player2Set < 10) ||
       (player2Set === 11 && player1Set < 10) ||
@@ -65,26 +65,26 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
       setInputChanged(true);
     } else {
       setInputChanged(false);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
 
   const checkInput2 = event => {
     setPlayer2Set(event.target.value);
 
-    console.log(player1Set + ' ' + player2Set);
+    console.log(player1Set + " " + player2Set);
     if (player1Set - player2Set >= 2 && (player1Set > 10 || player2Set > 10)) {
       setInputChanged(true);
-      setCss('');
+      setCss("");
     } else {
       setInputChanged(false);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
   //ganze zahlen
   return (
     <div className="popupEditTable--rows">
-      <p>{'Set ' + index + '  '}</p>
+      <p>{"Set " + index + "  "}</p>
       <input
         className={css}
         size="2"
@@ -92,7 +92,7 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
         value={player1Set}
         onChange={checkInput1}
       ></input>
-      <p> {' : '} </p>
+      <p> {" : "} </p>
       <input
         className={css}
         size="2"
