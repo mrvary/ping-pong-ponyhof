@@ -1,8 +1,8 @@
-import { Modal } from "react-bootstrap";
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./PopupReviewPlayer.css";
-import Button from "./Button";
+import { Modal } from 'react-bootstrap';
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './PopupReviewPlayer.css';
+import Button from './Button';
 
 function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
   return (
@@ -23,7 +23,11 @@ function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
             <p className="popup__names">player1</p>
             <p className="popup__names">player1</p>
           </div>
-          <Button text="Hochladen" onClick={buttonFunk}></Button>
+          <Button
+            primText="Hochladen"
+            primOnClick={buttonFunk}
+            mode="primary"
+          ></Button>
         </div>
       </Modal.Body>
     </Modal>

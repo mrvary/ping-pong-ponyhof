@@ -1,11 +1,29 @@
-import React from "react";
-import "./Button.css";
+import React from 'react';
+import './Button.css';
 
-function Button({ text, onClick, mode, disableProp }) {
-  let css =
-    "button " + (mode === "primary" ? "button--primary" : "button--secondary");
+function Button({
+  primText,
+  primOnClick,
+  secText,
+  secOnClick,
+  mode,
+  disableProp
+}) {
+  let css = 'button ';
+  let text;
+  let onClick;
+
+  if (mode === 'primary') {
+    css = css + 'button--primary';
+    text = primText;
+    onClick = primOnClick;
+  } else {
+    css = css + 'button--secondary';
+    text = secText;
+    onClick = secOnClick;
+  }
   if (disableProp) {
-    css = css + " button--disabled";
+    css = css + ' button--disabled';
   }
   return (
     <button className={css} onClick={onClick} disabled={disableProp}>
