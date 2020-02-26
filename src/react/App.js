@@ -12,6 +12,8 @@ import Header from "./components/Header";
 
 // electron
 import IPCService from "../shared/ipc/ipcRendererService";
+const ipcRenderer = window.electron.ipcRenderer;
+const ipcMessages = require("../shared/ipc-messages");
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
@@ -23,18 +25,26 @@ const App = () => {
   const [xmlFilePath, setXMLFilePath] = useState(null);
 
   useEffect(() => {
-    getAllCompetitions();
+    getCompetitions();
   }, []);
 
-  const getAllCompetitions = () => {
+  const getCompetitions = () => {
     if (USE_BROWSER) {
+      // init competitions with dummy data
       setCompetitions(dummyCompetitions);
       return;
     }
 
-    IPCService.getAllCompetitions(competitions => {
-      setCompetitions(competitions);
-    });
+    // listen to ipc-renderer event to get the data back from ipc-main
+    ipcRenderer.once(
+      ipcMessages.GET_COMPETITIONS_RESPONSE,
+      (event, { competitions }) => {
+        setCompetitions(competitions);
+      }
+    );
+
+    // trigger event to get competitions from ipc-main
+    ipcRenderer.send(ipcMessages.GET_COMPETITIONS_REQUEST);
   };
 
   const openXMLDialog = () => {

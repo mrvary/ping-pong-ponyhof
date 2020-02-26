@@ -31,15 +31,6 @@ function startRound() {
   ipcRenderer.send(ipcChannels.START_ROUND);
 }
 
-function getAllCompetitions(callback) {
-  ipcRenderer.once(ipcChannels.GET_COMPETITIONS_REQUEST, (event, args) => {
-    const { competitions } = args;
-    callback(competitions);
-  });
-
-  ipcRenderer.send(ipcChannels.GET_COMPETITIONS_REQUEST);
-}
-
 function deleteCompetition(id, callback) {
   ipcRenderer.once(ipcChannels.DELETE_COMPETITION_REQUEST, (event, args) => {
     callback();
@@ -102,6 +93,5 @@ module.exports = {
   importXMLFile,
 
   // Competitions
-  getAllCompetitions,
   deleteCompetition
 };
