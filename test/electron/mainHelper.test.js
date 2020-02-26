@@ -76,11 +76,6 @@ describe("createStateResponseData()", () => {
 
       // ASSERT
       const { roundStarted, tableNumber, match } = responseData;
-      console.log("\n");
-      console.log("\n");
-      console.log(match);
-      console.log("\n");
-      console.log("\n");
       expect(match).toEqual(expectedResponseMatch);
       expect(tableNumber).toBe(initialTableNumber);
       expect(roundStarted).toBeFalsy();

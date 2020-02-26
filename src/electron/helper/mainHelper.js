@@ -20,7 +20,6 @@ function createStateResponseData({
 
   const { status } = currentlyRunningCompetition;
   const { player1, player2, match } = matchesWithPlayers[tableNumber];
-  console.log("⚡️ 👀" + status);
 
   if (status === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
