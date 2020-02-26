@@ -21,6 +21,7 @@ const {
   setCompetitionStatus,
   COMPETITION_STATE
 } = require("../modules/models/competition");
+const { createStateResponseData } = require("./helper/mainHelper");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -144,45 +145,6 @@ function initHTTPServer() {
   });
 }
 
-// TODO: write test
-function createStateResponseData({
-  tableNumber,
-  competitions,
-  matchesWithPlayers
-}) {
-  const currentlyRunningCompetition = competitions.find(
-    ({ status }) =>
-      status === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-      status === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-  );
-
-  if (!currentlyRunningCompetition) {
-    return {
-      roundStarted: false,
-      tableNumber
-    };
-  }
-
-  const { state } = currentlyRunningCompetition;
-  const { player1, player2, match } = matchesWithPlayers[tableNumber];
-
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-    return {
-      roundStarted: false,
-      tableNumber,
-      match: { ...match, player1, player2 }
-    };
-  }
-
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
-    return {
-      roundStarted: true,
-      tableNumber,
-      match: { ...match, player1, player2 }
-    };
-  }
-}
-
 function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, event => {
     console.log(
@@ -253,13 +215,13 @@ function registerIPCMainEvents() {
       );
 
       // notify react app that import is ready and was successful
-      const arguments = { competitionId: competition.id, message: "success" };
-      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
+      const returnData = { competitionId: competition.id, message: "success" };
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
     } catch (err) {
       // notify react app that a error has happened
       console.log(err.message);
-      const arguments = { competitionId: "", message: err.message };
-      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
+      const returnData = { competitionId: "", message: err.message };
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
     }
   });
 
