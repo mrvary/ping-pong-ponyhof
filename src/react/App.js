@@ -45,7 +45,7 @@ const App = () => {
     });
   };
 
-  const importXML = handleShowError => {
+  const importXML = () => {
     if (!xmlFilePath) {
       return;
     }
@@ -56,7 +56,6 @@ const App = () => {
       if (!competitionId) {
         console.log(message);
         setLinkDisabled(true);
-        handleShowError();
         return;
       }
 
@@ -89,6 +88,7 @@ const App = () => {
         xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
+        setLinkDisabled={setLinkDisabled}
       />
       {competitions.map(competition => (
         <Competition
