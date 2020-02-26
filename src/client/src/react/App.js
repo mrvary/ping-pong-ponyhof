@@ -36,6 +36,7 @@ function App() {
   const [availableTables, setAvailableTables] = useState([]);
   const [tableNumber, setTableNumber] = useState(-1);
   const [localMatch, setLocalMatch] = useState(null);
+  const [waitingMessage, setWaitingMessage] = useState("");
 
   const content = () => {
     const currentPage = view;
@@ -70,7 +71,7 @@ function App() {
     }
 
     if (currentPage === "WAITING") {
-      return <WaitingView appTitle={appTitle} isConnected={isConnected} />;
+      return <WaitingView message={waitingMessage} />;
     }
 
     // render nothing if none of the above states
@@ -81,6 +82,7 @@ function App() {
     event.preventDefault();
     console.info("CLIENT->SERVER: LOGIN_REQUEST");
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
+    setWaitingMessage("waiting for server response");
     setView("WAITING");
   };
 
@@ -88,6 +90,7 @@ function App() {
     // todo -> { sets: [], finished: true }
     // console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
     // socket.emit(socketIOMessages.UPDATE_SETS_REQUEST { match });
+    setWaitingMessage("waiting for ???");
     setView("WAITING");
   };
 
@@ -131,6 +134,7 @@ function App() {
 
       if (match && isMatchFinished(match)) {
         console.info("match is finished");
+        setWaitingMessage("waiting for next round to start");
         setView("WAITING");
         return;
       }
