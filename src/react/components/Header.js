@@ -4,6 +4,7 @@ import { Redirect } from 'react-router-dom';
 
 //Components
 import PopupReviewPlayer from './PopupReviewPlayer';
+import Popup from './Popup';
 
 function Header({
   openXMLDialog,
@@ -37,6 +38,9 @@ const HeaderBox = ({
   setLinkDisabled
 }) => {
   const competition = currentId !== '' ? '/competition/' + currentId : '';
+  const [showPopupError, setShowPopupError] = useState(false);
+  const handleCloseError = () => setShowPopupError(false);
+  const handleShowError = () => setShowPopupError(true);
 
   return (
     <div className="header__match-box">
@@ -45,8 +49,15 @@ const HeaderBox = ({
       <PopupReviewPlayer
         show={!linkDisabled}
         handleClose={setLinkDisabled}
-        buttonFunk={() => importXML()}
+        buttonFunk={() => importXML(handleShowError)}
       ></PopupReviewPlayer>
+      <Popup
+        show={showPopupError}
+        handleClose={handleCloseError}
+        header={'Fehler'}
+        bodyText={'Das Tunier wurde bereits hochgeladen'}
+        mode={'noBtn'}
+      ></Popup>
       <Redirect to={competition} />
     </div>
   );

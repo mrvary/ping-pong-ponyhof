@@ -45,7 +45,7 @@ const App = () => {
     });
   };
 
-  const importXML = () => {
+  const importXML = handleShowError => {
     if (!xmlFilePath) {
       return;
     }
@@ -56,6 +56,7 @@ const App = () => {
       if (!competitionId) {
         console.log(message);
         setLinkDisabled(true);
+        handleShowError();
         return;
       }
 
