@@ -9,7 +9,7 @@ const EventEmitter = require("events");
 // server application
 const expressApp = require("../server/app");
 const socketIOMessages = require("../../client/src/shared/socket-io-messages");
-const serverMessages = require("./server-messages");
+const serverMessages = require("./serverMessages");
 
 // models
 const { COMPETITION_STATE } = require("../models/competition");
@@ -59,6 +59,20 @@ function initSocketIO() {
     console.info(`Client connected [id=${clientSocket.id}]`);
     sendAvailableTablesToClients();
     listenToClientEvent(clientSocket);
+    setUpEventEmitters(clientSocket);
+  });
+}
+
+function setUpEventEmitters(clientSocket) {
+  SocketIOOutputEmitter.on(serverMessages.STATE_RESPONSE, data => {
+    console.log("OUTPUT EMITTER - STATE RESPONSE");
+    console.log(data);
+    // send login response to client with his table number
+    clientSocket.emit(
+      socketIOMessages.LOGIN_RESPONSE,
+      data
+      // createLoginResponseData(tableNumber)
+    );
   });
 }
 
@@ -147,11 +161,9 @@ function clientLogin(clientSocket, tableNumber) {
 
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
-  // send login response to client with his table number
-  clientSocket.emit(
-    socketIOMessages.LOGIN_RESPONSE,
-    createLoginResponseData(tableNumber)
-  );
+  SocketIOInputEmitter.emit(serverMessages.STATE_REQUEST, {
+    tableNumber
+  });
 }
 
 function mapHasValue(inputMap, searchedValue) {
@@ -160,35 +172,31 @@ function mapHasValue(inputMap, searchedValue) {
 }
 
 function createLoginResponseData(tableNumber) {
-  const state = "comp-active-round-ready";
-
+  // const state = "comp-active-round-ready";
   // todo: get match from DB
-  const {
-    mockedMatchFinished,
-    mockedMatchRunning
-  } = require("../../assets/mock-data/match.mock.data.js");
-  const match = { ...mockedMatchRunning };
-
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-    return {
-      roundStarted: false,
-      tableNumber,
-      match
-    };
-  }
-
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
-    return {
-      roundStarted: true,
-      tableNumber,
-      match
-    };
-  }
-
-  return {
-    roundStarted: false,
-    tableNumber
-  };
+  // const {
+  //   mockedMatchFinished,
+  //   mockedMatchRunning
+  // } = require("../../assets/mock-data/match.mock.data.js");
+  // const match = { ...mockedMatchRunning };
+  // if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+  //   return {
+  //     roundStarted: false,
+  //     tableNumber,
+  //     match
+  //   };
+  // }
+  // if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+  //   return {
+  //     roundStarted: true,
+  //     tableNumber,
+  //     match
+  //   };
+  // }
+  // return {
+  //   roundStarted: false,
+  //   tableNumber
+  // };
 }
 
 function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {

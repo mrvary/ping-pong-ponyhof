@@ -29,7 +29,7 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const serverMessages = require("../modules/server/server-messages");
+const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
 // windows actions
@@ -120,6 +120,15 @@ function initHTTPServer() {
       });
     }
   );
+
+  server.SocketIOInputEmitter.on(serverMessages.STATE_REQUEST, args => {
+    console.log("Server-->IPC-Main:", serverMessages.STATE_REQUEST);
+    console.log(args);
+
+    server.SocketIOOutputEmitter.emit(serverMessages.STATE_RESPONSE, {
+      state: "nice"
+    });
+  });
 
   server.SocketIOInputEmitter.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_CONNECTION_STATUS);
