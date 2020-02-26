@@ -5,12 +5,12 @@ import "./App.css";
 import io from "socket.io-client";
 import socketIOMessages from "../shared/socket-io-messages";
 
-// import routing components
+// COMPONENTS
 import Login from "./pages/Login";
 import WaitForRound from "./pages/Waiting";
 import Match from "./pages/Match";
-
-import Title from "./components/Title";
+import ConnectionStatus from "../components/ConnectionStatus";
+import Title from "../components/Title";
 
 const appTitle = "TTRace";
 
@@ -180,7 +180,13 @@ function App() {
     setSocket(connection);
   }
 
-  return <div className="client-container">{content()}</div>;
+  return (
+    <div className="client-container">
+      <Title title={appTitle} />
+      <ConnectionStatus isConnected={isConnected} />
+      {content()}
+    </div>
+  );
 }
 
 export default App;

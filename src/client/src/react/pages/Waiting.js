@@ -1,14 +1,9 @@
 import React from "react";
 import "./WaitForRound.css";
 
-import ConnectionStatus from "../components/ConnectionStatus";
-import Title from "../components/Title";
-
-function WaitForRound({ appTitle, isConnected }) {
+function WaitForRound(props) {
   return (
     <div>
-      <Title title={appTitle} />
-      <ConnectionStatus isConnected={isConnected} />
       <div className="ball-container">
         <div className="ball"></div>
         <div className="shadow"></div>

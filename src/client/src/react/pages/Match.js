@@ -1,13 +1,9 @@
 import React from "react";
 
-import Title from "../components/Title";
-import ConnectionStatus from "../components/ConnectionStatus";
 import ScoreBoard from "../components/ScoreBoard";
 import Player from "../components/Player";
 
 function Match({
-  appTitle,
-  isConnected,
   onlyShowNextPlayers,
   matchWithPlayers,
   sendFinishedMatch,
@@ -15,8 +11,6 @@ function Match({
 }) {
   return (
     <div>
-      <Title title={appTitle} />
-      <ConnectionStatus isConnected={isConnected} />
       {onlyShowNextPlayers ? (
         <NextPlayers matchWithPlayers={matchWithPlayers}></NextPlayers>
       ) : (

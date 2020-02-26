@@ -1,12 +1,7 @@
 import React from "react";
 import "./Login.css";
 
-import ConnectionStatus from "../components/ConnectionStatus";
-import Title from "../components/Title";
-
 function Login({
-  appTitle,
-  isConnected,
   tableNumber,
   sendTableNumber,
   tableNumberChanged,
@@ -14,8 +9,6 @@ function Login({
 }) {
   return (
     <div>
-      <Title title={appTitle} />
-      <ConnectionStatus isConnected={isConnected} />
       <div className="login">
         <form className="login-form">
           <datalist id="table-numbers">
