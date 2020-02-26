@@ -1,8 +1,8 @@
 import React from "react";
 import "./Login.css";
 
-import ConnectionStatus from "../../components/ConnectionStatus/ConnectionStatus";
-import Title from "../../components/Title";
+import ConnectionStatus from "../components/ConnectionStatus/ConnectionStatus";
+import Title from "../components/Title";
 
 function Login({
   appTitle,

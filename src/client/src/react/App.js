@@ -6,8 +6,8 @@ import io from "socket.io-client";
 import socketIOMessages from "../shared/socket-io-messages";
 
 // import routing components
-import Login from "./pages/Login/Login";
-import WaitForRound from "./pages/WaitForRound/WaitForRound";
+import Login from "./pages/Login";
+import WaitForRound from "./pages/Waiting";
 import Match from "./pages/Match";
 
 import Title from "./components/Title";
@@ -102,13 +102,13 @@ function App() {
     setTableNumber(event.target.value);
   };
 
+  // register sockets for client - server communication
   if (!socket) {
     const base_url = getServerURL();
     const connection = io(base_url);
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
       console.info("SERVER->CLIENT: AVAILABLE_TABLES");
-      console.info(tables);
 
       setAvailableTables(tables);
       setTableNumber(tables[0]);
