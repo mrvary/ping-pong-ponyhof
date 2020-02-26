@@ -1,7 +1,7 @@
 import React from "react";
 import "./WaitForRound.css";
 
-import ConnectionStatus from "../components/ConnectionStatus/ConnectionStatus";
+import ConnectionStatus from "../components/ConnectionStatus";
 import Title from "../components/Title";
 
 function WaitForRound({ appTitle, isConnected }) {

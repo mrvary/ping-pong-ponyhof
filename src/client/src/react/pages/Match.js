@@ -1,9 +1,9 @@
 import React from "react";
 
 import Title from "../components/Title";
-import ConnectionStatus from "../components/ConnectionStatus/ConnectionStatus";
-import ScoreBoard from "../components/ScoreBoard/ScoreBoard";
-import Player from "../components/Player/Player";
+import ConnectionStatus from "../components/ConnectionStatus";
+import ScoreBoard from "../components/ScoreBoard";
+import Player from "../components/Player";
 
 function Match({
   appTitle,

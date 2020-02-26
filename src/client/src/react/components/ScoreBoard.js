@@ -2,7 +2,7 @@ import React from "react";
 import "./ScoreBoard.css";
 
 import MainScore from "../MainScore/MainScore";
-import SetScore from "../SetScore/SetScore";
+import SetScore from "./SetScore";
 
 function ScoreBoard({ match, player1, player2 }) {
   const showSets = () =>
