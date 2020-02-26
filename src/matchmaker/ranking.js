@@ -215,6 +215,10 @@ function logRanking(ranking) {
 
 module.exports = {
   createCurrentRanking,
+  calculateBHZ,
+  calculateNewTTR,
+  getMatchesInvolved,
+  addMatchDetails,
   logRanking,
   createMatchResult,
   getParameterByPlayerId
