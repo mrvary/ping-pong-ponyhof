@@ -125,7 +125,7 @@ function registerIPCMainEvents() {
     }
 
     // send elements to renderer process
-    event.sender.send(ipcMessages.GET_COMPETITIONS_REQUEST, { competitions });
+    event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, { competitions });
   });
 
   ipcMain.on(ipcMessages.DELETE_COMPETITION_REQUEST, (event, data) => {
