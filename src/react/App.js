@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import "./Colors.css";
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import './Colors.css';
 
 // dummy data
-import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
+import dummyCompetitions from '../assets/mock-data/competitions.mock.data';
 
 // components
-import Footer from "./components/Footer";
-import Competition from "./components/Competition";
-import Header from "./components/Header";
+import Footer from './components/Footer';
+import Competition from './components/Competition';
+import Header from './components/Header';
 
 // electron
-import IPCService from "../shared/ipc/ipcRendererService";
+import IPCService from '../shared/ipc/ipcRendererService';
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
 const App = () => {
-  const [currentId, setCurrentId] = useState("");
+  const [currentId, setCurrentId] = useState('');
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [competitions, setCompetitions] = useState([]);
   const [xmlFilePath, setXMLFilePath] = useState(null);
