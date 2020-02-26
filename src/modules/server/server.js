@@ -163,9 +163,10 @@ function createLoginResponseData(tableNumber) {
 
   // todo: get match from DB
   const {
-    mockedMatchFinished
+    mockedMatchFinished,
+    mockedMatchRunning
   } = require("../../assets/mock-data/match.mock.data.js");
-  const match = { ...mockedMatchFinished };
+  const match = { ...mockedMatchRunning };
 
   if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {

@@ -65,4 +65,4 @@ const mockedMatchRunning = {
   freeTicket: false
 };
 
-module.exports = { mockedMatchFinished };
+module.exports = { mockedMatchFinished, mockedMatchRunning };

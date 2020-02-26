@@ -64,7 +64,6 @@ function App() {
         <MatchView
           onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
           match={localMatch}
-          sendFinishedMatch={sendFinishedMatch}
           sendSets={sendSets}
         />
       );
@@ -86,18 +85,22 @@ function App() {
     setView("WAITING");
   };
 
-  const sendFinishedMatch = match => event => {
-    // todo -> { sets: [], finished: true }
-    // console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
-    // socket.emit(socketIOMessages.UPDATE_SETS_REQUEST { match });
-    setWaitingMessage("waiting for ???");
-    setView("WAITING");
-  };
+  const sendSets = match => event => {
+    const finished = isMatchFinished(match);
+    const data = {
+      sets: match.sets,
+      finished,
+      tableNumber
+    };
 
-  const sendSets = sets => event => {
-    // todo -> { sets: [], finished: false }
     console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
-    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, { tableNumber, sets });
+    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
+
+    if (finished) {
+      localMatch(null);
+      setWaitingMessage("waiting for next round");
+      setView("WAITING");
+    }
   };
 
   const handleTableNumberChange = event => {
@@ -127,8 +130,6 @@ function App() {
         return;
       }
 
-      console.info("data: ");
-      console.info(data);
       setIsConnected(true);
       setLocalMatch(match);
 
