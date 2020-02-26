@@ -161,14 +161,15 @@ function mapHasValue(inputMap, searchedValue) {
 function createLoginResponseData(tableNumber) {
   const state = "comp-active-round-ready";
 
-  // find match, possibly undefined
+  // todo: get match from DB
   const { mockedMatch } = require("../../assets/mock-data/match.mock.data.js");
+  const match = { ...mockedMatch };
 
   if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
-      roundStarted: true,
+      roundStarted: false,
       tableNumber,
-      match: mockedMatch
+      match
     };
   }
 
@@ -176,7 +177,7 @@ function createLoginResponseData(tableNumber) {
     return {
       roundStarted: true,
       tableNumber,
-      match: mockedMatch
+      match
     };
   }
 

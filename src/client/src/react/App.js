@@ -119,8 +119,8 @@ function App() {
 
       // present, when something went wrong
       if (message) {
-        alert(message);
         setView("LOGIN");
+        alert(message);
         return;
       }
 
