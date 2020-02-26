@@ -196,7 +196,17 @@ function App() {
 
     connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
       console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
-      // error handling, probably send sets again
+
+      console.info("Could not send sets, trying again in 1000 ms.");
+      const { sets } = localMatch;
+      setInterval(
+        () =>
+          socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, {
+            tableNumber,
+            sets
+          }),
+        1000
+      );
     });
 
     connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
@@ -208,23 +218,6 @@ function App() {
 
       setView("NO_COMP");
     });
-    // remove
-    // connection.on(socketIOMessages.UPDATE_SETS, data => {
-    //   console.info("SERVER->CLIENT: UPDATE_SETS");
-    //   const { matchWithPlayers, roundStarted } = data;
-    //   console.info(matchWithPlayers);
-    //   console.info(data);
-
-    // });
-
-    // remove
-    // connection.on(socketIOMessages.LOGIN_ERROR, data => {
-    //   console.info("SERVER->CLIENT: LOGIN_ERROR");
-    //   const { tableNumber } = data;
-    //   alert(
-    //     `A device is already connected with the table ${tableNumber} or all slots are busy`
-    //   );
-    // });
 
     setSocket(connection);
   }
