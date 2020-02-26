@@ -20,7 +20,8 @@ const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
 const connectedClients = new Map();
 
 const ServerMainIOConnection = new EventEmitter();
-const SocketIOOutputEmitter = new EventEmitter();
+// TODO: is this needed at all?
+// const SocketIOOutputEmitter = new EventEmitter();
 
 let server = null;
 let serverSocket = null;
@@ -67,12 +68,9 @@ function setUpEventEmitters(clientSocket) {
   ServerMainIOConnection.on(serverMessages.STATE_RESPONSE, data => {
     console.log("OUTPUT EMITTER - STATE RESPONSE");
     console.log(data);
+
     // send login response to client with his table number
-    clientSocket.emit(
-      socketIOMessages.LOGIN_RESPONSE,
-      data
-      // createLoginResponseData(tableNumber)
-    );
+    clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, data);
   });
 }
 
@@ -169,34 +167,6 @@ function clientLogin(clientSocket, tableNumber) {
 function mapHasValue(inputMap, searchedValue) {
   const values = Array.from(inputMap.entries());
   return values.some(([_, value]) => value === searchedValue);
-}
-
-function createLoginResponseData(tableNumber) {
-  // const state = "comp-active-round-ready";
-  // todo: get match from DB
-  // const {
-  //   mockedMatchFinished,
-  //   mockedMatchRunning
-  // } = require("../../assets/mock-data/match.mock.data.js");
-  // const match = { ...mockedMatchRunning };
-  // if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-  //   return {
-  //     roundStarted: false,
-  //     tableNumber,
-  //     match
-  //   };
-  // }
-  // if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
-  //   return {
-  //     roundStarted: true,
-  //     tableNumber,
-  //     match
-  //   };
-  // }
-  // return {
-  //   roundStarted: false,
-  //   tableNumber
-  // };
 }
 
 function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
