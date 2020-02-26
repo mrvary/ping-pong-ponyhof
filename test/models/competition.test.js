@@ -9,11 +9,14 @@ const config = require("../config");
 const {
   COMPETITION_STATE,
   createCompetitionFromJSON,
-  setCompetitionStatus,  } = require("../../src/modules/models/competition");
+  setCompetitionStatus
+} = require("../../src/modules/models/competition");
 
 let jsonObject = null;
 
-const { expectedCompetitionWithDefaultValues } = require("./competition.test.data");
+const {
+  expectedCompetitionWithDefaultValues
+} = require("./competition.test.data");
 
 beforeAll(() => {
   readJSONObjectFromDisk();
@@ -35,9 +38,12 @@ describe("setCompetitionStatus", () => {
     let competition = createCompetitionFromJSON(jsonObject.tournament);
 
     // ACT: Set new competition state
-    competition = setCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
+    competition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_READY_ROUND_READY
+    );
 
-    // ARRANGE: check the competition state
+    // ASSERT: check the competition state
     expect(competition.state).toBe(COMPETITION_STATE.COMP_READY_ROUND_READY);
   });
 });
@@ -47,4 +53,3 @@ function readJSONObjectFromDisk() {
   const filePath = path.join(__dirname, config.JSON_FILE);
   jsonObject = JSON.parse(fs.readFileSync(filePath));
 }
-
