@@ -1,0 +1,23 @@
+.popup__header-text {
+  margin: 1vh 2vh;
+  color: var(--prim-font-color);
+  font-size: large;
+  text-align: center;
+}
+
+.popup__body-small-text {
+  margin: 1vh 2vh;
+  margin-bottom: 3vh;
+  color: var(--prim-font-color);
+  font-size: medium;
+  text-align: left;
+}
+.popup__centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.popup__names {
+  color: var(--tert-font-color);
+}
