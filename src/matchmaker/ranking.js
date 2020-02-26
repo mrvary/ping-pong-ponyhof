@@ -155,11 +155,11 @@ function createMatchResult(match) {
 
   match.sets.forEach(set => {
     //player1 has more points
-    if (set.player1 > set.player2) {
+    if (set.player1 - 1 > set.player2) {
       player1SetsWon++;
     }
     //player2 has more points
-    if (set.player1 < set.player2) {
+    if (set.player1 < set.player2 - 1) {
       player2SetsWon++;
     }
   });
