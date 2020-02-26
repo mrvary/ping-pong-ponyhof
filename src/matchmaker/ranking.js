@@ -77,27 +77,39 @@ function calculateTTRDifference(playerToCalculate, players) {
     }
   });
 
-  //3. calculate Pa of the player
-  //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
-  let ttrDifference = 0;
-  opponentTTR.forEach(ttr => {
-    //calc Pa for each opponent
-    let exp = (ttr - playerToCalculate.qttr) / 150;
-    let n = 1 + Math.pow(10, exp);
-    let Pa = 1 / n;
-    Pa = parseFloat(Pa.toFixed(3));
-    ttrDifference += (1 - Pa) * 16;
-  });
-
-  //4. calculate ttr difference
-  ttrDifference = Math.round(
-    ttrDifference - (opponentTTR.length - playerToCalculate.gamesWon) * 16
+  //3. calculate ttrDifference
+  let ttrDifference = ttrCalculation(
+    playerToCalculate.qttr,
+    opponentTTR,
+    playerToCalculate.gamesWon
   );
 
   //5. check for Freeticket games
   if (opponents.length !== playerToCalculate.opponentIds.length)
     ttrDifference -= 16;
 
+  return ttrDifference;
+}
+
+//for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
+// ttrCalculation : ttrPlayer, [ttrOpponnents] -> ttrDifference
+function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
+  debugger;
+  let ttrDifference = 0;
+  ttrOpponnents.forEach(ttr => {
+    // calc Pa for each opponent
+    let exp = (ttr - ttrPlayer) / 150;
+    let n = 1 + Math.pow(10, exp);
+    let Pa = 1 / n;
+    Pa = parseFloat(Pa.toFixed(3));
+    ttrDifference += (1 - Pa) * 16;
+  });
+
+  // calculate ttr difference
+  ttrDifference = Math.round(
+    ttrDifference - (ttrOpponnents.length - gamesWon) * 16
+  );
+  debugger;
   return ttrDifference;
 }
 
@@ -222,5 +234,6 @@ module.exports = {
   addMatchDetails,
   logRanking,
   createMatchResult,
-  getParameterByPlayerId
+  getParameterByPlayerId,
+  ttrCalculation
 };
