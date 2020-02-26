@@ -38,14 +38,12 @@ const createWindow = require("./window");
 let mainWindow = null;
 
 // application state variables
+let competitions = null;
 let competition = null;
 let matchesWithPlayers = [];
 
-// register IPC-Main events
+// init communication events
 registerIPCMainEvents();
-
-// initialize meta database and server
-initMetaStorage();
 initHTTPServer();
 
 app.on("ready", () => {
@@ -89,11 +87,6 @@ function initDevTools() {
     .catch(err => console.log("An error occurred: ", err));
 }
 
-function initMetaStorage() {
-  const filePath = fileManager.getMetaStorageDatabasePath();
-  metaStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-}
-
 function initHTTPServer() {
   server.initHTTPServer(config.SERVER_PORT);
 
@@ -126,12 +119,13 @@ function initHTTPServer() {
 
 function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, event => {
-    const competitions = metaStorage.getAllCompetitions();
-    console.log("Retrieved competitions from database", competitions.length);
+    // init competitions
+    if (!competitions) {
+      competitions = getCompetitionsFromDatabase();
+    }
 
-    event.sender.send(ipcMessages.GET_COMPETITIONS_REQUEST, {
-      competitions: competitions
-    });
+    // send elements to renderer process
+    event.sender.send(ipcMessages.GET_COMPETITIONS_REQUEST, { competitions });
   });
 
   ipcMain.on(ipcMessages.DELETE_COMPETITION_REQUEST, (event, data) => {
@@ -197,6 +191,16 @@ function registerIPCMainEvents() {
     const { route } = args;
     createWindow(route);
   });
+}
+
+function getCompetitionsFromDatabase() {
+  const filePath = fileManager.getMetaStorageDatabasePath();
+
+  metaStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+  const competitions = metaStorage.getAllCompetitions();
+  console.log(`Get ${competitions.length} elements from database`);
+
+  return competitions;
 }
 
 function initializeMatchesByCompetitionId(id) {
