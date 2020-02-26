@@ -9,14 +9,6 @@ function createWindow(route) {
   ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
 }
 
-function openXMLDialog(callback) {
-  ipcRenderer.once(ipcChannels.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
-    const { xmlFilePath } = args;
-    callback(xmlFilePath);
-  });
-  ipcRenderer.send(ipcChannels.OPEN_FILE_DIALOG_REQUEST);
-}
-
 function importXMLFile(xmlFilePath, callback) {
   ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_RESPONSE, (event, args) => {
     callback(args);
@@ -81,6 +73,5 @@ module.exports = {
   startRound,
 
   // Import
-  openXMLDialog,
   importXMLFile
 };
