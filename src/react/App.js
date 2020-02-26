@@ -48,11 +48,20 @@ const App = () => {
   };
 
   const openXMLDialog = () => {
-    IPCService.openXMLDialog(filePath => {
-      console.log(filePath);
-      setXMLFilePath(filePath);
+    ipcRenderer.once(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
+      console.log(
+        "ipc-main --> ipc-renderer:",
+        ipcMessages.OPEN_FILE_DIALOG_RESPONSE
+      );
+      const { message } = args;
+      console.log("message:", message);
+
+      // TODO: @William - Prüfe die Message auf "success" oder "cancel"
+
       setLinkDisabled(false);
     });
+
+    ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
   };
 
   const importXML = handleShowError => {

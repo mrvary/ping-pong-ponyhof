@@ -42,6 +42,7 @@ let mainWindow = null;
 
 // application state variables
 let competitions = null;
+let selectedXMLFile = null;
 
 let competition = null;
 let matchesWithPlayers = [];
@@ -158,10 +159,21 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
-    uiActions.openXMLFile().then(xmlFilePath => {
-      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, {
-        xmlFilePath: xmlFilePath
-      });
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.OPEN_FILE_DIALOG_REQUEST
+    );
+    uiActions.openXMLFile().then(filePath => {
+      let message = "success";
+
+      if (filePath) {
+        selectedXMLFile = filePath;
+        console.log("Selected XML File:", selectedXMLFile);
+      } else {
+        message = "cancel";
+      }
+
+      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
     });
   });
 
@@ -221,7 +233,7 @@ function getCompetitionsFromDatabase() {
   return competitions;
 }
 
-// Delete competitions from meta storage and the corresponding competition database file
+// Delete competition from meta storage and the corresponding competition database file
 function deleteCompetition(competitionId) {
   fileManager.deleteTournamentJSONFile(competitionId);
   metaStorage.deleteCompetition(competitionId);
