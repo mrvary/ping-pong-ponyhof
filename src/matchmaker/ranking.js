@@ -64,7 +64,6 @@ function calculateBHZ(playerToCalculate, players) {
 // calculateTTRDifference : playerToCalculate, [players] -> newTTR
 function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
-  debugger;
   const opponents = playerToCalculate.opponentIds.filter(
     opponentId => opponentId !== "FreeTicket"
   );

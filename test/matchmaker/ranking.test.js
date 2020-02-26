@@ -18,10 +18,19 @@ const {
   matchWithWrongSets,
   twoPlayers,
   matchesToUpdate,
-  dummyMatches
+  dummyMatches,
+  playersForRanking,
+  matchesForRanking,
+  expectedRanking
 } = require("./ranking.test.data");
 
-describe("createCurrentRanking()", () => {});
+describe("createCurrentRanking()", () => {
+  test("expected ranking was created", () => {
+    expect(createCurrentRanking(playersForRanking, matchesForRanking)).toEqual(
+      expectedRanking
+    );
+  });
+});
 
 describe("calculateBHZ()", () => {
   test("correct BHZ for each player", () => {
