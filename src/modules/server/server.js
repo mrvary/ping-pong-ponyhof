@@ -162,8 +162,7 @@ function createLoginResponseData(tableNumber) {
   const state = "comp-active-round-ready";
 
   // find match, possibly undefined
-  const mockedMatch = require("../../assets/mock-data/match.mock.data.js");
-  console.log(mockedMatch);
+  const { mockedMatch } = require("../../assets/mock-data/match.mock.data.js");
 
   if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {

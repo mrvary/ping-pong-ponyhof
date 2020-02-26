@@ -17,7 +17,12 @@ function setsWonPlayer2(match) {
   return setsWon(match, "player2", "player1");
 }
 
+function isMatchFinished(match) {
+  return setsWonPlayer1(match) === 3 || setsWonPlayer2(match) === 3;
+}
+
 module.exports = {
   setsWonPlayer1,
-  setsWonPlayer2
+  setsWonPlayer2,
+  isMatchFinished
 };

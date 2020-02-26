@@ -4,7 +4,7 @@ import "./ScoreBoard.css";
 import MainScore from "./MainScore";
 import SetScore from "./SetScore";
 
-function ScoreBoard({ match, player1, player2 }) {
+function ScoreBoard({ match }) {
   const showSets = () =>
     match.sets.map((set, index) => (
       <SetScore key={index} index={index} set={set} />
@@ -12,7 +12,7 @@ function ScoreBoard({ match, player1, player2 }) {
 
   return (
     <>
-      <MainScore match={match} player1={player1} player2={player2} />
+      <MainScore match={match} />
       <div className="score-board__container">{showSets()}</div>
     </>
   );

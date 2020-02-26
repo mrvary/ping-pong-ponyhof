@@ -4,12 +4,12 @@ import "./MainScore.css";
 import PlayerScore from "./PlayerScore";
 import { setsWonPlayer1, setsWonPlayer2 } from "../lib";
 
-function MainScore({ match, player1, player2 }) {
+function MainScore({ match }) {
   return (
     <div className="main-score__container">
-      <PlayerScore player={player1} score={setsWonPlayer1(match)} />
+      <PlayerScore player={match.player1} score={setsWonPlayer1(match)} />
       <div className="main-score__delimiter">:</div>
-      <PlayerScore player={player2} score={setsWonPlayer2(match)} />
+      <PlayerScore player={match.player2} score={setsWonPlayer2(match)} />
     </div>
   );
 }

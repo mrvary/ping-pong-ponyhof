@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "./App.css";
+import { isMatchFinished } from "./lib";
 
 // import shared
 import io from "socket.io-client";
@@ -34,7 +35,7 @@ function App() {
 
   const [availableTables, setAvailableTables] = useState([]);
   const [tableNumber, setTableNumber] = useState(-1);
-  const [matchWithPlayers, setMatchWithPlayers] = useState(null);
+  const [localMatch, setLocalMatch] = useState(null);
 
   const content = () => {
     const currentPage = view;
@@ -61,7 +62,7 @@ function App() {
       return (
         <MatchView
           onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
-          matchWithPlayers={matchWithPlayers}
+          match={localMatch}
           sendFinishedMatch={sendFinishedMatch}
           sendSets={sendSets}
         />
@@ -113,16 +114,40 @@ function App() {
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
-      // check message for error
-      // response: { tableNumber, roundStarted, match, message }
-      // if (match && match finished) WAITING
-      // if (roundStarted && match) MATCH;
-      // if (match) NEXT_PLAYERS
-      // NO_COMP
+
+      const { roundStarted, match, message } = data;
+
+      // present, when something went wrong
+      if (message) {
+        alert(message);
+        setView("LOGIN");
+        return;
+      }
 
       console.info("data: ");
       console.info(data);
       setIsConnected(true);
+      setLocalMatch(match);
+
+      if (match && isMatchFinished(match)) {
+        console.info("match is finished");
+        setView("WAITING");
+        return;
+      }
+
+      if (match && roundStarted) {
+        console.info("round is started");
+        setView("MATCH");
+        return;
+      }
+
+      if (match) {
+        console.info("round is started");
+        setView("NEXT_PLAYERS");
+        return;
+      }
+
+      setView("NO_COMP");
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, () => {
@@ -131,7 +156,7 @@ function App() {
         return;
       }
       console.info("SERVER->CLIENT: NEXT_ROUND");
-      setMatchWithPlayers(matchWithPlayers);
+      // setLocalMatch(matchWithPlayers);
 
       // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
       setView("NEXT_PLAYERS");
