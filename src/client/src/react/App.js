@@ -21,7 +21,7 @@ const appTitle = "TTRace";
 const isDev = true;
 const getServerURL = () => {
   const url = isDev ? "localhost:4000" : document.location.host;
-  console.log("Requested server: ", url);
+  console.info("Requested server: ", url);
   return url;
 };
 
@@ -80,21 +80,21 @@ function App() {
 
   const sendTableNumber = event => {
     event.preventDefault();
-    console.log("CLIENT->SERVER: LOGIN_REQUEST");
+    console.info("CLIENT->SERVER: LOGIN_REQUEST");
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
     setPage("WAITING");
   };
 
   const sendFinishedMatch = match => event => {
     // todo -> { sets: [], finished: true }
-    // console.log("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
+    // console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
     // socket.emit(socketIOMessages.UPDATE_SETS_REQUEST { match });
     setPage("WAITING");
   };
 
   const sendSets = sets => event => {
     // todo -> { sets: [], finished: false }
-    console.log("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+    console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
     socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, { tableNumber, sets });
   };
 
@@ -107,15 +107,15 @@ function App() {
     const connection = io(base_url);
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
-      console.log("SERVER->CLIENT: AVAILABLE_TABLES");
-      console.log(tables);
+      console.info("SERVER->CLIENT: AVAILABLE_TABLES");
+      console.info(tables);
 
       setAvailableTables(tables);
       setTableNumber(tables[0]);
     });
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
-      console.log("SERVER->CLIENT: LOGIN_RESPONSE");
+      console.info("SERVER->CLIENT: LOGIN_RESPONSE");
       // check message for error
       // response: { tableNumber, roundStarted, match, message }
       // if (match && match finished) WAITING
@@ -123,8 +123,8 @@ function App() {
       // if (match) NEXT_PLAYERS
       // NO_COMP
 
-      console.log("data: ");
-      console.log(data);
+      console.info("data: ");
+      console.info(data);
       setIsConnected(true);
     });
 
@@ -133,7 +133,7 @@ function App() {
       if (page === "MATCH" || page === "LOGIN") {
         return;
       }
-      console.log("SERVER->CLIENT: NEXT_ROUND");
+      console.info("SERVER->CLIENT: NEXT_ROUND");
       setMatchWithPlayers(matchWithPlayers);
 
       // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
@@ -141,36 +141,36 @@ function App() {
     });
 
     connection.on(socketIOMessages.START_ROUND, () => {
-      console.log("SERVER->CLIENT: START_ROUND");
+      console.info("SERVER->CLIENT: START_ROUND");
       setPage("MATCH");
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
-      console.log("SERVER->CLIENT: CANCEL_ROUND");
+      console.info("SERVER->CLIENT: CANCEL_ROUND");
       // page -> WAITING
     });
 
     connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
-      console.log("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
+      console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
       // error handling, probably send sets again
     });
 
     connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
-      console.log("SERVER->CLIENT: COMPETITION_CANCELED");
+      console.info("SERVER->CLIENT: COMPETITION_CANCELED");
       // page -> NO-COMP
     });
     // remove
     // connection.on(socketIOMessages.UPDATE_SETS, data => {
-    //   console.log("SERVER->CLIENT: UPDATE_SETS");
+    //   console.info("SERVER->CLIENT: UPDATE_SETS");
     //   const { matchWithPlayers, roundStarted } = data;
-    //   console.log(matchWithPlayers);
-    //   console.log(data);
+    //   console.info(matchWithPlayers);
+    //   console.info(data);
 
     // });
 
     // remove
     // connection.on(socketIOMessages.LOGIN_ERROR, data => {
-    //   console.log("SERVER->CLIENT: LOGIN_ERROR");
+    //   console.info("SERVER->CLIENT: LOGIN_ERROR");
     //   const { tableNumber } = data;
     //   alert(
     //     `A device is already connected with the table ${tableNumber} or all slots are busy`
