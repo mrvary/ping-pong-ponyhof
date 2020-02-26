@@ -1,11 +1,12 @@
 const {
   createCurrentRanking,
   calculateBHZ,
-  calculateNewTTR,
+  calculateTTRDifference,
   getMatchesInvolved,
   addMatchDetails,
   createMatchResult,
-  getParameterByPlayerId
+  getParameterByPlayerId,
+  ttrCalculation
 } = require("../../src/matchmaker/ranking");
 
 const { playersAfterUpdateWinner } = require("./player.test.data");
@@ -32,7 +33,62 @@ describe("calculateBHZ()", () => {
   });
 });
 
-describe("calculateNewTTR()", () => {});
+describe("calculateTTRDifference()", () => {
+  test("calculation against normal opponent", () => {
+    let players = twoPlayers;
+    let dummyPlayer = players[0];
+    dummyPlayer.opponentIds = ["PLAYER1"];
+    expect(calculateTTRDifference(dummyPlayer, players)).toBe(5);
+  });
+
+  test("calculation with normal opponent + FreeTicket player", () => {
+    let players = twoPlayers;
+    players.push({
+      id: "FreeTicket",
+      gamesWon: 0,
+      lastname: "FREILOS",
+      matchIds: [],
+      opponentIds: [],
+      qttr: 0
+    });
+    let dummyPlayer = players[0];
+    dummyPlayer.opponentIds = ["PLAYER1", "FreeTicket"];
+    dummyPlayer.gamesWon = 2;
+    expect(calculateTTRDifference(dummyPlayer, players)).toBe(5);
+  });
+
+  test("calculation just against FreeTicket player", () => {
+    let players = twoPlayers;
+    players.push({
+      id: "FreeTicket",
+      gamesWon: 0,
+      lastname: "FREILOS",
+      matchIds: [],
+      opponentIds: [],
+      qttr: 0
+    });
+    let dummyPlayer = players[0];
+    dummyPlayer.opponentIds = ["FreeTicket"];
+    dummyPlayer.gamesWon = 1;
+    expect(calculateTTRDifference(dummyPlayer, players)).toBe(0);
+  });
+});
+
+describe("ttrCalculation()", () => {
+  test("calculation of ttr difference", () => {
+    //these are real life examples
+    expect(ttrCalculation(1617, [1478], 1)).toBe(2);
+    expect(ttrCalculation(1576, [1703, 1458], 1)).toBe(0);
+    expect(ttrCalculation(1624, [1631, 1712], 0)).toBe(-11);
+    expect(ttrCalculation(1464, [1539, 1465, 1320, 1333, 1444], 0)).toBe(-50);
+    expect(ttrCalculation(1449, [1613, 1477, 1492, 1564, 1493, 1524], 6)).toBe(
+      71
+    );
+    expect(ttrCalculation(1637, [1449, 1572, 1428, 1484, 1603, 1563], 3)).toBe(
+      -31
+    );
+  });
+});
 
 describe("getMatchesInvolved()", () => {
   test("get the correct matches back", () => {
@@ -76,9 +132,7 @@ describe("getParameterByPlayerId()", () => {
     expect(getParameterByPlayerId("PingPong", twoPlayers, "clubname")).toBe(
       "Einhornhausen"
     );
-    expect(getParameterByPlayerId("PingPong", twoPlayers, "gamesWon")).toBe(
-      9000
-    );
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "gamesWon")).toBe(1);
     expect(getParameterByPlayerId("PingPong", twoPlayers, "qttr")).toBe(2020);
     expect(getParameterByPlayerId("PingPong", twoPlayers, "active")).toBe(true);
 

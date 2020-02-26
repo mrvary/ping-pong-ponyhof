@@ -84,9 +84,9 @@ const twoPlayers = [
     firstname: "Pony",
     lastname: "Hof",
     clubname: "Einhornhausen",
-    gamesWon: 9000,
+    gamesWon: 1,
     matchIds: [4, 5, 6, 7],
-    opponentIds: [],
+    opponentIds: ["PLAYER1"],
     qttr: 2020,
     active: true
   },
@@ -97,8 +97,8 @@ const twoPlayers = [
     clubname: "ESV SF Neuaubing",
     gamesWon: 0,
     matchIds: [1, 4, 9],
-    opponentIds: [],
-    qttr: 1415,
+    opponentIds: ["PingPong"],
+    qttr: 1960,
     active: true
   }
 ];

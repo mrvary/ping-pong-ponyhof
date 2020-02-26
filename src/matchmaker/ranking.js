@@ -64,6 +64,7 @@ function calculateBHZ(playerToCalculate, players) {
 // calculateTTRDifference : playerToCalculate, [players] -> newTTR
 function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
+  debugger;
   const opponents = playerToCalculate.opponentIds.filter(
     opponentId => opponentId !== "FreeTicket"
   );
@@ -94,7 +95,6 @@ function calculateTTRDifference(playerToCalculate, players) {
 //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
 // ttrCalculation : ttrPlayer, [ttrOpponnents] -> ttrDifference
 function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
-  debugger;
   let ttrDifference = 0;
   ttrOpponnents.forEach(ttr => {
     // calc Pa for each opponent
@@ -109,7 +109,6 @@ function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
   ttrDifference = Math.round(
     ttrDifference - (ttrOpponnents.length - gamesWon) * 16
   );
-  debugger;
   return ttrDifference;
 }
 
