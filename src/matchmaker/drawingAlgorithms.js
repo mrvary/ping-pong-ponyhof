@@ -76,7 +76,14 @@ function basicDrawingAlgorithm(players) {
 // advancedDrawing : [players] -> [pairings]
 function advancedDrawing(players) {
   let dummyPlayers = JSON.parse(JSON.stringify(players));
+  dummyPlayers = shuffle(dummyPlayers);
+  dummyPlayers = sortPlayersBy(dummyPlayers, "gamesWon");
   let groups = groupByGamesWon(dummyPlayers);
+
+  dummyPlayers.forEach(player => {
+    nextBetterOpponent = getNextBetterOpponent(player, dummyPlayers);
+    debugger;
+  });
 
   return dummyPlayers;
 }
@@ -145,6 +152,22 @@ function isRematch(player1, player2) {
   });
 
   return duplicates.length !== 0;
+}
+
+//this function returns the next best opponent a player can play again
+//if there is no opponent left the drawing is wrong and must be repaired
+// getNextBetterOpponent : player, [players] -> player
+function getNextBetterOpponent(player, dummyPlayers) {
+  for (let i = 0; i < dummyPlayers.length; i++) {
+    if (JSON.stringify(player) === JSON.stringify(dummyPlayers[i])) {
+      for (let j = i + 1; j < dummyPlayers.length; j++) {
+        if (!isRematch(player, dummyPlayers[j])) {
+          return dummyPlayers[j];
+        }
+      }
+      return false;
+    }
+  }
 }
 
 // sortPlayersBy : [players] -> [players]
