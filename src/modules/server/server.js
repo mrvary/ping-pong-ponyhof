@@ -162,8 +162,10 @@ function createLoginResponseData(tableNumber) {
   const state = "comp-active-round-ready";
 
   // todo: get match from DB
-  const { mockedMatch } = require("../../assets/mock-data/match.mock.data.js");
-  const match = { ...mockedMatch };
+  const {
+    mockedMatchFinished
+  } = require("../../assets/mock-data/match.mock.data.js");
+  const match = { ...mockedMatchFinished };
 
   if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
@@ -203,8 +205,12 @@ function clientLogout(clientSocket) {
 // SERVER -> CLIENT COMMUNICATION
 
 function sendNextRoundBroadcast() {
-  // send match to each client
-  const data = { matches: [] };
+  const {
+    mockedMatchFinished,
+    mockedMatchRunning
+  } = require("../../assets/mock-data/match.mock.data.js");
+
+  const data = { matches: [mockedMatchFinished, mockedMatchRunning] };
 
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }

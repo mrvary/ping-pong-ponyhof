@@ -154,16 +154,22 @@ function App() {
       setView("NO_COMP");
     });
 
-    connection.on(socketIOMessages.NEXT_ROUND, () => {
-      // todo: get match from matches
-      if (view === "MATCH" || view === "LOGIN") {
+    connection.on(socketIOMessages.NEXT_ROUND, data => {
+      console.info("SERVER->CLIENT: NEXT_ROUND");
+
+      if (view !== "WAITING" || view !== "NO_COMP") {
         return;
       }
-      console.info("SERVER->CLIENT: NEXT_ROUND");
-      // setLocalMatch(matchWithPlayers);
+      const { matches } = data;
+      const match = matches.find(match => match.tableNumber === tableNumber);
 
-      // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
-      setView("NEXT_PLAYERS");
+      if (!match) {
+        console.info(`No match for table number ${tableNumber}`);
+        return;
+      }
+
+      setLocalMatch(match);
+      match.roundStarted ? setView("MATCH") : setView("NEXT_PLAYERS");
     });
 
     connection.on(socketIOMessages.START_ROUND, () => {
