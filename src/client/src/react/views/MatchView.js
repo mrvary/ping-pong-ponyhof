@@ -3,7 +3,7 @@ import React from "react";
 import ScoreBoard from "../components/ScoreBoard";
 import Player from "../components/Player";
 
-function Match({
+function MatchView({
   onlyShowNextPlayers,
   matchWithPlayers,
   sendFinishedMatch,
@@ -35,4 +35,4 @@ function NextPlayers({ matchWithPlayers }) {
   );
 }
 
-export default Match;
+export default MatchView;

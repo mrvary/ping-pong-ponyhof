@@ -6,11 +6,11 @@ import io from "socket.io-client";
 import socketIOMessages from "../shared/socket-io-messages";
 
 // COMPONENTS
-import Login from "./pages/Login";
-import WaitForRound from "./pages/Waiting";
-import Match from "./pages/Match";
-import ConnectionStatus from "../components/ConnectionStatus";
-import Title from "../components/Title";
+import LoginView from "./views/LoginView";
+import WaitingView from "./views/WaitingView";
+import MatchView from "./views/MatchView";
+import ConnectionStatus from "./components/ConnectionStatus";
+import Title from "./components/Title";
 
 const appTitle = "TTRace";
 
@@ -40,7 +40,7 @@ function App() {
     const currentPage = page;
     if (currentPage === "LOGIN") {
       return (
-        <Login
+        <LoginView
           appTitle={appTitle}
           isConnected={isConnected}
           availableTables={availableTables}
@@ -61,7 +61,7 @@ function App() {
 
     if (currentPage === "NEXT_PLAYERS" || currentPage === "MATCH") {
       return (
-        <Match
+        <MatchView
           appTitle={appTitle}
           isConnected={isConnected}
           onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
@@ -73,7 +73,7 @@ function App() {
     }
 
     if (currentPage === "WAITING") {
-      return <WaitForRound appTitle={appTitle} isConnected={isConnected} />;
+      return <WaitingView appTitle={appTitle} isConnected={isConnected} />;
     }
     return <></>;
   };

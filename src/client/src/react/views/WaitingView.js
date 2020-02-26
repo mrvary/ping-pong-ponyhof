@@ -1,7 +1,7 @@
 import React from "react";
-import "./WaitForRound.css";
+import "./WaitingView.css";
 
-function WaitForRound(props) {
+function WaitingView(props) {
   return (
     <div>
       <div className="ball-container">
@@ -12,4 +12,4 @@ function WaitForRound(props) {
   );
 }
 
-export default WaitForRound;
+export default WaitingView;
