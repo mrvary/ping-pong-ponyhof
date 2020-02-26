@@ -97,7 +97,7 @@ const cleanedUpPlayers = [
   }
 ];
 
-const tournamentJSON = {
+const tournamentJSON16Players = {
   tournament: {
     "end-date": "2019-05-25",
     "multiple-participations-same-day": "false",
@@ -822,6 +822,78 @@ const tournamentJSON15Players = {
   }
 };
 
+const match_noFreeticket = {
+  id: 1,
+  player1: "PLAYER1",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 0,
+      player2: 0
+    }
+  ]
+};
+
+const match_noFreeticket2 = {
+  id: 5,
+  player1: "PLAYER13",
+  player2: "PLAYER8",
+  sets: [
+    {
+      player1: 8,
+      player2: 11
+    },
+    {
+      player1: 11,
+      player2: 3
+    },
+    {
+      player1: 11,
+      player2: 13
+    },
+    {
+      player1: 11,
+      player2: 0
+    },
+    {
+      player1: 22,
+      player2: 20
+    }
+  ]
+};
+
+const match_withFreeticket = {
+  id: 1,
+  player1: "FreeTicket",
+  player2: "PLAYER2",
+  sets: [
+    {
+      player1: 0,
+      player2: 0
+    }
+  ]
+};
+
+const match_withFreeticket2 = {
+  id: 1,
+  player1: "PLAYER9",
+  player2: "FreeTicket",
+  sets: [
+    {
+      player1: 11,
+      player2: 6
+    },
+    {
+      player1: 6,
+      player2: 11
+    },
+    {
+      player1: 5,
+      player2: 11
+    }
+  ]
+};
+
 const EXPECTED_PLAYER = {
   id: "PLAYER1",
   firstname: "Gerhard",
@@ -834,10 +906,226 @@ const EXPECTED_PLAYER = {
   active: true
 };
 
+const playersBeforeUpdateDrawing = [
+  {
+    id: "PLAYER1",
+    firstname: "Gerhard",
+    lastname: "Acker",
+    clubname: "ESV SF Neuaubing",
+    gamesWon: 0,
+    matchIds: [0],
+    opponentIds: ["PLAYER2"],
+    qttr: 1415,
+    active: true
+  },
+  {
+    id: "PLAYER4",
+    firstname: "Jonas Karl",
+    lastname: "Dill",
+    clubname: "TTC Perlach",
+    gamesWon: 1,
+    matchIds: [1],
+    opponentIds: ["PLAYER3"],
+    qttr: 1356,
+    active: true
+  },
+  {
+    id: "PLAYER2",
+    firstname: "Achim",
+    lastname: "Amthor",
+    clubname: "SC Baldham-Vaterstetten ",
+    gamesWon: 1,
+    matchIds: [0],
+    opponentIds: ["PLAYER1"],
+    qttr: 1251,
+    active: true
+  },
+  {
+    id: "PLAYER3",
+    firstname: "Ulrich",
+    lastname: "Dietzel",
+    clubname: "TTC Friedberg ",
+    gamesWon: 0,
+    matchIds: [1],
+    opponentIds: ["PLAYER4"],
+    qttr: 1111,
+    active: true
+  }
+];
+
+const matchesToPlay = [
+  {
+    id: 2,
+    player1: "PLAYER2",
+    player2: "PLAYER4",
+    sets: [
+      {
+        player1: 0,
+        player2: 0
+      }
+    ]
+  },
+  {
+    id: 3,
+    player1: "PLAYER1",
+    player2: "PLAYER3",
+    sets: [
+      {
+        player1: 0,
+        player2: 0
+      }
+    ]
+  }
+];
+
+const playersBeforeUpdateWinner = [
+  {
+    id: "PLAYER1",
+    firstname: "Gerhard",
+    lastname: "Acker",
+    clubname: "ESV SF Neuaubing",
+    gamesWon: 0,
+    matchIds: [0, 3],
+    opponentIds: ["PLAYER2", "PLAYER3"],
+    qttr: 1415,
+    active: true
+  },
+  {
+    id: "PLAYER4",
+    firstname: "Jonas Karl",
+    lastname: "Dill",
+    clubname: "TTC Perlach",
+    gamesWon: 1,
+    matchIds: [1, 2],
+    opponentIds: ["PLAYER3", "PLAYER2"],
+    qttr: 1356,
+    active: true
+  },
+  {
+    id: "PLAYER2",
+    firstname: "Achim",
+    lastname: "Amthor",
+    clubname: "SC Baldham-Vaterstetten ",
+    gamesWon: 1,
+    matchIds: [0, 2],
+    opponentIds: ["PLAYER1", "PLAYER4"],
+    qttr: 1251,
+    active: true
+  },
+  {
+    id: "PLAYER3",
+    firstname: "Ulrich",
+    lastname: "Dietzel",
+    clubname: "TTC Friedberg ",
+    gamesWon: 0,
+    matchIds: [1, 3],
+    opponentIds: ["PLAYER4", "PLAYER1"],
+    qttr: 1111,
+    active: true
+  }
+];
+
+const matchesToUseForUpdatingWinner = [
+  {
+    id: 2,
+    player1: "PLAYER2",
+    player2: "PLAYER4",
+    sets: [
+      {
+        player1: 11,
+        player2: 1
+      },
+      {
+        player1: 11,
+        player2: 2
+      },
+      {
+        player1: 11,
+        player2: 3
+      }
+    ]
+  },
+  {
+    id: 3,
+    player1: "PLAYER1",
+    player2: "PLAYER3",
+    sets: [
+      {
+        player1: 4,
+        player2: 11
+      },
+      {
+        player1: 5,
+        player2: 11
+      },
+      {
+        player1: 6,
+        player2: 11
+      }
+    ]
+  }
+];
+
+const playersAfterUpdateWinner = [
+  {
+    id: "PLAYER1",
+    firstname: "Gerhard",
+    lastname: "Acker",
+    clubname: "ESV SF Neuaubing",
+    gamesWon: 0,
+    matchIds: [0, 3],
+    opponentIds: ["PLAYER2", "PLAYER3"],
+    qttr: 1415,
+    active: true
+  },
+  {
+    id: "PLAYER4",
+    firstname: "Jonas Karl",
+    lastname: "Dill",
+    clubname: "TTC Perlach",
+    gamesWon: 1,
+    matchIds: [1, 2],
+    opponentIds: ["PLAYER3", "PLAYER2"],
+    qttr: 1356,
+    active: true
+  },
+  {
+    id: "PLAYER2",
+    firstname: "Achim",
+    lastname: "Amthor",
+    clubname: "SC Baldham-Vaterstetten ",
+    gamesWon: 2,
+    matchIds: [0, 2],
+    opponentIds: ["PLAYER1", "PLAYER4"],
+    qttr: 1251,
+    active: true
+  },
+  {
+    id: "PLAYER3",
+    firstname: "Ulrich",
+    lastname: "Dietzel",
+    clubname: "TTC Friedberg ",
+    gamesWon: 1,
+    matchIds: [1, 3],
+    opponentIds: ["PLAYER4", "PLAYER1"],
+    qttr: 1111,
+    active: true
+  }
+];
+
 module.exports = {
   inputPlayers,
-  tournamentJSON,
   cleanedUpPlayers,
   tournamentJSON15Players,
-  EXPECTED_PLAYER
+  tournamentJSON16Players,
+  EXPECTED_PLAYER,
+  match_noFreeticket,
+  match_noFreeticket2,
+  match_withFreeticket,
+  match_withFreeticket2,
+  playersBeforeUpdateDrawing,
+  matchesToPlay,
+  playersBeforeUpdateWinner,
+  matchesToUseForUpdatingWinner,
+  playersAfterUpdateWinner
 };
