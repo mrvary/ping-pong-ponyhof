@@ -164,7 +164,7 @@ function App() {
       const match = matches.find(match => match.tableNumber === tableNumber);
 
       if (!match) {
-        console.info(`No match for table number ${tableNumber}`);
+        console.error(`No match for table number ${tableNumber}`);
         return;
       }
 
@@ -174,12 +174,24 @@ function App() {
 
     connection.on(socketIOMessages.START_ROUND, () => {
       console.info("SERVER->CLIENT: START_ROUND");
+
+      if (view !== "NEXT_PLAYERS") {
+        console.error("Wrong view, could not start round");
+        return;
+      }
+
       setView("MATCH");
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
       console.info("SERVER->CLIENT: CANCEL_ROUND");
-      // page -> WAITING
+
+      if (view === "LOGIN") {
+        return;
+      }
+
+      setWaitingMessage("Round was cancelled, waiting for new round.");
+      setView("WAITING");
     });
 
     connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
@@ -189,7 +201,12 @@ function App() {
 
     connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
       console.info("SERVER->CLIENT: COMPETITION_CANCELED");
-      // page -> NO-COMP
+
+      if (view === "LOGIN") {
+        return;
+      }
+
+      setView("NO_COMP");
     });
     // remove
     // connection.on(socketIOMessages.UPDATE_SETS, data => {
