@@ -109,6 +109,7 @@ const App = () => {
         xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
+        setLinkDisabled={setLinkDisabled}
       />
       {competitions.map(competition => (
         <Competition
