@@ -20,7 +20,7 @@ function createCurrentRanking(players, matches) {
       ttr_beginn: player.qttr,
       ttr_now: newTTR,
       ttr_diff: newTTR - player.qttr,
-      matches: getMatchesInvolved(player, dummyMatches)
+      matches: getMatchesInvolved(player.matchIds, dummyMatches)
     });
   });
 
@@ -102,11 +102,12 @@ function calculateNewTTR(playerToCalculate, players) {
 }
 
 // getMatchesInvolved : player, [matches] -> [mactchesInvolved]
-function getMatchesInvolved(player, matches) {
-  let mactchesInvolved = matches.filter(function(match) {
-    if (match.player1 === player.id || match.player2 === player.id) return true;
-    return false;
+function getMatchesInvolved(matchIds, matches) {
+  let mactchesInvolved = [];
+  matches.forEach(match => {
+    if (matchIds.includes(match.id)) mactchesInvolved.push(match);
   });
+
   return mactchesInvolved;
 }
 
