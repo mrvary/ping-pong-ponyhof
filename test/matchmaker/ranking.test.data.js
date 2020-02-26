@@ -103,10 +103,36 @@ const twoPlayers = [
   }
 ];
 
+const matchesToUpdate = [
+  {
+    id: 1,
+    player1: "PingPong",
+    player2: "PLAYER1",
+    sets: [
+      {
+        player1: 11,
+        player2: 0
+      }
+    ]
+  },
+  {
+    id: 11,
+    player1: "Player1",
+    player2: "",
+    sets: [
+      {
+        player1: 0,
+        player2: 11
+      }
+    ]
+  }
+];
+
 module.exports = {
   matchWithResult_13,
   matchWithResult_12,
   matchWithResult_10,
   matchWithWrongSets,
-  twoPlayers
+  twoPlayers,
+  matchesToUpdate
 };

@@ -15,7 +15,8 @@ const {
   matchWithResult_12,
   matchWithResult_10,
   matchWithWrongSets,
-  twoPlayers
+  twoPlayers,
+  matchesToUpdate
 } = require("./ranking.test.data");
 
 describe("createCurrentRanking()", () => {});
@@ -32,7 +33,28 @@ describe("calculateBHZ()", () => {
 
 describe("calculateNewTTR()", () => {});
 describe("getMatchesInvolved()", () => {});
-describe("addMatchDetails()", () => {});
+
+describe("addMatchDetails()", () => {
+  test("add first and lastname of the players to a match", () => {
+    let matches = matchesToUpdate;
+    addMatchDetails(twoPlayers, matches);
+
+    expect(matches[0].player1).toBe("PingPong");
+    expect(matches[0].player1firstname).toBe("Pony");
+    expect(matches[0].player1lastname).toBe("Hof");
+
+    expect(matches[0].player2).toBe("PLAYER1");
+    expect(matches[0].player2firstname).toBe("Gerhard");
+    expect(matches[0].player2lastname).toBe("Acker");
+
+    expect(matches[1].player1).toBe("Player1");
+    expect(matches[1].player1firstname).toBeUndefined();
+    expect(matches[1].player1lastname).toBeUndefined();
+
+    expect(matches[1].player2firstname).toBeUndefined();
+    expect(matches[1].player2lastname).toBeUndefined();
+  });
+});
 
 describe("getParameterByPlayerId()", () => {
   test("get the correct value from the right playerId", () => {
