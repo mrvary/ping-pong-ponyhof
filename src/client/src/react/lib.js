@@ -1,3 +1,4 @@
+// return how many sets a player won against an opponent
 function setsWon(match, player, opponent) {
   let result = 0;
 

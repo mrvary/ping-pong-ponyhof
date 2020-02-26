@@ -2,7 +2,7 @@ import React from "react";
 import "./MainScore.css";
 
 import PlayerScore from "../PlayerScore/PlayerScore";
-import { setsWonPlayer1, setsWonPlayer2 } from "./main-score-state-func";
+import { setsWonPlayer1, setsWonPlayer2 } from "../lib";
 
 function MainScore({ match, player1, player2 }) {
   return (
