@@ -90,6 +90,7 @@ function updateSets(clientSocket, data) {
     return;
   }
   // update match in memory
+  SocketIOInputEmitter.emit(serverMessages.UPDATE_SETS, data);
   // emit message to app: new ranking / new match data
   // save to DB
 

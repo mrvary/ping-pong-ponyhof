@@ -122,6 +122,7 @@ function App() {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
       const { roundStarted, match, message } = data;
+      console.log(data);
 
       // present, when something went wrong
       if (message) {

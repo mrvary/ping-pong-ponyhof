@@ -120,6 +120,11 @@ function initHTTPServer() {
       });
     }
   );
+
+  server.SocketIOInputEmitter.on(serverMessages.UPDATE_SETS, args => {
+    console.log("Server-->IPC-Main:", serverMessages.UPDATE_CONNECTION_STATUS);
+    console.log(args);
+  });
 }
 
 function registerIPCMainEvents() {
