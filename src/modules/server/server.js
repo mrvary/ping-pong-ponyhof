@@ -159,21 +159,30 @@ function mapHasValue(inputMap, searchedValue) {
 }
 
 function createLoginResponseData(tableNumber) {
-  const state = "TODO";
+  const state = "comp-active-round-ready";
 
-  if (
-    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-  ) {
+  // find match, possibly undefined
+  const mockedMatch = require("../../assets/mock-data/match.mock.data.js");
+  console.log(mockedMatch);
+
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
-      roundAvailable: false,
+      roundStarted: true,
       tableNumber,
-      match: {}
+      match: mockedMatch
+    };
+  }
+
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+    return {
+      roundStarted: true,
+      tableNumber,
+      match: mockedMatch
     };
   }
 
   return {
-    roundAvailable: false,
+    roundStarted: false,
     tableNumber
   };
 }
