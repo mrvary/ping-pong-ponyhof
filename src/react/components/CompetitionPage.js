@@ -285,8 +285,8 @@ const CompetitionPage = () => {
       <Table matches={matches} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
-          onClick={handleShowEndTournament}
-          text="Tunier abschließen"
+          primOnClick={handleShowEndTournament}
+          primText="Tunier abschließen"
           mode="primary"
         ></Button>
         <Popup
@@ -299,8 +299,8 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
         <Button
-          onClick={handleShowEndRound}
-          text="Runde beenden"
+          primOnClick={handleShowEndRound}
+          primText="Runde beenden"
           mode="primary"
         ></Button>
         <Popup
@@ -313,8 +313,8 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
         <Button
-          onClick={handleStartRound}
-          text="Runde starten"
+          primOnClick={handleStartRound}
+          primText="Runde starten"
           mode="primary"
         ></Button>
       </div>

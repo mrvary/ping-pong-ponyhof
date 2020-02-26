@@ -10,3 +10,6 @@
   background-color: var(--prim-background-color);
   margin-bottom: 2vh;
 }
+.popupEditTable--input {
+  border: 0.1vh solid red;
+}
