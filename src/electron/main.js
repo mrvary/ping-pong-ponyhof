@@ -95,7 +95,7 @@ function initDevTools() {
 function initHTTPServer() {
   server.initHTTPServer(config.SERVER_PORT);
 
-  server.SocketIOInputEmitter.on(
+  server.ServerMainIOConnection.on(
     serverMessages.UPDATE_CONNECTION_STATUS,
     args => {
       console.log(
@@ -121,16 +121,16 @@ function initHTTPServer() {
     }
   );
 
-  server.SocketIOInputEmitter.on(serverMessages.STATE_REQUEST, args => {
+  server.ServerMainIOConnection.on(serverMessages.STATE_REQUEST, args => {
     console.log("Server-->IPC-Main:", serverMessages.STATE_REQUEST);
     console.log(args);
 
-    server.SocketIOOutputEmitter.emit(serverMessages.STATE_RESPONSE, {
+    server.ServerMainIOConnection.emit(serverMessages.STATE_RESPONSE, {
       state: "nice"
     });
   });
 
-  server.SocketIOInputEmitter.on(serverMessages.UPDATE_SETS, args => {
+  server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_CONNECTION_STATUS);
     console.log(args);
   });

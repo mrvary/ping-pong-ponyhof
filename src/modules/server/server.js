@@ -19,7 +19,7 @@ const MAX_AMOUNT_TABLE = 8;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
 const connectedClients = new Map();
 
-const SocketIOInputEmitter = new EventEmitter();
+const ServerMainIOConnection = new EventEmitter();
 const SocketIOOutputEmitter = new EventEmitter();
 
 let server = null;
@@ -64,7 +64,7 @@ function initSocketIO() {
 }
 
 function setUpEventEmitters(clientSocket) {
-  SocketIOOutputEmitter.on(serverMessages.STATE_RESPONSE, data => {
+  ServerMainIOConnection.on(serverMessages.STATE_RESPONSE, data => {
     console.log("OUTPUT EMITTER - STATE RESPONSE");
     console.log(data);
     // send login response to client with his table number
@@ -104,7 +104,7 @@ function updateSets(clientSocket, data) {
     return;
   }
   // update match in memory
-  SocketIOInputEmitter.emit(serverMessages.UPDATE_SETS, data);
+  ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
   // emit message to app: new ranking / new match data
   // save to DB
 
@@ -161,7 +161,7 @@ function clientLogin(clientSocket, tableNumber) {
 
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
-  SocketIOInputEmitter.emit(serverMessages.STATE_REQUEST, {
+  ServerMainIOConnection.emit(serverMessages.STATE_REQUEST, {
     tableNumber
   });
 }
@@ -201,7 +201,7 @@ function createLoginResponseData(tableNumber) {
 
 function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
   console.log(connectedDevice);
-  SocketIOInputEmitter.emit(serverMessages.UPDATE_CONNECTION_STATUS, {
+  ServerMainIOConnection.emit(serverMessages.UPDATE_CONNECTION_STATUS, {
     connectedDevice,
     tableNumber
   });
@@ -278,8 +278,8 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  SocketIOInputEmitter,
-  SocketIOOutputEmitter,
+  ServerMainIOConnection,
+  ServerMainIOConnection,
 
   initHTTPServer,
   shutdownServer,
