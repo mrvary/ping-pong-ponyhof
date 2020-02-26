@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import "./CompetitionPage.css";
-import "../Colors.css";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import './CompetitionPage.css';
+import '../Colors.css';
 
 //componenten
-import Popup from "./Popup";
-import Footer from "./Footer";
-import Button from "./Button";
-import CompetitionPageHeader from "./CompetitionPageHeader";
-import PopupEditTable from "./PopupEditTable";
+import Popup from './Popup';
+import Footer from './Footer';
+import Button from './Button';
+import CompetitionPageHeader from './CompetitionPageHeader';
+import PopupEditTable from './PopupEditTable';
 
 // shared service
-import IPCService from "../../shared/ipc/ipcRendererService";
-import { forEach } from "react-bootstrap/cjs/ElementChildren";
+import IPCService from '../../shared/ipc/ipcRendererService';
+import { forEach } from 'react-bootstrap/cjs/ElementChildren';
 
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
-  const statisticID = "/statisticTable/" + competitionID;
+  const statisticID = '/statisticTable/' + competitionID;
   return (
     <div className="competitionPage__link-alignment">
       <div className="competitionPage__link-ip-adress-statistic">
-        {" "}
-        IP-Adresse{" "}
+        {' '}
+        IP-Adresse{' '}
       </div>
       <p
         onClick={() => openStatisticWindow(statisticID)}
@@ -39,62 +39,62 @@ const TableHeadline = () => {
     <div className="competitionPage__centered">
       <div className="competitionPage__table competitionPage__table--def">
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Tisch{" "}
+          {' '}
+          Tisch{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
+          {' '}
           Spieler 1
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          :{" "}
+          {' '}
+          :{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Spieler 2{" "}
+          {' '}
+          Spieler 2{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 1{" "}
+          {' '}
+          Satz 1{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 2{" "}
+          {' '}
+          Satz 2{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 3{" "}
+          {' '}
+          Satz 3{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 4{" "}
+          {' '}
+          Satz 4{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 5{" "}
+          {' '}
+          Satz 5{' '}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Ergebnis{" "}
+          {' '}
+          Ergebnis{' '}
         </strong>
       </div>
     </div>
   );
 };
 
-const TableRow = ({ match }) => {
+const TableRow = ({ match, activ }) => {
   const [stringSet, setStringSet] = useState([
-    "0 : 0",
-    "0 : 0",
-    "0 : 0",
-    "0 : 0",
-    "0 : 0"
+    '0 : 0',
+    '0 : 0',
+    '0 : 0',
+    '0 : 0',
+    '0 : 0'
   ]);
   let index = 0;
 
   match.sets.forEach(set => {
-    stringSet[index] = set.player1 + " : " + set.player2;
+    stringSet[index] = set.player1 + ' : ' + set.player2;
     index++;
   });
 
@@ -112,44 +112,45 @@ const TableRow = ({ match }) => {
       <div className="competitionPage__table competitionPage__table--values">
         <div className="competitionPage__table--elements competitionPage__centered"></div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
+          {' '}
           {match.player1}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          :{" "}
+          {' '}
+          :{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {match.player2}{" "}
+          {' '}
+          {match.player2}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[0]}{" "}
+          {' '}
+          {stringSet[0]}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[1]}{" "}
+          {' '}
+          {stringSet[1]}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[2]}{" "}
+          {' '}
+          {stringSet[2]}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[3]}{" "}
+          {' '}
+          {stringSet[3]}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[4]}{" "}
+          {' '}
+          {stringSet[4]}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Ergebnis{" "}
+          {' '}
+          Ergebnis{' '}
         </div>
         <button
           onClick={handleShowEditMatch}
           className="competitionPage__table__bearbeiten-btn"
+          disabled={!activ}
         >
           bearbeiten
         </button>
@@ -164,12 +165,14 @@ const TableRow = ({ match }) => {
   );
 };
 
-const Table = ({ matches }) => {
+const Table = ({ matches, activ }) => {
+  let tableCss =
+    'competitionPage__table' + (activ ? '--barrierGreen' : '--barrierRed');
   return (
-    <div>
+    <div className={tableCss}>
       <TableHeadline />
       {matches.map(match => {
-        return <TableRow key={match.id} match={match} />;
+        return <TableRow key={match.id} match={match} activ={activ} />;
       })}
     </div>
   );
@@ -190,8 +193,8 @@ const CompetitionPage = () => {
       const matches = [
         {
           id: 3,
-          player1: "Samuel Geiger",
-          player2: "Marius Bach",
+          player1: 'Samuel Geiger',
+          player2: 'Marius Bach',
           sets: [
             { player1: 11, player2: 13 },
             { player1: 4, player2: 11 }
@@ -201,8 +204,8 @@ const CompetitionPage = () => {
         },
         {
           id: 4,
-          player1: "Edith Finch",
-          player2: "Finch Assozial",
+          player1: 'Edith Finch',
+          player2: 'Finch Assozial',
           sets: [
             { player1: 13, player2: 15 },
             { player1: 14, player2: 16 }
@@ -223,14 +226,19 @@ const CompetitionPage = () => {
       // map names to players
       const matches = matchesWithPlayers.map(matchWithPlayers => {
         const { match, player1, player2 } = matchWithPlayers;
-        match.player1 = player1.firstname + " " + player1.lastname;
-        match.player2 = player2.firstname + " " + player2.lastname;
+        match.player1 = player1.firstname + ' ' + player1.lastname;
+        match.player2 = player2.firstname + ' ' + player2.lastname;
         return match;
       });
 
       setMatches(matches);
     });
   };
+  const [activ, setActiv] = useState(false);
+  const handleActivate = () => {
+    setActiv(true);
+  };
+  const handleDisactivate = () => setActiv(false);
 
   const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
   const handleCloseEndTournament = () => setShowPopupEndTournament(false);
@@ -239,6 +247,10 @@ const CompetitionPage = () => {
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => setShowPopupEndRound(false);
   const handleShowEndRound = () => setShowPopupEndRound(true);
+
+  const [showPopupGoInactive, setShowPopupGoInactive] = useState(false);
+  const handleCloseGoInactive = () => setShowPopupGoInactive(false);
+  const handleShowGoInactive = () => setShowPopupGoInactive(true);
 
   const handleEndTournament = () => {
     handleCloseEndTournament();
@@ -263,32 +275,21 @@ const CompetitionPage = () => {
         playmode="Scheizer System"
         startDate="02.02.2020"
         linkTitle="zur Übersicht"
-        linkDestination={"/"}
+        linkDestination={'/'}
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
       />
-      <Table matches={matches} />
+      <Table matches={matches} activ={activ} />
       <div className="competitionPage__Bottom-Buttons">
-        <Button
-          primOnClick={handleShowEndTournament}
-          primText="Tunier abschließen"
-          mode="primary"
-        ></Button>
-        <Popup
-          show={showPopupEndTournament}
-          handleClose={handleCloseEndTournament}
-          header="Sicher?"
-          bodyText="Möchtest du wirklich das Tunier beenden?"
-          buttonFunk={() => handleEndTournament()}
-          buttonText="Beenden"
-          mode="primary"
-        ></Popup>
         <Button
           primOnClick={handleShowEndRound}
           primText="Runde beenden"
+          secOnClick={handleStartRound}
+          secText="Runde starten"
           mode="primary"
+          disableProp={false}
         ></Button>
         <Popup
           show={showPopupEndRound}
@@ -299,11 +300,39 @@ const CompetitionPage = () => {
           buttonText="Beenden"
           mode="primary"
         ></Popup>
+
         <Button
-          primOnClick={handleStartRound}
-          primText="Runde starten"
-          mode="primary"
+          primOnClick={handleActivate}
+          primText="Spiel starten"
+          secOnClick={handleShowGoInactive}
+          secText="Spiel pausieren"
+          mode={activ ? 'secondary' : 'primary'}
         ></Button>
+        <Popup
+          show={showPopupGoInactive}
+          handleClose={handleCloseGoInactive}
+          header="Bist du dir sicher?"
+          bodyText="Verbindungen zu Nutzergeräten werden beim Pausieren unterbrochen"
+          buttonFunk={() => handleDisactivate()}
+          buttonText="pausieren"
+          mode="primary"
+        ></Popup>
+
+        <Button
+          primOnClick={handleShowEndTournament}
+          primText="Tunier abschließen"
+          mode="primary"
+          disableProp={false}
+        ></Button>
+        <Popup
+          show={showPopupEndTournament}
+          handleClose={handleCloseEndTournament}
+          header="Sicher?"
+          bodyText="Möchtest du wirklich das Tunier beenden?"
+          buttonFunk={() => handleEndTournament()}
+          buttonText="Beenden"
+          mode="primary"
+        ></Popup>
       </div>
       <Footer title="Die Tabelle" />
     </div>
