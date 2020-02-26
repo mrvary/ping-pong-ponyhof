@@ -32,7 +32,9 @@ describe("calculateBHZ()", () => {
 });
 
 describe("calculateNewTTR()", () => {});
-describe("getMatchesInvolved()", () => {});
+describe("getMatchesInvolved()", () => {
+  test("get the correct matches back", () => {});
+});
 
 describe("addMatchDetails()", () => {
   test("add first and lastname of the players to a match", () => {
