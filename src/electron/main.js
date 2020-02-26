@@ -178,7 +178,11 @@ function registerIPCMainEvents() {
         message = "cancel";
       }
 
-      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
+      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, {
+        message,
+        // TODO: remove this later one, just for testing
+        selectedXMLFile
+      });
     });
   });
 
