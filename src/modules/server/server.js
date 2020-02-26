@@ -55,7 +55,7 @@ function initSocketIO() {
   // event fired every time a new client connects (Browser window was opened)
   serverSocket.on(socketIOMessages.CONNECTION, clientSocket => {
     console.info(`Client connected [id=${clientSocket.id}]`);
-    sendAvailableTablesToClient();
+    sendAvailableTablesToClients();
     listenToClientEvent(clientSocket);
   });
 }
@@ -105,13 +105,13 @@ function updateSets(clientSocket, data) {
   return;
 }
 
-function sendAvailableTablesToClient() {
+function sendAvailableTablesToClients() {
   sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 }
 
 function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(x =>
-    parseInt(x, 10)
+  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
+    parseInt(tableNumber, 10)
   );
 
   const availableTables = ALL_POTENTIAL_TABLES.filter(
@@ -142,7 +142,7 @@ function clientLogin(clientSocket, tableNumber) {
   connectedClients.set(clientSocket.id, tableNumber);
 
   // send available tables to clients
-  sendAvailableTablesToClient();
+  sendAvailableTablesToClients();
 
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
@@ -186,7 +186,7 @@ function clientLogout(clientSocket) {
     console.info(`Client logout [id=${clientSocket.id}]`);
 
     // update clients with available tables
-    sendAvailableTablesToClient();
+    sendAvailableTablesToClients();
   }
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
