@@ -19,7 +19,7 @@ const expectedUpdatedCompetition = {
     date: "2019-05-25",
     playmode: PLAYMODE.SCHWEIZER_SYSTEM,
     round_matchIds: [0, 1, 2, 3, 4, 5],
-    status: COMPETITION_STATE.ROUND_STARTED
+    status: COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
 };
 
 const expectedAllCompetitions = [
@@ -29,7 +29,7 @@ const expectedAllCompetitions = [
         date: "2018-05-20",
         playmode: PLAYMODE.SCHWEIZER_SYSTEM,
         round_matchIds: [],
-        status: COMPETITION_STATE.COMPETITION_FINISHED
+        status: COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     },
     {
         id: "jtoindo3ß1%",
@@ -37,7 +37,7 @@ const expectedAllCompetitions = [
         date: "2018-05-22",
         playmode: PLAYMODE.SCHWEIZER_SYSTEM,
         round_matchIds: [0, 1, 2, 3, 4, 5],
-        status: COMPETITION_STATE.ROUND_COMPLETED
+        status: COMPETITION_STATE.COMP_READY_ROUND_READY
     }
 ];
 

@@ -9,6 +9,9 @@ const EventEmitter = require("events");
 // server application
 const expressApp = require("../server/app");
 const socketIOMessages = require("../../client/src/shared/socket-io-messages");
+const serverMessages = require("./server-messages");
+
+// models
 const { COMPETITION_STATE } = require("../models/competition");
 
 // constants
@@ -18,10 +21,6 @@ const connectedClients = new Map();
 
 const SocketIOInputEmitter = new EventEmitter();
 const SocketIOOutputEmitter = new EventEmitter();
-
-const SERVER_MESSAGES = {
-  UPDATE_CONNECTION_STATUS: "update-connection-status"
-};
 
 let server = null;
 let serverSocket = null;
@@ -69,15 +68,6 @@ function listenToClientEvent(clientSocket) {
     clientLogin(clientSocket, tableNumber);
   });
 
-  // TODO: remove
-  // event fired when a start round is triggered
-  // clientSocket.on(socketIOMessages.UPDATE_SETS, data => {
-  //   SocketIOOutputEmitter.once(socketIOMessages.UPDATE_SETS, data => {
-  //     clientSocket.emit(socketIOMessages.UPDATE_SETS, data);
-  //   });
-  //   SocketIOInputEmitter.emit(socketIOMessages.UPDATE_SETS, data);
-  // });
-
   // event fired when a client disconnects, remove it from the list
   clientSocket.on(socketIOMessages.DISCONNECT, () => {
     clientLogout(clientSocket);
@@ -86,11 +76,6 @@ function listenToClientEvent(clientSocket) {
   clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, data =>
     updateSets(clientSocket, data)
   );
-}
-
-function getConnectedDeviceByTableNumber(tableNumber) {
-  const clientId = getKeyByValue(connectedClients, tableNumber);
-  return clientId ? clientId : null;
 }
 
 // CLIENT -> SERVER COMMUNICATION
@@ -111,6 +96,11 @@ function updateSets(clientSocket, data) {
   clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
     message: "🎉 ???"
   });
+}
+
+function getConnectedDeviceByTableNumber(tableNumber) {
+  const clientId = getKeyByValue(connectedClients, tableNumber);
+  return clientId ? clientId : null;
 }
 
 function sendAvailableTablesToClient() {
@@ -190,7 +180,7 @@ function createLoginResponseData(tableNumber) {
 
 function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
   console.log(connectedDevice);
-  SocketIOInputEmitter.emit(SERVER_MESSAGES.UPDATE_CONNECTION_STATUS, {
+  SocketIOInputEmitter.emit(serverMessages.UPDATE_CONNECTION_STATUS, {
     connectedDevice,
     tableNumber
   });
@@ -263,7 +253,6 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  SERVER_MESSAGES,
   SocketIOInputEmitter,
   SocketIOOutputEmitter,
 
@@ -271,6 +260,5 @@ module.exports = {
   shutdownServer,
 
   getConnectedDeviceByTableNumber,
-
   sendStartRoundBroadcast
 };

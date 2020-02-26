@@ -13,7 +13,7 @@ import PopupEditTable from "./PopupEditTable";
 // ipc communication
 import IPCService from "../../shared/ipc/ipcRendererService";
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcChannels = require("../../shared/ipc/ipcChannels");
+const ipcChannels = require("../../shared/ipc-messages");
 
 const USE_BROWSER = false;
 
@@ -231,7 +231,7 @@ const CompetitionPage = () => {
     }
 
     // trigger initialize competition
-    ipcRenderer.send(ipcChannels.GET_MATCHES_BY_COMPETITON_ID, {
+    ipcRenderer.send(ipcChannels.GET_MATCHES, {
       id: competitionID
     });
   };
