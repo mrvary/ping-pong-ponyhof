@@ -34,32 +34,11 @@ function separateTopFromBottomPlayers(players) {
 }
 
 //Algorithms for drawing later round
-// groupByGamesWon : [players] -> [groups]
-function groupByGamesWon(players) {
-  /*
-    if round 1 is over there are 2 groups of players (0|1 gamesWon )
-    if round 2 is over there are 3 groups of players (0|1|2 gameWon)
-    ...
-  */
-  const roundNr = players[0].matchIds.length;
-
-  let groups = [];
-  for (let i = 0; i < roundNr + 1; i++) {
-    const playersWithSameAmountOfGamesWon = players.filter(
-      players.filter(player => player.gamesWon === i)
-    );
-
-    groups.push(playersWithSameAmountOfGamesWon);
-  }
-  //reverser ranking so that the best players are at the beginning of the array
-  groups.reverse();
-
-  return groups;
-}
-
 // pairPlayersLaterRound : [players] -> [pairings]
 function pairPlayersLaterRound(players) {
-  return basicDrawingAlgorithm(players);
+  const basicDrawing = basicDrawingAlgorithm(players);
+  const drawing = advancedDrawing(players);
+  return basicDrawing;
 }
 
 // basicDrawingAlgorithm : [players] -> [pairings]
@@ -94,6 +73,14 @@ function basicDrawingAlgorithm(players) {
   return emergencyDrawingAlgorithm(dummyPlayers);
 }
 
+// advancedDrawing : [players] -> [pairings]
+function advancedDrawing(players) {
+  let dummyPlayers = JSON.parse(JSON.stringify(players));
+  let groups = groupByGamesWon(dummyPlayers);
+
+  return dummyPlayers;
+}
+
 // emergencyDrawingAlgorithm : [players] -> [pairings]
 function emergencyDrawingAlgorithm(players) {
   let dummyPlayers = [...players];
@@ -125,6 +112,29 @@ function createPairingFromArray(players) {
     });
   }
   return pairings;
+}
+
+// groupByGamesWon : [players] -> [groups]
+function groupByGamesWon(players) {
+  /*
+    if round 1 is over there are 2 groups of players (0|1 gamesWon )
+    if round 2 is over there are 3 groups of players (0|1|2 gameWon)
+    ...
+  */
+  const roundNr = players[0].matchIds.length;
+
+  let groups = [];
+  for (let i = 0; i < roundNr + 1; i++) {
+    const playersWithSameAmountOfGamesWon = players.filter(
+      player => player.gamesWon === i
+    );
+
+    groups.push(playersWithSameAmountOfGamesWon);
+  }
+  //reverser ranking so that the best players are at the beginning of the array
+  groups.reverse();
+
+  return groups;
 }
 
 // isRematch : [players] -> [boolean]
