@@ -14,7 +14,8 @@ const {
   matchWithResult_13,
   matchWithResult_12,
   matchWithResult_10,
-  matchWithWrongSets
+  matchWithWrongSets,
+  twoPlayers
 } = require("./ranking.test.data");
 
 describe("createCurrentRanking()", () => {});
@@ -32,7 +33,40 @@ describe("calculateBHZ()", () => {
 describe("calculateNewTTR()", () => {});
 describe("getMatchesInvolved()", () => {});
 describe("addMatchDetails()", () => {});
-describe("getParameterByPlayerId()", () => {});
+
+describe("getParameterByPlayerId()", () => {
+  test("get the correct value from the right playerId", () => {
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "firstname")).toBe(
+      "Pony"
+    );
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "lastname")).toBe(
+      "Hof"
+    );
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "clubname")).toBe(
+      "Einhornhausen"
+    );
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "gamesWon")).toBe(
+      9000
+    );
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "qttr")).toBe(2020);
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "active")).toBe(true);
+
+    expect(getParameterByPlayerId("PLAYER1", twoPlayers, "firstname")).toBe(
+      "Gerhard"
+    );
+    expect(getParameterByPlayerId("PLAYER1", twoPlayers, "lastname")).toBe(
+      "Acker"
+    );
+
+    expect(
+      getParameterByPlayerId("Ping", twoPlayers, "firstname")
+    ).toBeUndefined();
+    expect(
+      getParameterByPlayerId("Pong", twoPlayers, "lastname")
+    ).toBeUndefined();
+  });
+});
+
 describe("createMatchResult()", () => {
   test("correct match result was created", () => {
     const matchResult_13 = createMatchResult(matchWithResult_13);

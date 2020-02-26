@@ -78,9 +78,35 @@ const matchWithWrongSets = {
   ]
 };
 
+const twoPlayers = [
+  {
+    id: "PingPong",
+    firstname: "Pony",
+    lastname: "Hof",
+    clubname: "Einhornhausen",
+    gamesWon: 9000,
+    matchIds: [],
+    opponentIds: [],
+    qttr: 2020,
+    active: true
+  },
+  {
+    id: "PLAYER1",
+    firstname: "Gerhard",
+    lastname: "Acker",
+    clubname: "ESV SF Neuaubing",
+    gamesWon: 0,
+    matchIds: [],
+    opponentIds: [],
+    qttr: 1415,
+    active: true
+  }
+];
+
 module.exports = {
   matchWithResult_13,
   matchWithResult_12,
   matchWithResult_10,
-  matchWithWrongSets
+  matchWithWrongSets,
+  twoPlayers
 };
