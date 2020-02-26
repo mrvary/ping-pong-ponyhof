@@ -3,18 +3,13 @@ import React from "react";
 import ScoreBoard from "../components/ScoreBoard";
 import Player from "../components/Player";
 
-function MatchView({
-  onlyShowNextPlayers,
-  match,
-  sendFinishedMatch,
-  sendSets
-}) {
+function MatchView({ onlyShowNextPlayers, match, sendSets }) {
   return (
     <div>
       {onlyShowNextPlayers ? (
         <NextPlayers match={match}></NextPlayers>
       ) : (
-        <ScoreBoard match={match} />
+        <ScoreBoard match={match} sendSets={sendSets} />
       )}
     </div>
   );

@@ -4,7 +4,7 @@ import "./ScoreBoard.css";
 import MainScore from "./MainScore";
 import SetScore from "./SetScore";
 
-function ScoreBoard({ match }) {
+function ScoreBoard({ match, sendSets }) {
   const showSets = () =>
     match.sets.map((set, index) => (
       <SetScore key={index} index={index} set={set} />
@@ -14,6 +14,7 @@ function ScoreBoard({ match }) {
     <>
       <MainScore match={match} />
       <div className="score-board__container">{showSets()}</div>
+      <button onClick={sendSets(match.sets)}>Send sets</button>
     </>
   );
 }

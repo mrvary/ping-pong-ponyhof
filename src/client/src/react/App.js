@@ -64,7 +64,6 @@ function App() {
         <MatchView
           onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
           match={localMatch}
-          sendFinishedMatch={sendFinishedMatch}
           sendSets={sendSets}
         />
       );
@@ -86,18 +85,22 @@ function App() {
     setView("WAITING");
   };
 
-  const sendFinishedMatch = match => event => {
-    // todo -> { sets: [], finished: true }
-    // console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST (FINISHED) ");
-    // socket.emit(socketIOMessages.UPDATE_SETS_REQUEST { match });
-    setWaitingMessage("waiting for ???");
-    setView("WAITING");
-  };
+  const sendSets = match => event => {
+    const finished = isMatchFinished(match);
+    const data = {
+      sets: match.sets,
+      finished,
+      tableNumber
+    };
 
-  const sendSets = sets => event => {
-    // todo -> { sets: [], finished: false }
     console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
-    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, { tableNumber, sets });
+    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
+
+    if (finished) {
+      localMatch(null);
+      setWaitingMessage("waiting for next round");
+      setView("WAITING");
+    }
   };
 
   const handleTableNumberChange = event => {
@@ -127,8 +130,6 @@ function App() {
         return;
       }
 
-      console.info("data: ");
-      console.info(data);
       setIsConnected(true);
       setLocalMatch(match);
 
@@ -154,54 +155,70 @@ function App() {
       setView("NO_COMP");
     });
 
-    connection.on(socketIOMessages.NEXT_ROUND, () => {
-      // todo: get match from matches
-      if (view === "MATCH" || view === "LOGIN") {
+    connection.on(socketIOMessages.NEXT_ROUND, data => {
+      console.info("SERVER->CLIENT: NEXT_ROUND");
+
+      if (view !== "WAITING" || view !== "NO_COMP") {
         return;
       }
-      console.info("SERVER->CLIENT: NEXT_ROUND");
-      // setLocalMatch(matchWithPlayers);
+      const { matches } = data;
+      const match = matches.find(match => match.tableNumber === tableNumber);
 
-      // roundStarted ? setPage("MATCH") : setPage("NEXT_PLAYERS");
-      setView("NEXT_PLAYERS");
+      if (!match) {
+        console.error(`No match for table number ${tableNumber}`);
+        return;
+      }
+
+      setLocalMatch(match);
+      match.roundStarted ? setView("MATCH") : setView("NEXT_PLAYERS");
     });
 
     connection.on(socketIOMessages.START_ROUND, () => {
       console.info("SERVER->CLIENT: START_ROUND");
+
+      if (view !== "NEXT_PLAYERS") {
+        console.error("Wrong view, could not start round");
+        return;
+      }
+
       setView("MATCH");
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
       console.info("SERVER->CLIENT: CANCEL_ROUND");
-      // page -> WAITING
+
+      if (view === "LOGIN") {
+        return;
+      }
+
+      setWaitingMessage("Round was cancelled, waiting for new round.");
+      setView("WAITING");
     });
 
     connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
       console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
-      // error handling, probably send sets again
+
+      console.info("Could not send sets, trying again in 1000 ms.");
+      const { sets } = localMatch;
+      setInterval(
+        () =>
+          socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, {
+            tableNumber,
+            sets
+          }),
+        1000
+      );
     });
 
     connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
       console.info("SERVER->CLIENT: COMPETITION_CANCELED");
-      // page -> NO-COMP
+
+      if (view === "LOGIN") {
+        return;
+      }
+
+      setView("NO_COMP");
     });
-    // remove
-    // connection.on(socketIOMessages.UPDATE_SETS, data => {
-    //   console.info("SERVER->CLIENT: UPDATE_SETS");
-    //   const { matchWithPlayers, roundStarted } = data;
-    //   console.info(matchWithPlayers);
-    //   console.info(data);
-
-    // });
-
-    // remove
-    // connection.on(socketIOMessages.LOGIN_ERROR, data => {
-    //   console.info("SERVER->CLIENT: LOGIN_ERROR");
-    //   const { tableNumber } = data;
-    //   alert(
-    //     `A device is already connected with the table ${tableNumber} or all slots are busy`
-    //   );
-    // });
 
     setSocket(connection);
   }
