@@ -81,7 +81,24 @@ describe("createStateResponseData()", () => {
       expect(roundStarted).toBeFalsy();
     }
   );
-  test.todo(
-    "COMP_ACTIVE_ROUND_ACTIVE return {roundStarted, tableNumber, match}"
+
+  test(
+    COMP_ACTIVE_ROUND_ACTIVE + "return {roundStarted, tableNumber, match}",
+    () => {
+      // ACT
+      const responseData = createStateResponseData({
+        tableNumber: initialTableNumber,
+        competitions: competitions.map(competition => {
+          return { ...competition, status: COMP_ACTIVE_ROUND_ACTIVE };
+        }),
+        matchesWithPlayers
+      });
+
+      // ASSERT
+      const { roundStarted, tableNumber, match } = responseData;
+      expect(match).toEqual(expectedResponseMatch);
+      expect(tableNumber).toBe(initialTableNumber);
+      expect(roundStarted).toBeTruthy();
+    }
   );
 });
