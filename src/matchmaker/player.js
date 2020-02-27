@@ -110,12 +110,10 @@ function isFreeticketPlayerInMatch(match) {
 }
 
 module.exports = {
-  // pubic
   createPlayersFromJSON,
   updateWinner,
   updatePlayersAfterDrawing,
-
-  // private
+  isFreeticketPlayerInMatch,
   createPlayer,
   sortPlayersBy
 };

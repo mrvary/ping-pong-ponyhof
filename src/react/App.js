@@ -12,6 +12,8 @@ import Header from "./components/Header";
 
 // electron
 import IPCService from "../shared/ipc/ipcRendererService";
+const ipcRenderer = window.electron.ipcRenderer;
+const ipcMessages = require("../shared/ipc-messages");
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
@@ -23,26 +25,43 @@ const App = () => {
   const [xmlFilePath, setXMLFilePath] = useState(null);
 
   useEffect(() => {
-    getAllCompetitions();
+    getCompetitions();
   }, []);
 
-  const getAllCompetitions = () => {
+  const getCompetitions = () => {
     if (USE_BROWSER) {
+      // init competitions with dummy data
       setCompetitions(dummyCompetitions);
       return;
     }
 
-    IPCService.getAllCompetitions(competitions => {
-      setCompetitions(competitions);
-    });
+    // listen to ipc-renderer event to get the data back from ipc-main
+    ipcRenderer.once(
+      ipcMessages.GET_COMPETITIONS_RESPONSE,
+      (event, { competitions }) => {
+        setCompetitions(competitions);
+      }
+    );
+
+    // trigger event to get competitions from ipc-main
+    ipcRenderer.send(ipcMessages.GET_COMPETITIONS_REQUEST);
   };
 
   const openXMLDialog = () => {
-    IPCService.openXMLDialog(filePath => {
-      console.log(filePath);
-      setXMLFilePath(filePath);
+    ipcRenderer.once(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
+      console.log(
+        "ipc-main --> ipc-renderer:",
+        ipcMessages.OPEN_FILE_DIALOG_RESPONSE
+      );
+      const { message } = args;
+      console.log("message:", message);
+
+      // TODO: @William - Prüfe die Message auf "success" oder "cancel"
+
       setLinkDisabled(false);
     });
+
+    ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
   };
 
   const importXML = handleShowError => {
@@ -59,7 +78,6 @@ const App = () => {
         return;
       }
       setCurrentId(competitionId);
-      return;
     });
   };
 
@@ -71,10 +89,21 @@ const App = () => {
       return;
     }
 
-    IPCService.deleteCompetition(id, () => {
+    // TODO: Prüfung einbauen
+    // Prüfen, ob die Competition im Zustand "Aktiv" ist (siehe 'modules/models/competition.js' --> COMPETITION_STATE)
+    // COMPETITION_STATE.COMP_ACTIVE_ ...
+    // Je nachdem Popup mit entsprechender Warnung anzeigen
+
+    // listen to ipc-renderer event to update the ui
+    ipcRenderer.once(ipcMessages.DELETE_COMPETITION_RESPONSE, event => {
       setCompetitions(
         competitions.filter(competition => competition.id !== id)
       );
+    });
+
+    // trigger delete event to
+    ipcRenderer.send(ipcMessages.DELETE_COMPETITION_REQUEST, {
+      competitionId: id
     });
   };
 

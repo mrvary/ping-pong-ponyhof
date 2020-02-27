@@ -7,7 +7,7 @@ const path = require("path");
 const config = require("../config");
 
 const {
-  COMPETITION_STATUS,
+  COMPETITION_STATE,
   createCompetitionFromJSON,
   setCompetitionStatus,  } = require("../../src/modules/models/competition");
 
@@ -35,10 +35,10 @@ describe("setCompetitionStatus", () => {
     let competition = createCompetitionFromJSON(jsonObject.tournament);
 
     // ACT: Set new competition state
-    competition = setCompetitionStatus(competition, COMPETITION_STATUS.COMP_READY_ROUND_READY);
+    competition = setCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
 
     // ARRANGE: check the competition state
-    expect(competition.state).toBe(COMPETITION_STATUS.COMP_READY_ROUND_READY);
+    expect(competition.state).toBe(COMPETITION_STATE.COMP_READY_ROUND_READY);
   });
 });
 

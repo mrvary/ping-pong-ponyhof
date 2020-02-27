@@ -2,15 +2,26 @@ const {
   createPlayer,
   sortPlayersBy,
   createPlayersFromJSON,
-  updatePlayersAfterDrawing
+  updatePlayersAfterDrawing,
+  isFreeticketPlayerInMatch,
+  updateWinner
 } = require("../../src/matchmaker/player");
 
 const {
   inputPlayers,
   cleanedUpPlayers,
-  tournamentJSON,
   tournamentJSON15Players,
-  EXPECTED_PLAYER
+  tournamentJSON16Players,
+  EXPECTED_PLAYER,
+  match_noFreeticket,
+  match_noFreeticket2,
+  match_withFreeticket,
+  match_withFreeticket2,
+  playersBeforeUpdateDrawing,
+  matchesToPlay,
+  playersBeforeUpdateWinner,
+  matchesToUseForUpdatingWinner,
+  playersAfterUpdateWinner
 } = require("./player.test.data");
 
 const { testMatches } = require("./match.test.data");
@@ -24,7 +35,7 @@ describe("createPlayer()", () => {
 });
 
 describe("createPlayers()", () => {
-  const players = createPlayersFromJSON(tournamentJSON);
+  const players = createPlayersFromJSON(tournamentJSON16Players);
   test("returns a list of players", () => {
     expect(players).toHaveLength(16);
   });
@@ -41,6 +52,7 @@ describe("createPlayers()", () => {
     expect(playersWithFreeTicketPlayer).toContainEqual({
       id: "FreeTicket",
       gamesWon: 0,
+      lastname: "FREILOS",
       matchIds: [],
       opponentIds: [],
       qttr: 0
@@ -65,11 +77,31 @@ describe("sortPlayersBy()", () => {
 });
 
 describe("updatePlayersAfterDrawing()", () => {
-  test.todo(
-    "returns an array of all players from an array of players and matches"
+  const updatedPlayers = updatePlayersAfterDrawing(
+    playersBeforeUpdateDrawing,
+    matchesToPlay
   );
+  test("update players with matches drawn", () => {
+    expect(updatedPlayers).toEqual(playersBeforeUpdateWinner);
+  });
+});
 
-  test.todo("match Id added to each player");
+describe("isFreeticketPlayerInMatch()", () => {
+  test("no FreeTicket player in match", () => {
+    expect(isFreeticketPlayerInMatch(match_noFreeticket)).toBe(false);
+    expect(isFreeticketPlayerInMatch(match_noFreeticket2)).toBe(false);
+  });
 
-  test.todo("opponent Id added to each player");
+  test("recognice FreeTicket player in match", () => {
+    expect(isFreeticketPlayerInMatch(match_withFreeticket)).toBe(true);
+    expect(isFreeticketPlayerInMatch(match_withFreeticket2)).toBe(true);
+  });
+});
+
+describe("updateWinner()", () => {
+  test("correct output from updateWinner", () => {
+    expect(
+      updateWinner(playersBeforeUpdateWinner, matchesToUseForUpdatingWinner)
+    ).toEqual(playersAfterUpdateWinner);
+  });
 });
