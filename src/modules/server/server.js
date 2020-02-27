@@ -8,7 +8,7 @@ const EventEmitter = require("events");
 
 // server application
 const expressApp = require("../server/app");
-const socketIOMessages = require("../../client/src/shared/socket-io-messages");
+const socketIOMessages = require("../../client/src/shared/socketIOMessages");
 const serverMessages = require("./serverMessages");
 
 // models
@@ -58,7 +58,9 @@ function initSocketIO() {
   // event fired every time a new client connects (Browser window was opened)
   serverSocket.on(socketIOMessages.CONNECTION, clientSocket => {
     console.info(`Client connected [id=${clientSocket.id}]`);
-    sendAvailableTablesToClients();
+
+    sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
+
     listenToClientEvent(clientSocket);
     setUpEventEmitters(clientSocket);
   });
@@ -66,13 +68,12 @@ function initSocketIO() {
 
 function setUpEventEmitters(clientSocket) {
   ServerMainIOConnection.on(serverMessages.STATE_RESPONSE, data => {
-    console.log("OUTPUT EMITTER - STATE RESPONSE");
-    console.log(data);
-
     // send login response to client with his table number
     clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, data);
   });
 }
+
+// CLIENT -> SERVER COMMUNICATION
 
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
@@ -85,52 +86,13 @@ function listenToClientEvent(clientSocket) {
     clientLogout(clientSocket);
   });
 
+  // event fired when a client sends new sets
   clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, data =>
     updateSets(clientSocket, data)
   );
 }
 
-// CLIENT -> SERVER COMMUNICATION
-
-function updateSets(clientSocket, data) {
-  const { sets, tableNumber, finished } = data;
-  // todo
-  if ("error") {
-    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
-      message: "something went wrong."
-    });
-    return;
-  }
-  // update match in memory
-  ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
-  // emit message to app: new ranking / new match data
-  // save to DB
-
-  clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
-    message: "🎉 ???"
-  });
-}
-
-function getConnectedDeviceByTableNumber(tableNumber) {
-  const clientId = getKeyByValue(connectedClients, tableNumber);
-  return clientId ? clientId : null;
-}
-
-function sendAvailableTablesToClients() {
-  sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
-}
-
-function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
-    parseInt(tableNumber, 10)
-  );
-
-  const availableTables = ALL_POTENTIAL_TABLES.filter(
-    key => !takenTables.includes(key)
-  );
-
-  return availableTables;
-}
+// -----
 
 function clientLogin(clientSocket, tableNumber) {
   // verify if max amount of connected devices/table is reached
@@ -152,8 +114,8 @@ function clientLogin(clientSocket, tableNumber) {
   // save client socket
   connectedClients.set(clientSocket.id, tableNumber);
 
-  // send available tables to clients
-  sendAvailableTablesToClients();
+  // update clients with available tables
+  sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 
   notifyConnectionStatusToMainIPC(clientSocket.id, tableNumber);
 
@@ -162,6 +124,53 @@ function clientLogin(clientSocket, tableNumber) {
   ServerMainIOConnection.emit(serverMessages.STATE_REQUEST, {
     tableNumber
   });
+}
+
+// -----
+
+function clientLogout(clientSocket) {
+  // check if client is logged in
+  if (connectedClients.has(clientSocket.id)) {
+    // delete client from active connections and notify renderer
+    const tableNumber = connectedClients.get(clientSocket.id);
+    connectedClients.delete(clientSocket.id);
+    notifyConnectionStatusToMainIPC(null, tableNumber);
+    console.info(`Client logout [id=${clientSocket.id}]`);
+
+    // update clients with available tables
+    sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
+  }
+
+  console.log(`Client gone [id=${clientSocket.id}]`);
+}
+
+// -----
+
+function updateSets(clientSocket, data) {
+  ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
+
+  clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
+    message: "🎉 ???"
+  });
+}
+
+// -----
+
+function getAvailableTables() {
+  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
+    parseInt(tableNumber, 10)
+  );
+
+  const availableTables = ALL_POTENTIAL_TABLES.filter(
+    key => !takenTables.includes(key)
+  );
+
+  return availableTables;
+}
+
+function getConnectedDeviceByTableNumber(tableNumber) {
+  const clientId = getKeyByValue(connectedClients, tableNumber);
+  return clientId ? clientId : null;
 }
 
 function mapHasValue(inputMap, searchedValue) {
@@ -177,22 +186,6 @@ function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
   });
 }
 
-function clientLogout(clientSocket) {
-  // check if client is logged in
-  if (connectedClients.has(clientSocket.id)) {
-    // delete client from active connections and notify renderer
-    const tableNumber = connectedClients.get(clientSocket.id);
-    connectedClients.delete(clientSocket.id);
-    notifyConnectionStatusToMainIPC(null, tableNumber);
-    console.info(`Client logout [id=${clientSocket.id}]`);
-
-    // update clients with available tables
-    sendAvailableTablesToClients();
-  }
-
-  console.log(`Client gone [id=${clientSocket.id}]`);
-}
-
 // SERVER -> CLIENT COMMUNICATION
 
 function sendNextRoundBroadcast() {
@@ -206,10 +199,12 @@ function sendNextRoundBroadcast() {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
+// maybe remove single function later on
 function sendCompetitionCanceledBroadcast() {
   sendBroadcast(socketIOMessages.COMPETITION_CANCELED);
 }
 
+// maybe remove single function later on
 function sendCancelRoundBroadcast() {
   sendBroadcast(socketIOMessages.CANCEL_ROUND);
 }
@@ -248,7 +243,6 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  ServerMainIOConnection,
   ServerMainIOConnection,
 
   initHTTPServer,

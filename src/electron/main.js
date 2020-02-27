@@ -21,7 +21,10 @@ const {
   setCompetitionStatus,
   COMPETITION_STATE
 } = require("../modules/models/competition");
-const { createStateResponseData } = require("./helper/mainHelper");
+const {
+  createStateResponseData,
+  createUpdateSetsResponseData
+} = require("./helper/mainHelper");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -140,8 +143,15 @@ function initHTTPServer() {
   });
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
-    console.log("Server-->IPC-Main:", serverMessages.UPDATE_CONNECTION_STATUS);
+    console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
     console.log(args);
+
+    const responseData = createUpdateSetsResponseData();
+
+    server.ServerMainIOConnection.emit(
+      serverMessages.UPDATE_SETS_RESPONSE,
+      responseData
+    );
   });
 }
 

@@ -38,6 +38,9 @@ function createStateResponseData({
   }
 }
 
+function createUpdateSetsResponseData() {}
+
 module.exports = {
-  createStateResponseData
+  createStateResponseData,
+  createUpdateSetsResponseData
 };

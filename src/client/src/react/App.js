@@ -4,7 +4,7 @@ import { isMatchFinished } from "./lib";
 
 // import shared
 import io from "socket.io-client";
-import socketIOMessages from "../shared/socket-io-messages";
+import socketIOMessages from "../shared/socketIOMessages";
 
 // COMPONENTS
 import LoginView from "./views/LoginView";
