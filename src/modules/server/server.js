@@ -189,14 +189,7 @@ function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
 
 // SERVER -> CLIENT COMMUNICATION
 
-function sendNextRoundBroadcast() {
-  const {
-    mockedMatchFinished,
-    mockedMatchRunning
-  } = require("../../assets/mock-data/match.mock.data.js");
-
-  const data = { matches: [mockedMatchFinished, mockedMatchRunning] };
-
+function sendNextRoundBroadcast(data) {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
@@ -226,6 +219,7 @@ function sendBroadcast(eventName, data) {
   serverSocket.sockets.emit(eventName, data);
   console.log(`server emit broadcast: ${eventName}`);
   console.log(`--- data was ${data}`);
+  console.log(data);
 }
 
 function getKeyByValue(map, searchValue) {
@@ -248,5 +242,10 @@ module.exports = {
   shutdownServer,
 
   getConnectedDeviceByTableNumber,
-  sendStartRoundBroadcast
+
+  sendStartRoundBroadcast,
+  sendNextRoundBroadcast,
+  sendCancelRoundBroadcast,
+
+  sendCompetitionCanceledBroadcast
 };

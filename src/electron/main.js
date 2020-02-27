@@ -259,10 +259,26 @@ function registerIPCMainEvents() {
       competition,
       COMPETITION_STATE.COMP_READY_ROUND_STARTED
     );
+
     // TODO: check this with Marco
     competition = updatedCompetition;
     metaStorage.updateCompetition(updatedCompetition);
     server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.NEXT_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+    // fire up matchmaker
+    // save things
+    const updatedCompetition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    );
+
+    // TODO: check this with Marco
+    competition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
+    server.sendNextRoundBroadcast({ matchesWithPlayers });
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {

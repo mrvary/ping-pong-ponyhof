@@ -265,6 +265,10 @@ const CompetitionPage = () => {
     IPCService.startRound();
   };
 
+  const handleNextRound = () => {
+    IPCService.nextRound();
+  };
+
   const openStatisticWindow = route => {
     IPCService.createWindow(route);
   };
@@ -315,6 +319,11 @@ const CompetitionPage = () => {
         <Button
           onClick={handleStartRound}
           text="Runde starten"
+          mode="primary"
+        ></Button>
+        <Button
+          onClick={handleNextRound}
+          text="Nächste Runde"
           mode="primary"
         ></Button>
       </div>

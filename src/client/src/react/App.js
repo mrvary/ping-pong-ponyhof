@@ -30,6 +30,8 @@ function App() {
   const [socket, setSocket] = useState(null);
 
   // possibilities: LOGIN | NO_COMP | NEXT_PLAYERS | MATCH | WAITING
+  // why is it called three times?
+  console.log("app has been called");
   const [view, setView] = useState("LOGIN");
   const [isConnected, setIsConnected] = useState(false);
 
@@ -39,8 +41,7 @@ function App() {
   const [waitingMessage, setWaitingMessage] = useState("");
 
   const content = () => {
-    const currentPage = view;
-    if (currentPage === "LOGIN") {
+    if (view === "LOGIN") {
       return (
         <LoginView
           availableTables={availableTables}
@@ -51,7 +52,7 @@ function App() {
       );
     }
 
-    if (currentPage === "NO_COMP") {
+    if (view === "NO_COMP") {
       return (
         <div>
           <Title title="No competition started yet, please wait."></Title>
@@ -59,17 +60,17 @@ function App() {
       );
     }
 
-    if (currentPage === "NEXT_PLAYERS" || currentPage === "MATCH") {
+    if (view === "NEXT_PLAYERS" || view === "MATCH") {
       return (
         <MatchView
-          onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
+          onlyShowNextPlayers={view === "NEXT_PLAYERS"}
           match={localMatch}
           sendSets={sendSets}
         />
       );
     }
 
-    if (currentPage === "WAITING") {
+    if (view === "WAITING") {
       return <WaitingView message={waitingMessage} />;
     }
 
@@ -122,7 +123,6 @@ function App() {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
       const { roundStarted, match, message } = data;
-      console.log(data);
 
       // present, when something went wrong
       if (message) {
@@ -158,12 +158,16 @@ function App() {
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
       console.info("SERVER->CLIENT: NEXT_ROUND");
+      console.log(data);
+      console.log(view);
 
-      if (view !== "WAITING" || view !== "NO_COMP") {
-        return;
-      }
-      const { matches } = data;
-      const match = matches.find(match => match.tableNumber === tableNumber);
+      // if (view !== "WAITING" || view !== "NO_COMP") {
+      //   return;
+      // }
+      const { matchesWithPlayers } = data;
+      const match = matchesWithPlayers.find(
+        match => match.tableNumber === tableNumber
+      );
 
       if (!match) {
         console.error(`No match for table number ${tableNumber}`);
