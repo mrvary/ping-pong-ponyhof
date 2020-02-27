@@ -18,10 +18,10 @@ function createStateResponseData({
     };
   }
 
-  const { state } = currentlyRunningCompetition;
+  const { status } = currentlyRunningCompetition;
   const { player1, player2, match } = matchesWithPlayers[tableNumber];
 
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+  if (status === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
       roundStarted: false,
       tableNumber,
@@ -29,7 +29,7 @@ function createStateResponseData({
     };
   }
 
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+  if (status === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
     return {
       roundStarted: true,
       tableNumber,
