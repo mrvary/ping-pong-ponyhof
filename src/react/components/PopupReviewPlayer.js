@@ -13,7 +13,6 @@ function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
   }, []);
 
   const getCompetition = () => {
-    console.log("load");
     ipcRenderer.once(
       ipcMessages.GET_SINGLE_COMPETITION_RESPONSE,
       (event, args) => {

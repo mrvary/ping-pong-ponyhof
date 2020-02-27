@@ -7,8 +7,8 @@ const parser = require("xml2json");
 
 const {
   createCompetitionFromJSON,
-  setCompetitionStatus,
-  setMatchesOfCurrentRound
+  updateCompetitionStatus,
+  updateCompetitionRoundMatches
 } = require("../../modules/models/competition");
 const { createPlayersFromJSON } = require("../../matchmaker/player");
 
@@ -55,10 +55,10 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   competitionStorage.createPlayers(players);
 
   // store match id of the current round
-  setMatchesOfCurrentRound(competition, matches);
+  updateCompetitionRoundMatches(competition, matches);
 
   // update competition status
-  setCompetitionStatus(competition, false, false);
+  updateCompetitionStatus(competition, false, false);
   metaStorage.updateCompetition(competition);
 
   return competition;

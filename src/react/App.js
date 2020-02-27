@@ -22,7 +22,6 @@ const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [competitions, setCompetitions] = useState([]);
-  const [xmlFilePath, setXMLFilePath] = useState(null);
 
   useEffect(() => {
     getCompetitions();
@@ -67,20 +66,23 @@ const App = () => {
   };
 
   const importXML = handleShowError => {
-    if (!xmlFilePath) {
-      return;
-    }
 
-    IPCService.importXMLFile(xmlFilePath, args => {
+    ipcRenderer.once(ipcMessages.IMPORT_XML_FILE_RESPONSE, (event, args) => {
+      console.log("ipc-main --> ipc-renderer:", ipcMessages.IMPORT_XML_FILE_RESPONSE);
+      console.log(args);
+
       const { competitionId, message } = args;
+
       if (!competitionId) {
-        console.log(message);
         setLinkDisabled(true);
         handleShowError();
         return;
       }
+
       setCurrentId(competitionId);
     });
+
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
   };
 
   const deleteCompetition = id => {
@@ -115,7 +117,6 @@ const App = () => {
         title="PingPongPonyhof"
         openXMLDialog={openXMLDialog}
         importXML={importXML}
-        xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
         setLinkDisabled={setLinkDisabled}

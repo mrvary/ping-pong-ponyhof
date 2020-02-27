@@ -14,19 +14,21 @@ require("electron-reload")(__dirname, {
 const config = require("./config");
 
 // xml import
-const {
-  importXML,
-  readCompetitionXMLFileFromDisk,
-  convertXMLToJSON
-} = require("../modules/import/xml-import");
+const { readCompetitionXMLFileFromDisk, convertXMLToJSON } = require("../modules/import/xml-import");
 
-// models
+// competition model
 const {
+  COMPETITION_STATE,
   createCompetitionFromJSON,
-  setCompetitionStatus,
-  COMPETITION_STATE
+  updateCompetitionRoundMatches,
+  updateCompetitionStatus
 } = require("../modules/models/competition");
-const { createPlayersFromJSON } = require("../matchmaker/player");
+
+// player model
+const { createPlayersFromJSON, updatePlayersAfterDrawing } = require("../matchmaker/player");
+
+// matchmaker
+const matchmaker = require("../matchmaker/drawing");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -54,6 +56,7 @@ let competitions = null;
 
 let competition = null;
 let players = null;
+let matches = null;
 let matchesWithPlayers = [];
 
 // init communication events
@@ -145,6 +148,7 @@ function registerIPCMainEvents() {
 
     // send competitions to renderer process
     event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, { competitions });
+    console.log("ipc-main --> ipc-renderer:", ipcMessages.GET_COMPETITIONS_RESPONSE);
   });
 
   ipcMain.on(ipcMessages.DELETE_COMPETITION_REQUEST, (event, data) => {
@@ -165,6 +169,7 @@ function registerIPCMainEvents() {
     deleteCompetition(competitionId);
 
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
+    console.log("ipc-main --> ipc-renderer:", ipcMessages.DELETE_COMPETITION_RESPONSE);
   });
 
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
@@ -183,6 +188,7 @@ function registerIPCMainEvents() {
       }
 
       event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
+      console.log("ipc-main --> ipc-renderer:", ipcMessages.OPEN_FILE_DIALOG_RESPONSE);
     });
   });
 
@@ -221,41 +227,70 @@ function registerIPCMainEvents() {
       competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
       players = competitionStorage.getAllPlayers();
     }
+    console.log("init competition and players");
 
     // send data back to ipc-renderer { competition, players } (for players use matchmaker)
-    console.log("init competition and players");
     event.sender.send(ipcMessages.GET_SINGLE_COMPETITION_RESPONSE, {
       competition,
       players
     });
+    console.log("ipc-main --> ipc-renderer:", ipcMessages.GET_SINGLE_COMPETITION_RESPONSE);
   });
 
-  ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, (event, args) => {
-    try {
-      const { xmlFilePath } = args;
-      competition = importXML(
-        xmlFilePath,
-        fileManager,
-        metaStorage,
-        competitionStorage
-      );
+  ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, (event) => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.IMPORT_XML_FILE_REQUEST);
+    let args;
 
-      // notify react app that import is ready and was successful
-      const arguments = { competitionId: competition.id, message: "success" };
-      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
+    try {
+      if (!competition) {
+        console.log("Competition is not initialized");
+        return; // --> Fehler: Competition ist nicht initialisiert
+      }
+
+      // 1. initialize competition storage
+      // 1.1. open competition storage and init with json object
+      const competitionFilePath = fileManager.getCompetitionFilePath(competition.id);
+      competitionStorage.open(competitionFilePath, config.USE_IN_MEMORY_STORAGE);
+      competitionStorage.initWithCompetition(jsonObject);
+      console.log("Initialized competition storage with json object");
+
+      if (!players) {
+        console.log("Players is not initialized");
+        return; // --> Fehler: Players sind nicht initialisiert
+      }
+
+      // 1.2. use matchmaker to draw the first round and update players
+      matches = matchmaker.drawRound(players);
+      players = updatePlayersAfterDrawing(players, matches);
+      console.log("Matchmaker drew the first round");
+
+      // 1.3. store matches and players into the competition storage
+      competitionStorage.createMatches(matches);
+      competitionStorage.createPlayers(players);
+      console.log("Save matches and players into competition storage");
+
+      // 2. update competition and save competition into meta storage
+      competition = updateCompetitionRoundMatches(competition, matches);
+      competition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
+      metaStorage.createCompetition(competition);
+      console.log("Create competition in meta storage");
+
+      // 3. create response message with success message
+      args = {competitionId: competition.id, message: "success"};
     } catch (err) {
-      // notify react app that a error has happened
-      console.log(err.message);
-      const arguments = { competitionId: "", message: err.message };
-      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
+      args = {competitionId: "", message: err.message};
+    } finally {
+      // notify react app about the import status
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, args);
+      console.log("ipc-main --> ipc-renderer:", ipcMessages.IMPORT_XML_FILE_RESPONSE);
     }
   });
 
   ipcMain.on(ipcMessages.GET_MATCHES, (event, args) => {
-    const { id } = args;
+    const { competitionId } = args;
 
     // 1. initialize competition
-    competition = metaStorage.getCompetition(id);
+    competition = metaStorage.getCompetition(competitionId);
 
     // 2. initialize matches of competition
     initializeMatchesByCompetitionId(id);
@@ -327,6 +362,6 @@ function initializeMatchesByCompetitionId(id) {
   });
 
   // 4. update competition status
-  setCompetitionStatus(competition, false, false);
+  updateCompetitionStatus(competition, false, false);
   metaStorage.updateCompetition(competition);
 }

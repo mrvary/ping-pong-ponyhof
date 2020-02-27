@@ -16,6 +16,8 @@ function open(filePath, useInMemory) {
 
   const adapter = useInMemory ? new Memory() : new FileSync(filePath);
   storage = low(adapter);
+
+  console.log("Open storage:", filePath);
 }
 
 function initWithCompetition(jsonObject) {
