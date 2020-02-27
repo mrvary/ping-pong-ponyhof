@@ -71,6 +71,11 @@ function setUpEventEmitters(clientSocket) {
     // send login response to client with his table number
     clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, data);
   });
+
+  ServerMainIOConnection.on(serverMessages.UPDATE_SETS_RESPONSE, data => {
+    // send response to client whether sets were successfully updated
+    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, data);
+  });
 }
 
 // CLIENT -> SERVER COMMUNICATION
@@ -148,10 +153,6 @@ function clientLogout(clientSocket) {
 
 function updateSets(clientSocket, data) {
   ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
-
-  clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
-    message: "🎉 ???"
-  });
 }
 
 // -----
@@ -199,12 +200,10 @@ function sendNextRoundBroadcast() {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
-// maybe remove single function later on
 function sendCompetitionCanceledBroadcast() {
   sendBroadcast(socketIOMessages.COMPETITION_CANCELED);
 }
 
-// maybe remove single function later on
 function sendCancelRoundBroadcast() {
   sendBroadcast(socketIOMessages.CANCEL_ROUND);
 }
