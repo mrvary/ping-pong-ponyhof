@@ -144,7 +144,6 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
-    console.log("whoop whoop");
     console.log(args);
 
     const responseData = createUpdateSetsResponseData();

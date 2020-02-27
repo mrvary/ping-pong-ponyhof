@@ -30,8 +30,6 @@ function App() {
   const [socket, setSocket] = useState(null);
 
   // possibilities: LOGIN | NO_COMP | NEXT_PLAYERS | MATCH | WAITING
-  // why is it called three times?
-  console.log("app has been called");
   const [view, setView] = useState("LOGIN");
   const [isConnected, setIsConnected] = useState(false);
 
@@ -158,12 +156,10 @@ function App() {
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
       console.info("SERVER->CLIENT: NEXT_ROUND");
-      console.log(data);
-      console.log(view);
 
-      // if (view !== "WAITING" || view !== "NO_COMP") {
-      //   return;
-      // }
+      if (view !== "WAITING" || view !== "NO_COMP") {
+        return;
+      }
       const { matchesWithPlayers } = data;
       const match = matchesWithPlayers.find(
         match => match.tableNumber === tableNumber

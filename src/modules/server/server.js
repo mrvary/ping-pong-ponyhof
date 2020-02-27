@@ -219,7 +219,6 @@ function sendBroadcast(eventName, data) {
   serverSocket.sockets.emit(eventName, data);
   console.log(`server emit broadcast: ${eventName}`);
   console.log(`--- data was ${data}`);
-  console.log(data);
 }
 
 function getKeyByValue(map, searchValue) {
