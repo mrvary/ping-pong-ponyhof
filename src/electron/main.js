@@ -14,7 +14,10 @@ require("electron-reload")(__dirname, {
 const config = require("./config");
 
 // xml import
-const { readCompetitionXMLFileFromDisk, convertXMLToJSON } = require("../modules/import/xml-import");
+const {
+  readCompetitionXMLFileFromDisk,
+  convertXMLToJSON
+} = require("../modules/import/xml-import");
 
 // competition model
 const {
@@ -25,7 +28,10 @@ const {
 } = require("../modules/models/competition");
 
 // player model
-const { createPlayersFromJSON, updatePlayersAfterDrawing } = require("../matchmaker/player");
+const {
+  createPlayersFromJSON,
+  updatePlayersAfterDrawing
+} = require("../matchmaker/player");
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
@@ -148,7 +154,10 @@ function registerIPCMainEvents() {
 
     // send competitions to renderer process
     event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, { competitions });
-    console.log("ipc-main --> ipc-renderer:", ipcMessages.GET_COMPETITIONS_RESPONSE);
+    console.log(
+      "ipc-main --> ipc-renderer:",
+      ipcMessages.GET_COMPETITIONS_RESPONSE
+    );
   });
 
   ipcMain.on(ipcMessages.DELETE_COMPETITION_REQUEST, (event, data) => {
@@ -169,7 +178,10 @@ function registerIPCMainEvents() {
     deleteCompetition(competitionId);
 
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
-    console.log("ipc-main --> ipc-renderer:", ipcMessages.DELETE_COMPETITION_RESPONSE);
+    console.log(
+      "ipc-main --> ipc-renderer:",
+      ipcMessages.DELETE_COMPETITION_RESPONSE
+    );
   });
 
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
@@ -188,7 +200,10 @@ function registerIPCMainEvents() {
       }
 
       event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
-      console.log("ipc-main --> ipc-renderer:", ipcMessages.OPEN_FILE_DIALOG_RESPONSE);
+      console.log(
+        "ipc-main --> ipc-renderer:",
+        ipcMessages.OPEN_FILE_DIALOG_RESPONSE
+      );
     });
   });
 
@@ -234,11 +249,17 @@ function registerIPCMainEvents() {
       competition,
       players
     });
-    console.log("ipc-main --> ipc-renderer:", ipcMessages.GET_SINGLE_COMPETITION_RESPONSE);
+    console.log(
+      "ipc-main --> ipc-renderer:",
+      ipcMessages.GET_SINGLE_COMPETITION_RESPONSE
+    );
   });
 
-  ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, (event) => {
-    console.log("ipc-renderer --> ipc-main:", ipcMessages.IMPORT_XML_FILE_REQUEST);
+  ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, event => {
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.IMPORT_XML_FILE_REQUEST
+    );
     let args;
 
     try {
@@ -249,8 +270,13 @@ function registerIPCMainEvents() {
 
       // 1. initialize competition storage
       // 1.1. open competition storage and init with json object
-      const competitionFilePath = fileManager.getCompetitionFilePath(competition.id);
-      competitionStorage.open(competitionFilePath, config.USE_IN_MEMORY_STORAGE);
+      const competitionFilePath = fileManager.getCompetitionFilePath(
+        competition.id
+      );
+      competitionStorage.open(
+        competitionFilePath,
+        config.USE_IN_MEMORY_STORAGE
+      );
       competitionStorage.initWithCompetition(jsonObject);
       console.log("Initialized competition storage with json object");
 
@@ -271,18 +297,24 @@ function registerIPCMainEvents() {
 
       // 2. update competition and save competition into meta storage
       competition = updateCompetitionRoundMatches(competition, matches);
-      competition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
+      competition = updateCompetitionStatus(
+        competition,
+        COMPETITION_STATE.COMP_READY_ROUND_READY
+      );
       metaStorage.createCompetition(competition);
       console.log("Create competition in meta storage");
 
       // 3. create response message with success message
-      args = {competitionId: competition.id, message: "success"};
+      args = { competitionId: competition.id, message: "success" };
     } catch (err) {
-      args = {competitionId: "", message: err.message};
+      args = { competitionId: "", message: err.message };
     } finally {
       // notify react app about the import status
       event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, args);
-      console.log("ipc-main --> ipc-renderer:", ipcMessages.IMPORT_XML_FILE_RESPONSE);
+      console.log(
+        "ipc-main --> ipc-renderer:",
+        ipcMessages.IMPORT_XML_FILE_RESPONSE
+      );
     }
   });
 

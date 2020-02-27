@@ -66,9 +66,11 @@ const App = () => {
   };
 
   const importXML = handleShowError => {
-
     ipcRenderer.once(ipcMessages.IMPORT_XML_FILE_RESPONSE, (event, args) => {
-      console.log("ipc-main --> ipc-renderer:", ipcMessages.IMPORT_XML_FILE_RESPONSE);
+      console.log(
+        "ipc-main --> ipc-renderer:",
+        ipcMessages.IMPORT_XML_FILE_RESPONSE
+      );
       console.log(args);
 
       const { competitionId, message } = args;

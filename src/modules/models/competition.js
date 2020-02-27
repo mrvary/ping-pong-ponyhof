@@ -29,7 +29,7 @@ function createCompetitionFromJSON(dataFromJSON) {
 }
 
 function updateCompetitionRoundMatches(competition, matches) {
-  return {...competition, round_matchIds: matches.map(match => match.id)};
+  return { ...competition, round_matchIds: matches.map(match => match.id) };
 }
 
 function updateCompetitionStatus(competition, newStatus) {

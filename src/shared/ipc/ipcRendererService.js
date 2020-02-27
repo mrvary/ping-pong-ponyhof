@@ -60,5 +60,5 @@ module.exports = {
   createWindow,
 
   // Trigger
-  startRound,
+  startRound
 };
