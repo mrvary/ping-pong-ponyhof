@@ -59,10 +59,11 @@ let xmlFilePath = null;
 let jsonObject = null;
 
 let competitions = null;
+let selectedCompetition = null;
+let selectedPlayers = null;
+let selectedMatches = null;
 
-let competition = null;
-let players = null;
-let matches = null;
+let currentCompetition = null;
 let matchesWithPlayers = [];
 
 // init communication events
@@ -168,9 +169,9 @@ function registerIPCMainEvents() {
     const { competitionId } = data;
 
     // check if a competition is selected ...
-    if (competition) {
+    if (currentCompetition) {
       // ... than reset application state
-      competition = null;
+      currentCompetition = null;
       matchesWithPlayers = [];
       console.log("Reset application state");
     }
@@ -213,12 +214,12 @@ function registerIPCMainEvents() {
       ipcMessages.GET_SINGLE_COMPETITION_REQUEST
     );
 
-    // check if a xml file is selected --> Fehler: XML-Datei ist nicht ausgewählt
-    if (!xmlFilePath) {
-      return;
-    }
-
     if (!args) {
+      // check if a xml file is selected --> Fehler: XML-Datei ist nicht ausgewählt
+      if (!xmlFilePath) {
+        return;
+      }
+
       // 1. load xml file
       const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
 
@@ -229,25 +230,44 @@ function registerIPCMainEvents() {
       jsonObject = convertXMLToJSON(xmlContent);
 
       // 4. parse JSON-Object for necessary data
-      competition = createCompetitionFromJSON(jsonObject.tournament);
-      players = createPlayersFromJSON(jsonObject);
+      selectedCompetition = createCompetitionFromJSON(jsonObject.tournament);
+      selectedPlayers = createPlayersFromJSON(jsonObject);
+
+      // 5. do resets
+      xmlFilePath = null;
     } else {
       const { competitionId } = args;
 
-      // 1. load competition from meta data storage
-      competition = metaStorage.getCompetition(competitionId);
+      if (!competitionId) {
+        console.log("Parameter competitionId is not initialized");
+        return;
+      }
+
+      if (competitions.length > 0) {
+        selectedCompetition = competitions.find(
+          competition => competition.id === competitionId
+        );
+      } else {
+        console.log("workflow fehler?");
+        return; // Fehler: Workflow
+      }
 
       // 2. load players from competition storage
       const filePath = fileManager.getCompetitionFilePath(competitionId);
       competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-      players = competitionStorage.getAllPlayers();
+      selectedPlayers = competitionStorage.getAllPlayers();
+
+      // 3. load matches from competition storage
+      selectedMatches = competitionStorage.getMatchesByIds(
+        selectedCompetition.round_matchIds
+      );
     }
-    console.log("init competition and players");
+    console.log("competition and players are selected");
 
     // send data back to ipc-renderer { competition, players } (for players use matchmaker)
     event.sender.send(ipcMessages.GET_SINGLE_COMPETITION_RESPONSE, {
-      competition,
-      players
+      competition: selectedCompetition,
+      players: selectedPlayers
     });
     console.log(
       "ipc-main --> ipc-renderer:",
@@ -260,18 +280,33 @@ function registerIPCMainEvents() {
       "ipc-renderer --> ipc-main:",
       ipcMessages.IMPORT_XML_FILE_REQUEST
     );
-    let args;
 
+    let args;
     try {
-      if (!competition) {
-        console.log("Competition is not initialized");
-        return; // --> Fehler: Competition ist nicht initialisiert
+      if (!selectedCompetition) {
+        const errorMessage = "Competition is not initialized";
+        console.log(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      if (!selectedPlayers) {
+        const errorMessage = "Players is not initialized";
+        console.log(errorMessage);
+        throw new Error(errorMessage);
+      }
+
+      if (currentCompetition) {
+        // TODO: Wann fliegt dieser Fehler?
+        const errorMessage =
+          "A competition is already loaded. Do you want to pause the current?";
+        console.log(errorMessage);
+        throw new Error(errorMessage);
       }
 
       // 1. initialize competition storage
       // 1.1. open competition storage and init with json object
       const competitionFilePath = fileManager.getCompetitionFilePath(
-        competition.id
+        selectedCompetition.id
       );
       competitionStorage.open(
         competitionFilePath,
@@ -280,32 +315,36 @@ function registerIPCMainEvents() {
       competitionStorage.initWithCompetition(jsonObject);
       console.log("Initialized competition storage with json object");
 
-      if (!players) {
-        console.log("Players is not initialized");
-        return; // --> Fehler: Players sind nicht initialisiert
-      }
-
       // 1.2. use matchmaker to draw the first round and update players
-      matches = matchmaker.drawRound(players);
-      players = updatePlayersAfterDrawing(players, matches);
+      selectedMatches = matchmaker.drawRound(selectedPlayers);
+      selectedPlayers = updatePlayersAfterDrawing(
+        selectedPlayers,
+        selectedMatches
+      );
       console.log("Matchmaker drew the first round");
 
       // 1.3. store matches and players into the competition storage
-      competitionStorage.createMatches(matches);
-      competitionStorage.createPlayers(players);
+      competitionStorage.createMatches(selectedMatches);
+      competitionStorage.createPlayers(selectedPlayers);
       console.log("Save matches and players into competition storage");
 
       // 2. update competition and save competition into meta storage
-      competition = updateCompetitionRoundMatches(competition, matches);
-      competition = updateCompetitionStatus(
-        competition,
+      selectedCompetition = updateCompetitionRoundMatches(
+        selectedCompetition,
+        selectedMatches
+      );
+      selectedCompetition = updateCompetitionStatus(
+        selectedCompetition,
         COMPETITION_STATE.COMP_READY_ROUND_READY
       );
-      metaStorage.createCompetition(competition);
+      metaStorage.createCompetition(selectedCompetition);
       console.log("Create competition in meta storage");
 
+      // reset app state variables
+      jsonObject = null;
+
       // 3. create response message with success message
-      args = { competitionId: competition.id, message: "success" };
+      args = { competitionId: selectedCompetition.id, message: "success" };
     } catch (err) {
       args = { competitionId: "", message: err.message };
     } finally {
@@ -319,18 +358,47 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.GET_MATCHES, (event, args) => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.GET_MATCHES);
     const { competitionId } = args;
 
-    // 1. initialize competition
-    competition = metaStorage.getCompetition(competitionId);
+    if (!currentCompetition) {
+      // init current competition
+      if (!selectedCompetition) {
+        console.log("Competition is not initialized");
+        return; // --> Fehler: Competition ist nicht initialisiert
+      }
 
-    // 2. initialize matches of competition
-    initializeMatchesByCompetitionId(id);
+      if (!selectedPlayers) {
+        console.log("Players is not initialized");
+        return; // --> Fehler: Players sind nicht initialisiert
+      }
 
-    // 3. send matches to renderer
+      if (!selectedMatches) {
+        console.log("Matches is not initialized");
+        return; // --> Fehler: Matches sind nicht initialisiert
+      }
+
+      // initialize current competition
+      currentCompetition = selectedCompetition;
+      initMatchesWithPlayers(selectedMatches, selectedPlayers);
+      console.log("Set current competition");
+      console.log("init matches with players");
+
+      // reset selected state
+      selectedCompetition = null;
+      selectedPlayers = [];
+      selectedMatches = [];
+    } else {
+      if (currentCompetition.id !== competitionId) {
+        console.log("Workflow fehler");
+        return;
+      }
+    }
+
     event.sender.send(ipcMessages.UPDATE_MATCHES, {
       matchesWithPlayers: matchesWithPlayers
     });
+    console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_MATCHES);
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
@@ -359,21 +427,7 @@ function deleteCompetition(competitionId) {
   metaStorage.deleteCompetition(competitionId);
 }
 
-function initializeMatchesByCompetitionId(id) {
-  if (matchesWithPlayers.length > 0) {
-    return;
-  }
-
-  // 1. open competition storage
-  const filePath = fileManager.getCompetitionFilePath(id);
-  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-
-  // 2. get players and current matches from competition
-  const currentRoundMatchIds = competition.round_matchIds;
-  const matches = competitionStorage.getMatchesByIds(currentRoundMatchIds);
-  const players = competitionStorage.getAllPlayers();
-
-  // 3. map communication object
+function initMatchesWithPlayers(matches, players) {
   let tableNumber = 1;
   matches.forEach(match => {
     const player1 = players.find(player => player.id === match.player1);
@@ -392,8 +446,21 @@ function initializeMatchesByCompetitionId(id) {
     matchesWithPlayers.push(matchWithPlayers);
     tableNumber++;
   });
+}
 
-  // 4. update competition status
-  updateCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
+function initializeMatchesByCompetitionId(id) {
+  if (matchesWithPlayers.length > 0) {
+    return;
+  }
+
+  // 1. open competition storage
+  const filePath = fileManager.getCompetitionFilePath(id);
+  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+
+  // 2. get players and current matches from competition
+  const currentRoundMatchIds = currentCompetition.round_matchIds;
+  const matches = competitionStorage.getMatchesByIds(currentRoundMatchIds);
+  const players = competitionStorage.getAllPlayers();
+
+  initMatchesWithPlayers(matches, players);
 }

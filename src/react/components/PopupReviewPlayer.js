@@ -10,7 +10,7 @@ const ipcMessages = require("../../shared/ipc-messages");
 function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
   useEffect(() => {
     getCompetition();
-  }, []);
+  }, null);
 
   const getCompetition = () => {
     ipcRenderer.once(
