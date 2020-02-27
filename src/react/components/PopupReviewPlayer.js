@@ -46,7 +46,11 @@ function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
             <p className="popup__names">player1</p>
             <p className="popup__names">player1</p>
           </div>
-          <Button text="Hochladen" onClick={buttonFunk}></Button>
+          <Button
+            primText="Hochladen"
+            primOnClick={buttonFunk}
+            mode="primary"
+          ></Button>
         </div>
       </Modal.Body>
     </Modal>

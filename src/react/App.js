@@ -73,14 +73,12 @@ const App = () => {
 
     IPCService.importXMLFile(xmlFilePath, args => {
       const { competitionId, message } = args;
-
       if (!competitionId) {
         console.log(message);
         setLinkDisabled(true);
         handleShowError();
         return;
       }
-
       setCurrentId(competitionId);
     });
   };
