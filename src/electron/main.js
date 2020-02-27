@@ -21,6 +21,10 @@ const {
   setCompetitionStatus,
   COMPETITION_STATE
 } = require("../modules/models/competition");
+const {
+  createStateResponseData,
+  createUpdateSetsResponseData
+} = require("./helper/mainHelper");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -29,7 +33,7 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const serverMessages = require("../modules/server/server-messages");
+const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
 // windows actions
@@ -95,7 +99,7 @@ function initDevTools() {
 function initHTTPServer() {
   server.initHTTPServer(config.SERVER_PORT);
 
-  server.SocketIOInputEmitter.on(
+  server.ServerMainIOConnection.on(
     serverMessages.UPDATE_CONNECTION_STATUS,
     args => {
       console.log(
@@ -120,6 +124,35 @@ function initHTTPServer() {
       });
     }
   );
+
+  server.ServerMainIOConnection.on(serverMessages.STATE_REQUEST, args => {
+    console.log("Server-->IPC-Main:", serverMessages.STATE_REQUEST);
+    console.log(args);
+    const { tableNumber } = args;
+
+    const responseData = createStateResponseData({
+      competitions,
+      matchesWithPlayers,
+      tableNumber
+    });
+
+    server.ServerMainIOConnection.emit(
+      serverMessages.STATE_RESPONSE,
+      responseData
+    );
+  });
+
+  server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
+    console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
+    console.log(args);
+
+    const responseData = createUpdateSetsResponseData();
+
+    server.ServerMainIOConnection.emit(
+      serverMessages.UPDATE_SETS_RESPONSE,
+      responseData
+    );
+  });
 }
 
 function registerIPCMainEvents() {
@@ -173,7 +206,11 @@ function registerIPCMainEvents() {
         message = "cancel";
       }
 
-      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
+      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, {
+        message,
+        // TODO: remove this later one, just for testing
+        selectedXMLFile
+      });
     });
   });
 
@@ -188,13 +225,13 @@ function registerIPCMainEvents() {
       );
 
       // notify react app that import is ready and was successful
-      const arguments = { competitionId: competition.id, message: "success" };
-      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
+      const returnData = { competitionId: competition.id, message: "success" };
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
     } catch (err) {
       // notify react app that a error has happened
       console.log(err.message);
-      const arguments = { competitionId: "", message: err.message };
-      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, arguments);
+      const returnData = { competitionId: "", message: err.message };
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
     }
   });
 
@@ -214,7 +251,41 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
+    if (competition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      return;
+    }
+    const updatedCompetition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_READY_ROUND_STARTED
+    );
+
+    // TODO: check this with Marco
+    competition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
     server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.NEXT_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+    // fire up matchmaker
+    // save things
+    const updatedCompetition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    );
+
+    // TODO: check this with Marco
+    competition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
+
+    const matchesWithoutFreeTickets = matchesWithPlayers.filter(
+      ({ player1, player2 }) =>
+        player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
+    );
+
+    server.sendNextRoundBroadcast({
+      matchesWithPlayers: matchesWithoutFreeTickets
+    });
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
@@ -274,6 +345,11 @@ function initializeMatchesByCompetitionId(id) {
   });
 
   // 4. update competition status
-  setCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
+  const updatedCompetition = setCompetitionStatus(
+    competition,
+    COMPETITION_STATE.COMP_READY_ROUND_READY
+  );
+  // TODO: check this with Marco
+  competition = updatedCompetition;
+  metaStorage.updateCompetition(updatedCompetition);
 }

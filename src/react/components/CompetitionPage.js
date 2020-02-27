@@ -273,6 +273,7 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
+    IPCService.nextRound();
     handleCloseEndRound();
   };
 

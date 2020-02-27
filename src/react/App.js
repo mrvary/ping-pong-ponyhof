@@ -57,6 +57,10 @@ const App = () => {
       console.log("message:", message);
 
       // TODO: @William - Prüfe die Message auf "success" oder "cancel"
+      // TODO: selectedXMLFile wird so nicht geschickt werden später
+      if (message === "success") {
+        setXMLFilePath(args.selectedXMLFile);
+      }
 
       setLinkDisabled(false);
     });

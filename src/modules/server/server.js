@@ -8,8 +8,8 @@ const EventEmitter = require("events");
 
 // server application
 const expressApp = require("../server/app");
-const socketIOMessages = require("../../client/src/shared/socket-io-messages");
-const serverMessages = require("./server-messages");
+const socketIOMessages = require("../../client/src/shared/socketIOMessages");
+const serverMessages = require("./serverMessages");
 
 // models
 const { COMPETITION_STATE } = require("../models/competition");
@@ -19,8 +19,9 @@ const MAX_AMOUNT_TABLE = 8;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
 const connectedClients = new Map();
 
-const SocketIOInputEmitter = new EventEmitter();
-const SocketIOOutputEmitter = new EventEmitter();
+const ServerMainIOConnection = new EventEmitter();
+// TODO: is this needed at all?
+// const SocketIOOutputEmitter = new EventEmitter();
 
 let server = null;
 let serverSocket = null;
@@ -57,10 +58,27 @@ function initSocketIO() {
   // event fired every time a new client connects (Browser window was opened)
   serverSocket.on(socketIOMessages.CONNECTION, clientSocket => {
     console.info(`Client connected [id=${clientSocket.id}]`);
-    sendAvailableTablesToClients();
+
+    sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
+
     listenToClientEvent(clientSocket);
+    setUpEventEmitters(clientSocket);
   });
 }
+
+function setUpEventEmitters(clientSocket) {
+  ServerMainIOConnection.on(serverMessages.STATE_RESPONSE, data => {
+    // send login response to client with his table number
+    clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, data);
+  });
+
+  ServerMainIOConnection.on(serverMessages.UPDATE_SETS_RESPONSE, data => {
+    // send response to client whether sets were successfully updated
+    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, data);
+  });
+}
+
+// CLIENT -> SERVER COMMUNICATION
 
 function listenToClientEvent(clientSocket) {
   // event fired every time a client sends a table number
@@ -73,51 +91,13 @@ function listenToClientEvent(clientSocket) {
     clientLogout(clientSocket);
   });
 
+  // event fired when a client sends new sets
   clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, data =>
     updateSets(clientSocket, data)
   );
 }
 
-// CLIENT -> SERVER COMMUNICATION
-
-function updateSets(clientSocket, data) {
-  const { sets, tableNumber, finished } = data;
-  // todo
-  if ("error") {
-    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
-      message: "something went wrong."
-    });
-    return;
-  }
-  // update match in memory
-  // emit message to app: new ranking / new match data
-  // save to DB
-
-  clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, {
-    message: "🎉 ???"
-  });
-}
-
-function getConnectedDeviceByTableNumber(tableNumber) {
-  const clientId = getKeyByValue(connectedClients, tableNumber);
-  return clientId ? clientId : null;
-}
-
-function sendAvailableTablesToClients() {
-  sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
-}
-
-function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
-    parseInt(tableNumber, 10)
-  );
-
-  const availableTables = ALL_POTENTIAL_TABLES.filter(
-    key => !takenTables.includes(key)
-  );
-
-  return availableTables;
-}
+// -----
 
 function clientLogin(clientSocket, tableNumber) {
   // verify if max amount of connected devices/table is reached
@@ -139,64 +119,19 @@ function clientLogin(clientSocket, tableNumber) {
   // save client socket
   connectedClients.set(clientSocket.id, tableNumber);
 
-  // send available tables to clients
-  sendAvailableTablesToClients();
+  // update clients with available tables
+  sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 
   notifyConnectionStatusToMainIPC(clientSocket.id, tableNumber);
 
   console.info(`Client login [id=${clientSocket.id}] [table=${tableNumber}]`);
 
-  // send login response to client with his table number
-  clientSocket.emit(
-    socketIOMessages.LOGIN_RESPONSE,
-    createLoginResponseData(tableNumber)
-  );
-}
-
-function mapHasValue(inputMap, searchedValue) {
-  const values = Array.from(inputMap.entries());
-  return values.some(([_, value]) => value === searchedValue);
-}
-
-function createLoginResponseData(tableNumber) {
-  const state = "comp-active-round-ready";
-
-  // todo: get match from DB
-  const {
-    mockedMatchFinished,
-    mockedMatchRunning
-  } = require("../../assets/mock-data/match.mock.data.js");
-  const match = { ...mockedMatchRunning };
-
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-    return {
-      roundStarted: false,
-      tableNumber,
-      match
-    };
-  }
-
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
-    return {
-      roundStarted: true,
-      tableNumber,
-      match
-    };
-  }
-
-  return {
-    roundStarted: false,
-    tableNumber
-  };
-}
-
-function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
-  console.log(connectedDevice);
-  SocketIOInputEmitter.emit(serverMessages.UPDATE_CONNECTION_STATUS, {
-    connectedDevice,
+  ServerMainIOConnection.emit(serverMessages.STATE_REQUEST, {
     tableNumber
   });
 }
+
+// -----
 
 function clientLogout(clientSocket) {
   // check if client is logged in
@@ -208,22 +143,53 @@ function clientLogout(clientSocket) {
     console.info(`Client logout [id=${clientSocket.id}]`);
 
     // update clients with available tables
-    sendAvailableTablesToClients();
+    sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
   }
 
   console.log(`Client gone [id=${clientSocket.id}]`);
 }
 
+// -----
+
+function updateSets(clientSocket, data) {
+  ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
+}
+
+// -----
+
+function getAvailableTables() {
+  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
+    parseInt(tableNumber, 10)
+  );
+
+  const availableTables = ALL_POTENTIAL_TABLES.filter(
+    key => !takenTables.includes(key)
+  );
+
+  return availableTables;
+}
+
+function getConnectedDeviceByTableNumber(tableNumber) {
+  const clientId = getKeyByValue(connectedClients, tableNumber);
+  return clientId ? clientId : null;
+}
+
+function mapHasValue(inputMap, searchedValue) {
+  const values = Array.from(inputMap.entries());
+  return values.some(([_, value]) => value === searchedValue);
+}
+
+function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
+  console.log(connectedDevice);
+  ServerMainIOConnection.emit(serverMessages.UPDATE_CONNECTION_STATUS, {
+    connectedDevice,
+    tableNumber
+  });
+}
+
 // SERVER -> CLIENT COMMUNICATION
 
-function sendNextRoundBroadcast() {
-  const {
-    mockedMatchFinished,
-    mockedMatchRunning
-  } = require("../../assets/mock-data/match.mock.data.js");
-
-  const data = { matches: [mockedMatchFinished, mockedMatchRunning] };
-
+function sendNextRoundBroadcast(data) {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
@@ -269,12 +235,16 @@ function range(start, exclusiveEnd) {
 }
 
 module.exports = {
-  SocketIOInputEmitter,
-  SocketIOOutputEmitter,
+  ServerMainIOConnection,
 
   initHTTPServer,
   shutdownServer,
 
   getConnectedDeviceByTableNumber,
-  sendStartRoundBroadcast
+
+  sendStartRoundBroadcast,
+  sendNextRoundBroadcast,
+  sendCancelRoundBroadcast,
+
+  sendCompetitionCanceledBroadcast
 };

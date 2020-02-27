@@ -8,7 +8,7 @@ const isDev = require("electron-is-dev");
 const url = require("url");
 const path = require("path");
 
-const network = require("./helper/network-helper");
+const network = require("./helper/networkHelper");
 
 // server config
 const SERVER_HOST = isDev ? "localhost" : network.getIpAddress();
