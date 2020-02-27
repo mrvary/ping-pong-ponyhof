@@ -10,6 +10,11 @@
   background-color: var(--prim-background-color);
   margin-bottom: 2vh;
 }
+.popupEditTable--text{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .popupEditTable--input {
   border: 0.1vh solid var(--error-color);
 }

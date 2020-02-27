@@ -1,8 +1,8 @@
-import { Modal } from "react-bootstrap";
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./PopupEditTable.css";
-import Button from "./Button";
+import { Modal } from 'react-bootstrap';
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './PopupEditTable.css';
+import Button from './Button';
 
 function PopupEditTable({ show, handleClose, sets, saveChanges }) {
   const [inputChanged, setInputChanged] = useState(false);
@@ -38,6 +38,7 @@ const DisplaySetHandler = ({ sets, setInputChanged }) => {
         index++;
         return (
           <DisplaySet
+            key={index}
             set={set}
             index={index}
             setInputChanged={setInputChanged}
@@ -48,57 +49,72 @@ const DisplaySetHandler = ({ sets, setInputChanged }) => {
   );
 };
 const DisplaySet = ({ set, index, setInputChanged }) => {
-  let [player1Set, setPlayer1Set] = useState(set.player1);
-  let [player2Set, setPlayer2Set] = useState(set.player2);
-  let [css, setCss] = useState("");
+  const [player1Set, setPlayer1Set] = useState(set.player1);
+  const [player2Set, setPlayer2Set] = useState(set.player2);
+  let [css, setCss] = useState('');
 
   const checkInput1 = event => {
+    console.log('event:' + event.target.value);
+    setPlayer1Set(event.target.value);
     setPlayer1Set(event.target.value);
 
-    console.log(player1Set + " " + player2Set);
+    console.log(player1Set + ' ' + player2Set);
     if (
       (player1Set === 11 && player2Set < 10) ||
       (player2Set === 11 && player1Set < 10) ||
-      (player1Set >= 10 && player1Set - player2Set === 2) ||
-      (player2Set >= 10 && player2Set - player1Set === 2)
+      (player1Set >= 9 && player2Set - player1Set === 2) ||
+      (player2Set >= 9 && player1Set - player2Set === 2)
     ) {
       setInputChanged(true);
+      setCss('');
     } else {
       setInputChanged(false);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
 
   const checkInput2 = event => {
     setPlayer2Set(event.target.value);
 
-    console.log(player1Set + " " + player2Set);
-    if (player1Set - player2Set >= 2 && (player1Set > 10 || player2Set > 10)) {
+    console.log(player1Set + ' ' + player2Set);
+    console.log(player2Set < 10);
+
+    if (
+      (player1Set === 11 && player2Set < 10) ||
+      (player2Set === 11 && player1Set < 10) ||
+      (player1Set >= 9 && player2Set - player1Set === 2) ||
+      (player2Set >= 9 && player1Set - player2Set === 2)
+    ) {
       setInputChanged(true);
-      setCss("");
+      setCss('');
     } else {
       setInputChanged(false);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
   //ganze zahlen
   return (
+    //todo stop negatives
     <div className="popupEditTable--rows">
-      <p>{"Set " + index + "  "}</p>
+      <p className="popupEditTable--text">{'Set ' + index + '  '}</p>
       <input
         className={css}
+        type="number"
         size="2"
         maxLength="2"
         value={player1Set}
         onChange={checkInput1}
+        name="player1Set"
       ></input>
-      <p> {" : "} </p>
+      <p className="popupEditTable--text"> {' : '} </p>
       <input
         className={css}
+        type="number"
         size="2"
         maxLength="2"
         value={player2Set}
         onChange={checkInput2}
+        name="player2Set"
       ></input>
     </div>
   );
