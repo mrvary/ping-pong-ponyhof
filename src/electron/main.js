@@ -278,7 +278,15 @@ function registerIPCMainEvents() {
     // TODO: check this with Marco
     competition = updatedCompetition;
     metaStorage.updateCompetition(updatedCompetition);
-    server.sendNextRoundBroadcast({ matchesWithPlayers });
+
+    const matchesWithoutFreeTickets = matchesWithPlayers.filter(
+      ({ player1, player2 }) =>
+        player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
+    );
+
+    server.sendNextRoundBroadcast({
+      matchesWithPlayers: matchesWithoutFreeTickets
+    });
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
