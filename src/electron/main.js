@@ -27,6 +27,11 @@ const {
   updateCompetitionStatus
 } = require("../modules/models/competition");
 
+const {
+  createStateResponseData,
+  createUpdateSetsResponseData
+} = require("./helper/mainHelper");
+
 // player model
 const {
   createPlayersFromJSON,
@@ -43,7 +48,7 @@ const competitionStorage = require("../modules/persistance/lowdb/competition-sto
 
 // communication
 const server = require("../modules/server/server");
-const serverMessages = require("../modules/server/server-messages");
+const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
 // windows actions
@@ -114,7 +119,7 @@ function initDevTools() {
 function initHTTPServer() {
   server.initHTTPServer(config.SERVER_PORT);
 
-  server.SocketIOInputEmitter.on(
+  server.ServerMainIOConnection.on(
     serverMessages.UPDATE_CONNECTION_STATUS,
     args => {
       console.log(
@@ -139,6 +144,35 @@ function initHTTPServer() {
       });
     }
   );
+
+  server.ServerMainIOConnection.on(serverMessages.STATE_REQUEST, args => {
+    console.log("Server-->IPC-Main:", serverMessages.STATE_REQUEST);
+    console.log(args);
+    const { tableNumber } = args;
+
+    const responseData = createStateResponseData({
+      competitions,
+      matchesWithPlayers,
+      tableNumber
+    });
+
+    server.ServerMainIOConnection.emit(
+      serverMessages.STATE_RESPONSE,
+      responseData
+    );
+  });
+
+  server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
+    console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
+    console.log(args);
+
+    const responseData = createUpdateSetsResponseData();
+
+    server.ServerMainIOConnection.emit(
+      serverMessages.UPDATE_SETS_RESPONSE,
+      responseData
+    );
+  });
 }
 
 function registerIPCMainEvents() {
@@ -315,6 +349,12 @@ function registerIPCMainEvents() {
       competitionStorage.initWithCompetition(jsonObject);
       console.log("Initialized competition storage with json object");
 
+      // notify react app that import is ready and was successful
+      const returnData = {
+        competitionId: selectedCompetition.id,
+        message: "success"
+      };
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
       // 1.2. use matchmaker to draw the first round and update players
       selectedMatches = matchmaker.drawRound(selectedPlayers);
       selectedPlayers = updatePlayersAfterDrawing(
@@ -346,6 +386,10 @@ function registerIPCMainEvents() {
       // 3. create response message with success message
       args = { competitionId: selectedCompetition.id, message: "success" };
     } catch (err) {
+      // notify react app that a error has happened
+      console.log(err.message);
+      const returnData = { competitionId: "", message: err.message };
+      event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
       args = { competitionId: "", message: err.message };
     } finally {
       // notify react app about the import status
@@ -402,7 +446,41 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
+    if (currentCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      return;
+    }
+    const updatedCompetition = updateCompetitionStatus(
+      currentCompetition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    );
+
+    // TODO: check this with Marco
+    currentCompetition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
     server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.NEXT_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+    // fire up matchmaker
+    // save things
+    const updatedCompetition = updateCompetitionStatus(
+      currentCompetition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    );
+
+    // TODO: check this with Marco
+    currentCompetition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
+
+    const matchesWithoutFreeTickets = matchesWithPlayers.filter(
+      ({ player1, player2 }) =>
+        player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
+    );
+
+    server.sendNextRoundBroadcast({
+      matchesWithPlayers: matchesWithoutFreeTickets
+    });
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {

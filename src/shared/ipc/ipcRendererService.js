@@ -13,6 +13,10 @@ function startRound() {
   ipcRenderer.send(ipcChannels.START_ROUND);
 }
 
+function nextRound() {
+  ipcRenderer.send(ipcChannels.NEXT_ROUND);
+}
+
 function getPlayersByPlayerId(id) {
   const players = [
     {
@@ -60,5 +64,6 @@ module.exports = {
   createWindow,
 
   // Trigger
-  startRound
+  startRound,
+  nextRound
 };

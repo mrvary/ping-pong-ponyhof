@@ -40,7 +40,7 @@ describe("playCompetition", () => {
     });
 
     //3.3 log matches
-    logMatches(currentMatches, players);
+    // logMatches(currentMatches, players);
 
     //4. update winner
     players = updateWinner(players, currentMatches);
@@ -49,7 +49,7 @@ describe("playCompetition", () => {
     let ranking = createCurrentRanking(players, matches);
 
     //5.5 log ranking
-    logRanking(ranking);
+    // logRanking(ranking);
 
     test("current matches length", () => {
       expect(currentMatches.length).toEqual(players.length / 2);

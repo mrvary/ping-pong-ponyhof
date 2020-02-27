@@ -25,7 +25,7 @@ const App = () => {
 
   useEffect(() => {
     getCompetitions();
-  }, []);
+  }, competitions);
 
   const getCompetitions = () => {
     if (USE_BROWSER) {
@@ -59,10 +59,27 @@ const App = () => {
 
       // TODO: @William - Prüfe die Message auf "success" oder "cancel"
 
+      getCompetition();
+
       setLinkDisabled(false);
     });
 
     ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
+  };
+
+  const getCompetition = () => {
+    ipcRenderer.once(
+      ipcMessages.GET_SINGLE_COMPETITION_RESPONSE,
+      (event, args) => {
+        console.log(
+          "ipc-main --> ipc-renderer",
+          ipcMessages.GET_SINGLE_COMPETITION_RESPONSE
+        );
+        console.log(args);
+      }
+    );
+
+    ipcRenderer.send(ipcMessages.GET_SINGLE_COMPETITION_REQUEST);
   };
 
   const importXML = handleShowError => {
