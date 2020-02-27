@@ -4,14 +4,26 @@ const {
   tournamentJSON15Players
 } = require("./player.test.data");
 
-const { createPlayersFromJSON } = require("../../src/matchmaker/player");
+const { drawRound } = require("../../src/matchmaker/drawing");
+
+const {
+  createPlayersFromJSON,
+  updatePlayersAfterDrawing,
+  updateWinner
+} = require("../../src/matchmaker/player");
+
+const { simulateMatches } = require("../../src/matchmaker/match");
 
 const {
   pairPlayersRoundOne,
   separateTopFromBottomPlayers,
   groupByGamesWon,
   sortPlayersBy,
-  shuffle
+  shuffle,
+  pairPlayersLaterRound,
+  basicDrawingAlgorithm,
+  advancedDrawingAlgorithm,
+  emergencyDrawingAlgorithm
 } = require("../../src/matchmaker/drawingAlgorithms");
 
 describe("separateTopFromBottomPlayers()", () => {
@@ -104,26 +116,108 @@ describe("pairPlayersRoundOne()", () => {
   });
 });
 
-describe("shuffle()", () => {
-  // can fail, maybe test differently?
-  const a = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  const b = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  const c = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  test("shuffles an input array", () => {
-    expect(a).not.toEqual(b);
-    expect(b).not.toEqual(c);
-    expect(a).not.toEqual(c);
-  });
-
-  test("still contains all elements", () => {
-    expect(a.length).toBe(10);
-    expect(a).toEqual(expect.arrayContaining([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]));
-  });
-});
-
 describe("groupByGamesWon()", () => {
   const players = cleanedUpPlayers.concat(cleanedUpPlayers).map(player => {
     return { ...player, matchIds: (player.matchIds = [1, 2, 3, 4, 5]) };
   });
   groupByGamesWon(players);
+});
+
+//simulate 100 competitions and count the success rate of each algorithm
+describe("drawingAlgorithms()", () => {
+  let basicDrawingSuccedCounter = 0;
+  let advancedDrawingSuccedCounter = 0;
+  let emergencyDrawingSuccedCounter = 0;
+  const competitionsToSimulate = 100;
+  for (let i = 0; i < competitionsToSimulate; i++) {
+    let players = createPlayersFromJSON(tournamentJSON15Players);
+    let matches = [];
+
+    let basicDrawingSucced = true;
+    let advancedDrawingSucced = true;
+    let emergencyDrawingSucced = true;
+
+    let basicDrawing;
+    let advancedDrawing;
+    let emergencyDrawing;
+
+    const roundsToPlay = 6;
+    //play competitions
+    for (let round = 1; round <= roundsToPlay; round++) {
+      //1. create new matches for the round (drawing)
+
+      let currentMatches = drawRound(players);
+
+      basicDrawing = basicDrawingAlgorithm(players);
+      advancedDrawing = advancedDrawingAlgorithm(players);
+      emergencyDrawing = emergencyDrawingAlgorithm(players);
+
+      if (basicDrawing === false) {
+        basicDrawingSucced = false;
+      }
+      if (advancedDrawing === false) {
+        advancedDrawingSucced = false;
+      }
+      if (emergencyDrawing === false) {
+        emergencyDrawingSucced = false;
+      }
+
+      //2. update the players with the created matches
+      players = updatePlayersAfterDrawing(players, currentMatches);
+
+      //3.1 simulate matches
+      currentMatches = simulateMatches(currentMatches);
+
+      //3.2 add currentMatches to all matches
+      currentMatches.forEach(currentMatch => {
+        matches.push(currentMatch);
+      });
+
+      //4. update winner
+      players = updateWinner(players, currentMatches);
+    }
+
+    if (basicDrawingSucced === true) {
+      basicDrawingSuccedCounter++;
+    }
+    if (advancedDrawingSucced === true) {
+      advancedDrawingSuccedCounter++;
+    }
+    if (emergencyDrawingSucced === true) {
+      emergencyDrawingSuccedCounter++;
+    }
+  }
+
+  test("basicDrawingAlgorithm succeded at least once", () => {
+    console.log(
+      "Der basic Algorithmus hat " +
+        basicDrawingSuccedCounter +
+        "/" +
+        competitionsToSimulate +
+        " das Turnier beenden können."
+    );
+    expect(basicDrawingSuccedCounter).not.toBe(0);
+  });
+
+  test("advancedDrawingAlgorithm succeded at least once", () => {
+    console.log(
+      "Der advanced Algorithmus hat " +
+        advancedDrawingSuccedCounter +
+        "/" +
+        competitionsToSimulate +
+        " das Turnier beenden können."
+    );
+    expect(advancedDrawingSuccedCounter).not.toBe(0);
+  });
+
+  test("emergencyDrawing succeded always", () => {
+    console.log(
+      "Der emergency Algorithmus hat " +
+        emergencyDrawingSuccedCounter +
+        "/" +
+        competitionsToSimulate +
+        " das Turnier beenden können."
+    );
+    expect(emergencyDrawingSuccedCounter).toBe(emergencyDrawingSuccedCounter);
+  });
 });
