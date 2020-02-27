@@ -11,6 +11,9 @@
 .button--primary {
   background: var(--button-color);
 }
+.button--secondary {
+  background: var(--button-color);
+}
 .button:hover {
   color: var(--grey-out-color);
 }
