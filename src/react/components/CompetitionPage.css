@@ -41,6 +41,25 @@ body {
   height: 7vh;
   font: 10vw;
 }
+.competitionPage__table--tisch {
+  color: var(--error-color);
+  font-size: xx-large;
+}
+.competitionPage__table--tisch--online {
+  color: var(--success-color);
+  font-size: xx-large;
+}
+li {
+  list-style-type: none;
+  position: relative; /* It's needed for setting position to absolute in the next rule. */
+}
+
+li::before {
+  content: '■';
+  position: absolute;
+  left: -0.8em; /* Adjust this value so that it appears where you want. */
+  font-size: 2em; /* Adjust this value so that it appears what size you want. */
+}
 /* for testing
   border: 0.1vh solid var(--grey-out-color);
 */
