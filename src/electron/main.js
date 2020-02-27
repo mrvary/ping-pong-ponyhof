@@ -144,6 +144,7 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
+    console.log("whoop whoop");
     console.log(args);
 
     const responseData = createUpdateSetsResponseData();
@@ -251,6 +252,16 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
+    if (competition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      return;
+    }
+    const updatedCompetition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_READY_ROUND_STARTED
+    );
+    // TODO: check this with Marco
+    competition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
     server.sendStartRoundBroadcast();
   });
 
@@ -311,6 +322,11 @@ function initializeMatchesByCompetitionId(id) {
   });
 
   // 4. update competition status
-  setCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
+  const updatedCompetition = setCompetitionStatus(
+    competition,
+    COMPETITION_STATE.COMP_READY_ROUND_READY
+  );
+  // TODO: check this with Marco
+  competition = updatedCompetition;
+  metaStorage.updateCompetition(updatedCompetition);
 }
