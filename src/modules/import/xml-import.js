@@ -67,7 +67,7 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
 function readCompetitionXMLFileFromDisk(filePath) {
   if (!filePath) {
     console.log("The file path contains errors");
-    throw new Error('Der Dateipfad enthält Fehler.');
+    throw new Error("Der Dateipfad enthält Fehler.");
   }
 
   // check if file exists
@@ -82,7 +82,7 @@ function readCompetitionXMLFileFromDisk(filePath) {
 }
 
 function convertXMLToJSON(xmlContent) {
-  const options = {reversible: false};
+  const options = { reversible: false };
   const jsonContent = parser.toJson(xmlContent, options);
   const jsonObject = JSON.parse(jsonContent);
   console.log("Convert xml file to json");

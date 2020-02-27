@@ -14,7 +14,11 @@ require("electron-reload")(__dirname, {
 const config = require("./config");
 
 // xml import
-const { importXML, readCompetitionXMLFileFromDisk, convertXMLToJSON } = require("../modules/import/xml-import");
+const {
+  importXML,
+  readCompetitionXMLFileFromDisk,
+  convertXMLToJSON
+} = require("../modules/import/xml-import");
 
 // models
 const {
@@ -183,7 +187,10 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.GET_SINGLE_COMPETITION_REQUEST, (event, args) => {
-    console.log("ipc-renderer --> ipc-main", ipcMessages.GET_SINGLE_COMPETITION_REQUEST);
+    console.log(
+      "ipc-renderer --> ipc-main",
+      ipcMessages.GET_SINGLE_COMPETITION_REQUEST
+    );
 
     // check if a xml file is selected --> Fehler: XML-Datei ist nicht ausgewählt
     if (!xmlFilePath) {
@@ -217,7 +224,10 @@ function registerIPCMainEvents() {
 
     // send data back to ipc-renderer { competition, players } (for players use matchmaker)
     console.log("init competition and players");
-    event.sender.send(ipcMessages.GET_SINGLE_COMPETITION_RESPONSE, { competition, players });
+    event.sender.send(ipcMessages.GET_SINGLE_COMPETITION_RESPONSE, {
+      competition,
+      players
+    });
   });
 
   ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, (event, args) => {
