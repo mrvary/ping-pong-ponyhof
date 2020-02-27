@@ -36,16 +36,25 @@ function separateTopFromBottomPlayers(players) {
 //Algorithms for drawing later round
 // pairPlayersLaterRound : [players] -> [pairings]
 function pairPlayersLaterRound(players) {
+  //this is the "safest" algorithm
   const basicDrawing = basicDrawingAlgorithm(players);
-  const drawing = advancedDrawing(players);
-  return basicDrawing;
+  if (basicDrawing !== false) {
+    return basicDrawing;
+  }
+
+  const advancedDrawing = advancedDrawingAlgorithm(players);
+  if (advancedDrawing !== false) {
+    return advancedDrawing;
+  }
+
+  return emergencyDrawingAlgorithm(players);
 }
 
 // basicDrawingAlgorithm : [players] -> [pairings]
 function basicDrawingAlgorithm(players) {
   let dummyPlayers = [...players];
   let doLoopCounter = 0;
-  const maxTries = 500;
+  const maxTries = 300;
   let pairingSucceeded;
 
   do {
@@ -69,23 +78,58 @@ function basicDrawingAlgorithm(players) {
   if (pairingSucceeded) {
     return createPairingFromArray(dummyPlayers);
   }
-
-  return emergencyDrawingAlgorithm(dummyPlayers);
+  return false;
 }
 
 // advancedDrawing : [players] -> [pairings]
-function advancedDrawing(players) {
+function advancedDrawingAlgorithm(players) {
+  //copy the player call by value
   let dummyPlayers = JSON.parse(JSON.stringify(players));
-  dummyPlayers = shuffle(dummyPlayers);
-  dummyPlayers = sortPlayersBy(dummyPlayers, "gamesWon");
-  let groups = groupByGamesWon(dummyPlayers);
 
-  dummyPlayers.forEach(player => {
-    nextBetterOpponent = getNextBetterOpponent(player, dummyPlayers);
-    debugger;
-  });
+  let currentDrawing = [];
+  let doLoopCounter = 0;
+  let pairingSucceeded;
+  const maxTries = 300;
 
-  return dummyPlayers;
+  do {
+    pairingSucceeded = true;
+    currentDrawing = [];
+
+    //shuffle the players each time to get a different sorted list
+    dummyPlayers = shuffle(dummyPlayers);
+    dummyPlayers = sortPlayersBy(dummyPlayers, "gamesWon");
+
+    for (let i = 0; i < dummyPlayers.length / 2; i++) {
+      //1. get the next player
+      let nextPlayer = getNextPlayer(currentDrawing, dummyPlayers);
+      if (nextPlayer !== false) {
+        currentDrawing.push(nextPlayer);
+      } else {
+        pairingSucceeded = false;
+        break;
+      }
+
+      //2. get players not included to the drawing yet
+      let remainingPlayers = dummyPlayers.filter(
+        player => !currentDrawing.includes(player)
+      );
+
+      //3. get the opponent and check if they can play against each other
+      let opponentPlayer = getNextBetterOpponent(nextPlayer, remainingPlayers);
+      if (opponentPlayer !== false) {
+        currentDrawing.push(opponentPlayer);
+      } else {
+        pairingSucceeded = false;
+        break;
+      }
+    }
+    doLoopCounter++;
+  } while (pairingSucceeded === false && doLoopCounter < maxTries);
+
+  if (pairingSucceeded) {
+    return createPairingFromArray(currentDrawing);
+  }
+  return false;
 }
 
 // emergencyDrawingAlgorithm : [players] -> [pairings]
@@ -144,6 +188,29 @@ function groupByGamesWon(players) {
   return groups;
 }
 
+//returns the next best player not included in a match
+// getNextPlayer : [players] ->  player
+function getNextPlayer(currentDrawing, dummyPlayers) {
+  for (let i = 0; i < dummyPlayers.length; i++) {
+    if (!currentDrawing.includes(dummyPlayers[i])) {
+      return dummyPlayers[i];
+    }
+  }
+  return false;
+}
+
+//this function returns the next best opponent a player hasn't played against so far
+//if there is no opponent left the drawing is wrong and must be repaired
+// getNextBetterOpponent : player, [players] -> player
+function getNextBetterOpponent(player, remainingPlayers) {
+  for (let i = 0; i < remainingPlayers.length; i++) {
+    if (!isRematch(player, remainingPlayers[i])) {
+      return remainingPlayers[i];
+    }
+  }
+  return false;
+}
+
 // isRematch : [players] -> [boolean]
 function isRematch(player1, player2) {
   //find a match where player1 and player2 were involved
@@ -152,22 +219,6 @@ function isRematch(player1, player2) {
   });
 
   return duplicates.length !== 0;
-}
-
-//this function returns the next best opponent a player can play again
-//if there is no opponent left the drawing is wrong and must be repaired
-// getNextBetterOpponent : player, [players] -> player
-function getNextBetterOpponent(player, dummyPlayers) {
-  for (let i = 0; i < dummyPlayers.length; i++) {
-    if (JSON.stringify(player) === JSON.stringify(dummyPlayers[i])) {
-      for (let j = i + 1; j < dummyPlayers.length; j++) {
-        if (!isRematch(player, dummyPlayers[j])) {
-          return dummyPlayers[j];
-        }
-      }
-      return false;
-    }
-  }
 }
 
 // sortPlayersBy : [players] -> [players]
@@ -214,5 +265,8 @@ module.exports = {
   shuffle,
   groupByGamesWon,
   groupsToString,
-  pairPlayersLaterRound
+  pairPlayersLaterRound,
+  basicDrawingAlgorithm,
+  advancedDrawingAlgorithm,
+  emergencyDrawingAlgorithm
 };
