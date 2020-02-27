@@ -10,7 +10,9 @@ function PopupEditTable({ show, handleClose, sets, saveChanges }) {
   const endPopup = () => {
     setInputChanged(false);
     saveChanges();
+    //TODO: speichern
   };
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>Edit</Modal.Header>
@@ -54,16 +56,13 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
   let [css, setCss] = useState("");
 
   const checkInput1 = event => {
-    console.log("event:" + event.target.value);
-    setPlayer1Set(event.target.value);
     setPlayer1Set(event.target.value);
 
-    console.log(player1Set + " " + player2Set);
     if (
-      (player1Set === 11 && player2Set < 10) ||
-      (player2Set === 11 && player1Set < 10) ||
-      (player1Set >= 9 && player2Set - player1Set === 2) ||
-      (player2Set >= 9 && player1Set - player2Set === 2)
+      (event.target.value === 11 && player2Set < 10) ||
+      (player2Set === 11 && event.target.value < 10) ||
+      (event.target.value >= 9 && player2Set - event.target.value === 2) ||
+      (player2Set >= 9 && event.target.value - player2Set === 2)
     ) {
       setInputChanged(true);
       setCss("");
@@ -76,14 +75,11 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
   const checkInput2 = event => {
     setPlayer2Set(event.target.value);
 
-    console.log(player1Set + " " + player2Set);
-    console.log(player2Set < 10);
-
     if (
-      (player1Set === 11 && player2Set < 10) ||
-      (player2Set === 11 && player1Set < 10) ||
-      (player1Set >= 9 && player2Set - player1Set === 2) ||
-      (player2Set >= 9 && player1Set - player2Set === 2)
+      (player1Set === 11 && event.target.value < 10) ||
+      (event.target.value === 11 && player1Set < 10) ||
+      (player1Set >= 9 && event.target.value - player1Set === 2) ||
+      (event.target.value >= 9 && player1Set - event.target.value === 2)
     ) {
       setInputChanged(true);
       setCss("");
@@ -92,11 +88,10 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
       setCss("popupEditTable--input");
     }
   };
-  //ganze zahlen
   return (
     //todo stop negatives
     <div className="popupEditTable--rows">
-      <p className="popupEditTable--text">{"Set " + index + "  "}</p>
+      <p>{"Set " + index + "  "}</p>
       <input
         className={css}
         type="number"
@@ -106,7 +101,7 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
         onChange={checkInput1}
         name="player1Set"
       ></input>
-      <p className="popupEditTable--text"> {" : "} </p>
+      <p> {" : "} </p>
       <input
         className={css}
         type="number"
@@ -121,9 +116,3 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
 };
 
 export default PopupEditTable;
-/*
-        value={player1Set}
-
-        value={player2Set}
-
-*/
