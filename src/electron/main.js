@@ -14,13 +14,15 @@ require("electron-reload")(__dirname, {
 const config = require("./config");
 
 // xml import
-const { importXML } = require("../modules/import/xml-import");
+const { importXML, readCompetitionXMLFileFromDisk, convertXMLToJSON } = require("../modules/import/xml-import");
 
 // models
 const {
+  createCompetitionFromJSON,
   setCompetitionStatus,
   COMPETITION_STATE
 } = require("../modules/models/competition");
+const { createPlayersFromJSON } = require("../matchmaker/player");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -41,10 +43,13 @@ const createWindow = require("./window");
 let mainWindow = null;
 
 // application state variables
+let xmlFilePath = null;
+let jsonObject = null;
+
 let competitions = null;
-let selectedXMLFile = null;
 
 let competition = null;
+let players = null;
 let matchesWithPlayers = [];
 
 // init communication events
@@ -167,14 +172,52 @@ function registerIPCMainEvents() {
       let message = "success";
 
       if (filePath) {
-        selectedXMLFile = filePath;
-        console.log("Selected XML File:", selectedXMLFile);
+        xmlFilePath = filePath;
+        console.log("Selected XML File:", xmlFilePath);
       } else {
         message = "cancel";
       }
 
       event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
     });
+  });
+
+  ipcMain.on(ipcMessages.GET_SINGLE_COMPETITION_REQUEST, (event, args) => {
+    console.log("ipc-renderer --> ipc-main", ipcMessages.GET_SINGLE_COMPETITION_REQUEST);
+
+    // check if a xml file is selected --> Fehler: XML-Datei ist nicht ausgewählt
+    if (!xmlFilePath) {
+      return;
+    }
+
+    if (!args) {
+      // 1. load xml file
+      const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
+
+      // TODO:
+      // 2. validate xml file against xml-schema --> Fehler: XML-Datei ist nicht valide
+
+      // 3. convert xml file to JSON-Object
+      jsonObject = convertXMLToJSON(xmlContent);
+
+      // 4. parse JSON-Object for necessary data
+      competition = createCompetitionFromJSON(jsonObject.tournament);
+      players = createPlayersFromJSON(jsonObject);
+    } else {
+      const { competitionId } = args;
+
+      // 1. load competition from meta data storage
+      competition = metaStorage.getCompetition(competitionId);
+
+      // 2. load players from competition storage
+      const filePath = fileManager.getCompetitionFilePath(competitionId);
+      competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+      players = competitionStorage.getAllPlayers();
+    }
+
+    // send data back to ipc-renderer { competition, players } (for players use matchmaker)
+    console.log("init competition and players");
+    event.sender.send(ipcMessages.GET_SINGLE_COMPETITION_RESPONSE, { competition, players });
   });
 
   ipcMain.on(ipcMessages.IMPORT_XML_FILE_REQUEST, (event, args) => {

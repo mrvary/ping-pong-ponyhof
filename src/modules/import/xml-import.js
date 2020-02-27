@@ -24,8 +24,10 @@ const matchmaker = require("../../matchmaker/drawing");
  * @returns {{competitionId: int, matches: [], players: []}}
  */
 function importXML(filePath, fileManager, metaStorage, competitionStorage) {
-  // read xml file from disk and convert it to json object
-  const jsonObject = readTournamentXMLFileFromDisk(filePath);
+  // read xml file from disk
+  const xmlContent = readCompetitionXMLFileFromDisk(filePath);
+  // convert xml content to json content and create a json object
+  const jsonObject = convertXMLToJSON(xmlContent);
 
   // store meta data about the competition in meta database
   const competition = createCompetitionFromJSON(jsonObject.tournament);
@@ -62,23 +64,25 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
   return competition;
 }
 
-/**
- * Read the tournament xml file from disk and convert it to JSON-Object
- * @param {string} filePath - The file path of the resource
- * @returns {jsonObject: JSON-Object}
- */
-function readTournamentXMLFileFromDisk(filePath) {
+function readCompetitionXMLFileFromDisk(filePath) {
   if (!filePath) {
-    console.log("The competition already exists");
-    throw new Error(`Die XML-Datei konnte nicht gefunden werden.`);
+    console.log("The file path contains errors");
+    throw new Error('Der Dateipfad enthält Fehler.');
+  }
+
+  // check if file exists
+  console.log("Read XML-File:", filePath);
+  if (!fs.existsSync(filePath)) {
+    console.log("The file does not exits");
+    throw new Error("Die Datei existiert nicht");
   }
 
   // read file from disk
-  const xmlContent = fs.readFileSync(filePath);
-  console.log("Read XML-File:", filePath);
+  return fs.readFileSync(filePath);
+}
 
-  // convert xml to json object
-  const options = { reversible: false };
+function convertXMLToJSON(xmlContent) {
+  const options = {reversible: false};
   const jsonContent = parser.toJson(xmlContent, options);
   const jsonObject = JSON.parse(jsonContent);
   console.log("Convert xml file to json");
@@ -86,4 +90,8 @@ function readTournamentXMLFileFromDisk(filePath) {
   return jsonObject;
 }
 
-module.exports.importXML = importXML;
+module.exports = {
+  readCompetitionXMLFileFromDisk,
+  convertXMLToJSON,
+  importXML
+};

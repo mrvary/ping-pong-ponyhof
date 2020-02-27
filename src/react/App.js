@@ -38,13 +38,15 @@ const App = () => {
     // listen to ipc-renderer event to get the data back from ipc-main
     ipcRenderer.once(
       ipcMessages.GET_COMPETITIONS_RESPONSE,
-      (event, { competitions }) => {
+      (event, args) => {
+        const { competitions } = args;
         setCompetitions(competitions);
       }
     );
 
     // trigger event to get competitions from ipc-main
     ipcRenderer.send(ipcMessages.GET_COMPETITIONS_REQUEST);
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.GET_COMPETITIONS_REQUEST);
   };
 
   const openXMLDialog = () => {
