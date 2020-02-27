@@ -13,6 +13,8 @@
   --link-font-hover-color: rgb(117, 84, 126);
 
   --success-color: green;
+  --error-color: red;
+  --inactive-color: orange;
 
   --anti-color: #b788ba;
   --main-color: #f4f4f4;

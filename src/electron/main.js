@@ -21,7 +21,10 @@ const {
   setCompetitionStatus,
   COMPETITION_STATE
 } = require("../modules/models/competition");
-const { createStateResponseData } = require("./helper/mainHelper");
+const {
+  createStateResponseData,
+  createUpdateSetsResponseData
+} = require("./helper/mainHelper");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -140,8 +143,15 @@ function initHTTPServer() {
   });
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
-    console.log("Server-->IPC-Main:", serverMessages.UPDATE_CONNECTION_STATUS);
+    console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
     console.log(args);
+
+    const responseData = createUpdateSetsResponseData();
+
+    server.ServerMainIOConnection.emit(
+      serverMessages.UPDATE_SETS_RESPONSE,
+      responseData
+    );
   });
 }
 
@@ -241,7 +251,41 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
+    if (competition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      return;
+    }
+    const updatedCompetition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_READY_ROUND_STARTED
+    );
+
+    // TODO: check this with Marco
+    competition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
     server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.NEXT_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+    // fire up matchmaker
+    // save things
+    const updatedCompetition = setCompetitionStatus(
+      competition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    );
+
+    // TODO: check this with Marco
+    competition = updatedCompetition;
+    metaStorage.updateCompetition(updatedCompetition);
+
+    const matchesWithoutFreeTickets = matchesWithPlayers.filter(
+      ({ player1, player2 }) =>
+        player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
+    );
+
+    server.sendNextRoundBroadcast({
+      matchesWithPlayers: matchesWithoutFreeTickets
+    });
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
@@ -301,6 +345,11 @@ function initializeMatchesByCompetitionId(id) {
   });
 
   // 4. update competition status
-  setCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
+  const updatedCompetition = setCompetitionStatus(
+    competition,
+    COMPETITION_STATE.COMP_READY_ROUND_READY
+  );
+  // TODO: check this with Marco
+  competition = updatedCompetition;
+  metaStorage.updateCompetition(updatedCompetition);
 }
