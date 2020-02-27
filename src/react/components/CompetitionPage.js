@@ -273,15 +273,12 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
+    IPCService.nextRound();
     handleCloseEndRound();
   };
 
   const handleStartRound = () => {
     IPCService.startRound();
-  };
-
-  const handleNextRound = () => {
-    IPCService.nextRound();
   };
 
   const openStatisticWindow = route => {
@@ -309,7 +306,6 @@ const CompetitionPage = () => {
           mode="primary"
           disableProp={!active}
         ></Button>
-
         <Popup
           show={showPopupReDoRound}
           handleClose={handleCloseReDoRound}
@@ -345,13 +341,6 @@ const CompetitionPage = () => {
           secText="Spiel pausieren"
           mode={active ? "secondary" : "primary"}
         ></Button>
-
-        <Button
-          onClick={handleNextRound}
-          text="Nächste Runde"
-          mode="primary"
-        ></Button>
-
         <Popup
           show={showPopupGoInactive}
           handleClose={handleCloseGoInactive}
