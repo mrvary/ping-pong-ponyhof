@@ -55,15 +55,19 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
   const [player2Set, setPlayer2Set] = useState(set.player2);
   let [css, setCss] = useState("");
 
+  const checkValues = ({ input1, input2 }) => {
+    return (
+      (input1 === 11 && input2 < 10) ||
+      (input2 === 11 && input1 < 10) ||
+      (input1 >= 9 && input2 - input1 === 2) ||
+      (input2 >= 9 && input1 - input2 === 2)
+    );
+  };
+
   const checkInput1 = event => {
     setPlayer1Set(event.target.value);
 
-    if (
-      (event.target.value === 11 && player2Set < 10) ||
-      (player2Set === 11 && event.target.value < 10) ||
-      (event.target.value >= 9 && player2Set - event.target.value === 2) ||
-      (player2Set >= 9 && event.target.value - player2Set === 2)
-    ) {
+    if (checkValues(event.target.value, player2Set)) {
       setInputChanged(true);
       setCss("");
     } else {
@@ -75,12 +79,7 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
   const checkInput2 = event => {
     setPlayer2Set(event.target.value);
 
-    if (
-      (player1Set === 11 && event.target.value < 10) ||
-      (event.target.value === 11 && player1Set < 10) ||
-      (player1Set >= 9 && event.target.value - player1Set === 2) ||
-      (event.target.value >= 9 && player1Set - event.target.value === 2)
-    ) {
+    if (checkValues(event.target.value, player1Set)) {
       setInputChanged(true);
       setCss("");
     } else {

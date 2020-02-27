@@ -247,7 +247,6 @@ const CompetitionPage = () => {
     handleCloseGoInactive();
   };
 
-
   function mapPlayerNamesToMatch(matchesWithPlayers) {
     return matchesWithPlayers.map(matchWithPlayers => {
       const { match, player1, player2 } = matchWithPlayers;
