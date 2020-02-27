@@ -84,7 +84,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ match }) => {
+const TableRow = ({ match, activ }) => {
   const [stringSet, setStringSet] = useState([
     "0 : 0",
     "0 : 0",
@@ -151,6 +151,7 @@ const TableRow = ({ match }) => {
         <button
           onClick={handleShowEditMatch}
           className="competitionPage__table__bearbeiten-btn"
+          disabled={!activ}
         >
           bearbeiten
         </button>
@@ -165,12 +166,14 @@ const TableRow = ({ match }) => {
   );
 };
 
-const Table = ({ matches }) => {
+const Table = ({ matches, activ }) => {
+  let tableCss =
+    "competitionPage__table" + (activ ? "--barrierGreen" : "--barrierRed");
   return (
-    <div>
+    <div className={tableCss}>
       <TableHeadline />
       {matches.map(match => {
-        return <TableRow key={match.id} match={match} />;
+        return <TableRow key={match.id} match={match} activ={activ} />;
       })}
     </div>
   );
@@ -235,6 +238,14 @@ const CompetitionPage = () => {
       id: competitionID
     });
   };
+  const [active, setActive] = useState(false);
+  const handleActivate = () => {
+    setActive(true);
+  };
+  const handleDisactivate = () => {
+    setActive(false);
+    handleCloseGoInactive();
+  };
 
   function mapPlayerNamesToMatch(matchesWithPlayers) {
     return matchesWithPlayers.map(matchWithPlayers => {
@@ -245,16 +256,20 @@ const CompetitionPage = () => {
     });
   }
 
-  const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
-  const handleCloseEndTournament = () => setShowPopupEndTournament(false);
-  const handleShowEndTournament = () => setShowPopupEndTournament(true);
+  const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
+  const handleCloseReDoRound = () => setShowPopupReDoRound(false);
+  const handleShowReDoRound = () => setShowPopupReDoRound(true);
 
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => setShowPopupEndRound(false);
   const handleShowEndRound = () => setShowPopupEndRound(true);
 
+  const [showPopupGoInactive, setShowPopupGoInactive] = useState(false);
+  const handleCloseGoInactive = () => setShowPopupGoInactive(false);
+  const handleShowGoInactive = () => setShowPopupGoInactive(true);
+
   const handleEndTournament = () => {
-    handleCloseEndTournament();
+    handleCloseReDoRound();
   };
 
   const handleEndRound = () => {
@@ -286,26 +301,32 @@ const CompetitionPage = () => {
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
       />
-      <Table matches={matches} />
+      <Table matches={matches} activ={active} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
-          onClick={handleShowEndTournament}
-          text="Tunier abschließen"
+          primOnClick={handleShowReDoRound}
+          primText="Runde abbrechen"
           mode="primary"
+          disableProp={!active}
         ></Button>
+
         <Popup
-          show={showPopupEndTournament}
-          handleClose={handleCloseEndTournament}
+          show={showPopupReDoRound}
+          handleClose={handleCloseReDoRound}
           header="Sicher?"
-          bodyText="Möchtest du wirklich das Tunier beenden?"
+          bodyText="Bisher erreichte Ergebnisse der Runde werden gelöscht und eine neue Runde wird geloßt"
           buttonFunk={() => handleEndTournament()}
-          buttonText="Beenden"
+          buttonText="Runde abbrechen"
           mode="primary"
         ></Popup>
+
         <Button
-          onClick={handleShowEndRound}
-          text="Runde beenden"
+          primOnClick={handleShowEndRound}
+          primText="Runde beenden"
+          secOnClick={handleStartRound}
+          secText="Runde starten"
           mode="primary"
+          disableProp={!active}
         ></Button>
         <Popup
           show={showPopupEndRound}
@@ -316,16 +337,30 @@ const CompetitionPage = () => {
           buttonText="Beenden"
           mode="primary"
         ></Popup>
+
         <Button
-          onClick={handleStartRound}
-          text="Runde starten"
-          mode="primary"
+          primOnClick={handleActivate}
+          primText="Spiel starten"
+          secOnClick={handleShowGoInactive}
+          secText="Spiel pausieren"
+          mode={active ? "secondary" : "primary"}
         ></Button>
+
         <Button
           onClick={handleNextRound}
           text="Nächste Runde"
           mode="primary"
         ></Button>
+
+        <Popup
+          show={showPopupGoInactive}
+          handleClose={handleCloseGoInactive}
+          header="Bist du dir sicher?"
+          bodyText="Verbindungen zu Nutzergeräten werden beim Pausieren unterbrochen"
+          buttonFunk={() => handleDisactivate()}
+          buttonText="pausieren"
+          mode="primary"
+        ></Popup>
       </div>
       <Footer title="Die Tabelle" />
     </div>
