@@ -75,6 +75,8 @@ let activePlayers = null;
 let activeMatches = null;
 let activeMatchesWithPlayers = [];
 
+let matchStarted = false;
+
 // init communication events
 registerIPCMainEvents();
 initHTTPServer();
@@ -133,8 +135,8 @@ function initHTTPServer() {
       console.log(args);
       const { connectedDevice, tableNumber } = args;
 
-      if (matchesWithPlayers.length > 0) {
-        matchesWithPlayers = matchesWithPlayers.map(match => {
+      if (selectedMatchesWithPlayers.length > 0) {
+        selectedMatchesWithPlayers = selectedMatchesWithPlayers.map(match => {
           if (match.tableNumber === tableNumber) {
             return { ...match, connectedDevice };
           }
@@ -144,7 +146,7 @@ function initHTTPServer() {
       }
 
       mainWindow.webContents.send(ipcMessages.UPDATE_MATCHES, {
-        matchesWithPlayers: matchesWithPlayers
+        matchesWithPlayers: selectedMatchesWithPlayers
       });
     }
   );
@@ -156,7 +158,7 @@ function initHTTPServer() {
 
     const responseData = createStateResponseData({
       competitions,
-      matchesWithPlayers,
+      selectedMatchesWithPlayers,
       tableNumber
     });
 
@@ -210,7 +212,7 @@ function registerIPCMainEvents() {
     if (activeCompetition) {
       // ... than reset application state
       activeCompetition = null;
-      matchesWithPlayers = [];
+      activeMatchesWithPlayers = [];
       console.log("Reset application state");
     }
 
@@ -398,11 +400,13 @@ function registerIPCMainEvents() {
       return; // --> Fehler: Matches sind nicht initialisiert
     }
 
-    selectedMatchesWithPlayers = mapMatchesWithPlayers(
-      selectedMatches,
-      selectedPlayers
-    );
-    console.log("competition and players and matches are selected");
+    if (selectedMatchesWithPlayers.length === 0) {
+      selectedMatchesWithPlayers = mapMatchesWithPlayers(
+        selectedMatches,
+        selectedPlayers
+      );
+      console.log("competition and players and matches are selected");
+    }
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, {
       matchesWithPlayers: selectedMatchesWithPlayers
@@ -411,6 +415,12 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
+
+    if (matchStarted) {
+      return;
+    }
+
     if (activeCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
       return;
     }
@@ -422,6 +432,8 @@ function registerIPCMainEvents() {
 
     activeCompetition = updatedCompetition;
     metaStorage.updateCompetition(updatedCompetition);
+
+    matchStarted = true;
     server.sendStartRoundBroadcast();
   });
 
@@ -442,7 +454,7 @@ function registerIPCMainEvents() {
     activeCompetition = updatedCompetition;
     metaStorage.updateCompetition(updatedCompetition);
 
-    const matchesWithoutFreeTickets = matchesWithPlayers.filter(
+    const matchesWithoutFreeTickets = selectedMatchesWithPlayers.filter(
       ({ player1, player2 }) =>
         player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
     );
@@ -525,15 +537,15 @@ function mapMatchesWithPlayers(matches, players) {
   matches.forEach(match => {
     const player1 = players.find(player => player.id === match.player1);
     const player2 = players.find(player => player.id === match.player2);
+    match.player1 = player1;
+    match.player2 = player2;
 
     const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
 
     const matchWithPlayers = {
       tableNumber: tableNumber,
       connectedDevice: uuid,
-      match: match,
-      player1: player1,
-      player2: player2
+      match: match
     };
 
     matchesWithPlayers.push(matchWithPlayers);

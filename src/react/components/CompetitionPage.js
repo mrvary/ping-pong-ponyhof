@@ -3,16 +3,15 @@ import { useParams } from "react-router-dom";
 import "./CompetitionPage.css";
 import "../Colors.css";
 
-//componenten
+// components
 import Popup from "./Popup";
 import Footer from "./Footer";
 import Button from "./Button";
 import CompetitionPageHeader from "./CompetitionPageHeader";
+import CompetitionPage__Header from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
 
 // ipc communication
-import IPCService from "../../shared/ipc/ipcRendererService";
-import CompetitionPage__Header from "./CompetitionPageHeader";
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcChannels = require("../../shared/ipc-messages");
 
@@ -108,6 +107,7 @@ const TableRow = ({ match, activ }) => {
     //TODO save Changes from edited Table
     handleCloseEditMatch();
   };
+
   let tischCss = "liRed";
   if (true) {
     tischCss = "liGreen";
@@ -125,7 +125,7 @@ const TableRow = ({ match, activ }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player1}
+          {match.player1.firstname + " " + match.player1.lastname}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -133,7 +133,7 @@ const TableRow = ({ match, activ }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player2}{" "}
+          {match.player2.firstname + " " + match.player2.lastname}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -197,7 +197,9 @@ const CompetitionPage = () => {
   useEffect(() => {
     function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
-      const matches = mapPlayerNamesToMatch(matchesWithPlayers);
+      const matches = matchesWithPlayers.map(matchWithPlayers => {
+        return matchWithPlayers.match;
+      });
       setMatches(matches);
     }
 
@@ -258,15 +260,6 @@ const CompetitionPage = () => {
     handleCloseGoInactive();
   };
 
-  function mapPlayerNamesToMatch(matchesWithPlayers) {
-    return matchesWithPlayers.map(matchWithPlayers => {
-      const { match, player1, player2 } = matchWithPlayers;
-      match.player1 = player1.firstname + " " + player1.lastname;
-      match.player2 = player2.firstname + " " + player2.lastname;
-      return match;
-    });
-  }
-
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
   const handleShowReDoRound = () => setShowPopupReDoRound(true);
@@ -284,16 +277,16 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
-    IPCService.nextRound();
+    ipcRenderer.send(ipcChannels.NEXT_ROUND);
     handleCloseEndRound();
   };
 
   const handleStartRound = () => {
-    IPCService.startRound();
+    ipcRenderer.send(ipcChannels.START_ROUND);
   };
 
   const openStatisticWindow = route => {
-    IPCService.createWindow(route);
+    ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
   };
 
   return (
