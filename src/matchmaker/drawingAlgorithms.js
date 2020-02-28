@@ -222,6 +222,16 @@ function shuffle(array) {
   return array;
 }
 
+// testDrawing : [pairing] -> boolean
+function testDrawing(drawing, amountOfPlayers) {
+  const playerIds = new Set();
+  drawing.forEach(pairing => {
+    playerIds.add(pairing.player1);
+    playerIds.add(pairing.player2);
+  });
+  return playerIds.size === amountOfPlayers;
+}
+
 // groupsToString : [groups] -> string
 function groupsToString(groups) {
   let string = "";
@@ -250,5 +260,6 @@ module.exports = {
   groupsToString,
   basicDrawingAlgorithm,
   advancedDrawingAlgorithm,
-  emergencyDrawingAlgorithm
+  emergencyDrawingAlgorithm,
+  testDrawing
 };

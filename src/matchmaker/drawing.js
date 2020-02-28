@@ -3,7 +3,8 @@ const {
   pairPlayersRoundOne,
   basicDrawingAlgorithm,
   advancedDrawingAlgorithm,
-  emergencyDrawingAlgorithm
+  emergencyDrawingAlgorithm,
+  testDrawing
 } = require("./drawingAlgorithms.js");
 
 const { createMatches } = require("./match.js");
@@ -33,12 +34,15 @@ function drawFirstRound(players) {
 function drawLaterRound(players) {
   //if basicDrawing succeed its always correct
   const basicDrawing = basicDrawingAlgorithm(players);
-  if (basicDrawing !== false) {
+  if (basicDrawing !== false && testDrawing(basicDrawing, players.length)) {
     return basicDrawing;
   }
 
   const advancedDrawing = advancedDrawingAlgorithm(players);
-  if (advancedDrawing !== false) {
+  if (
+    advancedDrawing !== false &&
+    testDrawing(advancedDrawing, players.length)
+  ) {
     return advancedDrawing;
   }
 
