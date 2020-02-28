@@ -64,11 +64,15 @@ let xmlFilePath = null;
 let jsonObject = null;
 
 let competitions = null;
+
 let selectedCompetition = null;
 let selectedPlayers = null;
 let selectedMatches = null;
+let selectedMatchesWithPlayers = [];
 
 let currentCompetition = null;
+let currentPlayers = null;
+let currentMatches = null;
 let matchesWithPlayers = [];
 
 // init communication events
@@ -242,70 +246,44 @@ function registerIPCMainEvents() {
     });
   });
 
-  ipcMain.on(ipcMessages.GET_SINGLE_COMPETITION_REQUEST, (event, args) => {
+  ipcMain.on(ipcMessages.GET_COMPETITION_PREVIEW_REQUEST, (event) => {
     console.log(
       "ipc-renderer --> ipc-main",
-      ipcMessages.GET_SINGLE_COMPETITION_REQUEST
+      ipcMessages.GET_COMPETITION_PREVIEW_REQUEST
     );
 
-    if (!args) {
-      // check if a xml file is selected --> Fehler: XML-Datei ist nicht ausgewählt
-      if (!xmlFilePath) {
-        return;
-      }
-
-      // 1. load xml file
-      const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
-
-      // TODO:
-      // 2. validate xml file against xml-schema --> Fehler: XML-Datei ist nicht valide
-
-      // 3. convert xml file to JSON-Object
-      jsonObject = convertXMLToJSON(xmlContent);
-
-      // 4. parse JSON-Object for necessary data
-      selectedCompetition = createCompetitionFromJSON(jsonObject.tournament);
-      selectedPlayers = createPlayersFromJSON(jsonObject);
-
-      // 5. do resets
-      xmlFilePath = null;
-    } else {
-      const { competitionId } = args;
-
-      if (!competitionId) {
-        console.log("Parameter competitionId is not initialized");
-        return;
-      }
-
-      if (competitions.length > 0) {
-        selectedCompetition = competitions.find(
-          competition => competition.id === competitionId
-        );
-      } else {
-        console.log("workflow fehler?");
-        return; // Fehler: Workflow
-      }
-
-      // 2. load players from competition storage
-      const filePath = fileManager.getCompetitionFilePath(competitionId);
-      competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-      selectedPlayers = competitionStorage.getAllPlayers();
-
-      // 3. load matches from competition storage
-      selectedMatches = competitionStorage.getMatchesByIds(
-        selectedCompetition.round_matchIds
-      );
+    // check if a xml file is selected --> Fehler: XML-Datei ist nicht ausgewählt
+    if (!xmlFilePath) {
+      return;
     }
-    console.log("competition and players are selected");
 
-    // send data back to ipc-renderer { competition, players } (for players use matchmaker)
-    event.sender.send(ipcMessages.GET_SINGLE_COMPETITION_RESPONSE, {
+    // 1. load xml file
+    const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
+
+    // TODO:
+    // 2. validate xml file against xml-schema --> Fehler: XML-Datei ist nicht valide
+
+    // 3. convert xml file to JSON-Object
+    jsonObject = convertXMLToJSON(xmlContent);
+
+    // 4. parse JSON-Object for necessary data
+    selectedCompetition = createCompetitionFromJSON(jsonObject);
+    selectedPlayers = createPlayersFromJSON(jsonObject);
+    console.log(`competition and players are selected`);
+
+    // reset selected xml file
+    xmlFilePath = null;
+
+    const returnData = {
       competition: selectedCompetition,
       players: selectedPlayers
-    });
+    };
+
+    // send data back to ipc-renderer { competition, players }
+    event.sender.send(ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE, returnData);
     console.log(
       "ipc-main --> ipc-renderer:",
-      ipcMessages.GET_SINGLE_COMPETITION_RESPONSE
+      ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
     );
   });
 
@@ -329,14 +307,6 @@ function registerIPCMainEvents() {
         throw new Error(errorMessage);
       }
 
-      if (currentCompetition) {
-        // TODO: Wann fliegt dieser Fehler?
-        const errorMessage =
-          "A competition is already loaded. Do you want to pause the current?";
-        console.log(errorMessage);
-        throw new Error(errorMessage);
-      }
-
       // 1. initialize competition storage
       // 1.1. open competition storage and init with json object
       const competitionFilePath = fileManager.getCompetitionFilePath(
@@ -354,6 +324,7 @@ function registerIPCMainEvents() {
         competitionId: selectedCompetition.id,
         message: "success"
       };
+
       event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);
       // 1.2. use matchmaker to draw the first round and update players
       selectedMatches = matchmaker.drawRound(selectedPlayers);
