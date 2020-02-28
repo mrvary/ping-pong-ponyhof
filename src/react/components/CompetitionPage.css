@@ -59,12 +59,16 @@ body {
   font-size: 2vh;
   border: none;
   background: var(--prim-background-color);
+  color: var(--prim-font-color);
 }
 .competitionPage__table__bearbeiten-btn:hover {
   color: var(--grey-out-color);
 }
 .competitionPage__table__bearbeiten-btn:focus {
   outline: 0;
+}
+.competitionPage__table__bearbeiten-btn--notActive:hover {
+  color: var(--prim-font-color);
 }
 
 .competitionPage__link-ip-adress-statistic {
