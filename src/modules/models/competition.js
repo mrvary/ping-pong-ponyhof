@@ -28,11 +28,11 @@ function createCompetitionFromJSON(dataFromJSON) {
   };
 }
 
-function setMatchesOfCurrentRound(competition, matches) {
-  competition.round_matchIds = matches.map(match => match.id);
+function updateCompetitionRoundMatches(competition, matches) {
+  return { ...competition, round_matchIds: matches.map(match => match.id) };
 }
 
-function setCompetitionStatus(competition, newStatus) {
+function updateCompetitionStatus(competition, newStatus) {
   console.log(
     "Set new competition status:",
     competition.status,
@@ -46,6 +46,6 @@ module.exports = {
   PLAYMODE,
   COMPETITION_STATE,
   createCompetitionFromJSON,
-  setMatchesOfCurrentRound,
-  setCompetitionStatus
+  updateCompetitionRoundMatches,
+  updateCompetitionStatus
 };

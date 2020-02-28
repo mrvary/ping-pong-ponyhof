@@ -9,16 +9,6 @@ function createWindow(route) {
   ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
 }
 
-function importXMLFile(xmlFilePath, callback) {
-  ipcRenderer.once(ipcChannels.IMPORT_XML_FILE_RESPONSE, (event, args) => {
-    callback(args);
-  });
-
-  ipcRenderer.send(ipcChannels.IMPORT_XML_FILE_REQUEST, {
-    xmlFilePath: xmlFilePath
-  });
-}
-
 function startRound() {
   ipcRenderer.send(ipcChannels.START_ROUND);
 }
@@ -75,8 +65,5 @@ module.exports = {
 
   // Trigger
   startRound,
-  nextRound,
-
-  // Import
-  importXMLFile
+  nextRound
 };

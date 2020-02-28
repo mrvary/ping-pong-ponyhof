@@ -22,11 +22,10 @@ const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [competitions, setCompetitions] = useState([]);
-  const [xmlFilePath, setXMLFilePath] = useState(null);
 
   useEffect(() => {
     getCompetitions();
-  }, []);
+  }, competitions);
 
   const getCompetitions = () => {
     if (USE_BROWSER) {
@@ -36,15 +35,17 @@ const App = () => {
     }
 
     // listen to ipc-renderer event to get the data back from ipc-main
-    ipcRenderer.once(
-      ipcMessages.GET_COMPETITIONS_RESPONSE,
-      (event, { competitions }) => {
-        setCompetitions(competitions);
-      }
-    );
+    ipcRenderer.once(ipcMessages.GET_COMPETITIONS_RESPONSE, (event, args) => {
+      const { competitions } = args;
+      setCompetitions(competitions);
+    });
 
     // trigger event to get competitions from ipc-main
     ipcRenderer.send(ipcMessages.GET_COMPETITIONS_REQUEST);
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.GET_COMPETITIONS_REQUEST
+    );
   };
 
   const openXMLDialog = () => {
@@ -57,10 +58,8 @@ const App = () => {
       console.log("message:", message);
 
       // TODO: @William - Prüfe die Message auf "success" oder "cancel"
-      // TODO: selectedXMLFile wird so nicht geschickt werden später
-      if (message === "success") {
-        setXMLFilePath(args.selectedXMLFile);
-      }
+
+      getCompetition();
 
       setLinkDisabled(false);
     });
@@ -68,21 +67,41 @@ const App = () => {
     ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
   };
 
-  const importXML = handleShowError => {
-    if (!xmlFilePath) {
-      return;
-    }
+  const getCompetition = () => {
+    ipcRenderer.once(
+      ipcMessages.GET_SINGLE_COMPETITION_RESPONSE,
+      (event, args) => {
+        console.log(
+          "ipc-main --> ipc-renderer",
+          ipcMessages.GET_SINGLE_COMPETITION_RESPONSE
+        );
+        console.log(args);
+      }
+    );
 
-    IPCService.importXMLFile(xmlFilePath, args => {
+    ipcRenderer.send(ipcMessages.GET_SINGLE_COMPETITION_REQUEST);
+  };
+
+  const importXML = handleShowError => {
+    ipcRenderer.once(ipcMessages.IMPORT_XML_FILE_RESPONSE, (event, args) => {
+      console.log(
+        "ipc-main --> ipc-renderer:",
+        ipcMessages.IMPORT_XML_FILE_RESPONSE
+      );
+      console.log(args);
+
       const { competitionId, message } = args;
+
       if (!competitionId) {
-        console.log(message);
         setLinkDisabled(true);
         handleShowError();
         return;
       }
+
       setCurrentId(competitionId);
     });
+
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
   };
 
   const deleteCompetition = id => {
@@ -117,7 +136,6 @@ const App = () => {
         title="PingPongPonyhof"
         openXMLDialog={openXMLDialog}
         importXML={importXML}
-        xmlFilePath={xmlFilePath}
         currentId={currentId}
         linkDisabled={linkDisabled}
         setLinkDisabled={setLinkDisabled}

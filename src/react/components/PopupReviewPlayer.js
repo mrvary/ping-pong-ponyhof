@@ -1,5 +1,5 @@
 import { Modal } from "react-bootstrap";
-import React from "react";
+import React, { useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PopupReviewPlayer.css";
 import Button from "./Button";

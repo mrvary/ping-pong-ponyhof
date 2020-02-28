@@ -235,7 +235,7 @@ const CompetitionPage = () => {
 
     // trigger initialize competition
     ipcRenderer.send(ipcChannels.GET_MATCHES, {
-      id: competitionID
+      competitionId: competitionID
     });
   };
   const [active, setActive] = useState(false);

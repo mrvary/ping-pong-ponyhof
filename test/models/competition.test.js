@@ -9,8 +9,7 @@ const config = require("../config");
 const {
   COMPETITION_STATE,
   createCompetitionFromJSON,
-  setCompetitionStatus
-} = require("../../src/modules/models/competition");
+  updateCompetitionStatus,  } = require("../../src/modules/models/competition");
 
 let jsonObject = null;
 
@@ -38,10 +37,7 @@ describe("setCompetitionStatus", () => {
     let competition = createCompetitionFromJSON(jsonObject.tournament);
 
     // ACT: Set new competition state
-    competition = setCompetitionStatus(
-      competition,
-      COMPETITION_STATE.COMP_READY_ROUND_READY
-    );
+    competition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
 
     // ASSERT: check the competition state
     expect(competition.state).toBe(COMPETITION_STATE.COMP_READY_ROUND_READY);

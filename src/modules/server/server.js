@@ -20,8 +20,6 @@ const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
 const connectedClients = new Map();
 
 const ServerMainIOConnection = new EventEmitter();
-// TODO: is this needed at all?
-// const SocketIOOutputEmitter = new EventEmitter();
 
 let server = null;
 let serverSocket = null;
