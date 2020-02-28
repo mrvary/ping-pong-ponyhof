@@ -108,19 +108,20 @@ const TableRow = ({ match, activ }) => {
     //TODO save Changes from edited Table
     handleCloseEditMatch();
   };
-  let tischCss = 'competition__table--tisch';
-  if (false) {
-    tischCss = 'competition__table--tisch--online';
+  let tischCss = 'liRed';
+  if (true) {
+    tischCss = 'liGreen';
   }
-  /* <span className={tischCss}>&#8226;</span>
-          <span>&#xa0;</span>
-          <span>&#xa0;</span>
-          */
+
   return (
     <div className="competitionPage__centered">
       <div className="competitionPage__table competitionPage__table--values">
         <div className="competitionPage__table--elements competitionPage__centered">
-          <li className={tischCss}>1</li>
+          <li id={tischCss} className="competitionPage__centered">
+            <span>&#xa0;</span>
+            <span>&#xa0;</span>
+            <span>1</span>
+          </li>
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
