@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import "./CompetitionPage.css";
 import "../Colors.css";
 
-//componenten
+// components
 import Popup from "./Popup";
 import Footer from "./Footer";
 import Button from "./Button";
@@ -11,7 +11,6 @@ import CompetitionPageHeader from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
 
 // ipc communication
-import IPCService from "../../shared/ipc/ipcRendererService";
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcChannels = require("../../shared/ipc-messages");
 
@@ -273,16 +272,16 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
-    IPCService.nextRound();
+    ipcRenderer.send(ipcChannels.NEXT_ROUND);
     handleCloseEndRound();
   };
 
   const handleStartRound = () => {
-    IPCService.startRound();
+    ipcRenderer.send(ipcChannels.START_ROUND);
   };
 
   const openStatisticWindow = route => {
-    IPCService.createWindow(route);
+    ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
   };
 
   return (

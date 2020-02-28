@@ -64,12 +64,14 @@ let xmlFilePath = null;
 let jsonObject = null;
 
 let competitions = null;
+
 let selectedCompetition = null;
 let selectedPlayers = null;
 let selectedMatches = null;
 
 let currentCompetition = null;
 let matchesWithPlayers = [];
+let matchStarted = false;
 
 // init communication events
 registerIPCMainEvents();
@@ -446,17 +448,25 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
+
+    if (matchStarted) {
+      return;
+    }
+
     if (currentCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
       return;
     }
+
     const updatedCompetition = updateCompetitionStatus(
       currentCompetition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
     );
 
-    // TODO: check this with Marco
     currentCompetition = updatedCompetition;
     metaStorage.updateCompetition(updatedCompetition);
+
+    matchStarted = true;
     server.sendStartRoundBroadcast();
   });
 
