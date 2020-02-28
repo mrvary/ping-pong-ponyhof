@@ -51,10 +51,12 @@ describe("separateTopFromBottomPlayers()", () => {
     const { bottom } = separateTopFromBottomPlayers(
       playersWithFreeTicketPlayer
     );
+
     expect(bottom).toContainEqual({
       id: "FreeTicket",
       gamesWon: 0,
       matchIds: [],
+      lastname: "FREILOS",
       opponentIds: [],
       qttr: 0
     });
