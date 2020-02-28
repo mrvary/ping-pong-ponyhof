@@ -1,9 +1,9 @@
 const {
   separateTopFromBottomPlayers,
   pairPlayersRoundOne,
-  groupByGamesWon,
-  groupsToString,
-  pairPlayersLaterRound
+  basicDrawingAlgorithm,
+  advancedDrawingAlgorithm,
+  emergencyDrawingAlgorithm
 } = require("./drawingAlgorithms.js");
 
 const { createMatches } = require("./match.js");
@@ -31,9 +31,18 @@ function drawFirstRound(players) {
 
 // drawLaterRound : [players] -> [pairings]
 function drawLaterRound(players) {
-  const pairings = pairPlayersLaterRound(players);
+  //if basicDrawing succeed its always correct
+  const basicDrawing = basicDrawingAlgorithm(players);
+  if (basicDrawing !== false) {
+    return basicDrawing;
+  }
 
-  return pairings;
+  const advancedDrawing = advancedDrawingAlgorithm(players);
+  if (advancedDrawing !== false) {
+    return advancedDrawing;
+  }
+
+  return emergencyDrawingAlgorithm(players);
 }
 
 module.exports = {

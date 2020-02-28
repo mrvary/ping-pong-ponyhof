@@ -33,23 +33,6 @@ function separateTopFromBottomPlayers(players) {
   return { top, bottom };
 }
 
-//Algorithms for drawing later round
-// pairPlayersLaterRound : [players] -> [pairings]
-function pairPlayersLaterRound(players) {
-  //this is the "safest" algorithm
-  const basicDrawing = basicDrawingAlgorithm(players);
-  if (basicDrawing !== false) {
-    return basicDrawing;
-  }
-
-  const advancedDrawing = advancedDrawingAlgorithm(players);
-  if (advancedDrawing !== false) {
-    return advancedDrawing;
-  }
-
-  return emergencyDrawingAlgorithm(players);
-}
-
 // basicDrawingAlgorithm : [players] -> [pairings]
 function basicDrawingAlgorithm(players) {
   let dummyPlayers = [...players];
@@ -265,7 +248,6 @@ module.exports = {
   shuffle,
   groupByGamesWon,
   groupsToString,
-  pairPlayersLaterRound,
   basicDrawingAlgorithm,
   advancedDrawingAlgorithm,
   emergencyDrawingAlgorithm
