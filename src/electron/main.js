@@ -310,10 +310,20 @@ function registerIPCMainEvents() {
 
       const { matches, players } = createMatchesWithMatchmaker(selectedPlayers);
 
-      const competitionFilePath = fileManager.getCompetitionFilePath(selectedCompetition.id);
-      initCompetitionDatabase(competitionFilePath, players, matches, jsonObject);
+      const competitionFilePath = fileManager.getCompetitionFilePath(
+        selectedCompetition.id
+      );
+      initCompetitionDatabase(
+        competitionFilePath,
+        players,
+        matches,
+        jsonObject
+      );
 
-      selectedCompetition = createCompetitionInMetaStorage(selectedCompetition, matches);
+      selectedCompetition = createCompetitionInMetaStorage(
+        selectedCompetition,
+        matches
+      );
       selectedPlayers = players;
       selectedMatches = matches;
 
@@ -321,7 +331,10 @@ function registerIPCMainEvents() {
       jsonObject = null;
 
       // 3. create response message with success message
-      returnData = { competitionId: selectedCompetition.id, message: "success" };
+      returnData = {
+        competitionId: selectedCompetition.id,
+        message: "success"
+      };
     } catch (err) {
       // notify react app that a error has happened
       console.log(err.message);
@@ -337,7 +350,10 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.GET_COMPETITION_MATCHES_REQUEST, (event, args) => {
-    console.log("ipc-renderer --> ipc-main:", ipcMessages.GET_COMPETITION_MATCHES_REQUEST);
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.GET_COMPETITION_MATCHES_REQUEST
+    );
     const { competitionId } = args;
 
     if (!competitionId) {
@@ -348,7 +364,9 @@ function registerIPCMainEvents() {
     // check if xml was imported
     if (!selectedCompetition) {
       // get selected competition from competitions
-      selectedCompetition = competitions.find(competition => competition.id === competitionId);
+      selectedCompetition = competitions.find(
+        competition => competition.id === competitionId
+      );
       console.log("Select competition from competitions");
 
       // load players from competition storage
@@ -358,7 +376,9 @@ function registerIPCMainEvents() {
       console.log("Select players from competition database");
 
       // 3. load matches from competition storage
-      selectedMatches = competitionStorage.getMatchesByIds(selectedCompetition.round_matchIds);
+      selectedMatches = competitionStorage.getMatchesByIds(
+        selectedCompetition.round_matchIds
+      );
       console.log("Select matches from competition database");
     }
 
@@ -378,7 +398,10 @@ function registerIPCMainEvents() {
       return; // --> Fehler: Matches sind nicht initialisiert
     }
 
-    selectedMatchesWithPlayers = mapMatchesWithPlayers(selectedMatches, selectedPlayers);
+    selectedMatchesWithPlayers = mapMatchesWithPlayers(
+      selectedMatches,
+      selectedPlayers
+    );
     console.log("competition and players and matches are selected");
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, {
@@ -461,7 +484,11 @@ function initCompetitionDatabase(filePath, players, matches, jsonObject) {
   storeMatchesAndPlayersInCompetitionDatabase(filePath, players, matches);
 }
 
-function storeMatchesAndPlayersInCompetitionDatabase(filePath, players, matches) {
+function storeMatchesAndPlayersInCompetitionDatabase(
+  filePath,
+  players,
+  matches
+) {
   competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
   competitionStorage.createPlayers(players);
   competitionStorage.createMatches(matches);
@@ -474,13 +501,16 @@ function createMatchesWithMatchmaker(players) {
   players = updatePlayersAfterDrawing(players, matches);
   console.log("Matchmaker drew a round");
 
-  return {matches, players};
+  return { matches, players };
 }
 
 // update competition and create competition in meta storage
 function createCompetitionInMetaStorage(competition, matches) {
   competition = updateCompetitionRoundMatches(competition, matches);
-  competition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
+  competition = updateCompetitionStatus(
+    competition,
+    COMPETITION_STATE.COMP_READY_ROUND_READY
+  );
 
   metaStorage.createCompetition(competition);
   console.log("Create competition in meta storage");
