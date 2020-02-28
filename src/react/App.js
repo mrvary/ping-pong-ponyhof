@@ -11,7 +11,6 @@ import Competition from "./components/Competition";
 import Header from "./components/Header";
 
 // electron
-import IPCService from "../shared/ipc/ipcRendererService";
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../shared/ipc-messages");
 
