@@ -4,6 +4,8 @@ const {
   tournamentJSON15Players
 } = require("./player.test.data");
 
+const { testPairingWithFreeTicket } = require("./match.test.data");
+
 const { drawRound } = require("../../src/matchmaker/drawing");
 
 const {
@@ -20,7 +22,7 @@ const {
   groupByGamesWon,
   sortPlayersBy,
   shuffle,
-  pairPlayersLaterRound,
+  testDrawing,
   basicDrawingAlgorithm,
   advancedDrawingAlgorithm,
   emergencyDrawingAlgorithm
@@ -123,6 +125,17 @@ describe("groupByGamesWon()", () => {
     return { ...player, matchIds: (player.matchIds = [1, 2, 3, 4, 5]) };
   });
   groupByGamesWon(players);
+});
+
+describe("testDrawing()", () => {
+  test("pairing succeesful created", () => {
+    expect(testDrawing(testPairingWithFreeTicket, 16)).toBe(true);
+    expect(testDrawing(testPairingWithFreeTicket, 14)).toBe(false);
+    expect(testDrawing(testPairingWithFreeTicket, 18)).toBe(false);
+
+    testPairingWithFreeTicket[4].player1 = "PLAYER3";
+    expect(testDrawing(testPairingWithFreeTicket, 16)).toBe(false);
+  });
 });
 
 //simulate 100 competitions and count the success rate of each algorithm
