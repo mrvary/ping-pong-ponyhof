@@ -11,10 +11,10 @@ module.exports = {
   DELETE_COMPETITION_REQUEST: "delete-competition-request",
 
   OPEN_FILE_DIALOG_REQUEST: "open-import-dialog-request",
-  GET_SINGLE_COMPETITION_REQUEST: "get-single-competition-request",
+  GET_COMPETITION_PREVIEW_REQUEST: "get-competition-preview-request",
   IMPORT_XML_FILE_REQUEST: "import-xml-file-request",
 
-  GET_MATCHES: "get-matches",
+  GET_COMPETITION_MATCHES_REQUEST: "get-matches",
   UPDATE_SETS: "update-sets",
 
   START_COMPETITION: "start-competition",
@@ -34,7 +34,7 @@ module.exports = {
   DELETE_COMPETITION_RESPONSE: "delete-competition-request",
 
   OPEN_FILE_DIALOG_RESPONSE: "open-import-dialog-response",
-  GET_SINGLE_COMPETITION_RESPONSE: "get-single-competition-response",
+  GET_COMPETITION_PREVIEW_RESPONSE: "get-competition-preview-response",
   IMPORT_XML_FILE_RESPONSE: "import-xml-file_response",
 
   UPDATE_MATCHES: "update-matches"

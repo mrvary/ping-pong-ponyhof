@@ -68,17 +68,17 @@ const App = () => {
 
   const getCompetition = () => {
     ipcRenderer.once(
-      ipcMessages.GET_SINGLE_COMPETITION_RESPONSE,
+      ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE,
       (event, args) => {
         console.log(
           "ipc-main --> ipc-renderer",
-          ipcMessages.GET_SINGLE_COMPETITION_RESPONSE
+          ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         console.log(args);
       }
     );
 
-    ipcRenderer.send(ipcMessages.GET_SINGLE_COMPETITION_REQUEST);
+    ipcRenderer.send(ipcMessages.GET_COMPETITION_PREVIEW_REQUEST);
   };
 
   const importXML = handleShowError => {
