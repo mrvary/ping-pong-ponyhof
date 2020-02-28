@@ -3,7 +3,7 @@
  */
 
 const fs = require("fs");
-const parser = require("xml2json");
+const parser = require("fast-xml-parser");
 
 const {
   createCompetitionFromJSON,
@@ -78,13 +78,22 @@ function readCompetitionXMLFileFromDisk(filePath) {
   }
 
   // read file from disk
-  return fs.readFileSync(filePath);
+  return fs.readFileSync(filePath).toString();
 }
 
 function convertXMLToJSON(xmlContent) {
-  const options = { reversible: false };
-  const jsonContent = parser.toJson(xmlContent, options);
-  const jsonObject = JSON.parse(jsonContent);
+  const options = {
+    ignoreAttributes: false,
+    attributeNamePrefix: "",
+    parseAttributeValue: true
+  };
+
+  const result = parser.validate(xmlContent, options);
+  if (!result) {
+    console.log("xml is not valid", result.err);
+  }
+
+  const jsonObject = parser.parse(xmlContent, options);
   console.log("Convert xml file to json");
 
   return jsonObject;
@@ -92,6 +101,5 @@ function convertXMLToJSON(xmlContent) {
 
 module.exports = {
   readCompetitionXMLFileFromDisk,
-  convertXMLToJSON,
-  importXML
+  convertXMLToJSON
 };
