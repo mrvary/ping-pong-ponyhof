@@ -185,8 +185,8 @@ const CompetitionPage = () => {
   useEffect(() => {
     function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
-      const matches =  matchesWithPlayers.map(matchWithPlayers => {
-        return  matchWithPlayers.match;
+      const matches = matchesWithPlayers.map(matchWithPlayers => {
+        return matchWithPlayers.match;
       });
       setMatches(matches);
     }
