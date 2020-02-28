@@ -33,7 +33,6 @@ function createCompetition(dataFromJSON) {
   };
 }
 
-
 function updateCompetitionRoundMatches(competition, matches) {
   return { ...competition, round_matchIds: matches.map(match => match.id) };
 }

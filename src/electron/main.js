@@ -246,7 +246,7 @@ function registerIPCMainEvents() {
     });
   });
 
-  ipcMain.on(ipcMessages.GET_COMPETITION_PREVIEW_REQUEST, (event) => {
+  ipcMain.on(ipcMessages.GET_COMPETITION_PREVIEW_REQUEST, event => {
     console.log(
       "ipc-renderer --> ipc-main",
       ipcMessages.GET_COMPETITION_PREVIEW_REQUEST
