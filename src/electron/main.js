@@ -520,15 +520,15 @@ function initMatchesWithPlayers(matches, players) {
   matches.forEach(match => {
     const player1 = players.find(player => player.id === match.player1);
     const player2 = players.find(player => player.id === match.player2);
+    match.player1 = player1;
+    match.player2 = player2;
 
     const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
 
     const matchWithPlayers = {
       tableNumber: tableNumber,
       connectedDevice: uuid,
-      match: match,
-      player1: player1,
-      player2: player2
+      match: match
     };
 
     matchesWithPlayers.push(matchWithPlayers);

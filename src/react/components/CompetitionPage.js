@@ -125,7 +125,7 @@ const TableRow = ({ match, activ }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player1}
+          {match.player1.firstname + " " + match.player1.lastname}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -133,7 +133,7 @@ const TableRow = ({ match, activ }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player2}{" "}
+          {match.player2.firstname + " " + match.player2.lastname}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -197,7 +197,9 @@ const CompetitionPage = () => {
   useEffect(() => {
     function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
-      const matches = mapPlayerNamesToMatch(matchesWithPlayers);
+      const matches = matchesWithPlayers.map(matchWithPlayers => {
+        return matchWithPlayers.match;
+      });
       setMatches(matches);
     }
 
@@ -257,15 +259,6 @@ const CompetitionPage = () => {
     setActive(false);
     handleCloseGoInactive();
   };
-
-  function mapPlayerNamesToMatch(matchesWithPlayers) {
-    return matchesWithPlayers.map(matchWithPlayers => {
-      const { match, player1, player2 } = matchWithPlayers;
-      match.player1 = player1.firstname + " " + player1.lastname;
-      match.player2 = player2.firstname + " " + player2.lastname;
-      return match;
-    });
-  }
 
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
