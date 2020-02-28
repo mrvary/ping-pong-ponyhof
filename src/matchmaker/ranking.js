@@ -61,7 +61,7 @@ function calculateBHZ(playerToCalculate, players) {
   return bhz;
 }
 
-// calculateTTRDifference : playerToCalculate, [players] -> newTTR
+// calculateTTRDifference : playerToCalculate, [players] -> Number
 function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
   const opponents = playerToCalculate.opponentIds.filter(
@@ -92,7 +92,7 @@ function calculateTTRDifference(playerToCalculate, players) {
 }
 
 //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
-// ttrCalculation : ttrPlayer, [ttrOpponnents] -> ttrDifference
+// ttrCalculation : Player, [Numbers], Number -> Number
 function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
   let ttrDifference = 0;
   ttrOpponnents.forEach(ttr => {
@@ -111,7 +111,7 @@ function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
   return ttrDifference;
 }
 
-// getMatchesInvolved : player, [matches] -> [mactchesInvolved]
+// getMatchesInvolved : [Numbers], [matches] -> [matches]
 function getMatchesInvolved(matchIds, matches) {
   let mactchesInvolved = [];
   matches.forEach(match => {
@@ -121,7 +121,7 @@ function getMatchesInvolved(matchIds, matches) {
   return mactchesInvolved;
 }
 
-// addMatchDetails : [players], [matches] -> [matchesWithDetail]
+// addMatchDetails : [players], [matches] -> [matches]
 function addMatchDetails(players, matches) {
   matches.forEach(match => {
     match.player1firstname = getParameterByPlayerId(
@@ -148,7 +148,7 @@ function addMatchDetails(players, matches) {
   });
 }
 
-// getParameterByPlayerId : playerId, [players], parameter -> value
+// getParameterByPlayerId : id, [players], parameter -> value
 function getParameterByPlayerId(playerId, players, parameter) {
   let value;
   players.forEach(player => {
