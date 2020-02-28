@@ -14,7 +14,7 @@ module.exports = {
   GET_COMPETITION_PREVIEW_REQUEST: "get-competition-preview-request",
   IMPORT_XML_FILE_REQUEST: "import-xml-file-request",
 
-  GET_MATCHES: "get-matches",
+  GET_COMPETITION_MATCHES_REQUEST: "get-matches",
   UPDATE_SETS: "update-sets",
 
   START_COMPETITION: "start-competition",
