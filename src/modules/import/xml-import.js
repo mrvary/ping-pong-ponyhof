@@ -12,8 +12,12 @@ const {
 } = require("../../modules/models/competition");
 const { createPlayersFromJSON } = require("../../matchmaker/player");
 
-const config = require("../../electron/config");
 const matchmaker = require("../../matchmaker/drawing");
+
+const ERROR_MESSAGES = {
+  FilePathIsNotDefined: "file path is not defined",
+  FileDoesNotExists: "The file does not exist"
+};
 
 /**
  * Import XML-File into databases and draw first round of competition
@@ -66,19 +70,21 @@ function importXML(filePath, fileManager, metaStorage, competitionStorage) {
 
 function readCompetitionXMLFileFromDisk(filePath) {
   if (!filePath) {
-    console.log("The file path contains errors");
-    throw new Error("Der Dateipfad enthält Fehler.");
+    console.log(ERROR_MESSAGES.FilePathIsNotDefined);
+    throw new Error(ERROR_MESSAGES.FilePathIsNotDefined);
   }
 
   // check if file exists
-  console.log("Read XML-File:", filePath);
   if (!fs.existsSync(filePath)) {
-    console.log("The file does not exits");
-    throw new Error("Die Datei existiert nicht");
+    console.log(ERROR_MESSAGES.FileDoesNotExists);
+    throw new Error(ERROR_MESSAGES.FileDoesNotExists);
   }
 
   // read file from disk
-  return fs.readFileSync(filePath).toString();
+  const xmlContent = fs.readFileSync(filePath).toString();
+  console.log("Read XML-File:", filePath);
+
+  return xmlContent;
 }
 
 function convertXMLToJSON(xmlContent) {
@@ -100,6 +106,8 @@ function convertXMLToJSON(xmlContent) {
 }
 
 module.exports = {
+  ERROR_MESSAGES,
+
   readCompetitionXMLFileFromDisk,
   convertXMLToJSON
 };

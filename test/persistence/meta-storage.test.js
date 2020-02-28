@@ -213,7 +213,7 @@ describe("getCompetition()", () => {
 
 function readCompetitionFile() {
     const filePath = path.join(__dirname, config.JSON_FILE);
-    const data = fs.readFileSync(filePath);
+    const data = fs.readFileSync(filePath).toString();
     return JSON.parse(data);
 }
 
