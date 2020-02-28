@@ -12,6 +12,7 @@ import PopupEditTable from "./PopupEditTable";
 
 // ipc communication
 import IPCService from "../../shared/ipc/ipcRendererService";
+import CompetitionPage__Header from "./CompetitionPageHeader";
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcChannels = require("../../shared/ipc-messages");
 
@@ -107,11 +108,21 @@ const TableRow = ({ match, activ }) => {
     //TODO save Changes from edited Table
     handleCloseEditMatch();
   };
+  let tischCss = "liRed";
+  if (true) {
+    tischCss = "liGreen";
+  }
 
   return (
     <div className="competitionPage__centered">
       <div className="competitionPage__table competitionPage__table--values">
-        <div className="competitionPage__table--elements competitionPage__centered"></div>
+        <div className="competitionPage__table--elements competitionPage__centered">
+          <li id={tischCss} className="competitionPage__centered">
+            <span>&#xa0;</span>
+            <span>&#xa0;</span>
+            <span>1</span>
+          </li>
+        </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
           {match.player1}

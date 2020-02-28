@@ -41,6 +41,17 @@ body {
   height: 7vh;
   font: 10vw;
 }
+#liGreen::before {
+  content: "■";
+  font-size: 1.2em;
+  color: var(--success-color);
+}
+#liRed::before {
+  content: "■";
+  font-size: 1.2em;
+  color: var(--error-color);
+}
+
 /* for testing
   border: 0.1vh solid var(--grey-out-color);
 */
