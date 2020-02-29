@@ -44,7 +44,7 @@ function createMatches(matches) {
     matches.forEach(match => {
       storage
         .get(elementPath)
-        .post(match)
+        .push(match)
         .write();
     });
   }
@@ -65,7 +65,7 @@ function createPlayers(players) {
     players.forEach(player => {
       storage
         .get(elementPath)
-        .post(player)
+        .push(player)
         .write();
     });
   }

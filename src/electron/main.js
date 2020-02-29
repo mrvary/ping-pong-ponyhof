@@ -488,7 +488,7 @@ function deleteCompetition(competitionId) {
 
 // Initialize competition storage with default values
 function initCompetitionDatabase(filePath, players, matches, jsonObject) {
-  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+  competitionStorage.openStorage(filePath, config.USE_IN_MEMORY_STORAGE);
   competitionStorage.initStateWithDefaults(jsonObject);
   console.log("Initialized competition storage with json object");
 
@@ -501,7 +501,7 @@ function storeMatchesAndPlayersInCompetitionDatabase(
   players,
   matches
 ) {
-  competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
+  competitionStorage.openStorage(filePath, config.USE_IN_MEMORY_STORAGE);
   competitionStorage.createPlayers(players);
   competitionStorage.createMatches(matches);
   console.log("Save matches and players into competition storage");
