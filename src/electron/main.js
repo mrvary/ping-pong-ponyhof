@@ -83,6 +83,8 @@ initHTTPServer();
 
 app.on("ready", () => {
   initDevTools();
+  initMetaStorage();
+
   mainWindow = createWindow();
   createMenu();
 });
@@ -181,12 +183,18 @@ function initHTTPServer() {
   });
 }
 
+function initMetaStorage() {
+  const filePath = fileManager.getMetaStorageDatabasePath();
+  metaStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+}
+
 function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, event => {
     console.log(
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
+
     // check if competitions are loaded from database
     if (!competitions) {
       // init competitions from database
@@ -471,9 +479,6 @@ function registerIPCMainEvents() {
 }
 
 function getCompetitionsFromDatabase() {
-  const filePath = fileManager.getMetaStorageDatabasePath();
-
-  metaStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
   const competitions = metaStorage.getAllCompetitions();
   console.log(`Get ${competitions.length} elements from database`);
 
@@ -488,7 +493,7 @@ function deleteCompetition(competitionId) {
 
 // Initialize competition storage with default values
 function initCompetitionDatabase(filePath, players, matches, jsonObject) {
-  competitionStorage.openStorage(filePath, config.USE_IN_MEMORY_STORAGE);
+  competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
   competitionStorage.initStateWithDefaults(jsonObject);
   console.log("Initialized competition storage with json object");
 
@@ -501,7 +506,6 @@ function storeMatchesAndPlayersInCompetitionDatabase(
   players,
   matches
 ) {
-  competitionStorage.openStorage(filePath, config.USE_IN_MEMORY_STORAGE);
   competitionStorage.createPlayers(players);
   competitionStorage.createMatches(matches);
   console.log("Save matches and players into competition storage");

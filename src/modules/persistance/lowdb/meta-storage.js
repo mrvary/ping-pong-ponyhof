@@ -22,6 +22,8 @@ let internalUseInMemory;
 function init(filePath, useInMemory = true) {
   internalFilePath = filePath;
   internalUseInMemory = useInMemory;
+
+  initStateWithDefaults({ competitions: [] });
 }
 
 function initStateWithDefaults(jsonObject) {
@@ -37,6 +39,10 @@ function getState() {
 function clear() {
   const object = { competitions: [] };
   lowDBDao.clear(object);
+}
+
+function close() {
+  lowDBDao.close();
 }
 
 function createCompetition(competition) {
