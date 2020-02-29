@@ -47,22 +47,24 @@ describe("convertXMLToJSON()", () => {
     test("When_XMLContentContainsSyntaxError_Expect_XMLInvalidException", () => {
         // ARRANGE
         const filePath = path.join(__dirname, config.XML_FILE_INVALID);
+        const xmlContent = readCompetitionXMLFileFromDisk(filePath);
 
         // ASSERT: compare exception message
-        expect(() => convertXMLToJSON(filePath)).toThrow(ERROR_MESSAGES.XMLInvalidException);
+        expect(() => convertXMLToJSON(xmlContent)).toThrow(ERROR_MESSAGES.XMLInvalidException);
     });
 
     test("When_XMLContentIsValid_Expect_JsonObject", () => {
         // ARRANGE
         // load xml content
         const xmlFilePath = path.join(__dirname, config.XML_FILE_VALID);
+        const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
 
         // load expected json file
         const jsonFilePath = path.join(__dirname, config.JSON_FILE);
         const expectedJsonObject = readJSONObjectFromDisk(jsonFilePath);
 
         // ACT
-        const jsonObject = convertXMLToJSON(xmlFilePath);
+        const jsonObject = convertXMLToJSON(xmlContent);
 
         // ASSERT: compare exception message
         expect(jsonObject).toEqual(expectedJsonObject);
