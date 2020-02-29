@@ -24,6 +24,12 @@ function openStorage(filePath, useInMemory) {
   console.log("Open storage:", filePath);
 }
 
+function close() {
+  if (storage) {
+    storage = null;
+  }
+}
+
 function initStateWithDefaults(jsonObject) {
   storage.setState(jsonObject).write();
   storage.set(ELEMENT_PATHS.MATCHES, []).write();
@@ -34,26 +40,33 @@ function getState() {
   return storage.getState();
 }
 
-function createMatches(matches) {
-  const elementPath = "matches";
-  const hasMatchesFlag = storage.has(elementPath).value();
+// manipulate matches
 
-  if (!hasMatchesFlag) {
-    storage.set(elementPath, matches).write();
-  } else {
-    matches.forEach(match => {
-      storage
-        .get(elementPath)
-        .push(match)
-        .write();
-    });
+function createMatches(matches) {
+  if (!hasFlag(ELEMENT_PATHS.MATCHES)) {
+    // create new collection with data
+    storage.set(ELEMENT_PATHS.MATCHES, matches).write();
+    return;
   }
+
+  // add matches to collection
+  const collection = storage.get(ELEMENT_PATHS.MATCHES);
+  matches.forEach(match => {
+    collection.push(match).write();
+  });
 }
 
 function getAllMatches() {
   const elementPath = "matches";
   return storage.get(elementPath).value();
 }
+
+function getMatchesByIds(ids) {
+  const matches = getAllMatches();
+  return matches.filter(match => ids.includes(match.id));
+}
+
+// manipulate players
 
 function createPlayers(players) {
   const elementPath = "players";
@@ -76,20 +89,19 @@ function getAllPlayers() {
   return storage.get(elementPath).value();
 }
 
-function getMatchesByIds(ids) {
-  const matches = getAllMatches();
-  return matches.filter(match => ids.includes(match.id));
+function hasFlag(elementPath) {
+  return storage.has(elementPath).value();
 }
 
 module.exports = {
   COMP_ERROR_MESSAGES,
   openStorage,
+  close,
 
   initStateWithDefaults,
   getState,
 
   createMatches,
-  getAllMatches,
   getMatchesByIds,
   createPlayers,
   getAllPlayers
