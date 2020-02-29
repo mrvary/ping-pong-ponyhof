@@ -5,8 +5,7 @@
 const { open, FilePathIsUndefinedException } = require("./lowdb-storage");
 
 const COMP_ERROR_MESSAGES = {
-  FilePathIsUndefinedException,
-
+  FilePathIsUndefinedException
 };
 
 let storage = null;
