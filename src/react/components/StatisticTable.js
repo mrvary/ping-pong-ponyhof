@@ -5,8 +5,8 @@ import "../Colors.css";
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
 // shared service
-import IPCService from "../../shared/ipc/ipcRendererService";
-const USE_BROWSER = false;
+// import IPCService from "../../shared/ipc/ipcRendererService";
+// const USE_BROWSER = false;
 
 const TableHeader = () => {
   return (
@@ -67,13 +67,13 @@ const StatisticTable = () => {
   const [matches, setMatches] = useState([]);
   const [players, setPlayer] = useState([]);
 
-  IPCService.getMatchesByCompetition(competitionID_1, matchData => {
-    console.log(matchData.matchesWithPlayers);
-    setMatches(matchData.matchesWithPlayers);
+  // IPCService.getMatchesByCompetition(competitionID_1, matchData => {
+  //   console.log(matchData.matchesWithPlayers);
+  //   setMatches(matchData.matchesWithPlayers);
 
-    const playerData = IPCService.getPlayersByPlayerId();
-    setPlayer(playerData);
-  });
+  //   const playerData = IPCService.getPlayersByPlayerId();
+  //   setPlayer(playerData);
+  // });
 
   return (
     <div>
