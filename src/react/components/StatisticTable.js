@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import './StatisticTable.css';
-import { useParams } from 'react-router-dom';
-import '../Colors.css';
-import CompetitionPageHeader from './CompetitionPageHeader';
+import React, { useState, useEffect } from "react";
+import "./StatisticTable.css";
+import { useParams } from "react-router-dom";
+import "../Colors.css";
+import CompetitionPageHeader from "./CompetitionPageHeader";
 
 // shared service
 // import IPCService from "../../shared/ipc/ipcRendererService";
@@ -59,7 +59,7 @@ const Table = ({ matches }) => {
 const StatisticTable = () => {
   //link to competitionPage
   const { competitionID } = useParams();
-  const linkDestination = '/competition/' + competitionID;
+  const linkDestination = "/competition/" + competitionID;
 
   //falsche daten
   //dummy match
