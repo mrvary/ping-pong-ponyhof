@@ -35,14 +35,61 @@ function App() {
 
   const [availableTables, setAvailableTables] = useState([]);
   const [tableNumber, setTableNumber] = useState(-1);
-  const [localMatch, setLocalMatch] = useState(null);
+  const [localMatch, setLocalMatch] = useState(undefined);
   const [waitingMessage, setWaitingMessage] = useState("");
+  const [roundStarted, setRoundStarted] = useState(false);
+  const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
+  const [message, setMessage] = useState("");
 
+  // set tableNumber when availableTables are non-empty
   useEffect(() => {
     if (tableNumber < 0 && availableTables.length > 0) {
       setTableNumber(availableTables[0]);
     }
   }, [availableTables, tableNumber]);
+
+  // set match when matchesWithPlayers are available
+  useEffect(() => {
+    if (matchesWithPlayers.length < 1) {
+      return;
+    }
+    const matchWithPlayer = matchesWithPlayers.find(
+      matchWithPlayer => matchWithPlayer.tableNumber === tableNumber
+    );
+
+    if (!matchWithPlayer) {
+      console.error(`No match for table number ${tableNumber}`);
+      return;
+    }
+
+    setLocalMatch(matchWithPlayer);
+  }, [matchesWithPlayers, tableNumber]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      return;
+    }
+    if (localMatch && isMatchFinished(localMatch)) {
+      console.info("match is finished");
+      setWaitingMessage("waiting for next round to start");
+      setView("WAITING");
+      return;
+    }
+
+    if (localMatch && roundStarted) {
+      console.info("round is started");
+      setView("MATCH");
+      return;
+    }
+
+    if (localMatch) {
+      console.info("round is started");
+      setView("NEXT_PLAYERS");
+      return;
+    }
+
+    setView("NO_COMP");
+  }, [localMatch, roundStarted, isConnected]);
 
   const content = () => {
     if (view === "LOGIN") {
@@ -135,49 +182,17 @@ function App() {
         return;
       }
 
+      setMessage(message);
       setIsConnected(true);
       setLocalMatch(match);
-
-      if (match && isMatchFinished(match)) {
-        console.info("match is finished");
-        setWaitingMessage("waiting for next round to start");
-        setView("WAITING");
-        return;
-      }
-
-      if (match && roundStarted) {
-        console.info("round is started");
-        setView("MATCH");
-        return;
-      }
-
-      if (match) {
-        console.info("round is started");
-        setView("NEXT_PLAYERS");
-        return;
-      }
-
-      setView("NO_COMP");
+      setRoundStarted(roundStarted);
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
       console.info("SERVER->CLIENT: NEXT_ROUND");
 
-      if (view !== "WAITING" || view !== "NO_COMP") {
-        return;
-      }
       const { matchesWithPlayers } = data;
-      const match = matchesWithPlayers.find(
-        match => match.tableNumber === tableNumber
-      );
-
-      if (!match) {
-        console.error(`No match for table number ${tableNumber}`);
-        return;
-      }
-
-      setLocalMatch(match);
-      match.roundStarted ? setView("MATCH") : setView("NEXT_PLAYERS");
+      setMatchesWithPlayers(matchesWithPlayers);
     });
 
     connection.on(socketIOMessages.START_ROUND, () => {
