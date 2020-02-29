@@ -24,7 +24,7 @@ beforeAll(() => {
 describe("createCompetitionFromJSON()", () => {
   test("When_CreateNewCompetition_Expect_CompetitionIsInitializedWithDefaultValues", () => {
     // ACT: create data structure of a competition
-    const competition = createCompetitionFromJSON(jsonObject.tournament);
+    const competition = createCompetitionFromJSON(jsonObject);
 
     // ASSERT: data structure is equal to expected
     expect(competition).toEqual(expectedCompetitionWithDefaultValues);
@@ -34,7 +34,7 @@ describe("createCompetitionFromJSON()", () => {
 describe("setCompetitionStatus", () => {
   test("Set new competition state", () => {
     // ARRANGE: Create new competition
-    let competition = createCompetitionFromJSON(jsonObject.tournament);
+    let competition = createCompetitionFromJSON(jsonObject);
 
     // ACT: Set new competition state
     competition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
@@ -47,5 +47,5 @@ describe("setCompetitionStatus", () => {
 function readJSONObjectFromDisk() {
   // Read json data from file
   const filePath = path.join(__dirname, config.JSON_FILE);
-  jsonObject = JSON.parse(fs.readFileSync(filePath));
+  jsonObject = JSON.parse(fs.readFileSync(filePath).toString());
 }
