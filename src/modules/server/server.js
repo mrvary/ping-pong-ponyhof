@@ -194,8 +194,8 @@ function sendNextRoundBroadcast(data) {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
-function sendCompetitionCanceledBroadcast() {
-  sendBroadcast(socketIOMessages.COMPETITION_CANCELED);
+function sendCancelCompetitionBroadcast() {
+  sendBroadcast(socketIOMessages.CANCEL_COMPETITION);
 }
 
 function sendCancelRoundBroadcast() {
@@ -247,5 +247,5 @@ module.exports = {
   sendNextRoundBroadcast,
   sendCancelRoundBroadcast,
 
-  sendCompetitionCanceledBroadcast
+  sendCancelCompetitionBroadcast
 };

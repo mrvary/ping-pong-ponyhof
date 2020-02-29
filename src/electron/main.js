@@ -260,12 +260,12 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
-    if (competition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
-      return;
-    }
+    // if (competition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+    //   return;
+    // }
     const updatedCompetition = setCompetitionStatus(
       competition,
-      COMPETITION_STATE.COMP_READY_ROUND_STARTED
+      COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
     );
 
     // TODO: check this with Marco
