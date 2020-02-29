@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { isMatchFinished } from "./lib";
 
@@ -37,6 +37,12 @@ function App() {
   const [tableNumber, setTableNumber] = useState(-1);
   const [localMatch, setLocalMatch] = useState(null);
   const [waitingMessage, setWaitingMessage] = useState("");
+
+  useEffect(() => {
+    if (tableNumber < 0 && availableTables.length > 0) {
+      setTableNumber(availableTables[0]);
+    }
+  }, [availableTables, tableNumber]);
 
   const content = () => {
     if (view === "LOGIN") {
@@ -114,7 +120,7 @@ function App() {
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
       console.info("SERVER->CLIENT: AVAILABLE_TABLES");
       setAvailableTables(tables);
-      setTableNumber(tables[0]);
+      // setTableNumber(tables[0]);
     });
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
