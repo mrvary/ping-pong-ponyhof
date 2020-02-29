@@ -26,9 +26,9 @@ const getServerURL = () => {
   return url;
 };
 
-function App() {
-  const [socket, setSocket] = useState(null);
+let socket;
 
+function App() {
   // possibilities: LOGIN | NO_COMP | NEXT_PLAYERS | MATCH | WAITING
   const [view, setView] = useState("LOGIN");
   const [isConnected, setIsConnected] = useState(false);
@@ -221,7 +221,7 @@ function App() {
       setView("NO_COMP");
     });
 
-    setSocket(connection);
+    socket = connection;
   }
 
   return (
