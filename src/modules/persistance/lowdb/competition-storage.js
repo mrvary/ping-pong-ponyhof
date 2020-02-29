@@ -51,7 +51,7 @@ function createMatches(matches) {
 
 function getAllMatches() {
   lowDBDao.open(internalFilePath, internalUseInMemory);
- return lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
+  return lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
 }
 
 function getMatchesByIds(ids) {
