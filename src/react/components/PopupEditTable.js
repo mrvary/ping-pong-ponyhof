@@ -55,19 +55,19 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
   const [player2Set, setPlayer2Set] = useState(set.player2);
   let [css, setCss] = useState("");
 
-  const checkValues = (input1, input2) => {
+  const checkValuesLegitimacy = (inputPlayer1, inputPlayer2) => {
     return (
-      (input1 === "11" && input2 < 10 && input2 >= 0) ||
-      (input2 === "11" && input1 < 10 && input1 >= 0) ||
-      (input1 >= 9 && input2 - input1 === 2) ||
-      (input2 >= 9 && input1 - input2 === 2)
+      (inputPlayer1 === "11" && inputPlayer2 < 10 && inputPlayer2 >= 0) ||
+      (inputPlayer2 === "11" && inputPlayer1 < 10 && inputPlayer1 >= 0) ||
+      (inputPlayer1 >= 9 && inputPlayer2 - inputPlayer1 === 2) ||
+      (inputPlayer2 >= 9 && inputPlayer1 - inputPlayer2 === 2)
     );
   };
 
   const checkInput1 = event => {
     setPlayer1Set(event.target.value);
 
-    if (checkValues(event.target.value, player2Set)) {
+    if (checkValuesLegitimacy(event.target.value, player2Set)) {
       setInputChanged(true);
       setCss("");
     } else {
@@ -79,7 +79,7 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
   const checkInput2 = event => {
     setPlayer2Set(event.target.value);
 
-    if (checkValues(event.target.value, player1Set)) {
+    if (checkValuesLegitimacy(event.target.value, player1Set)) {
       setInputChanged(true);
       setCss("");
     } else {
