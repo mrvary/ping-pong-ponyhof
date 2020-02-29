@@ -489,7 +489,7 @@ function deleteCompetition(competitionId) {
 // Initialize competition storage with default values
 function initCompetitionDatabase(filePath, players, matches, jsonObject) {
   competitionStorage.open(filePath, config.USE_IN_MEMORY_STORAGE);
-  competitionStorage.initWithCompetition(jsonObject);
+  competitionStorage.initStateWithDefaults(jsonObject);
   console.log("Initialized competition storage with json object");
 
   // store matches and players into the competition storage

@@ -8,6 +8,11 @@ const COMP_ERROR_MESSAGES = {
   FilePathIsUndefinedException
 };
 
+const ELEMENT_PATHS = {
+  MATCHES: "matches",
+  PLAYERS: "players"
+};
+
 let storage = null;
 
 function openStorage(filePath, useInMemory) {
@@ -19,8 +24,14 @@ function openStorage(filePath, useInMemory) {
   console.log("Open storage:", filePath);
 }
 
-function initWithCompetition(jsonObject) {
+function initStateWithDefaults(jsonObject) {
   storage.setState(jsonObject).write();
+  storage.set(ELEMENT_PATHS.MATCHES, []).write();
+  storage.set(ELEMENT_PATHS.PLAYERS, []).write();
+}
+
+function getState() {
+  return storage.getState();
 }
 
 function createMatches(matches) {
@@ -72,9 +83,11 @@ function getMatchesByIds(ids) {
 
 module.exports = {
   COMP_ERROR_MESSAGES,
-
   openStorage,
-  initWithCompetition,
+
+  initStateWithDefaults,
+  getState,
+
   createMatches,
   getAllMatches,
   getMatchesByIds,
