@@ -191,6 +191,10 @@ function registerIPCMainEvents() {
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
   });
 
+  ipcMain.on(ipcMessages.CANCEL_COMPETITION, event => {
+    server.sendCancelCompetitionBroadcast();
+  });
+
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
     console.log(
       "ipc-renderer --> ipc-main:",
@@ -250,6 +254,11 @@ function registerIPCMainEvents() {
     });
   });
 
+  ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
+    const { route } = args;
+    createWindow(route);
+  });
+
   ipcMain.on(ipcMessages.START_ROUND, () => {
     if (competition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
       return;
@@ -263,6 +272,13 @@ function registerIPCMainEvents() {
     competition = updatedCompetition;
     metaStorage.updateCompetition(updatedCompetition);
     server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+
+    // TODO: remove last round from storage
+    server.sendCancelRoundBroadcast();
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
@@ -286,11 +302,6 @@ function registerIPCMainEvents() {
     server.sendNextRoundBroadcast({
       matchesWithPlayers: matchesWithoutFreeTickets
     });
-  });
-
-  ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
-    const { route } = args;
-    createWindow(route);
   });
 }
 

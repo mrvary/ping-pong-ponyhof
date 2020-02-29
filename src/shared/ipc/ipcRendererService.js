@@ -27,6 +27,14 @@ function nextRound() {
   ipcRenderer.send(ipcChannels.NEXT_ROUND);
 }
 
+function cancelRound() {
+  ipcRenderer.send(ipcChannels.CANCEL_ROUND);
+}
+
+function cancelCompetition() {
+  ipcRenderer.send(ipcChannels.CANCEL_COMPETITION);
+}
+
 function getPlayersByPlayerId(id) {
   const players = [
     {
@@ -76,6 +84,8 @@ module.exports = {
   // Trigger
   startRound,
   nextRound,
+  cancelRound,
+  cancelCompetition,
 
   // Import
   importXMLFile
