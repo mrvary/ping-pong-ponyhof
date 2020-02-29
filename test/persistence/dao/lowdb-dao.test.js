@@ -38,6 +38,26 @@ describe("initStateWithDefaults()", () => {
     });
 });
 
+describe("clear()", () => {
+
+    test("When_ExecuteMethod_Expected_OnlyContainsDefaults", () => {
+        // ARRANGE
+        const match = { id: 1, player1: "PLAYER1", player2: "PLAYER", sets: []};
+        lowDBDao.open();
+        lowDBDao.createElement("matches", match);
+
+        // expected state
+        const expectedState = { matches: [] };
+
+        // ACT
+        lowDBDao.clear({ matches: [] });
+
+        // ARRANGE:
+        const actualState = lowDBDao.getState();
+        expect(actualState).toEqual(expectedState);
+    });
+});
+
 describe("createElements()", () => {
     test("When_NoElementFlagExist_Expect_AddFlagWithData", () => {
         // ARRANGE

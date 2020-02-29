@@ -34,6 +34,10 @@ function close() {
   }
 }
 
+function clear(object) {
+  storage.setState(object).write();
+}
+
 function initStateWithDefaults(object) {
   //storage.setState(jsonObject).write();
   storage.defaults(object).write();
@@ -46,8 +50,27 @@ function getState() {
 // CRUD FUNCTIONALITY
 
 function getAllElements(elementPath) {
+  if (!hasElementPath(elementPath)) {
+    // TODO: throw error
+    return;
+  }
+
   return storage.get(elementPath).value();
 }
+
+function getElement(elementPath, identifier) {
+  if (!hasElementPath(elementPath)) {
+    // TODO: throw error
+    return;
+  }
+
+  return storage
+    .get(elementPath)
+    .find(identifier)
+    .value();
+}
+
+// TODO: Create Object if Necessary
 
 function createElements(elementPath, elements) {
   if (!hasElementPath(elementPath)) {
@@ -59,8 +82,58 @@ function createElements(elementPath, elements) {
   // add matches to collection
   const collection = storage.get(elementPath);
   elements.forEach(element => {
+    // TODO: Prüfen, ob es das Element mit dem identifier schon gibt?
     collection.push(element).write();
   });
+}
+
+function createElement(elementPath, element, identifier = undefined) {
+  if (!hasElementPath(elementPath)) {
+    // create new collection with data
+    storage.set(elementPath, [element]).write();
+    return;
+  }
+
+  // check if a element with the identifier exists
+  if (identifier && hasElement(elementPath, identifier)) {
+    // TODO: throw error
+    return;
+  }
+
+  storage
+    .get(elementPath)
+    .push(element)
+    .write();
+}
+
+function updateElement(elementPath, element, identifier) {
+  if (!hasElementPath(elementPath)) {
+    // create new collection with data
+    storage.set(elementPath, [element]).write();
+    return;
+  }
+
+  storage
+    .get(elementPath)
+    .find(identifier)
+    .assign(element)
+    .write();
+}
+
+function deleteElement(elementPath, identifier) {
+  if (!hasElement(elementPath, identifier)) {
+    return;
+  }
+
+  storage
+    .get(elementPath)
+    .remove(identifier)
+    .write();
+}
+
+function hasElement(elementPath, identifier) {
+  const element = getElement(elementPath, identifier);
+  return !!element;
 }
 
 function hasElementPath(elementPath) {
@@ -73,9 +146,17 @@ module.exports = {
   open,
   close,
 
+  clear,
   initStateWithDefaults,
   getState,
 
   getAllElements,
-  createElements
+  getElement,
+
+  createElements,
+  createElement,
+
+  updateElement,
+
+  deleteElement
 };

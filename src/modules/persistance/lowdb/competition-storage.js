@@ -6,7 +6,7 @@ const lowDBDao = require("./dao/lowdb-dao");
 
 // Error Messages
 const FilePathIsUndefinedException = lowDBDao.FilePathIsUndefinedException;
-const COMP_ERROR_MESSAGES = {
+const ERROR_MESSAGES = {
   FilePathIsUndefinedException
 };
 
@@ -73,7 +73,7 @@ function getAllPlayers() {
 }
 
 module.exports = {
-  COMP_ERROR_MESSAGES,
+  ERROR_MESSAGES,
 
   init,
   initStateWithDefaults,
@@ -81,7 +81,6 @@ module.exports = {
   close,
 
   createMatches,
-  getAllMatches,
   getMatchesByIds,
 
   createPlayers,
