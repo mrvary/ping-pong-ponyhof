@@ -53,22 +53,24 @@ function App() {
     if (matchesWithPlayers.length < 1) {
       return;
     }
-    const matchWithPlayer = matchesWithPlayers.find(
-      matchWithPlayer => matchWithPlayer.tableNumber === tableNumber
+    const matchWithPlayers = matchesWithPlayers.find(
+      matchWithPlayers => matchWithPlayers.tableNumber === tableNumber
     );
 
-    if (!matchWithPlayer) {
+    if (!matchWithPlayers) {
       console.error(`No match for table number ${tableNumber}`);
       return;
     }
 
-    setLocalMatch(matchWithPlayer);
+    const { match, player1, player2 } = matchWithPlayers;
+    setLocalMatch({ ...match, player1, player2 });
   }, [matchesWithPlayers, tableNumber]);
 
   useEffect(() => {
     if (!isConnected) {
       return;
     }
+
     if (localMatch && isMatchFinished(localMatch)) {
       console.info("match is finished");
       setWaitingMessage("waiting for next round to start");
@@ -149,7 +151,7 @@ function App() {
     socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
 
     if (finished) {
-      localMatch(null);
+      localMatch(undefined);
       setWaitingMessage("waiting for next round");
       setView("WAITING");
     }
