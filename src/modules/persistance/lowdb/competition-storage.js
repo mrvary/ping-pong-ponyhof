@@ -2,107 +2,88 @@
  * @author Marco Goebel
  */
 
-const { open, FilePathIsUndefinedException } = require("./lowdb-storage");
+const lowDBDao = require("./dao/lowdb-dao");
 
+// Error Messages
+const FilePathIsUndefinedException = lowDBDao.FilePathIsUndefinedException;
 const COMP_ERROR_MESSAGES = {
   FilePathIsUndefinedException
 };
 
+// Element Paths
 const ELEMENT_PATHS = {
   MATCHES: "matches",
   PLAYERS: "players"
 };
 
-let storage = null;
+let internalFilePath;
+let internalUseInMemory;
 
-function openStorage(filePath, useInMemory) {
-  if (storage) {
-    return;
-  }
+// STATE OPERATIONS
 
-  storage = open(filePath, useInMemory);
-  console.log("Open storage:", filePath);
-}
-
-function close() {
-  if (storage) {
-    storage = null;
-  }
+function init(filePath, useInMemory = true) {
+  internalFilePath = filePath;
+  internalUseInMemory = useInMemory;
 }
 
 function initStateWithDefaults(jsonObject) {
-  storage.setState(jsonObject).write();
-  storage.set(ELEMENT_PATHS.MATCHES, []).write();
-  storage.set(ELEMENT_PATHS.PLAYERS, []).write();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  lowDBDao.initStateWithDefaults(jsonObject);
+  lowDBDao.createElements(ELEMENT_PATHS.MATCHES, []);
+  lowDBDao.createElements(ELEMENT_PATHS.PLAYERS, []);
 }
 
 function getState() {
-  return storage.getState();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  return lowDBDao.getState();
 }
 
-// manipulate matches
+function close() {
+  lowDBDao.close();
+}
+
+// CRUD MATCHES
 
 function createMatches(matches) {
-  if (!hasFlag(ELEMENT_PATHS.MATCHES)) {
-    // create new collection with data
-    storage.set(ELEMENT_PATHS.MATCHES, matches).write();
-    return;
-  }
-
-  // add matches to collection
-  const collection = storage.get(ELEMENT_PATHS.MATCHES);
-  matches.forEach(match => {
-    collection.push(match).write();
-  });
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  lowDBDao.createElements(ELEMENT_PATHS.MATCHES, matches);
 }
 
 function getAllMatches() {
-  const elementPath = "matches";
-  return storage.get(elementPath).value();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+ return lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
 }
 
 function getMatchesByIds(ids) {
-  const matches = getAllMatches();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  const matches = lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
   return matches.filter(match => ids.includes(match.id));
 }
 
-// manipulate players
+// PLAYER CRUD
 
 function createPlayers(players) {
-  const elementPath = "players";
-  const hasMatchesFlag = storage.has(elementPath).value();
-
-  if (!hasMatchesFlag) {
-    storage.set(elementPath, players).write();
-  } else {
-    players.forEach(player => {
-      storage
-        .get(elementPath)
-        .push(player)
-        .write();
-    });
-  }
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  lowDBDao.createElements(ELEMENT_PATHS.PLAYERS, players);
 }
 
 function getAllPlayers() {
-  const elementPath = "players";
-  return storage.get(elementPath).value();
-}
-
-function hasFlag(elementPath) {
-  return storage.has(elementPath).value();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  return lowDBDao.getAllElements(ELEMENT_PATHS.PLAYERS);
 }
 
 module.exports = {
   COMP_ERROR_MESSAGES,
-  openStorage,
-  close,
 
+  init,
   initStateWithDefaults,
   getState,
+  close,
 
   createMatches,
+  getAllMatches,
   getMatchesByIds,
+
   createPlayers,
   getAllPlayers
 };
