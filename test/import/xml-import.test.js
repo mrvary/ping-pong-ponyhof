@@ -15,32 +15,19 @@ const {
 
 describe("readCompetitionXMLFileFromDisk()", () => {
     test("When_FilePathIsUndefined_Expect_FilePathIsNotDefinedException", () => {
-        // ACT
-        let message = null;
-        try {
-            const xmlContent = readCompetitionXMLFileFromDisk();
-        } catch (e) {
-            message = e.message;
-        } finally {
-            // ASSERT: compare exception message
-            expect(message).toEqual(ERROR_MESSAGES.FilePathIsNotDefined);
-        }
+
+        // ASSERT: compare exception message
+        expect(() => {
+            readCompetitionXMLFileFromDisk()
+        }).toThrow(ERROR_MESSAGES.FilePathIsNotDefined);
     });
 
     test("When_FileDoesNotExist_Expect_FileDoesNotExistException", () => {
         // ARRANGE
         const filePath = path.join(__dirname, "notExist.xml");
 
-        // ACT
-        let message = null;
-        try {
-            readCompetitionXMLFileFromDisk(filePath);
-        } catch (e) {
-            message = e.message;
-        } finally {
-            // ASSERT: compare exception message
-            expect(message).toEqual(ERROR_MESSAGES.FileDoesNotExists);
-        }
+        // ASSERT: compare exception message
+        expect(() => readCompetitionXMLFileFromDisk(filePath)).toThrow(ERROR_MESSAGES.FileDoesNotExists);
     });
 
     test("When_FileExists_Expect_XMLContent", () => {
@@ -61,16 +48,8 @@ describe("convertXMLToJSON()", () => {
         // ARRANGE
         const filePath = path.join(__dirname, config.XML_FILE_INVALID);
 
-        // ACT
-        let message = null;
-        try {
-            const jsonObject = convertXMLToJSON(filePath);
-        } catch (e) {
-            message = e.message;
-        } finally {
-            // ASSERT: compare exception message
-            expect(message).toEqual(ERROR_MESSAGES.XMLInvalidException);
-        }
+        // ASSERT: compare exception message
+        expect(() => convertXMLToJSON(filePath)).toThrow(ERROR_MESSAGES.XMLInvalidException);
     });
 
     test("When_XMLContentIsValid_Expect_JsonObject", () => {
