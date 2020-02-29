@@ -158,9 +158,10 @@ function updateSets(clientSocket, data) {
 // -----
 
 function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
-    parseInt(tableNumber, 10)
-  );
+  const takenTables = Array.from(connectedClients.values());
+  // .map(tableNumber =>
+  //   parseInt(tableNumber, 10)
+  // );
 
   const availableTables = ALL_POTENTIAL_TABLES.filter(
     key => !takenTables.includes(key)
