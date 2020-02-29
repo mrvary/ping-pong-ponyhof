@@ -2,21 +2,21 @@
  * @author Marco Goebel
  */
 
-const low = require("lowdb");
+const { open, FilePathIsUndefinedException } = require("./lowdb-storage");
 
-const FileSync = require("lowdb/adapters/FileSync");
-const Memory = require("lowdb/adapters/Memory");
+const COMP_ERROR_MESSAGES = {
+  FilePathIsUndefinedException,
+
+};
 
 let storage = null;
 
-function open(filePath, useInMemory) {
+function openStorage(filePath, useInMemory) {
   if (storage) {
     return;
   }
 
-  const adapter = useInMemory ? new Memory() : new FileSync(filePath);
-  storage = low(adapter);
-
+  storage = open(filePath, useInMemory);
   console.log("Open storage:", filePath);
 }
 
@@ -72,7 +72,9 @@ function getMatchesByIds(ids) {
 }
 
 module.exports = {
-  open,
+  COMP_ERROR_MESSAGES,
+
+  openStorage,
   initWithCompetition,
   createMatches,
   getAllMatches,
