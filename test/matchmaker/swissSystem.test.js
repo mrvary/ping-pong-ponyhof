@@ -42,7 +42,7 @@ describe("playCompetition", () => {
     });
 
     //3.3 log matches
-    logMatches(currentMatches, players);
+    //logMatches(currentMatches, players);
 
     //4. update winner
     players = updateWinner(players, currentMatches);
@@ -51,7 +51,7 @@ describe("playCompetition", () => {
     ranking = createCurrentRanking(players, matches);
 
     //5.5 log ranking
-    logRanking(ranking);
+    //logRanking(ranking);
   }
 
   test("match length of the last round", () => {
