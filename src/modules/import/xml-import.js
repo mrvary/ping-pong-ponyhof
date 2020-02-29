@@ -30,15 +30,13 @@ function readCompetitionXMLFileFromDisk(filePath) {
   return xmlContent;
 }
 
-function convertXMLToJSON(filePath) {
+function convertXMLToJSON(xmlContent) {
   const options = {
     ignoreAttributes: false,
     attributeNamePrefix: "",
     allowBooleanAttributes: true,
     parseAttributeValue: false
   };
-
-  const xmlContent = readCompetitionXMLFileFromDisk(filePath);
 
   try {
     const jsonObject = parser.parse(xmlContent, options, true);
