@@ -5,6 +5,9 @@
   border-radius: 2vh;
   background: var(--sec-background-color);
 }
+.competition__container--active {
+  background-color: var(--active-compet-color);
+}
 .competition__btn {
   border: none;
   height: 7vh;

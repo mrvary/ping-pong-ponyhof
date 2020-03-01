@@ -12,12 +12,20 @@ function Competition(props) {
     deleteCompetition
   } = props;
 
+  const [active, setActive] = useState(true);
+
   const [showPopupDelete, setShowPopupDelete] = useState(false);
   const handleClose = () => setShowPopupDelete(false);
   const handleShow = () => setShowPopupDelete(true);
+
   const competitionID = "/competition/" + id;
+
+  let containerCss = "competition__container";
+  if (active) {
+    containerCss = "competition__container competition__container--active";
+  }
   return (
-    <div className="competition__container">
+    <div className={containerCss}>
       <Link
         to={competitionID}
         className="competition__btn competition__btn--gameload competition__link"

@@ -84,7 +84,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ match, activ }) => {
+const TableRow = ({ match, active }) => {
   const [stringSet, setStringSet] = useState([
     "0 : 0",
     "0 : 0",
@@ -111,6 +111,11 @@ const TableRow = ({ match, activ }) => {
   let tischCss = "liRed";
   if (true) {
     tischCss = "liGreen";
+  }
+  let activeButtonCss = "competitionPage__table__bearbeiten-btn";
+  if (!active) {
+    activeButtonCss =
+      "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
   }
 
   return (
@@ -161,8 +166,8 @@ const TableRow = ({ match, activ }) => {
         </div>
         <button
           onClick={handleShowEditMatch}
-          className="competitionPage__table__bearbeiten-btn"
-          disabled={!activ}
+          className={activeButtonCss}
+          disabled={!active}
         >
           bearbeiten
         </button>
@@ -177,14 +182,14 @@ const TableRow = ({ match, activ }) => {
   );
 };
 
-const Table = ({ matches, activ }) => {
+const Table = ({ matches, active }) => {
   let tableCss =
-    "competitionPage__table" + (activ ? "--barrierGreen" : "--barrierRed");
+    "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
   return (
     <div className={tableCss}>
       <TableHeadline />
       {matches.map(match => {
-        return <TableRow key={match.id} match={match} activ={activ} />;
+        return <TableRow key={match.id} match={match} active={active} />;
       })}
     </div>
   );
@@ -302,7 +307,7 @@ const CompetitionPage = () => {
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
       />
-      <Table matches={matches} activ={active} />
+      <Table matches={matches} active={active} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
           primOnClick={handleShowReDoRound}
