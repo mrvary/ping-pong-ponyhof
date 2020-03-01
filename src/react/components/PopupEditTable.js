@@ -1,8 +1,8 @@
-import { Modal } from 'react-bootstrap';
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './PopupEditTable.css';
-import Button from './Button';
+import { Modal } from "react-bootstrap";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./PopupEditTable.css";
+import Button from "./Button";
 
 function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const [inputChanged, setInputChanged] = useState(false);
@@ -69,12 +69,12 @@ const DisplaySet = ({
 }) => {
   const [player1Set, setPlayer1Set] = useState(set.player1);
   const [player2Set, setPlayer2Set] = useState(set.player2);
-  let [css, setCss] = useState('');
+  let [css, setCss] = useState("");
 
   const checkValuesLegitimacy = (inputPlayer1, inputPlayer2) => {
     return (
-      (inputPlayer1 === '11' && inputPlayer2 < 10 && inputPlayer2 >= 0) ||
-      (inputPlayer2 === '11' && inputPlayer1 < 10 && inputPlayer1 >= 0) ||
+      (inputPlayer1 === "11" && inputPlayer2 < 10 && inputPlayer2 >= 0) ||
+      (inputPlayer2 === "11" && inputPlayer1 < 10 && inputPlayer1 >= 0) ||
       (inputPlayer1 >= 9 && inputPlayer2 - inputPlayer1 === 2) ||
       (inputPlayer2 >= 9 && inputPlayer1 - inputPlayer2 === 2)
     );
@@ -85,7 +85,7 @@ const DisplaySet = ({
 
     if (checkValuesLegitimacy(event.target.value, player2Set)) {
       setInputChanged(true);
-      setCss('');
+      setCss("");
       let newSet = currentSets;
       newSet[index - 1] = {
         player1: parseInt(event.target.value),
@@ -94,7 +94,7 @@ const DisplaySet = ({
       changeCurrentSet(newSet);
     } else {
       setInputChanged(false);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
 
@@ -103,7 +103,7 @@ const DisplaySet = ({
 
     if (checkValuesLegitimacy(event.target.value, player1Set)) {
       setInputChanged(true);
-      setCss('');
+      setCss("");
       let newSet = currentSets;
       newSet[index - 1] = {
         player1: parseInt(player1Set),
@@ -112,13 +112,13 @@ const DisplaySet = ({
       changeCurrentSet(newSet);
     } else {
       setInputChanged(false);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
   return (
     //todo stop negatives
     <div className="popupEditTable--rows">
-      <p>{'Set ' + index + '  '}</p>
+      <p>{"Set " + index + "  "}</p>
       <input
         className={css}
         type="number"
@@ -128,7 +128,7 @@ const DisplaySet = ({
         onChange={checkInput1}
         name="player1Set"
       ></input>
-      <p> {' : '} </p>
+      <p> {" : "} </p>
       <input
         className={css}
         type="number"
