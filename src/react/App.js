@@ -60,11 +60,11 @@ const App = () => {
       const { message } = args;
       console.log('message:', message);
 
-      // TODO: @William - Prüfe die Message auf "success" oder "cancel"
+      if (message === 'success') {
+        getCompetition();
 
-      getCompetition();
-
-      setLinkDisabled(false);
+        setLinkDisabled(false);
+      }
     });
 
     ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
