@@ -71,7 +71,13 @@ const reducer = (state, action) => {
       };
 
     case ACTION_TYPE.ROUND_CANCELED:
-      return state;
+      return {
+        ...state,
+        match: undefined,
+        roundStarted: false,
+        message: "Runde abgebrochen, kleinen Moment bitte!",
+        view: CLIENT_STATE.WAITING
+      };
 
     case ACTION_TYPE.ROUND_STARTED:
       return state;
@@ -96,7 +102,8 @@ function roundAvailable(state, action) {
     return {
       ...state,
       match: localMatch,
-      view: CLIENT_STATE.NEXT_PLAYERS
+      view: CLIENT_STATE.NEXT_PLAYERS,
+      message: ""
     };
   }
   console.error(
@@ -239,9 +246,8 @@ function App() {
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
       console.info("SERVER->CLIENT: AVAILABLE_TABLES");
+
       dispatch({ type: ACTION_TYPE.TABLES_AVAILABLE, availableTables: tables });
-      // todo: siehe unten
-      // setTableNumber(tables[0]);
     });
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
@@ -259,6 +265,7 @@ function App() {
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
       console.info("SERVER->CLIENT: NEXT_ROUND");
+
       dispatch({
         type: ACTION_TYPE.ROUND_AVAILABLE,
         matches: data.matchesWithPlayers
@@ -276,16 +283,11 @@ function App() {
     //   setView("MATCH");
     // });
 
-    // connection.on(socketIOMessages.CANCEL_ROUND, () => {
-    //   console.info("SERVER->CLIENT: CANCEL_ROUND");
+    connection.on(socketIOMessages.CANCEL_ROUND, () => {
+      console.info("SERVER->CLIENT: CANCEL_ROUND");
 
-    //   if (view === "LOGIN") {
-    //     return;
-    //   }
-
-    //   setWaitingMessage("Round was cancelled, waiting for new round.");
-    //   setView("WAITING");
-    // });
+      dispatch({ type: ACTION_TYPE.ROUND_CANCELED });
+    });
 
     // connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
     //   console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
