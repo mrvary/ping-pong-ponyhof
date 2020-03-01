@@ -56,7 +56,7 @@ const App = () => {
         "ipc-main --> ipc-renderer:",
         ipcMessages.OPEN_FILE_DIALOG_RESPONSE
       );
-      
+
       const { message } = args;
       console.log("message:", message);
 
@@ -78,9 +78,9 @@ const App = () => {
           "ipc-main --> ipc-renderer",
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
-        const {competiton, players} = args;
-        setViewedCompetition(competiton)
-        setViewedPlayers(players)
+        const { competiton, players } = args;
+        setViewedCompetition(competiton);
+        setViewedPlayers(players);
       }
     );
 
