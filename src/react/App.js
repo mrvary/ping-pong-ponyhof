@@ -17,6 +17,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
+let competitionID = null;
+
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
@@ -75,6 +77,10 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         console.log(args);
+
+        // TODO: William fragen, wie man das lösen könnte
+        const { competition } = args;
+        competitionID = competition.id;
       }
     );
 
@@ -100,7 +106,10 @@ const App = () => {
       setCurrentId(competitionId);
     });
 
-    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
+    console.log(competitionID);
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
+      competitionId: competitionID
+    });
   };
 
   const deleteCompetition = id => {
