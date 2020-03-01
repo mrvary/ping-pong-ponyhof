@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import './Header.css';
-import { Redirect } from 'react-router-dom';
+import React, { useState } from "react";
+import "./Header.css";
+import { Redirect } from "react-router-dom";
 
 //Components
-import PopupReviewPlayer from './PopupReviewPlayer';
-import Popup from './Popup';
+import PopupReviewPlayer from "./PopupReviewPlayer";
+import Popup from "./Popup";
 
 function Header({
   openXMLDialog,
@@ -46,7 +46,7 @@ const HeaderBox = ({
   viewedCompetition,
   errorMessage
 }) => {
-  const competition = currentId !== '' ? '/competition/' + currentId : '';
+  const competition = currentId !== "" ? "/competition/" + currentId : "";
   const [showPopupError, setShowPopupError] = useState(false);
   const handleCloseError = () => setShowPopupError(false);
   const handleShowError = () => setShowPopupError(true);
@@ -65,9 +65,9 @@ const HeaderBox = ({
       <Popup
         show={showPopupError}
         handleClose={handleCloseError}
-        header={'Fehler'}
+        header={"Fehler"}
         bodyText={errorMessage}
-        mode={'noBtn'}
+        mode={"noBtn"}
       ></Popup>
       <Redirect to={competition} />
     </div>
@@ -75,12 +75,12 @@ const HeaderBox = ({
 };
 
 const UploadXML = ({ openXMLDialog, linkDisabled }) => {
-  let xmlText = 'Lade hier deine XML Datei hoch!';
-  let xmlUploadedCss = 'header__upload-xml-button';
+  let xmlText = "Lade hier deine XML Datei hoch!";
+  let xmlUploadedCss = "header__upload-xml-button";
 
   if (!linkDisabled) {
-    xmlText = 'Upload erfolgreich';
-    xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
+    xmlText = "Upload erfolgreich";
+    xmlUploadedCss = xmlUploadedCss + " header__upload-xml-button--true";
   }
   return (
     <button className={xmlUploadedCss} onClick={openXMLDialog}>

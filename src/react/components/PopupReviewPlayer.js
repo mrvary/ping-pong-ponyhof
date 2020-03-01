@@ -1,8 +1,8 @@
-import { Modal } from 'react-bootstrap';
-import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './PopupReviewPlayer.css';
-import Button from './Button';
+import { Modal } from "react-bootstrap";
+import React, { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./PopupReviewPlayer.css";
+import Button from "./Button";
 
 function PopupReviewPlayer({
   show,
@@ -11,7 +11,7 @@ function PopupReviewPlayer({
   viewedPlayers,
   viewedCompetition
 }) {
-  console.log('Object' + JSON.stringify(viewedCompetition));
+  console.log("Object" + JSON.stringify(viewedCompetition));
   return (
     <Modal show={show} onHide={() => handleClose(true)}>
       <Modal.Header closeButton className="popup__header-text">
@@ -29,7 +29,7 @@ function PopupReviewPlayer({
           <div>
             {viewedPlayers.map(player => (
               <li key={player.id} className="popup__names">
-                {player.firstname + ' ' + player.lastname}
+                {player.firstname + " " + player.lastname}
               </li>
             ))}
           </div>
