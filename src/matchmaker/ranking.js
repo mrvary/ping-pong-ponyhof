@@ -7,7 +7,7 @@ function createCurrentRanking(players, matches) {
   addMatchDetails(players, dummyMatches);
 
   players.forEach(player => {
-    const newTTR = calculateNewTTR(player, players);
+    const ttrDifference = calculateTTRDifference(player, players);
     ranking.push({
       place: 0,
       id: player.id,
@@ -18,9 +18,9 @@ function createCurrentRanking(players, matches) {
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
       ttr_beginn: player.qttr,
-      ttr_now: newTTR,
-      ttr_diff: newTTR - player.qttr,
-      matches: getMatchesInvolved(player, dummyMatches)
+      ttr_now: player.qttr + ttrDifference,
+      ttr_diff: ttrDifference,
+      matches: getMatchesInvolved(player.matchIds, dummyMatches)
     });
   });
 
@@ -61,8 +61,8 @@ function calculateBHZ(playerToCalculate, players) {
   return bhz;
 }
 
-// calculateNewTTR : playerToCalculate, [players] -> newTTR
-function calculateNewTTR(playerToCalculate, players) {
+// calculateTTRDifference : playerToCalculate, [players] -> Number
+function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
   const opponents = playerToCalculate.opponentIds.filter(
     opponentId => opponentId !== "FreeTicket"
@@ -77,40 +77,51 @@ function calculateNewTTR(playerToCalculate, players) {
     }
   });
 
-  //3. calculate Pa of the player
-  //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
-  let ttrDifference = 0;
-  opponentTTR.forEach(ttr => {
-    //calc Pa for each opponent
-    let exp = (ttr - playerToCalculate.qttr) / 150;
-    let n = 1 + Math.pow(10, exp);
-    let Pa = 1 / n;
-    Pa = parseFloat(Pa.toFixed(3));
-    ttrDifference += (1 - Pa) * 16;
-  });
-
-  //4. calculate ttr difference
-  ttrDifference = Math.round(
-    ttrDifference - (opponentTTR.length - playerToCalculate.gamesWon) * 16
+  //3. calculate ttrDifference
+  let ttrDifference = ttrCalculation(
+    playerToCalculate.qttr,
+    opponentTTR,
+    playerToCalculate.gamesWon
   );
 
   //5. check for Freeticket games
   if (opponents.length !== playerToCalculate.opponentIds.length)
     ttrDifference -= 16;
 
-  return playerToCalculate.qttr + ttrDifference;
+  return ttrDifference;
 }
 
-// getMatchesInvolved : player, [matches] -> [mactchesInvolved]
-function getMatchesInvolved(player, matches) {
-  let mactchesInvolved = matches.filter(function(match) {
-    if (match.player1 === player.id || match.player2 === player.id) return true;
-    return false;
+//for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
+// ttrCalculation : Player, [Numbers], Number -> Number
+function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
+  let ttrDifference = 0;
+  ttrOpponnents.forEach(ttr => {
+    // calc Pa for each opponent
+    let exp = (ttr - ttrPlayer) / 150;
+    let n = 1 + Math.pow(10, exp);
+    let Pa = 1 / n;
+    Pa = parseFloat(Pa.toFixed(3));
+    ttrDifference += (1 - Pa) * 16;
   });
+
+  // calculate ttr difference
+  ttrDifference = Math.round(
+    ttrDifference - (ttrOpponnents.length - gamesWon) * 16
+  );
+  return ttrDifference;
+}
+
+// getMatchesInvolved : [Numbers], [matches] -> [matches]
+function getMatchesInvolved(matchIds, matches) {
+  let mactchesInvolved = [];
+  matches.forEach(match => {
+    if (matchIds.includes(match.id)) mactchesInvolved.push(match);
+  });
+
   return mactchesInvolved;
 }
 
-// addMatchDetails : [players], [matches] -> [matchesWithDetail]
+// addMatchDetails : [players], [matches] -> [matches]
 function addMatchDetails(players, matches) {
   matches.forEach(match => {
     match.player1firstname = getParameterByPlayerId(
@@ -137,7 +148,7 @@ function addMatchDetails(players, matches) {
   });
 }
 
-// getParameterByPlayerId : playerId, [players], parameter -> value
+// getParameterByPlayerId : id, [players], parameter -> value
 function getParameterByPlayerId(playerId, players, parameter) {
   let value;
   players.forEach(player => {
@@ -155,11 +166,11 @@ function createMatchResult(match) {
 
   match.sets.forEach(set => {
     //player1 has more points
-    if (set.player1 > set.player2) {
+    if (set.player1 - 1 > set.player2) {
       player1SetsWon++;
     }
     //player2 has more points
-    if (set.player1 < set.player2) {
+    if (set.player1 < set.player2 - 1) {
       player2SetsWon++;
     }
   });
@@ -215,7 +226,12 @@ function logRanking(ranking) {
 
 module.exports = {
   createCurrentRanking,
+  calculateBHZ,
+  calculateTTRDifference,
+  getMatchesInvolved,
+  addMatchDetails,
   logRanking,
   createMatchResult,
-  getParameterByPlayerId
+  getParameterByPlayerId,
+  ttrCalculation
 };

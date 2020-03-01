@@ -1,6 +1,7 @@
 import { Modal } from "react-bootstrap";
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./Button";
 import Button from "./Button";
 
 function Popup({
@@ -35,7 +36,9 @@ const InsertButton = ({ mode, buttonText, buttonFunk }) => {
   if (mode === "noBtn") {
     return null;
   }
-  return <Button text={buttonText} onClick={buttonFunk}></Button>;
+  return (
+    <Button primText={buttonText} primOnClick={buttonFunk} mode={mode}></Button>
+  );
 };
 
 export default Popup;

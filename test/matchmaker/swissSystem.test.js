@@ -52,7 +52,6 @@ describe("playCompetition", () => {
 
     //5.5 log ranking
     //logRanking(ranking);
-  }
 
   test("match length of the last round", () => {
     expect(currentMatches.length).toEqual(players.length / 2);

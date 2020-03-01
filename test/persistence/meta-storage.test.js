@@ -60,7 +60,7 @@ describe("clear()", () => {
    test("When_ExecuteMethod_Expected_OnlyContainsDefaults", () => {
        // ARRANGE: create dummy data
        const expectedState = {competitions: []};
-       const competition = createCompetitionFromJSON(jsonObject.tournament);
+       const competition = createCompetitionFromJSON(jsonObject);
        metaStorage.createCompetition(competition);
 
        // ACT: execute method
@@ -83,7 +83,7 @@ describe("createCompetition()", () => {
 
     test("When_StorageDoesNotContainCompetition_Expect_CompetitionIsCreated", () => {
         // ARRANGE: create competition from json object
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        const competition = createCompetitionFromJSON(jsonObject);
         const expectedState = { competitions: [ expectedCompetitionWithDefaultValues ] };
 
         // ACT: execute method
@@ -96,7 +96,7 @@ describe("createCompetition()", () => {
 
     test("When_StorageDoesContainCompetition_Expect_ExceptionError2", () => {
         // ARRANGE: create competition from json object
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        const competition = createCompetitionFromJSON(jsonObject);
         metaStorage.createCompetition(competition);
 
         // ACT: execute methods a second time
@@ -123,7 +123,7 @@ describe("updateCompetition()", () => {
 
     test("When_CompetitionDoesNotExists_Expect_CreateNewCompetition", () => {
         // ARRANGE:
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        const competition = createCompetitionFromJSON(jsonObject);
         const expectedState = { competitions: [ expectedCompetitionWithDefaultValues ] };
 
         // ACT:
@@ -138,7 +138,7 @@ describe("updateCompetition()", () => {
         // ARRANGE:
         const expectedState = {competitions: [ expectedUpdatedCompetition ]};
 
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        const competition = createCompetitionFromJSON(jsonObject);
         metaStorage.createCompetition(competition);
         competition.round_matchIds = [ 0, 1, 2, 3, 4, 5 ];
         competition.status = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
@@ -160,7 +160,7 @@ describe("deleteCompetition()", () => {
     test("When_CompetitionDoesNotExist_Expect_DefaultState", () => {
         // ARRANGE:
         const expectedState = { competitions: [] };
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        const competition = createCompetitionFromJSON(jsonObject);
         metaStorage.createCompetition(competition);
 
         // ACT:
@@ -200,7 +200,7 @@ describe("getCompetition()", () => {
     test("When_StorageContainsCompetition_Expect_SameCompetition", () => {
         // ARRANGE:
         const expectedCompetition = expectedCompetitionWithDefaultValues;
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        const competition = createCompetitionFromJSON(jsonObject);
         metaStorage.createCompetition(competition);
 
         // ACT:
@@ -213,7 +213,7 @@ describe("getCompetition()", () => {
 
 function readCompetitionFile() {
     const filePath = path.join(__dirname, config.JSON_FILE);
-    const data = fs.readFileSync(filePath);
+    const data = fs.readFileSync(filePath).toString();
     return JSON.parse(data);
 }
 

@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import "./CompetitionPage.css";
 import "../Colors.css";
 
-//componenten
+// components
 import Popup from "./Popup";
 import Footer from "./Footer";
 import Button from "./Button";
@@ -11,9 +11,8 @@ import CompetitionPageHeader from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
 
 // ipc communication
-import IPCService from "../../shared/ipc/ipcRendererService";
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcChannels = require("../../shared/ipc-messages");
+const ipcMessages = require("../../shared/ipc-messages");
 
 const USE_BROWSER = false;
 
@@ -84,7 +83,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ match }) => {
+const TableRow = ({ matchWithPlayers, active }) => {
   const [stringSet, setStringSet] = useState([
     "0 : 0",
     "0 : 0",
@@ -94,7 +93,8 @@ const TableRow = ({ match }) => {
   ]);
   let index = 0;
 
-  match.sets.forEach(set => {
+  //console.log('stringyfy' + JSON.stringify(matchWithPlayers.match));
+  matchWithPlayers.match.sets.forEach(set => {
     stringSet[index] = set.player1 + " : " + set.player2;
     index++;
   });
@@ -103,18 +103,39 @@ const TableRow = ({ match }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
-  const saveChanges = () => {
+  const saveChanges = (sets, tableNumber) => {
     //TODO save Changes from edited Table
+    console.log("tablenr" + tableNumber);
+    const tableSets = { tableNumber, sets };
+    ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
     handleCloseEditMatch();
   };
+
+  let tischCss = "liRed";
+  if (matchWithPlayers.connectedDevice) {
+    tischCss = "liGreen";
+  }
+  let activeButtonCss = "competitionPage__table__bearbeiten-btn";
+  if (!active) {
+    activeButtonCss =
+      "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
+  }
 
   return (
     <div className="competitionPage__centered">
       <div className="competitionPage__table competitionPage__table--values">
-        <div className="competitionPage__table--elements competitionPage__centered"></div>
+        <div className="competitionPage__table--elements competitionPage__centered">
+          <li id={tischCss} className="competitionPage__centered">
+            <span>&#xa0;</span>
+            <span>&#xa0;</span>
+            <span>{matchWithPlayers.tableNumber}</span>
+          </li>
+        </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player1}
+          {matchWithPlayers.match.player1.firstname +
+            " " +
+            matchWithPlayers.match.player1.lastname}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -122,7 +143,9 @@ const TableRow = ({ match }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player2}{" "}
+          {matchWithPlayers.match.player2.firstname +
+            " " +
+            matchWithPlayers.match.player2.lastname}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -150,27 +173,37 @@ const TableRow = ({ match }) => {
         </div>
         <button
           onClick={handleShowEditMatch}
-          className="competitionPage__table__bearbeiten-btn"
+          className={activeButtonCss}
+          disabled={!active || matchWithPlayers.connectedDevice}
         >
           bearbeiten
         </button>
         <PopupEditTable
           show={showPopupEditMatch}
           handleClose={handleCloseEditMatch}
-          sets={match.sets}
+          sets={matchWithPlayers.match.sets}
           saveChanges={saveChanges}
+          tableNumber={matchWithPlayers.tableNumber}
         ></PopupEditTable>
       </div>
     </div>
   );
 };
 
-const Table = ({ matches }) => {
+const Table = ({ matchesWithPlayers, active }) => {
+  let tableCss =
+    "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
   return (
-    <div>
+    <div className={tableCss}>
       <TableHeadline />
-      {matches.map(match => {
-        return <TableRow key={match.id} match={match} />;
+      {matchesWithPlayers.map(matchWithPlayers => {
+        return (
+          <TableRow
+            key={matchWithPlayers.match.id}
+            matchWithPlayers={matchWithPlayers}
+            active={active}
+          />
+        );
       })}
     </div>
   );
@@ -178,21 +211,24 @@ const Table = ({ matches }) => {
 
 const CompetitionPage = () => {
   const { competitionID } = useParams();
-  const [matches, setMatches] = useState([]);
-
+  const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
+  const [competitionData, setCompetitionData] = useState({});
   useEffect(() => {
-    function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
+    function handleMatchesStatusChanged(
+      event,
+      { competition, matchesWithPlayers }
+    ) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
-      const matches = mapPlayerNamesToMatch(matchesWithPlayers);
-      setMatches(matches);
+      setMatchesWithPlayers(matchesWithPlayers);
+      setCompetitionData(competition);
     }
 
-    ipcRenderer.on(ipcChannels.UPDATE_MATCHES, handleMatchesStatusChanged);
+    ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
 
     return () => {
       ipcRenderer.removeListener(
-        ipcChannels.UPDATE_MATCHES,
+        ipcMessages.UPDATE_MATCHES,
         handleMatchesStatusChanged
       );
     };
@@ -226,55 +262,59 @@ const CompetitionPage = () => {
       ];
 
       console.log(matches);
-      setMatches(matches);
+      setMatchesWithPlayers(matches);
       return;
     }
 
     // trigger initialize competition
-    ipcRenderer.send(ipcChannels.GET_MATCHES, {
-      id: competitionID
+    ipcRenderer.send(ipcMessages.GET_COMPETITION_MATCHES_REQUEST, {
+      competitionId: competitionID
     });
   };
+  const [active, setActive] = useState(false);
+  const handleActivate = () => {
+    setActive(true);
+  };
+  const handleDisactivate = () => {
+    setActive(false);
+    handleCloseGoInactive();
+  };
 
-  function mapPlayerNamesToMatch(matchesWithPlayers) {
-    return matchesWithPlayers.map(matchWithPlayers => {
-      const { match, player1, player2 } = matchWithPlayers;
-      match.player1 = player1.firstname + " " + player1.lastname;
-      match.player2 = player2.firstname + " " + player2.lastname;
-      return match;
-    });
-  }
-
-  const [showPopupEndTournament, setShowPopupEndTournament] = useState(false);
-  const handleCloseEndTournament = () => setShowPopupEndTournament(false);
-  const handleShowEndTournament = () => setShowPopupEndTournament(true);
+  const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
+  const handleCloseReDoRound = () => setShowPopupReDoRound(false);
+  const handleShowReDoRound = () => setShowPopupReDoRound(true);
 
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => setShowPopupEndRound(false);
   const handleShowEndRound = () => setShowPopupEndRound(true);
 
+  const [showPopupGoInactive, setShowPopupGoInactive] = useState(false);
+  const handleCloseGoInactive = () => setShowPopupGoInactive(false);
+  const handleShowGoInactive = () => setShowPopupGoInactive(true);
+
   const handleEndTournament = () => {
-    handleCloseEndTournament();
+    handleCloseReDoRound();
   };
 
   const handleEndRound = () => {
+    ipcRenderer.send(ipcMessages.NEXT_ROUND);
     handleCloseEndRound();
   };
 
   const handleStartRound = () => {
-    IPCService.startRound();
+    ipcRenderer.send(ipcMessages.START_ROUND);
   };
 
   const openStatisticWindow = route => {
-    IPCService.createWindow(route);
+    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
   };
 
   return (
     <div>
       <p>competitionID: {competitionID}</p>
       <CompetitionPageHeader
-        playmode="Scheizer System"
-        startDate="02.02.2020"
+        playmode={competitionData.playmode}
+        startDate={competitionData.date}
         linkTitle="zur Übersicht"
         linkDestination={"/"}
       />
@@ -282,26 +322,31 @@ const CompetitionPage = () => {
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
       />
-      <Table matches={matches} />
+      <Table matchesWithPlayers={matchesWithPlayers} active={active} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
-          onClick={handleShowEndTournament}
-          text="Tunier abschließen"
+          primOnClick={handleShowReDoRound}
+          primText="Runde abbrechen"
           mode="primary"
+          disableProp={!active}
         ></Button>
         <Popup
-          show={showPopupEndTournament}
-          handleClose={handleCloseEndTournament}
+          show={showPopupReDoRound}
+          handleClose={handleCloseReDoRound}
           header="Sicher?"
-          bodyText="Möchtest du wirklich das Tunier beenden?"
+          bodyText="Bisher erreichte Ergebnisse der Runde werden gelöscht und eine neue Runde wird geloßt"
           buttonFunk={() => handleEndTournament()}
-          buttonText="Beenden"
+          buttonText="Runde abbrechen"
           mode="primary"
         ></Popup>
+
         <Button
-          onClick={handleShowEndRound}
-          text="Runde beenden"
+          primOnClick={handleShowEndRound}
+          primText="Runde beenden"
+          secOnClick={handleStartRound}
+          secText="Runde starten"
           mode="primary"
+          disableProp={!active}
         ></Button>
         <Popup
           show={showPopupEndRound}
@@ -312,11 +357,23 @@ const CompetitionPage = () => {
           buttonText="Beenden"
           mode="primary"
         ></Popup>
+
         <Button
-          onClick={handleStartRound}
-          text="Runde starten"
-          mode="primary"
+          primOnClick={handleActivate}
+          primText="Spiel starten"
+          secOnClick={handleShowGoInactive}
+          secText="Spiel pausieren"
+          mode={active ? "secondary" : "primary"}
         ></Button>
+        <Popup
+          show={showPopupGoInactive}
+          handleClose={handleCloseGoInactive}
+          header="Bist du dir sicher?"
+          bodyText="Verbindungen zu Nutzergeräten werden beim Pausieren unterbrochen"
+          buttonFunk={() => handleDisactivate()}
+          buttonText="pausieren"
+          mode="primary"
+        ></Popup>
       </div>
       <Footer title="Die Tabelle" />
     </div>

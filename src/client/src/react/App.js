@@ -4,7 +4,7 @@ import { isMatchFinished } from "./lib";
 
 // import shared
 import io from "socket.io-client";
-import socketIOMessages from "../shared/socket-io-messages";
+import socketIOMessages from "../shared/socketIOMessages";
 
 // COMPONENTS
 import LoginView from "./views/LoginView";
@@ -39,8 +39,7 @@ function App() {
   const [waitingMessage, setWaitingMessage] = useState("");
 
   const content = () => {
-    const currentPage = view;
-    if (currentPage === "LOGIN") {
+    if (view === "LOGIN") {
       return (
         <LoginView
           availableTables={availableTables}
@@ -51,7 +50,7 @@ function App() {
       );
     }
 
-    if (currentPage === "NO_COMP") {
+    if (view === "NO_COMP") {
       return (
         <div>
           <Title title="No competition started yet, please wait."></Title>
@@ -59,17 +58,17 @@ function App() {
       );
     }
 
-    if (currentPage === "NEXT_PLAYERS" || currentPage === "MATCH") {
+    if (view === "NEXT_PLAYERS" || view === "MATCH") {
       return (
         <MatchView
-          onlyShowNextPlayers={currentPage === "NEXT_PLAYERS"}
+          onlyShowNextPlayers={view === "NEXT_PLAYERS"}
           match={localMatch}
           sendSets={sendSets}
         />
       );
     }
 
-    if (currentPage === "WAITING") {
+    if (view === "WAITING") {
       return <WaitingView message={waitingMessage} />;
     }
 
@@ -161,8 +160,10 @@ function App() {
       if (view !== "WAITING" || view !== "NO_COMP") {
         return;
       }
-      const { matches } = data;
-      const match = matches.find(match => match.tableNumber === tableNumber);
+      const { matchesWithPlayers } = data;
+      const match = matchesWithPlayers.find(
+        match => match.tableNumber === tableNumber
+      );
 
       if (!match) {
         console.error(`No match for table number ${tableNumber}`);

@@ -11,6 +11,9 @@
 .button--primary {
   background: var(--button-color);
 }
+.button--secondary {
+  background: var(--button-color);
+}
 .button:hover {
   color: var(--grey-out-color);
 }
@@ -18,7 +21,7 @@
   outline: 0;
 }
 .button--disabled {
-  background: var(--sec-background-color);
+  background: var(--button-disabled-color);
   border: 0.1vh solid var(--grey-out-color);
   color: var(--grey-out-color);
 }

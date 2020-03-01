@@ -4,6 +4,7 @@
 
   --button-color: #84afce;
   --button-hover-color: #99bad1;
+  --button-disabled-color: #f4f4f4;
 
   --grey-out-color: #4d4d4d;
   --prim-font-color: black;
@@ -12,6 +13,9 @@
   --link-font-hover-color: rgb(117, 84, 126);
 
   --success-color: green;
+  --error-color: red;
+  --inactive-color: orange;
+  --active-compet-color: rgb(180, 221, 180);
 
   --anti-color: #b788ba;
   --main-color: #f4f4f4;
