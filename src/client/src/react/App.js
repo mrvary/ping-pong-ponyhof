@@ -36,7 +36,7 @@ const CLIENT_STATE = {
 };
 
 const initialState = {
-  view: "LOGIN",
+  view: CLIENT_STATE.LOGIN,
   isConnected: false,
   availableTables: [],
   match: undefined,
@@ -55,7 +55,11 @@ const reducer = (state, action) => {
       return state;
 
     case "tablesAvailable":
-      return state;
+      return {
+        ...state,
+        availableTables: action.availableTables,
+        tableNumber: setTableNumber(state.tableNumber, action.availableTables)
+      };
 
     case "roundCanceled":
       return state;
@@ -70,6 +74,17 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+function setTableNumber(currentNumber, tables) {
+  const isNotSet = currentNumber < 1;
+  const isNotAvailable = !tables.find(n => n === currentNumber);
+
+  if (isNotSet || isNotAvailable) {
+    // pick first available number
+    return tables[0];
+  }
+  return currentNumber;
+}
 
 function App() {
   // possibilities: LOGIN | NO_COMP | NEXT_PLAYERS | MATCH | WAITING
@@ -86,14 +101,14 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // set tableNumber when availableTables are non-empty
-  useEffect(() => {
-    if (state.tableNumber < 0 && state.availableTables.length > 0) {
-      dispatch({
-        type: "setTableNumber",
-        tableNumber: state.availableTables[0]
-      });
-    }
-  }, [state]);
+  // useEffect(() => {
+  //   if (state.tableNumber < 0 && state.availableTables.length > 0) {
+  //     dispatch({
+  //       type: "setTableNumber",
+  //       tableNumber: state.availableTables[0]
+  //     });
+  //   }
+  // }, [state]);
 
   // set match when matchesWithPlayers are available
 
