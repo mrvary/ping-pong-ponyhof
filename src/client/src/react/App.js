@@ -35,47 +35,75 @@ const CLIENT_STATE = {
   NEXT_PLAYERS: "next-players"
 };
 
+const ACTION_TYPE = {
+  SET_TABLE_NUMBER: "setTableNumber",
+  LOGGED_IN: "loggedIn",
+  TABLES_AVAILABLE: "tablesAvailable",
+  ROUND_CANCELED: "roundCanceled",
+  ROUND_STARTED: "roundStarted",
+  ROUND_AVAILABLE: "roundAvailable",
+  COMPETITION_CANCELED: "competitionCanceled"
+};
+
 const initialState = {
   view: CLIENT_STATE.LOGIN,
   isConnected: false,
   availableTables: [],
   match: undefined,
   tableNumber: undefined,
-  message: ""
-  // roundStarted: false
+  message: "",
+  roundStarted: false
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
-    case "setTableNumber":
+    case ACTION_TYPE.SET_TABLE_NUMBER:
       return { ...state, tableNumber: action.tableNumber };
 
-    case "loggedIn":
+    case ACTION_TYPE.LOGGED_IN:
       return loggedIn(state, action);
 
-    case "tablesAvailable":
+    case ACTION_TYPE.TABLES_AVAILABLE:
       return {
         ...state,
         availableTables: action.availableTables,
         tableNumber: setTableNumber(state.tableNumber, action.availableTables)
       };
 
-    case "roundCanceled":
+    case ACTION_TYPE.ROUND_CANCELED:
       return state;
 
-    case "roundStarted":
+    case ACTION_TYPE.ROUND_STARTED:
       return state;
 
-    case "roundAvailable":
-      return state;
+    case ACTION_TYPE.ROUND_AVAILABLE:
+      return roundAvailable(state, action);
 
-    case "competitionCanceled":
+    case ACTION_TYPE.COMPETITION_CANCELED:
       return state;
 
     default:
       return state;
   }
 };
+
+function roundAvailable(state, action) {
+  const localMatch = action.matches.find(
+    match => match.tableNumber === state.tableNumber
+  );
+
+  if (localMatch) {
+    return {
+      ...state,
+      match: localMatch,
+      view: CLIENT_STATE.NEXT_PLAYERS
+    };
+  }
+  console.error(
+    "Couldn't start round. No match found for table " + state.tableNumber
+  );
+  return state;
+}
 
 function loggedIn(state, action) {
   const { isConnected, match, roundStarted, message } = action;
@@ -199,7 +227,7 @@ function App() {
     const newTableNumber = parseInt(event.target.value, 10);
 
     dispatch({
-      type: "setTableNumber",
+      type: ACTION_TYPE.SET_TABLE_NUMBER,
       tableNumber: newTableNumber
     });
   };
@@ -211,7 +239,7 @@ function App() {
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
       console.info("SERVER->CLIENT: AVAILABLE_TABLES");
-      dispatch({ type: "tablesAvailable", availableTables: tables });
+      dispatch({ type: ACTION_TYPE.TABLES_AVAILABLE, availableTables: tables });
       // todo: siehe unten
       // setTableNumber(tables[0]);
     });
@@ -221,7 +249,7 @@ function App() {
 
       const { roundStarted, match, message } = data;
       dispatch({
-        type: "loggedIn",
+        type: ACTION_TYPE.LOGGED_IN,
         message,
         match,
         isConnected: !message,
@@ -229,12 +257,13 @@ function App() {
       });
     });
 
-    // connection.on(socketIOMessages.NEXT_ROUND, data => {
-    //   console.info("SERVER->CLIENT: NEXT_ROUND");
-
-    //   const { matchesWithPlayers } = data;
-    //   setMatchesWithPlayers(matchesWithPlayers);
-    // });
+    connection.on(socketIOMessages.NEXT_ROUND, data => {
+      console.info("SERVER->CLIENT: NEXT_ROUND");
+      dispatch({
+        type: ACTION_TYPE.ROUND_AVAILABLE,
+        matches: data.matchesWithPlayers
+      });
+    });
 
     // connection.on(socketIOMessages.START_ROUND, () => {
     //   console.info("SERVER->CLIENT: START_ROUND");
@@ -296,47 +325,3 @@ function App() {
 }
 
 export default App;
-
-// useEffect(() => {
-//   if (matchesWithPlayers.length < 1) {
-//     return;
-//   }
-//   const matchWithPlayers = matchesWithPlayers.find(
-//     matchWithPlayers => matchWithPlayers.tableNumber === tableNumber
-//   );
-
-//   if (!matchWithPlayers) {
-//     console.error(`No match for table number ${tableNumber}`);
-//     return;
-//   }
-
-//   const { match, player1, player2 } = matchWithPlayers;
-//   setLocalMatch({ ...match, player1, player2 });
-// }, [matchesWithPlayers, tableNumber]);
-
-// useEffect(() => {
-//   if (!isConnected) {
-//     return;
-//   }
-
-//   if (localMatch && isMatchFinished(localMatch)) {
-//     console.info("match is finished");
-//     setWaitingMessage("waiting for next round to start");
-//     setView("WAITING");
-//     return;
-//   }
-
-//   if (localMatch && roundStarted) {
-//     console.info("round is started");
-//     setView("MATCH");
-//     return;
-//   }
-
-//   if (localMatch) {
-//     console.info("round is started");
-//     setView("NEXT_PLAYERS");
-//     return;
-//   }
-
-//   setView("NO_COMP");
-// }, [localMatch, roundStarted, isConnected]);
