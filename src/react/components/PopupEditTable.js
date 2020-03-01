@@ -11,7 +11,7 @@ function PopupEditTable({ show, handleClose, sets, saveChanges }) {
   const endPopup = () => {
     setInputChanged(false);
     saveChanges();
-    console.log('save' + JSON.stringify(currentSets));
+    //console.log('save' + JSON.stringify(currentSets));
   };
 
   return (

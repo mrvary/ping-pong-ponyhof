@@ -83,7 +83,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ match, active }) => {
+const TableRow = ({ matchWithPlayers, active }) => {
   const [stringSet, setStringSet] = useState([
     '0 : 0',
     '0 : 0',
@@ -92,8 +92,9 @@ const TableRow = ({ match, active }) => {
     '0 : 0'
   ]);
   let index = 0;
-  console.log('stringyfy' + JSON.stringify(match));
-  match.sets.forEach(set => {
+
+  //console.log('stringyfy' + JSON.stringify(matchWithPlayers.match));
+  matchWithPlayers.match.sets.forEach(set => {
     stringSet[index] = set.player1 + ' : ' + set.player2;
     index++;
   });
@@ -108,7 +109,7 @@ const TableRow = ({ match, active }) => {
   };
 
   let tischCss = 'liRed';
-  if (true) {
+  if (matchWithPlayers.connectedDevice) {
     tischCss = 'liGreen';
   }
   let activeButtonCss = 'competitionPage__table__bearbeiten-btn';
@@ -124,12 +125,14 @@ const TableRow = ({ match, active }) => {
           <li id={tischCss} className="competitionPage__centered">
             <span>&#xa0;</span>
             <span>&#xa0;</span>
-            <span>1</span>
+            <span>{matchWithPlayers.tableNumber}</span>
           </li>
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
-          {match.player1.firstname + ' ' + match.player1.lastname}
+          {matchWithPlayers.match.player1.firstname +
+            ' ' +
+            matchWithPlayers.match.player1.lastname}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
@@ -137,7 +140,9 @@ const TableRow = ({ match, active }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
-          {match.player2.firstname + ' ' + match.player2.lastname}{' '}
+          {matchWithPlayers.match.player2.firstname +
+            ' ' +
+            matchWithPlayers.match.player2.lastname}{' '}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {' '}
@@ -173,7 +178,7 @@ const TableRow = ({ match, active }) => {
         <PopupEditTable
           show={showPopupEditMatch}
           handleClose={handleCloseEditMatch}
-          sets={match.sets}
+          sets={matchWithPlayers.match.sets}
           saveChanges={saveChanges}
         ></PopupEditTable>
       </div>
@@ -181,14 +186,20 @@ const TableRow = ({ match, active }) => {
   );
 };
 
-const Table = ({ matches, active }) => {
+const Table = ({ matchesWithPlayers, active }) => {
   let tableCss =
     'competitionPage__table' + (active ? '--barrierGreen' : '--barrierRed');
   return (
     <div className={tableCss}>
       <TableHeadline />
-      {matches.map(match => {
-        return <TableRow key={match.id} match={match} active={active} />;
+      {matchesWithPlayers.map(matchWithPlayers => {
+        return (
+          <TableRow
+            key={matchWithPlayers.match.id}
+            matchWithPlayers={matchWithPlayers}
+            active={active}
+          />
+        );
       })}
     </div>
   );
@@ -196,15 +207,12 @@ const Table = ({ matches, active }) => {
 
 const CompetitionPage = () => {
   const { competitionID } = useParams();
-  const [matches, setMatches] = useState([]);
+  const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
 
   useEffect(() => {
     function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
       console.log('IPC-Main-->IPC-Renderer:', matchesWithPlayers);
-      const matches = matchesWithPlayers.map(matchWithPlayers => {
-        return matchWithPlayers.match;
-      });
-      setMatches(matches);
+      setMatchesWithPlayers(matchesWithPlayers);
     }
 
     ipcRenderer.on(ipcChannels.UPDATE_MATCHES, handleMatchesStatusChanged);
@@ -246,7 +254,7 @@ const CompetitionPage = () => {
       ];
 
       console.log(matches);
-      setMatches(matches);
+      setMatchesWithPlayers(matches);
       return;
     }
 
@@ -306,7 +314,7 @@ const CompetitionPage = () => {
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
       />
-      <Table matches={matches} active={active} />
+      <Table matchesWithPlayers={matchesWithPlayers} active={active} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
           primOnClick={handleShowReDoRound}
