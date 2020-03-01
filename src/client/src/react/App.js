@@ -30,9 +30,9 @@ const getServerURL = () => {
 
 const CLIENT_STATE = {
   LOGIN: "login",
-  WAITING: "login",
-  MATCH: "login",
-  NEXT_PLAYERS: "login"
+  WAITING: "waiting",
+  MATCH: "match",
+  NEXT_PLAYERS: "next-players"
 };
 
 const initialState = {
@@ -41,9 +41,8 @@ const initialState = {
   availableTables: [],
   match: undefined,
   tableNumber: undefined,
-  message: "",
-  // check if needed
-  roundStarted: false
+  message: ""
+  // roundStarted: false
 };
 
 const reducer = (state, action) => {
@@ -52,7 +51,7 @@ const reducer = (state, action) => {
       return { ...state, tableNumber: action.tableNumber };
 
     case "loggedIn":
-      return state;
+      return loggedIn(state, action);
 
     case "tablesAvailable":
       return {
@@ -72,8 +71,46 @@ const reducer = (state, action) => {
 
     case "competitionCanceled":
       return state;
+
+    default:
+      return state;
   }
 };
+
+function loggedIn(state, action) {
+  const { isConnected, match, roundStarted, message } = action;
+  const newState = { ...state, isConnected, match, roundStarted, message };
+
+  if (message) {
+    console.error(message);
+    return { ...state, message };
+  }
+
+  if (match && isMatchFinished(match)) {
+    console.info("match is finished");
+    return {
+      ...newState,
+      message: "Spiel beendet. Warten auf die nächste Runde.",
+      view: CLIENT_STATE.WAITING
+    };
+  }
+
+  if (match && roundStarted) {
+    console.info("round is started");
+    return { ...newState, view: CLIENT_STATE.MATCH };
+  }
+
+  if (match) {
+    console.info("round is started");
+    return { ...newState, view: CLIENT_STATE.NEXT_PLAYERS };
+  }
+
+  return {
+    ...newState,
+    message: "Kein laufendes Turnier.",
+    view: CLIENT_STATE.WAITING
+  };
+}
 
 function setTableNumber(currentNumber, tables) {
   const isNotSet = currentNumber < 1;
@@ -87,17 +124,6 @@ function setTableNumber(currentNumber, tables) {
 }
 
 function App() {
-  // possibilities: LOGIN | NO_COMP | NEXT_PLAYERS | MATCH | WAITING
-  // const [view, setView] = useState("LOGIN");
-  // const [isConnected, setIsConnected] = useState(false);
-
-  // const [availableTables, setAvailableTables] = useState([]);
-  // const [tableNumber, setTableNumber] = useState(-1);
-  // const [localMatch, setLocalMatch] = useState(undefined);
-  // const [waitingMessage, setWaitingMessage] = useState("");
-  // const [roundStarted, setRoundStarted] = useState(false);
-  // const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
-  // const [message, setMessage] = useState("");
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // set tableNumber when availableTables are non-empty
@@ -110,41 +136,34 @@ function App() {
   //   }
   // }, [state]);
 
-  // set match when matchesWithPlayers are available
-
   const content = () => {
     if (state.view === CLIENT_STATE.LOGIN) {
       return (
         <LoginView
           availableTables={state.availableTables}
           tableNumber={state.tableNumber}
-          sendTableNumber={sendTableNumber}
+          sendTableNumber={sendTableNumber(state.tableNumber)}
           tableNumberChanged={handleTableNumberChange}
         />
       );
     }
 
-    // if (view === "NO_COMP") {
-    //   return (
-    //     <div>
-    //       <Title title="No competition started yet, please wait."></Title>
-    //     </div>
-    //   );
-    // }
+    if (
+      state.view === CLIENT_STATE.NEXT_PLAYERS ||
+      state.view === CLIENT_STATE.MATCH
+    ) {
+      return (
+        <MatchView
+          onlyShowNextPlayers={state.view === CLIENT_STATE.NEXT_PLAYERS}
+          match={state.match}
+          // sendSets={sendSets}
+        />
+      );
+    }
 
-    // if (view === "NEXT_PLAYERS" || view === "MATCH") {
-    //   return (
-    //     <MatchView
-    //       onlyShowNextPlayers={view === "NEXT_PLAYERS"}
-    //       match={localMatch}
-    //       sendSets={sendSets}
-    //     />
-    //   );
-    // }
-
-    // if (view === "WAITING") {
-    //   return <WaitingView message={waitingMessage} />;
-    // }
+    if (state.view === CLIENT_STATE.WAITING) {
+      return <WaitingView message={state.message} />;
+    }
 
     // render nothing if none of the above states
     return <></>;
@@ -197,23 +216,18 @@ function App() {
       // setTableNumber(tables[0]);
     });
 
-    // connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
-    //   console.info("SERVER->CLIENT: LOGIN_RESPONSE");
+    connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
+      console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
-    //   const { roundStarted, match, message } = data;
-
-    //   // present, when something went wrong
-    //   if (message) {
-    //     setView("LOGIN");
-    //     alert(message);
-    //     return;
-    //   }
-
-    //   setMessage(message);
-    //   setIsConnected(true);
-    //   setLocalMatch(match);
-    //   setRoundStarted(roundStarted);
-    // });
+      const { roundStarted, match, message } = data;
+      dispatch({
+        type: "loggedIn",
+        message,
+        match,
+        isConnected: !message,
+        roundStarted
+      });
+    });
 
     // connection.on(socketIOMessages.NEXT_ROUND, data => {
     //   console.info("SERVER->CLIENT: NEXT_ROUND");
