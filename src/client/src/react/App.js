@@ -103,7 +103,8 @@ function App() {
   };
 
   const handleTableNumberChange = event => {
-    setTableNumber(event.target.value);
+    const tableNumber = Number(event.target.value);
+    setTableNumber(tableNumber);
   };
 
   // register sockets for client - server communication
