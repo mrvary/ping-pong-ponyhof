@@ -212,11 +212,15 @@ const Table = ({ matchesWithPlayers, active }) => {
 const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
-
+  const [competitionData, setCompetitionData] = useState({});
   useEffect(() => {
-    function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
+    function handleMatchesStatusChanged(
+      event,
+      { competition, matchesWithPlayers }
+    ) {
       console.log('IPC-Main-->IPC-Renderer:', matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
+      setCompetitionData(competition);
     }
 
     ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
@@ -309,8 +313,8 @@ const CompetitionPage = () => {
     <div>
       <p>competitionID: {competitionID}</p>
       <CompetitionPageHeader
-        playmode="Scheizer System"
-        startDate="02.02.2020"
+        playmode={competitionData.playmode}
+        startDate={competitionData.startDate}
         linkTitle="zur Übersicht"
         linkDestination={'/'}
       />
