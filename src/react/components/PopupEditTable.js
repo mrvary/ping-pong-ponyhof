@@ -1,16 +1,17 @@
-import { Modal } from "react-bootstrap";
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./PopupEditTable.css";
-import Button from "./Button";
+import { Modal } from 'react-bootstrap';
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './PopupEditTable.css';
+import Button from './Button';
 
 function PopupEditTable({ show, handleClose, sets, saveChanges }) {
   const [inputChanged, setInputChanged] = useState(false);
+  const [currentSets, changeCurrentSet] = useState(sets);
 
   const endPopup = () => {
     setInputChanged(false);
     saveChanges();
-    //TODO: speichern
+    console.log('save' + JSON.stringify(currentSets));
   };
 
   return (
@@ -21,6 +22,8 @@ function PopupEditTable({ show, handleClose, sets, saveChanges }) {
         <DisplaySetHandler
           sets={sets}
           setInputChanged={setInputChanged}
+          changeCurrentSet={changeCurrentSet}
+          currentSets={currentSets}
         ></DisplaySetHandler>
         <Button
           mode="primary"
@@ -32,7 +35,12 @@ function PopupEditTable({ show, handleClose, sets, saveChanges }) {
     </Modal>
   );
 }
-const DisplaySetHandler = ({ sets, setInputChanged }) => {
+const DisplaySetHandler = ({
+  sets,
+  setInputChanged,
+  changeCurrentSet,
+  currentSets
+}) => {
   let index = 0;
   return (
     <div className="popupEditTable--columns">
@@ -43,22 +51,30 @@ const DisplaySetHandler = ({ sets, setInputChanged }) => {
             key={index}
             set={set}
             index={index}
+            changeCurrentSet={changeCurrentSet}
             setInputChanged={setInputChanged}
+            currentSets={currentSets}
           ></DisplaySet>
         );
       })}
     </div>
   );
 };
-const DisplaySet = ({ set, index, setInputChanged }) => {
+const DisplaySet = ({
+  set,
+  index,
+  setInputChanged,
+  changeCurrentSet,
+  currentSets
+}) => {
   const [player1Set, setPlayer1Set] = useState(set.player1);
   const [player2Set, setPlayer2Set] = useState(set.player2);
-  let [css, setCss] = useState("");
+  let [css, setCss] = useState('');
 
   const checkValuesLegitimacy = (inputPlayer1, inputPlayer2) => {
     return (
-      (inputPlayer1 === "11" && inputPlayer2 < 10 && inputPlayer2 >= 0) ||
-      (inputPlayer2 === "11" && inputPlayer1 < 10 && inputPlayer1 >= 0) ||
+      (inputPlayer1 === '11' && inputPlayer2 < 10 && inputPlayer2 >= 0) ||
+      (inputPlayer2 === '11' && inputPlayer1 < 10 && inputPlayer1 >= 0) ||
       (inputPlayer1 >= 9 && inputPlayer2 - inputPlayer1 === 2) ||
       (inputPlayer2 >= 9 && inputPlayer1 - inputPlayer2 === 2)
     );
@@ -69,10 +85,16 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
 
     if (checkValuesLegitimacy(event.target.value, player2Set)) {
       setInputChanged(true);
-      setCss("");
+      setCss('');
+      let newSet = currentSets;
+      newSet[index - 1] = {
+        player1: parseInt(event.target.value),
+        player2: parseInt(player2Set)
+      };
+      changeCurrentSet(newSet);
     } else {
       setInputChanged(false);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
 
@@ -81,16 +103,22 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
 
     if (checkValuesLegitimacy(event.target.value, player1Set)) {
       setInputChanged(true);
-      setCss("");
+      setCss('');
+      let newSet = currentSets;
+      newSet[index - 1] = {
+        player1: parseInt(player1Set),
+        player2: parseInt(event.target.value)
+      };
+      changeCurrentSet(newSet);
     } else {
       setInputChanged(false);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
   return (
     //todo stop negatives
     <div className="popupEditTable--rows">
-      <p>{"Set " + index + "  "}</p>
+      <p>{'Set ' + index + '  '}</p>
       <input
         className={css}
         type="number"
@@ -100,7 +128,7 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
         onChange={checkInput1}
         name="player1Set"
       ></input>
-      <p> {" : "} </p>
+      <p> {' : '} </p>
       <input
         className={css}
         type="number"
