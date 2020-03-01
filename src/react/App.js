@@ -25,7 +25,7 @@ const App = () => {
   const [viewedCompetition, setViewedCompetition] = useState({});
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState("?");
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     getCompetitions();
@@ -100,7 +100,6 @@ const App = () => {
       if (!competitionId) {
         setLinkDisabled(true);
         handleShowError();
-        console.log("error1:" + message);
         setErrorMessage(message);
         return;
       }
@@ -109,7 +108,6 @@ const App = () => {
     });
 
     ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
-    return null;
   };
 
   const deleteCompetition = id => {
