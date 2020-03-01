@@ -136,13 +136,15 @@ function initHTTPServer() {
       );
       const { connectedDevice, tableNumber } = args;
 
-      selectedMatchesWithPlayers = selectedMatchesWithPlayers.map(matchWithPlayers => {
-        if (matchWithPlayers.tableNumber === tableNumber) {
-          return { ...matchWithPlayers, connectedDevice };
-        }
+      selectedMatchesWithPlayers = selectedMatchesWithPlayers.map(
+        matchWithPlayers => {
+          if (matchWithPlayers.tableNumber === tableNumber) {
+            return { ...matchWithPlayers, connectedDevice };
+          }
 
-        return matchWithPlayers;
-      });
+          return matchWithPlayers;
+        }
+      );
 
       mainWindow.webContents.send(ipcMessages.UPDATE_MATCHES, {
         competition: selectedCompetition,
