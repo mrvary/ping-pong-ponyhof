@@ -1,10 +1,16 @@
-import { Modal } from "react-bootstrap";
-import React, { useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./PopupReviewPlayer.css";
-import Button from "./Button";
+import { Modal } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './PopupReviewPlayer.css';
+import Button from './Button';
 
-function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
+function PopupReviewPlayer({
+  show,
+  handleClose,
+  buttonFunk,
+  viewedPlayers,
+  viewedCompetition
+}) {
   return (
     <Modal show={show} onHide={() => handleClose(true)}>
       <Modal.Header closeButton className="popup__header-text">
@@ -17,11 +23,11 @@ function PopupReviewPlayer({ show, handleClose, buttonFunk }) {
             Folgende Spieler sind im Spiel:
           </p>
           <div>
-            <p className="popup__names">player1</p>
-            <p className="popup__names">player1</p>
-            <p className="popup__names">player1</p>
-            <p className="popup__names">player1</p>
-            <p className="popup__names">player1</p>
+            {viewedPlayers.map(player => (
+              <p className="popup__names">
+                {player.firstname + ' ' + player.lastname}
+              </p>
+            ))}
           </div>
           <Button
             primText="Hochladen"

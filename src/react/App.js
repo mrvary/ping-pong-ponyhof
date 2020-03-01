@@ -22,6 +22,9 @@ const App = () => {
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [competitions, setCompetitions] = useState([]);
 
+  const [viewedCompetition, setViewedCompetition] = useState({});
+  const [viewedPlayers, setViewedPlayers] = useState([]);
+
   useEffect(() => {
     getCompetitions();
   }, competitions);
@@ -53,6 +56,7 @@ const App = () => {
         "ipc-main --> ipc-renderer:",
         ipcMessages.OPEN_FILE_DIALOG_RESPONSE
       );
+      
       const { message } = args;
       console.log("message:", message);
 
@@ -74,7 +78,9 @@ const App = () => {
           "ipc-main --> ipc-renderer",
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
-        console.log(args);
+        const {competiton, players} = args;
+        setViewedCompetition(competiton)
+        setViewedPlayers(players)
       }
     );
 
@@ -138,6 +144,8 @@ const App = () => {
         currentId={currentId}
         linkDisabled={linkDisabled}
         setLinkDisabled={setLinkDisabled}
+        viewedPlayers={viewedPlayers}
+        viewedCompetition={viewedCompetition}
       />
       {competitions.map(competition => (
         <Competition
