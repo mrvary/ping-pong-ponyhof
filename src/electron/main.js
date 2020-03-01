@@ -414,6 +414,11 @@ function registerIPCMainEvents() {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_MATCHES);
   });
 
+  ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
+    console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
+    console.log(args);
+  });
+
   ipcMain.on(ipcMessages.START_ROUND, () => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
 
