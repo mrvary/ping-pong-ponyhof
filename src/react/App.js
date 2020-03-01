@@ -29,7 +29,7 @@ const App = () => {
 
   useEffect(() => {
     getCompetitions();
-  }, competitions);
+  }, []);
 
   const getCompetitions = () => {
     if (USE_BROWSER) {
