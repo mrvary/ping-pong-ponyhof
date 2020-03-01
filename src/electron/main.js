@@ -409,9 +409,15 @@ function registerIPCMainEvents() {
     }
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, {
+      competition: selectedCompetition,
       matchesWithPlayers: selectedMatchesWithPlayers
     });
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_MATCHES);
+  });
+
+  ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
+    console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
+    console.log(args);
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {

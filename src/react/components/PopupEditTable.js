@@ -4,13 +4,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./PopupEditTable.css";
 import Button from "./Button";
 
-function PopupEditTable({ show, handleClose, sets, saveChanges }) {
+function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const [inputChanged, setInputChanged] = useState(false);
+  const [currentSets, changeCurrentSet] = useState(sets);
 
   const endPopup = () => {
     setInputChanged(false);
-    saveChanges();
-    //TODO: speichern
+    saveChanges(currentSets, tableNumber);
+    //console.log('save' + JSON.stringify(currentSets));
   };
 
   return (
@@ -21,6 +22,8 @@ function PopupEditTable({ show, handleClose, sets, saveChanges }) {
         <DisplaySetHandler
           sets={sets}
           setInputChanged={setInputChanged}
+          changeCurrentSet={changeCurrentSet}
+          currentSets={currentSets}
         ></DisplaySetHandler>
         <Button
           mode="primary"
@@ -32,7 +35,12 @@ function PopupEditTable({ show, handleClose, sets, saveChanges }) {
     </Modal>
   );
 }
-const DisplaySetHandler = ({ sets, setInputChanged }) => {
+const DisplaySetHandler = ({
+  sets,
+  setInputChanged,
+  changeCurrentSet,
+  currentSets
+}) => {
   let index = 0;
   return (
     <div className="popupEditTable--columns">
@@ -43,14 +51,22 @@ const DisplaySetHandler = ({ sets, setInputChanged }) => {
             key={index}
             set={set}
             index={index}
+            changeCurrentSet={changeCurrentSet}
             setInputChanged={setInputChanged}
+            currentSets={currentSets}
           ></DisplaySet>
         );
       })}
     </div>
   );
 };
-const DisplaySet = ({ set, index, setInputChanged }) => {
+const DisplaySet = ({
+  set,
+  index,
+  setInputChanged,
+  changeCurrentSet,
+  currentSets
+}) => {
   const [player1Set, setPlayer1Set] = useState(set.player1);
   const [player2Set, setPlayer2Set] = useState(set.player2);
   let [css, setCss] = useState("");
@@ -70,6 +86,12 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
     if (checkValuesLegitimacy(event.target.value, player2Set)) {
       setInputChanged(true);
       setCss("");
+      let newSet = currentSets;
+      newSet[index - 1] = {
+        player1: parseInt(event.target.value),
+        player2: parseInt(player2Set)
+      };
+      changeCurrentSet(newSet);
     } else {
       setInputChanged(false);
       setCss("popupEditTable--input");
@@ -82,6 +104,12 @@ const DisplaySet = ({ set, index, setInputChanged }) => {
     if (checkValuesLegitimacy(event.target.value, player1Set)) {
       setInputChanged(true);
       setCss("");
+      let newSet = currentSets;
+      newSet[index - 1] = {
+        player1: parseInt(player1Set),
+        player2: parseInt(event.target.value)
+      };
+      changeCurrentSet(newSet);
     } else {
       setInputChanged(false);
       setCss("popupEditTable--input");
