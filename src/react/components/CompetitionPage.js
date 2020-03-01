@@ -314,7 +314,7 @@ const CompetitionPage = () => {
       <p>competitionID: {competitionID}</p>
       <CompetitionPageHeader
         playmode={competitionData.playmode}
-        startDate={competitionData.startDate}
+        startDate={competitionData.date}
         linkTitle="zur Übersicht"
         linkDestination={"/"}
       />
