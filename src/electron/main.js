@@ -43,7 +43,7 @@ const matchmaker = require("../matchmaker/drawing");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
-const metaStorage = require("../modules/persistance/lowdb/meta-storage");
+const metaRepository = require("../modules/persistance/repositories/meta-repository");
 const competitionStorage = require("../modules/persistance/lowdb/competition-storage");
 
 // communication
@@ -63,8 +63,6 @@ let mainWindow = null;
 let xmlFilePath = null;
 let jsonObject = null;
 
-let competitions = null;
-
 let selectedCompetition = null;
 let selectedPlayers = null;
 let selectedMatches = null;
@@ -83,7 +81,7 @@ initHTTPServer();
 
 app.on("ready", () => {
   initDevTools();
-  initMetaStorage();
+  initMetaRepository();
 
   mainWindow = createWindow();
   createMenu();
@@ -183,9 +181,9 @@ function initHTTPServer() {
   });
 }
 
-function initMetaStorage() {
+function initMetaRepository() {
   const filePath = fileManager.getMetaStorageDatabasePath();
-  metaStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+  metaRepository.init(filePath, config.USE_IN_MEMORY_STORAGE);
 }
 
 function registerIPCMainEvents() {
@@ -195,14 +193,10 @@ function registerIPCMainEvents() {
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
 
-    // check if competitions are loaded from database
-    if (!competitions) {
-      // init competitions from database
-      competitions = getCompetitionsFromDatabase();
-    }
-
     // send competitions to renderer process
-    event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, { competitions });
+    event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, {
+      competitions: metaRepository.getAllCompetitions()
+    });
     console.log(
       "ipc-main --> ipc-renderer:",
       ipcMessages.GET_COMPETITIONS_RESPONSE
@@ -224,7 +218,11 @@ function registerIPCMainEvents() {
       console.log("Reset application state");
     }
 
-    deleteCompetition(competitionId);
+    // Delete the competition file
+    fileManager.deleteTournamentJSONFile(competitionId);
+
+    // Delete competition from meta file
+    metaRepository.deleteCompetition(competitionId);
 
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
     console.log(
@@ -439,7 +437,7 @@ function registerIPCMainEvents() {
     );
 
     activeCompetition = updatedCompetition;
-    metaStorage.updateCompetition(updatedCompetition);
+    metaRepository.updateCompetition(updatedCompetition);
 
     matchStarted = true;
     server.sendStartRoundBroadcast();
@@ -476,19 +474,6 @@ function registerIPCMainEvents() {
     const { route } = args;
     createWindow(route);
   });
-}
-
-function getCompetitionsFromDatabase() {
-  const competitions = metaStorage.getAllCompetitions();
-  console.log(`Get ${competitions.length} elements from database`);
-
-  return competitions;
-}
-
-// Delete competition from meta storage and the corresponding competition database file
-function deleteCompetition(competitionId) {
-  fileManager.deleteTournamentJSONFile(competitionId);
-  metaStorage.deleteCompetition(competitionId);
 }
 
 // Initialize competition storage with default values
@@ -528,8 +513,7 @@ function createCompetitionInMetaStorage(competition, matches) {
     COMPETITION_STATE.COMP_READY_ROUND_READY
   );
 
-  metaStorage.createCompetition(competition);
-  console.log("Create competition in meta storage");
+  metaRepository.createCompetition(competition);
 
   return competition;
 }
