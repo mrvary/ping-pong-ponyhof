@@ -409,6 +409,7 @@ function registerIPCMainEvents() {
     }
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, {
+      competition: selectedCompetition,
       matchesWithPlayers: selectedMatchesWithPlayers
     });
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_MATCHES);
