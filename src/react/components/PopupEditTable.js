@@ -4,13 +4,13 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './PopupEditTable.css';
 import Button from './Button';
 
-function PopupEditTable({ show, handleClose, sets, saveChanges }) {
+function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const [inputChanged, setInputChanged] = useState(false);
   const [currentSets, changeCurrentSet] = useState(sets);
 
   const endPopup = () => {
     setInputChanged(false);
-    saveChanges();
+    saveChanges(currentSets, tableNumber);
     //console.log('save' + JSON.stringify(currentSets));
   };
 

@@ -12,7 +12,7 @@ import PopupEditTable from './PopupEditTable';
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcChannels = require('../../shared/ipc-messages');
+const ipcMessages = require('../../shared/ipc-messages');
 
 const USE_BROWSER = false;
 
@@ -103,8 +103,10 @@ const TableRow = ({ matchWithPlayers, active }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
-  const saveChanges = () => {
+  const saveChanges = (sets, tableNumber) => {
     //TODO save Changes from edited Table
+    const tableSets = { tableNumber, sets };
+    ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
     handleCloseEditMatch();
   };
 
@@ -215,12 +217,12 @@ const CompetitionPage = () => {
       setMatchesWithPlayers(matchesWithPlayers);
     }
 
-    ipcRenderer.on(ipcChannels.UPDATE_MATCHES, handleMatchesStatusChanged);
+    ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
 
     return () => {
       ipcRenderer.removeListener(
-        ipcChannels.UPDATE_MATCHES,
+        ipcMessages.UPDATE_MATCHES,
         handleMatchesStatusChanged
       );
     };
@@ -259,7 +261,7 @@ const CompetitionPage = () => {
     }
 
     // trigger initialize competition
-    ipcRenderer.send(ipcChannels.GET_COMPETITION_MATCHES_REQUEST, {
+    ipcRenderer.send(ipcMessages.GET_COMPETITION_MATCHES_REQUEST, {
       competitionId: competitionID
     });
   };
@@ -289,16 +291,16 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
-    ipcRenderer.send(ipcChannels.NEXT_ROUND);
+    ipcRenderer.send(ipcMessages.NEXT_ROUND);
     handleCloseEndRound();
   };
 
   const handleStartRound = () => {
-    ipcRenderer.send(ipcChannels.START_ROUND);
+    ipcRenderer.send(ipcMessages.START_ROUND);
   };
 
   const openStatisticWindow = route => {
-    ipcRenderer.send(ipcChannels.OPEN_NEW_WINDOW, { route: route });
+    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
   };
 
   return (
