@@ -11,7 +11,6 @@ function PopupReviewPlayer({
   viewedPlayers,
   viewedCompetition
 }) {
-  console.log("Object" + JSON.stringify(viewedCompetition));
   return (
     <Modal show={show} onHide={() => handleClose(true)}>
       <Modal.Header closeButton className="popup__header-text">

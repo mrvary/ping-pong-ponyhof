@@ -7,6 +7,7 @@ function Footer({ title }) {
       <p className="footer__text">
         <strong>{title}</strong> by coolest guys and gals ever.
       </p>
+      <p className="footer__pictureCredits">Photo by Ellen Qin on Unsplash</p>
     </footer>
   );
 }

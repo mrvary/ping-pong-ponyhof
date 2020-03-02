@@ -4,3 +4,10 @@
   font-size: large;
   text-align: center;
 }
+
+.footer__pictureCredits {
+  margin: 1vh 2vh;
+  color: var(--font-color);
+  font-size: 1.5vh;
+  text-align: center;
+}

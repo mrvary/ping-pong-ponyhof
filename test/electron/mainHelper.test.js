@@ -6,7 +6,7 @@ const {
   expectedCompetitionWithDefaultValues
 } = require("../models/competition.test.data");
 
-const { COMPETITION_STATE } = require("../../src/modules/models/competition");
+const { COMPETITION_STATE } = require("../../src/shared/models/competition");
 
 const {
   COMP_CREATED,

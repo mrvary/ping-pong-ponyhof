@@ -39,3 +39,6 @@
 .competitionPage__link:hover {
   color: var(--link-font-hover-color);
 }
+.competitionPage__table__score {
+  font-weight: bold;
+}

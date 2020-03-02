@@ -151,15 +151,14 @@ function updateSetsResponse(state, action) {
 }
 
 function roundAvailable(state, action) {
-  const matchForTable = action.matches.find(
+  const matchForTable = action.matchesWithPlayers.find(
     match => match.tableNumber === state.tableNumber
   );
 
   if (matchForTable) {
-    const { match, player1, player2 } = matchForTable;
     return {
       ...state,
-      match: { ...match, player1, player2 },
+      match: matchForTable.match,
       view: VIEW.NEXT_PLAYERS,
       message: ""
     };
@@ -330,7 +329,7 @@ function App() {
 
       dispatch({
         type: ACTION_TYPE.ROUND_AVAILABLE,
-        matches: data.matchesWithPlayers
+        matchesWithPlayers: data.matchesWithPlayers
       });
     });
 
