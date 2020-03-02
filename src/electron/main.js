@@ -438,7 +438,7 @@ function registerIPCMainEvents() {
 
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
     if (
-        selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
+      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
     ) {
       return;
     }
@@ -447,15 +447,15 @@ function registerIPCMainEvents() {
     // fire up matchmaker
     // save things
     const updatedCompetition = updateCompetitionStatus(
-        selectedCompetition.competition,
-        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      selectedCompetition.competition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
     selectedCompetition.competition = updatedCompetition;
     metaRepository.updateCompetition(updatedCompetition);
 
     const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
-        ({ match }) =>
-            match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
+      ({ match }) =>
+        match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
     );
 
     server.sendNextRoundBroadcast({
