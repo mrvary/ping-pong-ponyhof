@@ -12,7 +12,7 @@ const socketIOMessages = require("../../client/src/shared/socketIOMessages");
 const serverMessages = require("./serverMessages");
 
 // models
-const { COMPETITION_STATE } = require("../models/competition");
+const { COMPETITION_STATE } = require("../../shared/models/competition");
 
 // constants
 const MAX_AMOUNT_TABLE = 8;

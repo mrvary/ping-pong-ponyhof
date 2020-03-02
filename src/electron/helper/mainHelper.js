@@ -1,4 +1,4 @@
-const { COMPETITION_STATE } = require("../../modules/models/competition");
+const { COMPETITION_STATE } = require("../../shared/models/competition");
 
 function createStateResponseData({ tableNumber, selectedCompetition }) {
   if (!selectedCompetition) {

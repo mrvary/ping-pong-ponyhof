@@ -21,7 +21,7 @@ const {
   COMPETITION_STATE,
   updateCompetitionRoundMatches,
   updateCompetitionStatus
-} = require("../modules/models/competition");
+} = require("../shared/models/competition");
 
 const {
   createStateResponseData,
