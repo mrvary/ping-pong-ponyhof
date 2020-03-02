@@ -29,7 +29,7 @@ function createMatch({ player1, player2 }) {
     match.sets.push({
       player1: 0,
       player2: 0
-    })
+    });
   }
 
   matchId++;
