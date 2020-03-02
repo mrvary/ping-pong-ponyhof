@@ -1,8 +1,8 @@
-import { Modal } from 'react-bootstrap';
-import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './PopupReviewPlayer.css';
-import Button from './Button';
+import { Modal } from "react-bootstrap";
+import React, { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./PopupReviewPlayer.css";
+import Button from "./Button";
 
 function PopupReviewPlayer({
   show,
@@ -28,7 +28,7 @@ function PopupReviewPlayer({
           <div>
             {viewedPlayers.map(player => (
               <li key={player.id} className="popup__names">
-                {player.firstname + ' ' + player.lastname}
+                {player.firstname + " " + player.lastname}
               </li>
             ))}
           </div>
