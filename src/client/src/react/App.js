@@ -28,7 +28,7 @@ const getServerURL = () => {
   return url;
 };
 
-const CLIENT_STATE = {
+const VIEW = {
   LOGIN: "login",
   WAITING: "waiting",
   MATCH: "match",
@@ -48,7 +48,7 @@ const ACTION_TYPE = {
 };
 
 const initialState = {
-  view: CLIENT_STATE.LOGIN,
+  view: VIEW.LOGIN,
   isConnected: false,
   availableTables: [],
   match: undefined,
@@ -80,7 +80,7 @@ const reducer = (state, action) => {
       return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
 
     case ACTION_TYPE.ROUND_STARTED:
-      return { ...state, view: CLIENT_STATE.MATCH };
+      return { ...state, view: VIEW.MATCH };
 
     case ACTION_TYPE.ROUND_AVAILABLE:
       return roundAvailable(state, action);
@@ -112,13 +112,13 @@ function switchToWaiting(state, message) {
     match: undefined,
     roundStarted: false,
     message,
-    view: CLIENT_STATE.WAITING
+    view: VIEW.WAITING
   };
 }
 
 function isNotLoggedIn(state, action) {
   return (
-    state.view === CLIENT_STATE.LOGIN &&
+    state.view === VIEW.LOGIN &&
     action.type !== ACTION_TYPE.LOGGED_IN &&
     action.type !== ACTION_TYPE.SET_TABLE_NUMBER &&
     action.type !== ACTION_TYPE.TABLES_AVAILABLE
@@ -148,7 +148,7 @@ function roundAvailable(state, action) {
         player1,
         player2
       },
-      view: CLIENT_STATE.NEXT_PLAYERS,
+      view: VIEW.NEXT_PLAYERS,
       message: ""
     };
   }
@@ -172,24 +172,24 @@ function loggedIn(state, action) {
     return {
       ...newState,
       message: "Spiel beendet. Warten auf die nächste Runde.",
-      view: CLIENT_STATE.WAITING
+      view: VIEW.WAITING
     };
   }
 
   if (match && roundStarted) {
     console.info("round is started");
-    return { ...newState, view: CLIENT_STATE.MATCH };
+    return { ...newState, view: VIEW.MATCH };
   }
 
   if (match) {
     console.info("round is started");
-    return { ...newState, view: CLIENT_STATE.NEXT_PLAYERS };
+    return { ...newState, view: VIEW.NEXT_PLAYERS };
   }
 
   return {
     ...newState,
     message: "Kein laufendes Turnier.",
-    view: CLIENT_STATE.WAITING
+    view: VIEW.WAITING
   };
 }
 
@@ -208,7 +208,7 @@ function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const content = () => {
-    if (state.view === CLIENT_STATE.LOGIN) {
+    if (state.view === VIEW.LOGIN) {
       return (
         <LoginView
           availableTables={state.availableTables}
@@ -220,19 +220,19 @@ function App() {
     }
 
     if (
-      state.view === CLIENT_STATE.NEXT_PLAYERS ||
-      state.view === CLIENT_STATE.MATCH
+      state.view === VIEW.NEXT_PLAYERS ||
+      state.view === VIEW.MATCH
     ) {
       return (
         <MatchView
-          onlyShowNextPlayers={state.view === CLIENT_STATE.NEXT_PLAYERS}
+          onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
           match={state.match}
           sendSets={sendSets}
         />
       );
     }
 
-    if (state.view === CLIENT_STATE.WAITING) {
+    if (state.view === VIEW.WAITING) {
       return <WaitingView message={state.message} />;
     }
 
