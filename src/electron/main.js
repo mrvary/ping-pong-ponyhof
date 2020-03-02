@@ -121,7 +121,11 @@ function initHTTPServer() {
       );
       const { connectedDevice, tableNumber } = args;
 
-      selectedMatchesWithPlayers = selectedMatchesWithPlayers.map(
+      if (!selectedCompetition) {
+        return;
+      }
+
+      selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
         matchWithPlayers => {
           if (matchWithPlayers.tableNumber === tableNumber) {
             return { ...matchWithPlayers, connectedDevice };
@@ -131,10 +135,10 @@ function initHTTPServer() {
         }
       );
 
-      mainWindow.webContents.send(ipcMessages.UPDATE_MATCHES, {
-        competition: selectedCompetition,
-        matchesWithPlayers: selectedMatchesWithPlayers
-      });
+      mainWindow.webContents.send(
+        ipcMessages.UPDATE_MATCHES,
+        selectedCompetition
+      );
     }
   );
 
@@ -144,8 +148,7 @@ function initHTTPServer() {
     const { tableNumber } = args;
 
     const responseData = createStateResponseData({
-      competitions,
-      selectedMatchesWithPlayers,
+      selectedCompetition,
       tableNumber
     });
 
@@ -310,7 +313,7 @@ function registerIPCMainEvents() {
       resultData = activeCompetition;
     } else if (
       selectedCompetition &&
-      selectedCompetition.competition.id === competitionId()
+      selectedCompetition.competition.id === competitionId
     ) {
       resultData = selectedCompetition;
     } else {
@@ -318,16 +321,8 @@ function registerIPCMainEvents() {
       resultData = initCompetition(competitionId);
 
       // init competition dependent on state
-      if (
-        resultData.competition.state ===
-        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-      ) {
-        activeCompetition = resultData;
-        console.log("Set competition active");
-      } else {
-        selectedCompetition = resultData;
-        console.log("Set competition selected");
-      }
+      selectedCompetition = resultData;
+      console.log("Set competition selected");
     }
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, resultData);
@@ -377,7 +372,7 @@ function registerIPCMainEvents() {
 
     // TODO: check this with Marco
     activeCompetition = updatedCompetition;
-    metaStorage.updateCompetition(updatedCompetition);
+    //metaStorage.updateCompetition(updatedCompetition);
 
     const matchesWithoutFreeTickets = selectedMatchesWithPlayers.filter(
       ({ player1, player2 }) =>
@@ -420,7 +415,7 @@ function initCompetition(competitionId) {
     competition = updateCompetitionRoundMatches(competition, matches);
     competition = updateCompetitionStatus(
       competition,
-      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
     );
     metaRepository.updateCompetition(competition);
   } else {
