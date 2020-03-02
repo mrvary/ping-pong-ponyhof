@@ -156,7 +156,7 @@ function roundStarted(state, action) {
   }
 
   const newState = roundAvailable(state, action);
-  return {...newState, view: VIEW.MATCH}
+  return { ...newState, view: VIEW.MATCH };
 }
 
 function roundAvailable(state, action) {
