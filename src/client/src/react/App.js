@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import "./App.css";
 import { isMatchFinished } from "./lib";
 
@@ -44,7 +44,9 @@ const ACTION_TYPE = {
   ROUND_AVAILABLE: "round-available",
   COMPETITION_CANCELED: "competition-canceled",
   MATCH_SEND_RESPONSE: "match-send-request",
-  MATCH_FINISHED: "match-finished"
+  MATCH_FINISHED: "match-finished",
+  SETS_UPDATED: "sets-updated",
+  UPDATE_SETS_RESPONSE: "update-sets-response"
 };
 
 const initialState = {
@@ -100,6 +102,9 @@ const reducer = (state, action) => {
 
     case ACTION_TYPE.UPDATE_SETS_RESPONSE:
       return updateSetsResponse(state, action);
+
+    case ACTION_TYPE.SETS_UPDATED:
+      return { ...state, match: { ...state.match, sets: action.sets } };
 
     default:
       return state;
@@ -224,6 +229,7 @@ function App() {
           onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
           match={state.match}
           sendSets={sendSets}
+          updateSets={updateSets}
         />
       );
     }
@@ -257,6 +263,18 @@ function App() {
     if (finished) {
       dispatch({ type: ACTION_TYPE.MATCH_FINISHED, match });
     }
+  };
+
+  const updateSets = match => player => setIndex => event => {
+    const newSets = match.sets.map((set, index) => {
+      if (setIndex === index) {
+        set[player] = event.target.value;
+        return set;
+      }
+      return set;
+    });
+
+    dispatch({ type: ACTION_TYPE.SETS_UPDATED, sets: newSets });
   };
 
   const handleTableNumberChange = event => {
@@ -337,7 +355,7 @@ function App() {
 
   return (
     <div className="client-container">
-      <Title title={TITLE} />
+      <Title text={TITLE} />
       <ConnectionStatus isConnected={state.isConnected} />
       {content()}
     </div>

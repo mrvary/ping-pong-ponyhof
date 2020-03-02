@@ -2,14 +2,15 @@ import React from "react";
 
 import ScoreBoard from "../components/ScoreBoard";
 import Player from "../components/Player";
+import Title from "../components/Title";
 
-function MatchView({ onlyShowNextPlayers, match, sendSets }) {
+function MatchView({ onlyShowNextPlayers, match, sendSets, updateSets }) {
   return (
     <div>
       {onlyShowNextPlayers ? (
         <NextPlayers match={match}></NextPlayers>
       ) : (
-        <ScoreBoard match={match} sendSets={sendSets} />
+        <ScoreBoard match={match} sendSets={sendSets} updateSets={updateSets} />
       )}
     </div>
   );
@@ -17,12 +18,12 @@ function MatchView({ onlyShowNextPlayers, match, sendSets }) {
 
 function NextPlayers({ match }) {
   return (
-    <div>
-      <h2>Next Up</h2>
+    <>
+      <Title text="Als nächstes spielen:"></Title>
+      <span></span>
       <Player player={match.player1}></Player>
-      <span>:</span>
       <Player player={match.player2}></Player>
-    </div>
+    </>
   );
 }
 
