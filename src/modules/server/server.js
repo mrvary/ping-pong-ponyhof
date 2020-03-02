@@ -146,7 +146,7 @@ function updateSets(clientSocket, data) {
     clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, data);
   });
 
-  ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
+  ServerMainIOConnection.emit(serverMessages.UPDATE_SETS_REQUEST, data);
 }
 
 // -----

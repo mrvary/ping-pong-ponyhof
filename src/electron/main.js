@@ -153,9 +153,12 @@ function initHTTPServer() {
     );
   });
 
-  server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
-    console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
+  server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS_REQUEST, args => {
+    console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS_REQUEST);
+
     const { tableNumber, sets } = args;
+    console.log(`---: #${tableNumber}`);
+    console.log(`---: ${sets}`);
 
     let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();
