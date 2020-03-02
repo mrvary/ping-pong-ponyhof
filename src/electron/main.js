@@ -45,7 +45,7 @@ const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
 // client
-const { isMatchFinished } = require("../client/src/react/lib");
+const { isMatchFinished } = require("../client/src/shared/lib");
 
 // windows actions
 const uiActions = require("./actions/uiActions");
