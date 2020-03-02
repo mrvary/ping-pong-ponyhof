@@ -1,49 +1,56 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import "./Competition.css";
+import './Competition.css';
 
 // components
-import Popup from "./Popup";
+import Popup from './Popup';
 
 function Competition(props) {
   const {
-    competition: { id, name, date, playmode },
+    competition: { id, name, state, date, playmode },
     deleteCompetition
   } = props;
 
-  const [active, setActive] = useState(true);
+  const [showPopupActiveError, setShowPopupActiveError] = useState(false);
+  const handleCloseActiveError = () => setShowPopupActiveError(false);
+  const handleShowActiveError = () => setShowPopupActiveError(true);
 
   const [showPopupDelete, setShowPopupDelete] = useState(false);
-  const handleClose = () => setShowPopupDelete(false);
-  const handleShow = () => setShowPopupDelete(true);
+  const handleCloseDelete = () => setShowPopupDelete(false);
+  const handleShowDelete = () => setShowPopupDelete(true);
 
-  const competitionID = "/competition/" + id;
-
-  let containerCss = "competition__container";
-  if (active) {
-    containerCss = "competition__container competition__container--active";
+  let containerCss = 'competition__container';
+  if (state === 'comp-active-round-active') {
+    containerCss = 'competition__container competition__container--active';
   }
+
   return (
     <div className={containerCss}>
-      <Link
-        to={competitionID}
-        className="competition__btn competition__btn--gameload competition__link"
-      >
-        Spiel vom {date}
-      </Link>
+      <PuttingThrough
+        props={props}
+        handleShowActiveError={handleShowActiveError}
+      ></PuttingThrough>
+      <Popup
+        show={showPopupActiveError}
+        handleClose={handleCloseActiveError}
+        header="Achtung!"
+        bodyText="Ein anderes Spiel ist aktiv"
+        mode="noBtn"
+      ></Popup>
+
       <button className="competition__btn competition__btn--gametype">
         {playmode}
       </button>
       <button
         className="competition__btn competition__btn--delete"
-        onClick={handleShow}
+        onClick={handleShowDelete}
       >
         Löschen
       </button>
       <Popup
         show={showPopupDelete}
-        handleClose={handleClose}
+        handleClose={handleCloseDelete}
         header="Achtung!"
         bodyText="Willst du dieses Spiel wirklich löschen?"
         buttonFunk={() => deleteCompetition(id)}
@@ -53,5 +60,25 @@ function Competition(props) {
     </div>
   );
 }
+
+const PuttingThrough = (props, handleShowActiveError) => {
+  const {
+    competition: { id, name, state, date, playmode }
+  } = props;
+
+  const competitionID = '/competition/' + id;
+  if (state === '') {
+    return <div onClick={handleShowActiveError}></div>;
+  } else {
+    return (
+      <Link
+        to={competitionID}
+        className="competition__btn competition__btn--gameload competition__link"
+      >
+        {name} vom {date}
+      </Link>
+    );
+  }
+};
 
 export default Competition;
