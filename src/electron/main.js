@@ -366,11 +366,16 @@ function registerIPCMainEvents() {
       return;
     }
 
-    if (selectedCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    if (
+      selectedCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    ) {
       return;
     }
 
-    const updatedCompetition = updateCompetitionStatus(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE);
+    const updatedCompetition = updateCompetitionStatus(
+      selectedCompetition.competition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    );
 
     selectedCompetition.competition = updatedCompetition;
     metaRepository.updateCompetition(updatedCompetition);
@@ -379,7 +384,7 @@ function registerIPCMainEvents() {
     server.sendStartRoundBroadcast();
   });
 
-  ipcMain.on(ipcMessages.START_COMPETITION, (event) => {
+  ipcMain.on(ipcMessages.START_COMPETITION, event => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
     const { competition } = selectedCompetition;
 
