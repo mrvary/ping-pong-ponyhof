@@ -13,7 +13,7 @@ import Header from "./components/Header";
 // electron
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../shared/ipc-messages");
-
+const COMPETITION_STATE = require("../shared/models/competition-state");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
@@ -28,6 +28,7 @@ const App = () => {
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [hasActiveGame, setHasActiveGame] = useState(false);
 
   useEffect(() => {
     getCompetitions();
@@ -52,6 +53,18 @@ const App = () => {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
+
+    //check for active game
+    setHasActiveGame(false);
+    competitions.map(competition => {
+      if (
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      ) {
+        setHasActiveGame(true);
+      }
+      return null;
+    });
   };
 
   const openXMLDialog = () => {
@@ -83,8 +96,6 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
-        console.log(args);
-        console.log(players);
         competitionID = competition.id;
 
         setViewedCompetition(competition);
@@ -113,7 +124,6 @@ const App = () => {
       setCurrentId(competitionId);
     });
 
-    console.log(competitionID);
     ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
       competitionId: competitionID
     });
@@ -126,12 +136,6 @@ const App = () => {
       );
       return;
     }
-
-    // TODO: Prüfung einbauen
-    // Prüfen, ob die Competition im Zustand "Aktiv" ist (siehe 'modules/models/competition.js' --> COMPETITION_STATE)
-    // COMPETITION_STATE.COMP_ACTIVE_ ...
-    // Je nachdem Popup mit entsprechender Warnung anzeigen
-
     // listen to ipc-renderer event to update the ui
     ipcRenderer.once(ipcMessages.DELETE_COMPETITION_RESPONSE, event => {
       setCompetitions(
@@ -163,6 +167,7 @@ const App = () => {
           key={competition.id}
           competition={competition}
           deleteCompetition={deleteCompetition}
+          hasActiveGame={hasActiveGame}
         />
       ))}
       <Footer title="PingPongPonyhof" />
