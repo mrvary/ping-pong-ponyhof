@@ -363,36 +363,26 @@ function registerIPCMainEvents() {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
     const { competition } = selectedCompetition;
 
+    // update competition state and notify client
     if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-      const updatedCompetition = updateCompetitionStatus(
-        competition,
-        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-      );
-      selectedCompetition.competition = updatedCompetition;
-      metaRepository.updateCompetition(updatedCompetition);
-
-      server.sendNextRoundBroadcast({
-        matchesWithPlayers: selectedCompetition.matchesWithPlayers
-      });
+      selectedCompetition.competition = updateCompetitionState(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
+      server.sendNextRoundBroadcast({matchesWithPlayers: selectedCompetition.matchesWithPlayers});
     } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
-      const updatedCompetition = updateCompetitionStatus(
-        competition,
-        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-      );
-      selectedCompetition.competition = updatedCompetition;
-      metaRepository.updateCompetition(updatedCompetition);
-    } else if (
-      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-    ) {
-      const updatedCompetition = updateCompetitionStatus(
-        competition,
-        COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-      );
-      selectedCompetition.competition = updatedCompetition;
-      metaRepository.updateCompetition(updatedCompetition);
-
+      selectedCompetition.competition = updateCompetitionState(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
       server.sendStartRoundBroadcast();
+    } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      selectedCompetition.competition = updateCompetitionState(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE);
     }
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.CANCEL_COMPETITION);
+    const { competition } = selectedCompetition;
+
+    if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+
+    }
+
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
@@ -521,6 +511,7 @@ function createMatchesWithMatchmaker(players) {
 function updateCompetitionState(competition, newState) {
   competition = updateCompetitionStatus(competition, newState);
   metaRepository.updateCompetition(competition);
+  return competition;
 }
 
 function mapMatchesWithPlayers(matches, players) {

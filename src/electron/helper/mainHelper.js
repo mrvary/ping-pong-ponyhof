@@ -24,6 +24,14 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
     };
   }
 
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    return {
+      roundStarted: false,
+      tableNumber,
+      match: match
+    };
+  }
+
   if (
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
     state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
