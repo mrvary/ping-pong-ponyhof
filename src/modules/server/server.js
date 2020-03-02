@@ -155,9 +155,10 @@ function updateSets(clientSocket, data) {
 // -----
 
 function getAvailableTables() {
-  const takenTables = Array.from(connectedClients.values()).map(tableNumber =>
-    parseInt(tableNumber, 10)
-  );
+  const takenTables = Array.from(connectedClients.values());
+  // .map(tableNumber =>
+  //   parseInt(tableNumber, 10)
+  // );
 
   const availableTables = ALL_POTENTIAL_TABLES.filter(
     key => !takenTables.includes(key)
@@ -190,8 +191,8 @@ function sendNextRoundBroadcast(data) {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
 
-function sendCompetitionCanceledBroadcast() {
-  sendBroadcast(socketIOMessages.COMPETITION_CANCELED);
+function sendCancelCompetitionBroadcast() {
+  sendBroadcast(socketIOMessages.CANCEL_COMPETITION);
 }
 
 function sendCancelRoundBroadcast() {
@@ -238,5 +239,5 @@ module.exports = {
   sendNextRoundBroadcast,
   sendCancelRoundBroadcast,
 
-  sendCompetitionCanceledBroadcast
+  sendCancelCompetitionBroadcast
 };

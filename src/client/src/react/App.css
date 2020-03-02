@@ -10,6 +10,6 @@
   padding: 1%;
   height: 100vh;
   background-image: url("../assets/background.jpg");
-  background-size: cover;
+  background-size: auto;
   background-repeat: no-repeat;
 }

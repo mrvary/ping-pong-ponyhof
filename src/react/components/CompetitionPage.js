@@ -17,13 +17,27 @@ const ipcMessages = require("../../shared/ipc-messages");
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
+  const [showPopupIP, setShowPopupIP] = useState(false);
+  const handleCloseIP = () => setShowPopupIP(false);
+  const handleShowIP = () => setShowPopupIP(true);
+
   const statisticID = "/statisticTable/" + competitionID;
   return (
     <div className="competitionPage__link-alignment">
-      <div className="competitionPage__link-ip-adress-statistic">
+      <div
+        className="competitionPage__link-ip-adress-statistic"
+        onClick={handleShowIP}
+      >
         {" "}
         IP-Adresse{" "}
       </div>
+      <Popup
+        show={showPopupIP}
+        handleClose={handleCloseIP}
+        header="Verbinde mit"
+        bodyText="IP"
+        mode="noBtn"
+      ></Popup>
       <p
         onClick={() => openStatisticWindow(statisticID)}
         className="competitionPage__link-ip-adress-statistic"
@@ -93,7 +107,6 @@ const TableRow = ({ matchWithPlayers, active }) => {
   ]);
   let index = 0;
 
-  //console.log('stringyfy' + JSON.stringify(matchWithPlayers.match));
   matchWithPlayers.match.sets.forEach(set => {
     stringSet[index] = set.player1 + " : " + set.player2;
     index++;
@@ -213,12 +226,14 @@ const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
   const [competitionData, setCompetitionData] = useState({});
+
   useEffect(() => {
     function handleMatchesStatusChanged(
       event,
       { competition, matchesWithPlayers }
     ) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
+      console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
     }
@@ -273,6 +288,7 @@ const CompetitionPage = () => {
   };
   const [active, setActive] = useState(false);
   const handleActivate = () => {
+    ipcRenderer.send(ipcMessages.START_COMPETITION);
     setActive(true);
   };
   const handleDisactivate = () => {
@@ -297,7 +313,6 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
-    ipcRenderer.send(ipcMessages.NEXT_ROUND);
     handleCloseEndRound();
   };
 
@@ -311,7 +326,6 @@ const CompetitionPage = () => {
 
   return (
     <div>
-      <p>competitionID: {competitionID}</p>
       <CompetitionPageHeader
         playmode={competitionData.playmode}
         startDate={competitionData.date}

@@ -1,5 +1,5 @@
 .competitionPage__header-alignment {
-  height: 10vh;
+  height: 6vh;
   font-size: 2vh;
   color: var(--tert-out-color);
   display: flex;
@@ -26,19 +26,16 @@
   color: var(--grey-out-color);
   font-size: 1.5vh;
 }
-
-.competitionPage__link-back-to-overview:focus {
-  outline: 0;
-}
-
-.competitionPage__link-back-to-overview {
+.competitionPage__link {
   text-decoration: underline;
-  color: var(--prim-font-color);
   font-size: 2vh;
   border: none;
   margin: 2vh 2vh;
-}
-
-.competitionPage__link-back-to-overview:hover {
   color: var(--grey-out-color);
+}
+.competitionPage__link:focus {
+  outline: 0;
+}
+.competitionPage__link:hover {
+  color: var(--link-font-hover-color);
 }

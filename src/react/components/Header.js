@@ -14,7 +14,8 @@ function Header({
   linkDisabled,
   setLinkDisabled,
   viewedPlayers,
-  viewedCompetition
+  viewedCompetition,
+  errorMessage
 }) {
   return (
     <section className="header__picture">
@@ -27,6 +28,7 @@ function Header({
           setLinkDisabled={setLinkDisabled}
           viewedPlayers={viewedPlayers}
           viewedCompetition={viewedCompetition}
+          errorMessage={errorMessage}
         />
         <strong className="header__title">{title}</strong>
       </div>
@@ -41,7 +43,8 @@ const HeaderBox = ({
   linkDisabled,
   setLinkDisabled,
   viewedPlayers,
-  viewedCompetition
+  viewedCompetition,
+  errorMessage
 }) => {
   const competition = currentId !== "" ? "/competition/" + currentId : "";
   const [showPopupError, setShowPopupError] = useState(false);
@@ -63,7 +66,7 @@ const HeaderBox = ({
         show={showPopupError}
         handleClose={handleCloseError}
         header={"Fehler"}
-        bodyText={"Das Tunier wurde bereits hochgeladen"}
+        bodyText={errorMessage}
         mode={"noBtn"}
       ></Popup>
       <Redirect to={competition} />

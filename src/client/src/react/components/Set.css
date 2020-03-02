@@ -1,4 +1,4 @@
-.set-score__container {
+.set__container {
   display: flex;
   flex-flow: row wrap;
   align-items: center;
@@ -10,16 +10,16 @@
   font-weight: 600;
 }
 
-.set-score__title {
+.set__title {
   text-align: center;
   flex: 1 100%;
 }
 
-.set-score__delimiter {
+.set__delimiter {
   margin: 0px 30px;
 }
 
-.set-score__score {
+.set__score {
   width: 80px;
   height: 80px;
   border-radius: 20px;

@@ -1,39 +1,38 @@
 const { COMPETITION_STATE } = require("../../modules/models/competition");
 
-function createStateResponseData({
-  tableNumber,
-  competitions,
-  matchesWithPlayers
-}) {
-  const currentlyRunningCompetition = competitions.find(
-    ({ status }) =>
-      status === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-      status === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-  );
-
-  if (!currentlyRunningCompetition) {
+function createStateResponseData({ tableNumber, selectedCompetition }) {
+  if (!selectedCompetition) {
     return {
       roundStarted: false,
       tableNumber
     };
   }
 
-  const { status } = currentlyRunningCompetition;
-  const { player1, player2, match } = matchesWithPlayers[tableNumber];
+  const { competition, matchesWithPlayers } = selectedCompetition;
+  const { state } = competition;
+  const { match } = matchesWithPlayers.find(
+    matchesWithPlayers => matchesWithPlayers.tableNumber === tableNumber
+  );
 
-  if (status === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+  if (
+    state === COMPETITION_STATE.COMP_READY_ROUND_READY ||
+    state === COMPETITION_STATE.COMP_CREATED
+  ) {
     return {
       roundStarted: false,
       tableNumber,
-      match: { ...match, player1, player2 }
+      match: match
     };
   }
 
-  if (status === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+  if (
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+    state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
+  ) {
     return {
       roundStarted: true,
       tableNumber,
-      match: { ...match, player1, player2 }
+      match: match
     };
   }
 }

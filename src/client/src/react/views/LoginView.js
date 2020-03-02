@@ -19,8 +19,8 @@ function LoginView({
             onChange={tableNumberChanged}
             value={tableNumber}
           >
-            {availableTables.map(n => {
-              const number = parseInt(n, 10);
+            {availableTables.map(table => {
+              const number = parseInt(table, 10);
               return (
                 <option key={number} value={number}>
                   {number}

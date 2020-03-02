@@ -139,7 +139,7 @@ describe("updateCompetition()", () => {
 
         // ACT
         competition.round_matchIds = [ 0, 1, 2, 3, 4, 5 ];
-        competition.status = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+        competition.state = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
         metaStorage.updateCompetition(competition);
 
         // ASSERT

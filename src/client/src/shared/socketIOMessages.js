@@ -13,7 +13,7 @@ module.exports = {
   // ********************************
   AVAILABLE_TABLES: "available-tables",
   CANCEL_ROUND: "cancel-round",
-  COMPETITION_CANCELED: "competition-canceled",
+  CANCEL_COMPETITION: "cancel-competition",
   NEXT_ROUND: "next-round",
   LOGIN_RESPONSE: "login-response",
   START_ROUND: "start-round",
