@@ -77,13 +77,7 @@ const reducer = (state, action) => {
       };
 
     case ACTION_TYPE.ROUND_CANCELED:
-      return {
-        ...state,
-        match: undefined,
-        roundStarted: false,
-        message: "Runde abgebrochen, kleinen Moment bitte!",
-        view: CLIENT_STATE.WAITING
-      };
+      return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
 
     case ACTION_TYPE.ROUND_STARTED:
       return { ...state, view: CLIENT_STATE.MATCH };
@@ -92,22 +86,17 @@ const reducer = (state, action) => {
       return roundAvailable(state, action);
 
     case ACTION_TYPE.COMPETITION_CANCELED:
-      return {
-        ...state,
-        match: undefined,
-        roundStarted: false,
-        message: "Turnier abgebrochen, kleinen Moment bitte!",
-        view: CLIENT_STATE.WAITING
-      };
+      return switchToWaiting(
+        state,
+        "Turnier abgebrochen, kleinen Moment bitte!"
+      );
 
     case ACTION_TYPE.MATCH_FINISHED:
-      return {
-        ...state,
-        match: action.match,
-        roundStarted: false,
-        message: "Runde beendet. Demnächst geht es weiter.",
-        view: CLIENT_STATE.WAITING
-      };
+      const newStateWithoutMatch = switchToWaiting(
+        state,
+        "Runde beendet. Demnächst geht es weiter."
+      );
+      return { newStateWithoutMatch, match: action.match };
 
     case ACTION_TYPE.UPDATE_SETS_RESPONSE:
       return updateSetsResponse(state, action);
@@ -116,6 +105,16 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+function switchToWaiting(state, message) {
+  return {
+    ...state,
+    match: undefined,
+    roundStarted: false,
+    message,
+    view: CLIENT_STATE.WAITING
+  };
+}
 
 function isNotLoggedIn(state, action) {
   return (
