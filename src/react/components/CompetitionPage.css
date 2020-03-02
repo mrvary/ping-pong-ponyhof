@@ -42,12 +42,12 @@ body {
   font: 10vw;
 }
 #liGreen::before {
-  content: '■';
+  content: "■";
   font-size: 1.2em;
   color: var(--success-color);
 }
 #liRed::before {
-  content: '■';
+  content: "■";
   font-size: 1.2em;
   color: var(--error-color);
 }
