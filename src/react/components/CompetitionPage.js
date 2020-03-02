@@ -288,6 +288,7 @@ const CompetitionPage = () => {
   };
   const [active, setActive] = useState(false);
   const handleActivate = () => {
+    ipcRenderer.send(ipcMessages.START_COMPETITION);
     setActive(true);
   };
   const handleDisactivate = () => {
