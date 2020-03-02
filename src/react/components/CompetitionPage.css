@@ -42,12 +42,12 @@ body {
   font: 10vw;
 }
 #liGreen::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--success-color);
 }
 #liRed::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--error-color);
 }
@@ -73,11 +73,14 @@ body {
 
 .competitionPage__link-ip-adress-statistic {
   text-decoration: underline;
-  color: var(--link-font-hover-color);
+  color: var(--grey-out-color);
   font-size: 2vh;
   border: none;
   margin: 2vh;
   cursor: pointer;
+}
+.competitionPage__link-ip-adress-statistic:hover {
+  color: var(--link-font-hover-color);
 }
 
 .competitionPage__link-alignment {
