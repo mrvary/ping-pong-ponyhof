@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import "./CompetitionPage.css";
 import "../Colors.css";
 
-//componenten
+// components
 import Popup from "./Popup";
 import Footer from "./Footer";
 import Button from "./Button";
@@ -11,10 +11,8 @@ import CompetitionPageHeader from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
 
 // ipc communication
-import IPCService from "../../shared/ipc/ipcRendererService";
-import CompetitionPage__Header from "./CompetitionPageHeader";
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcChannels = require("../../shared/ipc-messages");
+const ipcMessages = require("../../shared/ipc-messages");
 
 const USE_BROWSER = false;
 
@@ -85,7 +83,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ match, active }) => {
+const TableRow = ({ matchWithPlayers, active }) => {
   const [stringSet, setStringSet] = useState([
     "0 : 0",
     "0 : 0",
@@ -95,7 +93,8 @@ const TableRow = ({ match, active }) => {
   ]);
   let index = 0;
 
-  match.sets.forEach(set => {
+  //console.log('stringyfy' + JSON.stringify(matchWithPlayers.match));
+  matchWithPlayers.match.sets.forEach(set => {
     stringSet[index] = set.player1 + " : " + set.player2;
     index++;
   });
@@ -104,12 +103,16 @@ const TableRow = ({ match, active }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
-  const saveChanges = () => {
+  const saveChanges = (sets, tableNumber) => {
     //TODO save Changes from edited Table
+    console.log("tablenr" + tableNumber);
+    const tableSets = { tableNumber, sets };
+    ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
     handleCloseEditMatch();
   };
+
   let tischCss = "liRed";
-  if (true) {
+  if (matchWithPlayers.connectedDevice) {
     tischCss = "liGreen";
   }
   let activeButtonCss = "competitionPage__table__bearbeiten-btn";
@@ -125,12 +128,14 @@ const TableRow = ({ match, active }) => {
           <li id={tischCss} className="competitionPage__centered">
             <span>&#xa0;</span>
             <span>&#xa0;</span>
-            <span>1</span>
+            <span>{matchWithPlayers.tableNumber}</span>
           </li>
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player1}
+          {matchWithPlayers.match.player1.firstname +
+            " " +
+            matchWithPlayers.match.player1.lastname}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -138,7 +143,9 @@ const TableRow = ({ match, active }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
-          {match.player2}{" "}
+          {matchWithPlayers.match.player2.firstname +
+            " " +
+            matchWithPlayers.match.player2.lastname}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
           {" "}
@@ -167,29 +174,36 @@ const TableRow = ({ match, active }) => {
         <button
           onClick={handleShowEditMatch}
           className={activeButtonCss}
-          disabled={!active}
+          disabled={!active || matchWithPlayers.connectedDevice}
         >
           bearbeiten
         </button>
         <PopupEditTable
           show={showPopupEditMatch}
           handleClose={handleCloseEditMatch}
-          sets={match.sets}
+          sets={matchWithPlayers.match.sets}
           saveChanges={saveChanges}
+          tableNumber={matchWithPlayers.tableNumber}
         ></PopupEditTable>
       </div>
     </div>
   );
 };
 
-const Table = ({ matches, active }) => {
+const Table = ({ matchesWithPlayers, active }) => {
   let tableCss =
     "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
   return (
     <div className={tableCss}>
       <TableHeadline />
-      {matches.map(match => {
-        return <TableRow key={match.id} match={match} active={active} />;
+      {matchesWithPlayers.map(matchWithPlayers => {
+        return (
+          <TableRow
+            key={matchWithPlayers.match.id}
+            matchWithPlayers={matchWithPlayers}
+            active={active}
+          />
+        );
       })}
     </div>
   );
@@ -197,21 +211,24 @@ const Table = ({ matches, active }) => {
 
 const CompetitionPage = () => {
   const { competitionID } = useParams();
-  const [matches, setMatches] = useState([]);
-
+  const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
+  const [competitionData, setCompetitionData] = useState({});
   useEffect(() => {
-    function handleMatchesStatusChanged(event, { matchesWithPlayers }) {
+    function handleMatchesStatusChanged(
+      event,
+      { competition, matchesWithPlayers }
+    ) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
-      const matches = mapPlayerNamesToMatch(matchesWithPlayers);
-      setMatches(matches);
+      setMatchesWithPlayers(matchesWithPlayers);
+      setCompetitionData(competition);
     }
 
-    ipcRenderer.on(ipcChannels.UPDATE_MATCHES, handleMatchesStatusChanged);
+    ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
 
     return () => {
       ipcRenderer.removeListener(
-        ipcChannels.UPDATE_MATCHES,
+        ipcMessages.UPDATE_MATCHES,
         handleMatchesStatusChanged
       );
     };
@@ -245,13 +262,13 @@ const CompetitionPage = () => {
       ];
 
       console.log(matches);
-      setMatches(matches);
+      setMatchesWithPlayers(matches);
       return;
     }
 
     // trigger initialize competition
-    ipcRenderer.send(ipcChannels.GET_MATCHES, {
-      id: competitionID
+    ipcRenderer.send(ipcMessages.GET_COMPETITION_MATCHES_REQUEST, {
+      competitionId: competitionID
     });
   };
   const [active, setActive] = useState(false);
@@ -262,15 +279,6 @@ const CompetitionPage = () => {
     setActive(false);
     handleCloseGoInactive();
   };
-
-  function mapPlayerNamesToMatch(matchesWithPlayers) {
-    return matchesWithPlayers.map(matchWithPlayers => {
-      const { match, player1, player2 } = matchWithPlayers;
-      match.player1 = player1.firstname + " " + player1.lastname;
-      match.player2 = player2.firstname + " " + player2.lastname;
-      return match;
-    });
-  }
 
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
@@ -293,19 +301,19 @@ const CompetitionPage = () => {
   };
 
   const handleStartRound = () => {
-    IPCService.startRound();
+    ipcRenderer.send(ipcMessages.START_ROUND);
   };
 
   const openStatisticWindow = route => {
-    IPCService.createWindow(route);
+    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
   };
 
   return (
     <div>
       <p>competitionID: {competitionID}</p>
       <CompetitionPageHeader
-        playmode="Scheizer System"
-        startDate="02.02.2020"
+        playmode={competitionData.playmode}
+        startDate={competitionData.date}
         linkTitle="zur Übersicht"
         linkDestination={"/"}
       />
@@ -313,7 +321,7 @@ const CompetitionPage = () => {
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
       />
-      <Table matches={matches} active={active} />
+      <Table matchesWithPlayers={matchesWithPlayers} active={active} />
       <div className="competitionPage__Bottom-Buttons">
         <Button
           primOnClick={handleShowReDoRound}

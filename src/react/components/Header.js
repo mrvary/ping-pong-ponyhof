@@ -12,7 +12,9 @@ function Header({
   title,
   currentId,
   linkDisabled,
-  setLinkDisabled
+  setLinkDisabled,
+  viewedPlayers,
+  viewedCompetition
 }) {
   return (
     <section className="header__picture">
@@ -23,6 +25,8 @@ function Header({
           currentId={currentId}
           linkDisabled={linkDisabled}
           setLinkDisabled={setLinkDisabled}
+          viewedPlayers={viewedPlayers}
+          viewedCompetition={viewedCompetition}
         />
         <strong className="header__title">{title}</strong>
       </div>
@@ -35,7 +39,9 @@ const HeaderBox = ({
   importXML,
   currentId,
   linkDisabled,
-  setLinkDisabled
+  setLinkDisabled,
+  viewedPlayers,
+  viewedCompetition
 }) => {
   const competition = currentId !== "" ? "/competition/" + currentId : "";
   const [showPopupError, setShowPopupError] = useState(false);
@@ -50,6 +56,8 @@ const HeaderBox = ({
         show={!linkDisabled}
         handleClose={setLinkDisabled}
         buttonFunk={() => importXML(handleShowError)}
+        viewedPlayers={viewedPlayers}
+        viewedCompetition={viewedCompetition}
       ></PopupReviewPlayer>
       <Popup
         show={showPopupError}

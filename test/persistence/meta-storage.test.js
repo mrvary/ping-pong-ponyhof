@@ -7,6 +7,7 @@ const path = require("path");
 const config = require("../config");
 
 const metaStorage = require("../../src/modules/persistance/lowdb/meta-storage");
+const ERROR_MESSAGES = metaStorage.ERROR_MESSAGES;
 
 const {
     expectedCompetitionWithDefaultValues,
@@ -19,51 +20,44 @@ let jsonObject = null;
 
 beforeAll(() => {
     jsonObject = readCompetitionFile();
+
+    const filePath = null;
+    const useInMemory = true;
+
+    metaStorage.init(filePath, useInMemory);
 });
 
-describe("open()", () => {
-    test ("When_FilePathIsUndefined_Expect_ExceptionError1", () => {
-        // ARRANGE: set input values
-        const filePath = null;
-        const useInMemory = false;
+describe("initStateWithDefaults()", () => {
+    test("When_StorageIsEmpty_Expect_DefaultsAreInitialized", () => {
+        // ARRANGE
+        // init object
+        const initObject = { competitions: [] };
 
-        // ACT: open storage with undefined file path
-        let message = null;
-        try {
-            metaStorage.open(filePath, useInMemory);
-        } catch (e) {
-            message = e.message;
-        } finally {
-            // ASSERT: check if error message is the same
-            expect(message).toEqual(metaStorage.ERROR_MESSAGES.FilePathIsNotDefined)
-        }
-    });
+        // expectedState
+        const expectedState = { competitions: [] };
 
-    test("When_EmptyStorageIsOpen_Expect_InitializedWithDefaults", () => {
-        // ARRANGE: create expected state
-        const expectedState = {competitions: []};
+        // ACT
+        metaStorage.initStateWithDefaults(initObject);
 
-        // ACT: create tournament entry
-        metaStorage.open('', true);
+        // ASSERT:
         const actualState = metaStorage.getState();
-
-        // ASSERT: check the result
         expect(actualState).toEqual(expectedState);
     });
 });
 
 describe("clear()", () => {
-    beforeAll(() => {
-        metaStorage.open("", true);
-    });
-
    test("When_ExecuteMethod_Expected_OnlyContainsDefaults", () => {
-       // ARRANGE: create dummy data
-       const expectedState = {competitions: []};
-       const competition = createCompetitionFromJSON(jsonObject.tournament);
+       // ARRANGE
+       // create test data
+       const competition = createCompetitionFromJSON(jsonObject);
+
+       // init storage with test data
        metaStorage.createCompetition(competition);
 
-       // ACT: execute method
+       // expected state
+       const expectedState = { competitions: [] };
+
+       // ACT
        metaStorage.clear();
 
        // ARRANGE:
@@ -73,20 +67,20 @@ describe("clear()", () => {
 });
 
 describe("createCompetition()", () => {
-    beforeEach(() => {
-        metaStorage.open("", true);
-    });
-
     afterEach(() => {
         metaStorage.clear();
     });
 
     test("When_StorageDoesNotContainCompetition_Expect_CompetitionIsCreated", () => {
-        // ARRANGE: create competition from json object
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        // ARRANGE
+
+        // test data
+        const competition = createCompetitionFromJSON(jsonObject);
+
+        // expected state
         const expectedState = { competitions: [ expectedCompetitionWithDefaultValues ] };
 
-        // ACT: execute method
+        // ACT
         metaStorage.createCompetition(competition);
 
         // ARRANGE: check current state
@@ -94,126 +88,138 @@ describe("createCompetition()", () => {
         expect(actualState).toEqual(expectedState);
     });
 
-    test("When_StorageDoesContainCompetition_Expect_ExceptionError2", () => {
-        // ARRANGE: create competition from json object
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+    test("When_StorageDoesContainCompetition_Expect_CompetitionExistsException", () => {
+        // ARRANGE
+
+        // test data
+        const competition = createCompetitionFromJSON(jsonObject);
+
+        // init storage with test data
         metaStorage.createCompetition(competition);
 
-        // ACT: execute methods a second time
-        let message = null;
-        try {
-            metaStorage.createCompetition(competition);
-        } catch (e) {
-            message = e.message;
-        } finally {
-            // ASSERT: compare exception message
-            expect(message).toEqual(metaStorage.ERROR_MESSAGES.CompetitionExists);
-        }
+        // ACT
+        const method = () => { metaStorage.createCompetition(competition); };
+
+        // ASSERT
+        expect(method).toThrow(ERROR_MESSAGES.CompetitionExistsException);
     });
 });
 
 describe("updateCompetition()", () => {
-    beforeEach(() => {
-        metaStorage.open("", true);
-    });
-
     afterEach(() => {
         metaStorage.clear();
     });
 
     test("When_CompetitionDoesNotExists_Expect_CreateNewCompetition", () => {
-        // ARRANGE:
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        // ARRANGE
+        // test data
+        const competition = createCompetitionFromJSON(jsonObject);
+
+        // expected State
         const expectedState = { competitions: [ expectedCompetitionWithDefaultValues ] };
 
-        // ACT:
+        // ACT
         metaStorage.updateCompetition(competition);
 
-        // ASSERT:
+        // ASSERT
         const actualState = metaStorage.getState();
         expect(actualState).toEqual(expectedState);
     });
 
     test("When_CompetitionDoesExists_Expect_UpdateCompetitionObject", () => {
-        // ARRANGE:
+        // ARRANGE
+        // expected state
         const expectedState = {competitions: [ expectedUpdatedCompetition ]};
 
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        // create test data
+        const competition = createCompetitionFromJSON(jsonObject);
+
+        // init storage with test data
         metaStorage.createCompetition(competition);
+
+        // ACT
         competition.round_matchIds = [ 0, 1, 2, 3, 4, 5 ];
         competition.status = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
-
-        // ACT:
         metaStorage.updateCompetition(competition);
 
-        // ARRANGE:
+        // ASSERT
         const actualState= metaStorage.getState();
         expect(actualState).toEqual(expectedState);
     })
 });
 
 describe("deleteCompetition()", () => {
-    beforeEach(() => {
-        metaStorage.open("", true);
+    afterEach(() => {
+        metaStorage.clear();
     });
 
     test("When_CompetitionDoesNotExist_Expect_DefaultState", () => {
-        // ARRANGE:
+        // ARRANGE
+        // test data
+        const competition = createCompetitionFromJSON(jsonObject);
+
+        // expected State
         const expectedState = { competitions: [] };
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+
+        // init storage with test data
         metaStorage.createCompetition(competition);
 
-        // ACT:
+        // ACT
         metaStorage.deleteCompetition(competition.id);
 
-        // ASSERT:
+        // ASSERT
         const actualState = metaStorage.getState();
         expect(actualState).toEqual(expectedState);
     });
 });
 
 describe("getAllCompetitions()", () => {
-   beforeEach(() => {
-       metaStorage.open("", true);
-   });
+    afterEach(() => {
+        metaStorage.clear();
+    });
 
    test("When_StorageContainsTwoElements_Expect_TwoElements", () => {
-       // ARRANGE:
+       // ARRANGE
+
+       // init storage with test data
        expectedAllCompetitions.forEach(competition => {
            metaStorage.createCompetition(competition);
-       });
+       })
 
-       // ACT:
+       // ACT
        const actualCompetitions = metaStorage.getAllCompetitions();
 
-       // ASSERT:
+       // ASSERT
        expect(actualCompetitions).toEqual(expectedAllCompetitions);
        expect(actualCompetitions.length).toBe(expectedAllCompetitions.length);
    })
 });
 
 describe("getCompetition()", () => {
-    beforeEach(() => {
-        metaStorage.open("", true);
+    afterEach(() => {
+        metaStorage.clear();
     });
 
     test("When_StorageContainsCompetition_Expect_SameCompetition", () => {
-        // ARRANGE:
-        const expectedCompetition = expectedCompetitionWithDefaultValues;
-        const competition = createCompetitionFromJSON(jsonObject.tournament);
+        // ARRANGE
+        // init storage with test data
+        const competition = createCompetitionFromJSON(jsonObject);
         metaStorage.createCompetition(competition);
 
-        // ACT:
+        // expected array
+        const expectedCompetition = expectedCompetitionWithDefaultValues;
+
+        // ACT
         const actualCompetition = metaStorage.getCompetition(competition.id);
 
-        // ASSERT:
+        // ASSERT
         expect(actualCompetition).toEqual(expectedCompetition);
     });
 });
 
 function readCompetitionFile() {
     const filePath = path.join(__dirname, config.JSON_FILE);
-    const data = fs.readFileSync(filePath);
+    const data = fs.readFileSync(filePath).toString();
     return JSON.parse(data);
 }
 

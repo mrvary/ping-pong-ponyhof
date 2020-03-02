@@ -2,79 +2,87 @@
  * @author Marco Goebel
  */
 
-const low = require("lowdb");
+const lowDBDao = require("./dao/lowdb-dao");
 
-const FileSync = require("lowdb/adapters/FileSync");
-const Memory = require("lowdb/adapters/Memory");
+// Error Messages
+const FilePathIsUndefinedException = lowDBDao.FilePathIsUndefinedException;
+const ERROR_MESSAGES = {
+  FilePathIsUndefinedException
+};
 
-let storage = null;
+// Element Paths
+const ELEMENT_PATHS = {
+  MATCHES: "matches",
+  PLAYERS: "players"
+};
 
-function open(filePath, useInMemory) {
-  if (storage) {
-    return;
-  }
+let internalFilePath;
+let internalUseInMemory;
 
-  const adapter = useInMemory ? new Memory() : new FileSync(filePath);
-  storage = low(adapter);
+// STATE OPERATIONS
+
+function init(filePath, useInMemory = true) {
+  internalFilePath = filePath;
+  internalUseInMemory = useInMemory;
 }
 
-function initWithCompetition(jsonObject) {
-  storage.setState(jsonObject).write();
+function initStateWithDefaults(jsonObject) {
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  lowDBDao.initStateWithDefaults(jsonObject);
+  lowDBDao.createElements(ELEMENT_PATHS.MATCHES, []);
+  lowDBDao.createElements(ELEMENT_PATHS.PLAYERS, []);
 }
+
+function getState() {
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  return lowDBDao.getState();
+}
+
+function close() {
+  lowDBDao.close();
+}
+
+// CRUD MATCHES
 
 function createMatches(matches) {
-  const elementPath = "matches";
-  const hasMatchesFlag = storage.has(elementPath).value();
-
-  if (!hasMatchesFlag) {
-    storage.set(elementPath, matches).write();
-  } else {
-    matches.forEach(match => {
-      storage
-        .get(elementPath)
-        .post(match)
-        .write();
-    });
-  }
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  lowDBDao.createElements(ELEMENT_PATHS.MATCHES, matches);
 }
 
 function getAllMatches() {
-  const elementPath = "matches";
-  return storage.get(elementPath).value();
-}
-
-function createPlayers(players) {
-  const elementPath = "players";
-  const hasMatchesFlag = storage.has(elementPath).value();
-
-  if (!hasMatchesFlag) {
-    storage.set(elementPath, players).write();
-  } else {
-    players.forEach(player => {
-      storage
-        .get(elementPath)
-        .post(player)
-        .write();
-    });
-  }
-}
-
-function getAllPlayers() {
-  const elementPath = "players";
-  return storage.get(elementPath).value();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  return lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
 }
 
 function getMatchesByIds(ids) {
-  const matches = getAllMatches();
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  const matches = lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
   return matches.filter(match => ids.includes(match.id));
 }
 
+// PLAYER CRUD
+
+function createPlayers(players) {
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  lowDBDao.createElements(ELEMENT_PATHS.PLAYERS, players);
+}
+
+function getAllPlayers() {
+  lowDBDao.open(internalFilePath, internalUseInMemory);
+  return lowDBDao.getAllElements(ELEMENT_PATHS.PLAYERS);
+}
+
 module.exports = {
-  open,
-  initWithCompetition,
+  ERROR_MESSAGES,
+
+  init,
+  initStateWithDefaults,
+  getState,
+  close,
+
   createMatches,
-  getAllMatches,
   getMatchesByIds,
+
   createPlayers,
   getAllPlayers
 };

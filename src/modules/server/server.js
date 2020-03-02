@@ -17,16 +17,13 @@ const { COMPETITION_STATE } = require("../models/competition");
 // constants
 const MAX_AMOUNT_TABLE = 8;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
-const connectedClients = new Map();
 
 const ServerMainIOConnection = new EventEmitter();
-// TODO: is this needed at all?
-// const SocketIOOutputEmitter = new EventEmitter();
 
 let server = null;
 let serverSocket = null;
 
-let matchStarted = false;
+const connectedClients = new Map();
 
 function initHTTPServer(port) {
   // create express server with react client application
@@ -203,11 +200,6 @@ function sendCancelRoundBroadcast() {
 }
 
 function sendStartRoundBroadcast() {
-  if (matchStarted) {
-    return;
-  }
-
-  matchStarted = true;
   sendBroadcast(socketIOMessages.START_ROUND);
 }
 

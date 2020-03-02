@@ -3,87 +3,55 @@
  */
 
 const fs = require("fs");
-const parser = require("xml2json");
+const parser = require("fast-xml-parser");
 
-const {
-  createCompetitionFromJSON,
-  setCompetitionStatus,
-  setMatchesOfCurrentRound
-} = require("../../modules/models/competition");
-const { createPlayersFromJSON } = require("../../matchmaker/player");
+const ERROR_MESSAGES = {
+  FilePathIsNotDefined: "The file path is not defined",
+  FileDoesNotExists: "The file does not exist",
+  XMLInvalidException: "XML is invalid"
+};
 
-const config = require("../../electron/config");
-const matchmaker = require("../../matchmaker/drawing");
-
-/**
- * Import XML-File into databases and draw first round of competition
- * @param filePath
- * @param fileManager
- * @param metaStorage
- * @param competitionStorage
- * @returns {{competitionId: int, matches: [], players: []}}
- */
-function importXML(filePath, fileManager, metaStorage, competitionStorage) {
-  // read xml file from disk and convert it to json object
-  const jsonObject = readTournamentXMLFileFromDisk(filePath);
-
-  // store meta data about the competition in meta database
-  const competition = createCompetitionFromJSON(jsonObject.tournament);
-  metaStorage.createCompetition(competition);
-
-  // create competition database for xml file and store the jsonObject of the competition
-  const competitionFilePath = fileManager.getCompetitionFilePath(
-    competition.id
-  );
-  competitionStorage.open(competitionFilePath, config.USE_IN_MEMORY_STORAGE);
-  competitionStorage.initWithCompetition(jsonObject);
-
-  // TODO: init meta data object about current competition
-
-  // use matchmaker to draw first round
-  const players = createPlayersFromJSON(jsonObject);
-  const matches = matchmaker.drawRound(players);
-  console.log("Matchmaker draws the first round");
-
-  // TODO: use "matchmaker.updatePlayers()"
-  // TODO: update player data with match id's
-
-  // store matches and players into the competition database
-  competitionStorage.createMatches(matches);
-  competitionStorage.createPlayers(players);
-
-  // store match id of the current round
-  setMatchesOfCurrentRound(competition, matches);
-
-  // update competition status
-  setCompetitionStatus(competition, false, false);
-  metaStorage.updateCompetition(competition);
-
-  return competition;
-}
-
-/**
- * Read the tournament xml file from disk and convert it to JSON-Object
- * @param {string} filePath - The file path of the resource
- * @returns {jsonObject: JSON-Object}
- */
-function readTournamentXMLFileFromDisk(filePath) {
+function readCompetitionXMLFileFromDisk(filePath) {
   if (!filePath) {
-    console.log("The competition already exists");
-    throw new Error(`Die XML-Datei konnte nicht gefunden werden.`);
+    console.log(ERROR_MESSAGES.FilePathIsNotDefined);
+    throw new Error(ERROR_MESSAGES.FilePathIsNotDefined);
+  }
+
+  // check if file exists
+  if (!fs.existsSync(filePath)) {
+    console.log(ERROR_MESSAGES.FileDoesNotExists);
+    throw new Error(ERROR_MESSAGES.FileDoesNotExists);
   }
 
   // read file from disk
-  const xmlContent = fs.readFileSync(filePath);
+  const xmlContent = fs.readFileSync(filePath).toString();
   console.log("Read XML-File:", filePath);
 
-  // convert xml to json object
-  const options = { reversible: false };
-  const jsonContent = parser.toJson(xmlContent, options);
-  const jsonObject = JSON.parse(jsonContent);
-  console.log("Convert xml file to json");
-
-  return jsonObject;
+  return xmlContent;
 }
 
-module.exports.importXML = importXML;
+function convertXMLToJSON(xmlContent) {
+  const options = {
+    ignoreAttributes: false,
+    attributeNamePrefix: "",
+    allowBooleanAttributes: true,
+    parseAttributeValue: false
+  };
+
+  try {
+    const jsonObject = parser.parse(xmlContent, options, true);
+    console.log("Convert xml file to json");
+
+    return jsonObject;
+  } catch (error) {
+    console.log(ERROR_MESSAGES.XMLInvalidException);
+    throw new Error(ERROR_MESSAGES.XMLInvalidException);
+  }
+}
+
+module.exports = {
+  ERROR_MESSAGES,
+
+  readCompetitionXMLFileFromDisk,
+  convertXMLToJSON
+};
