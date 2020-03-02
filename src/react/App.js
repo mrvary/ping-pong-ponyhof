@@ -1,33 +1,33 @@
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import "./Colors.css";
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import './Colors.css';
 
 // dummy data
-import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
+import dummyCompetitions from '../assets/mock-data/competitions.mock.data';
 
 // components
-import Footer from "./components/Footer";
-import Competition from "./components/Competition";
-import Header from "./components/Header";
+import Footer from './components/Footer';
+import Competition from './components/Competition';
+import Header from './components/Header';
 
 // electron
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require("../shared/ipc-messages");
-
+const ipcMessages = require('../shared/ipc-messages');
+const COMPETITION_STATE = require('../shared/models/competition-state');
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
 let competitionID = null;
 
 const App = () => {
-  const [currentId, setCurrentId] = useState("");
+  const [currentId, setCurrentId] = useState('');
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [competitions, setCompetitions] = useState([]);
 
   const [viewedCompetition, setViewedCompetition] = useState({});
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [hasActivGame, setHasActivGame] = useState(false);
 
   useEffect(() => {
@@ -50,12 +50,11 @@ const App = () => {
     // trigger event to get competitions from ipc-main
     ipcRenderer.send(ipcMessages.GET_COMPETITIONS_REQUEST);
     console.log(
-      "ipc-renderer --> ipc-main:",
+      'ipc-renderer --> ipc-main:',
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
 
     //check for active game
-    /*
     setHasActivGame(false);
     competitions.map(competition => {
       if (
@@ -66,20 +65,19 @@ const App = () => {
       }
       return null;
     });
-    */
   };
 
   const openXMLDialog = () => {
     ipcRenderer.once(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
       console.log(
-        "ipc-main --> ipc-renderer:",
+        'ipc-main --> ipc-renderer:',
         ipcMessages.OPEN_FILE_DIALOG_RESPONSE
       );
 
       const { message } = args;
-      console.log("message:", message);
+      console.log('message:', message);
 
-      if (message === "success") {
+      if (message === 'success') {
         getCompetition();
 
         setLinkDisabled(false);
@@ -94,11 +92,11 @@ const App = () => {
       ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE,
       (event, args) => {
         console.log(
-          "ipc-main --> ipc-renderer",
+          'ipc-main --> ipc-renderer',
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
-        console.log("tada: " + JSON.stringify(competition));
+        console.log('tada: ' + JSON.stringify(competition));
         competitionID = competition.id;
 
         setViewedCompetition(competition);
@@ -112,7 +110,7 @@ const App = () => {
   const importXML = handleShowError => {
     ipcRenderer.once(ipcMessages.IMPORT_XML_FILE_RESPONSE, (event, args) => {
       console.log(
-        "ipc-main --> ipc-renderer:",
+        'ipc-main --> ipc-renderer:',
         ipcMessages.IMPORT_XML_FILE_RESPONSE
       );
       const { competitionId, message } = args;
@@ -140,12 +138,6 @@ const App = () => {
       );
       return;
     }
-
-    // TODO: Prüfung einbauen
-    // Prüfen, ob die Competition im Zustand "Aktiv" ist (siehe 'modules/models/competition.js' --> COMPETITION_STATE)
-    // COMPETITION_STATE.COMP_ACTIVE_ ...
-    // Je nachdem Popup mit entsprechender Warnung anzeigen
-
     // listen to ipc-renderer event to update the ui
     ipcRenderer.once(ipcMessages.DELETE_COMPETITION_RESPONSE, event => {
       setCompetitions(
@@ -177,6 +169,7 @@ const App = () => {
           key={competition.id}
           competition={competition}
           deleteCompetition={deleteCompetition}
+          hasActivGame={hasActivGame}
         />
       ))}
       <Footer title="PingPongPonyhof" />

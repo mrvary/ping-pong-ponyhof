@@ -1,15 +1,18 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import "./Competition.css";
+import './Competition.css';
 
 // components
-import Popup from "./Popup";
+import Popup from './Popup';
+
+const COMPETITION_STATE = require('../../shared/models/competition-state');
 
 function Competition(props) {
   const {
-    competition: { id, state, playmode },
-    deleteCompetition
+    competition: { id, state, name, playmode, date },
+    deleteCompetition,
+    hasActivGame
   } = props;
 
   const [showPopupActiveError, setShowPopupActiveError] = useState(false);
@@ -20,16 +23,20 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let containerCss = "competition__container";
-  if (state === "comp-active-round-active") {
-    containerCss = "competition__container competition__container--active";
+  let containerCss = 'competition__container';
+  if (state === 'comp-active-round-active') {
+    containerCss = 'competition__container competition__container--active';
   }
 
   return (
     <div className={containerCss}>
       <PuttingThrough
-        props={props}
+        id={id}
+        name={name}
+        date={date}
+        state={state}
         handleShowActiveError={handleShowActiveError}
+        hasActivGame={hasActivGame}
       ></PuttingThrough>
       <Popup
         show={showPopupActiveError}
@@ -61,18 +68,27 @@ function Competition(props) {
   );
 }
 
-const PuttingThrough = (props, handleShowActiveError) => {
-  const {
-    competition: { id, name, state, date }
-  } = props;
-
-  const competitionID = "/competition/" + id;
-  if (state === "") {
+const PuttingThrough = ({
+  id,
+  name,
+  state,
+  date,
+  handleShowActiveError,
+  hasActivGame
+}) => {
+  const competitionID = '/competition/' + id;
+  if (
+    hasActivGame &&
+    (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+      state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE)
+  ) {
     return (
       <div
         onClick={handleShowActiveError}
         className="competition__btn competition__btn--gameload competition__link"
-      ></div>
+      >
+        {name} vom {date}
+      </div>
     );
   } else {
     return (
