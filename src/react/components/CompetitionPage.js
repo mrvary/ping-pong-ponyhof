@@ -313,6 +313,7 @@ const CompetitionPage = () => {
     setActive(true);
   };
   const handleDisactivate = () => {
+    ipcRenderer.send(ipcMessages.CANCEL_COMPETITION);
     setActive(false);
     handleCloseGoInactive();
   };

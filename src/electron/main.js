@@ -392,8 +392,19 @@ function registerIPCMainEvents() {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.CANCEL_COMPETITION);
     const { competition } = selectedCompetition;
 
+    let newState;
     if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+      newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
+      //TODO: Passiert hier noch was?
+    } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+      //TODO: Passiert hier noch was?
+    } else {
+      return;
     }
+
+    selectedCompetition.competition = updateCompetitionStatus(competition, newState);
+    server.sendCancelCompetitionBroadcast();
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
