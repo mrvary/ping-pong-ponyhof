@@ -409,7 +409,6 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
       </div>
-      <Footer title="Die Tabelle" />
     </div>
   );
 };
