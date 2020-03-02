@@ -19,7 +19,6 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
-  updateCompetitionRoundMatches,
   updateCompetitionStatus
 } = require("../shared/models/competition");
 
@@ -437,16 +436,9 @@ function registerIPCMainEvents() {
     server.sendStartRoundBroadcast();
   });
 
-  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
-    // check if it's a valid state transition (double check if all games are finished?)
-
-    // TODO: remove last round from storage
-    server.sendCancelRoundBroadcast();
-  });
-
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
     if (
-      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
+        selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
     ) {
       return;
     }
@@ -455,20 +447,27 @@ function registerIPCMainEvents() {
     // fire up matchmaker
     // save things
     const updatedCompetition = updateCompetitionStatus(
-      selectedCompetition.competition,
-      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
     selectedCompetition.competition = updatedCompetition;
     metaRepository.updateCompetition(updatedCompetition);
 
     const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
-      ({ match }) =>
-        match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
+        ({ match }) =>
+            match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
     );
 
     server.sendNextRoundBroadcast({
       matchesWithPlayers: matchesWithoutFreeTickets
     });
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+
+    // TODO: remove last round from storage
+    server.sendCancelRoundBroadcast();
   });
 }
 
