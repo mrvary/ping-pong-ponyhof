@@ -36,7 +36,7 @@ const VIEW = {
 };
 
 const ACTION_TYPE = {
-  SET_TABLE_NUMBER: "set-table-number",
+  // SET_TABLE_NUMBER: "set-table-number",
   LOGGED_IN: "logged-in",
   TABLES_AVAILABLE: "tables-available",
   ROUND_CANCELED: "round-canceled",
@@ -55,7 +55,7 @@ const initialState = {
   isConnected: false,
   availableTables: [],
   match: undefined,
-  tableNumber: undefined,
+  confirmedTableNumber: -1,
   message: "",
   roundStarted: false
 };
@@ -66,17 +66,13 @@ const reducer = (state, action) => {
   }
 
   switch (action.type) {
-    case ACTION_TYPE.SET_TABLE_NUMBER:
-      return { ...state, tableNumber: action.tableNumber };
-
     case ACTION_TYPE.LOGGED_IN:
       return loggedIn(state, action);
 
     case ACTION_TYPE.TABLES_AVAILABLE:
       return {
         ...state,
-        availableTables: action.availableTables,
-        tableNumber: setTableNumber(state.tableNumber, action.availableTables)
+        availableTables: action.availableTables
       };
 
     case ACTION_TYPE.ROUND_CANCELED:
@@ -135,7 +131,6 @@ function isNotLoggedIn(state, action) {
   return (
     state.view === VIEW.LOGIN &&
     action.type !== ACTION_TYPE.LOGGED_IN &&
-    action.type !== ACTION_TYPE.SET_TABLE_NUMBER &&
     action.type !== ACTION_TYPE.TABLES_AVAILABLE
   );
 }
@@ -151,8 +146,9 @@ function updateSetsResponse(state, action) {
 }
 
 function roundAvailable(state, action) {
+  console.log(action.matchesWithPlayers);
   const matchForTable = action.matchesWithPlayers.find(
-    match => match.tableNumber === state.tableNumber
+    match => match.tableNumber === state.confirmedTableNumber
   );
 
   if (matchForTable) {
@@ -172,7 +168,7 @@ function roundAvailable(state, action) {
 }
 
 function loggedIn(state, action) {
-  const { match, roundStarted, message } = action.data;
+  const { match, roundStarted, message, tableNumber } = action.data;
 
   if (message) {
     console.error(message);
@@ -184,7 +180,8 @@ function loggedIn(state, action) {
     isConnected: !message,
     match,
     roundStarted,
-    message
+    message,
+    confirmedTableNumber: tableNumber
   };
 
   if (match && isMatchFinished(match)) {
@@ -213,17 +210,6 @@ function loggedIn(state, action) {
   };
 }
 
-function setTableNumber(currentNumber, tables) {
-  const isNotSet = currentNumber < 1;
-  const isNotAvailable = !tables.find(n => n === currentNumber);
-
-  if (isNotSet || isNotAvailable) {
-    // pick first available number
-    return tables[0];
-  }
-  return currentNumber;
-}
-
 const sendSets = dispatch => match => event => {
   event.preventDefault();
   const finished = isMatchFinished(match);
@@ -249,9 +235,7 @@ function App() {
       return (
         <LoginView
           availableTables={state.availableTables}
-          tableNumber={state.tableNumber}
-          sendTableNumber={sendTableNumber(state.tableNumber)}
-          tableNumberChanged={handleTableNumberChange}
+          sendTableNumber={sendTableNumber}
         />
       );
     }
@@ -296,15 +280,6 @@ function App() {
 
   const addSet = () => {
     dispatch({ type: ACTION_TYPE.ADD_SET });
-  };
-
-  const handleTableNumberChange = event => {
-    const newTableNumber = parseInt(event.target.value, 10);
-
-    dispatch({
-      type: ACTION_TYPE.SET_TABLE_NUMBER,
-      tableNumber: newTableNumber
-    });
   };
 
   // register sockets for client - server communication
