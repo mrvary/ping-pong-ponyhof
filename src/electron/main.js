@@ -44,7 +44,7 @@ const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
 // client
-const { isMatchFinished } = require("../client/src/react/lib");
+const { isMatchFinished } = require("../client/src/shared/lib");
 
 // windows actions
 const uiActions = require("./actions/uiActions");
@@ -158,9 +158,17 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
-    console.log(args);
+    const {tableNumber, sets} = args;
 
+    let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();
+
+    if (finished) {
+      mainWindow.webContents.send(
+          ipcMessages.UPDATE_MATCHES,
+          selectedCompetition
+      );
+    }
 
     server.ServerMainIOConnection.emit(
       serverMessages.UPDATE_SETS_RESPONSE,
@@ -322,30 +330,10 @@ function registerIPCMainEvents() {
 
   ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
-    console.log(args);
-
     const { tableNumber, sets } = args;
 
     // 2. find match by table number
-    let finished = false;
-    selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-      matchWithPlayer => {
-        if (matchWithPlayer.tableNumber === tableNumber) {
-          // 3. update sets of match
-          const { match } = matchWithPlayer;
-          const updatedMatch = { ...match, sets };
-          matchWithPlayer.match = updatedMatch;
-
-          // 4. save match to storage
-          competitionStorage.updateMatch(updatedMatch);
-
-          // check if match is ready
-          finished = isMatchFinished(updatedMatch);
-        }
-
-        return matchWithPlayer;
-      }
-    );
+    let finished = updateSetsByTableNumber(tableNumber, sets);
 
     // 5. send update match
     if (finished) {
@@ -538,6 +526,31 @@ function updateCompetitionState(competition, newState) {
   competition = updateCompetitionStatus(competition, newState);
   metaRepository.updateCompetition(competition);
   return competition;
+}
+
+function updateSetsByTableNumber(tableNumber, sets) {
+  let finished = false;
+
+  selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
+      matchWithPlayer => {
+        if (matchWithPlayer.tableNumber === tableNumber) {
+          // 3. update sets of match
+          const { match } = matchWithPlayer;
+          const updatedMatch = { ...match, sets };
+          matchWithPlayer.match = updatedMatch;
+
+          // 4. save match to storage
+          competitionStorage.updateMatch(updatedMatch);
+
+          // check if match is ready
+          finished = isMatchFinished(updatedMatch);
+        }
+
+        return matchWithPlayer;
+      }
+  );
+
+  return finished;
 }
 
 function mapMatchesWithPlayers(matches, players) {
