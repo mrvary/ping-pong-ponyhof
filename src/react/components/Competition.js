@@ -12,7 +12,7 @@ function Competition(props) {
   const {
     competition: { id, state, name, playmode, date },
     deleteCompetition,
-    hasActivGame
+    hasActiveGame
   } = props;
 
   const [showPopupActiveError, setShowPopupActiveError] = useState(false);
@@ -36,7 +36,7 @@ function Competition(props) {
         date={date}
         state={state}
         handleShowActiveError={handleShowActiveError}
-        hasActivGame={hasActivGame}
+        hasActiveGame={hasActiveGame}
       ></PuttingThrough>
       <Popup
         show={showPopupActiveError}
@@ -74,11 +74,11 @@ const PuttingThrough = ({
   state,
   date,
   handleShowActiveError,
-  hasActivGame
+  hasActiveGame
 }) => {
   const competitionID = "/competition/" + id;
   if (
-    hasActivGame &&
+    hasActiveGame &&
     (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
       state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE)
   ) {

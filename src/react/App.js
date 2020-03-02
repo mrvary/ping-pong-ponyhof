@@ -28,7 +28,7 @@ const App = () => {
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
-  const [hasActivGame, setHasActivGame] = useState(false);
+  const [hasActiveGame, setHasActiveGame] = useState(false);
 
   useEffect(() => {
     getCompetitions();
@@ -55,13 +55,13 @@ const App = () => {
     );
 
     //check for active game
-    setHasActivGame(false);
+    setHasActiveGame(false);
     competitions.map(competition => {
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       ) {
-        setHasActivGame(true);
+        setHasActiveGame(true);
       }
       return null;
     });
@@ -96,7 +96,6 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
-        console.log("tada: " + JSON.stringify(competition));
         competitionID = competition.id;
 
         setViewedCompetition(competition);
@@ -125,7 +124,6 @@ const App = () => {
       setCurrentId(competitionId);
     });
 
-    console.log(competitionID);
     ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
       competitionId: competitionID
     });
@@ -169,7 +167,7 @@ const App = () => {
           key={competition.id}
           competition={competition}
           deleteCompetition={deleteCompetition}
-          hasActivGame={hasActivGame}
+          hasActiveGame={hasActiveGame}
         />
       ))}
       <Footer title="PingPongPonyhof" />
