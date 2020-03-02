@@ -4,13 +4,24 @@ import ScoreBoard from "../components/ScoreBoard";
 import Player from "../components/Player";
 import Title from "../components/Title";
 
-function MatchView({ onlyShowNextPlayers, match, sendSets, updateSets }) {
+function MatchView({
+  onlyShowNextPlayers,
+  match,
+  sendSets,
+  updateSets,
+  addSet
+}) {
   return (
     <div>
       {onlyShowNextPlayers ? (
         <NextPlayers match={match}></NextPlayers>
       ) : (
-        <ScoreBoard match={match} sendSets={sendSets} updateSets={updateSets} />
+        <ScoreBoard
+          match={match}
+          sendSets={sendSets}
+          updateSets={updateSets}
+          addSet={addSet}
+        />
       )}
     </div>
   );
