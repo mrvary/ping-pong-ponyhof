@@ -359,6 +359,31 @@ function registerIPCMainEvents() {
     createWindow(route);
   });
 
+  ipcMain.on(ipcMessages.START_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
+    const { competition } = selectedCompetition;
+
+    if (competition.state === COMPETITION_STATE.COMP_CREATED) {
+      const updatedCompetition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
+      selectedCompetition.competition = updatedCompetition;
+      metaRepository.updateCompetition(updatedCompetition);
+
+      server.sendNextRoundBroadcast({
+        matchesWithPlayers: selectedCompetition.matchesWithPlayers
+      });
+    } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      const updatedCompetition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
+      selectedCompetition.competition = updatedCompetition;
+      metaRepository.updateCompetition(updatedCompetition);
+    } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      const updatedCompetition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE);
+      selectedCompetition.competition = updatedCompetition;
+      metaRepository.updateCompetition(updatedCompetition);
+
+      server.sendStartRoundBroadcast();
+    }
+  });
+
   ipcMain.on(ipcMessages.START_ROUND, () => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
 
@@ -382,21 +407,6 @@ function registerIPCMainEvents() {
 
     matchStarted = true;
     server.sendStartRoundBroadcast();
-  });
-
-  ipcMain.on(ipcMessages.START_COMPETITION, event => {
-    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
-    const { competition } = selectedCompetition;
-
-    if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-      const updatedCompetition = updateCompetitionStatus(competition);
-      selectedCompetition.competition = updatedCompetition;
-      metaRepository.updateCompetition(updatedCompetition);
-
-      server.sendNextRoundBroadcast({
-        matchesWithPlayers: selectedCompetition.matchesWithPlayers
-      });
-    }
   });
 
   ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
@@ -495,6 +505,11 @@ function createMatchesWithMatchmaker(players) {
   console.log("Save matches and player in competition storage");
 
   return { matches, players };
+}
+
+function updateCompetitionState(competition, newState) {
+  competition = updateCompetitionStatus(competition, newState);
+  metaRepository.updateCompetition(competition);
 }
 
 function mapMatchesWithPlayers(matches, players) {

@@ -20,8 +20,7 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
   ) {
     return {
       roundStarted: false,
-      tableNumber,
-      match: match
+      tableNumber
     };
   }
 
