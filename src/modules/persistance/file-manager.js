@@ -7,6 +7,7 @@ const dataFolderName = "data";
 const metaStorageFilename = "competitions.json";
 
 function getApplicationDir(directoryName) {
+  debugger;
   const appPath = app.getPath("userData");
   const appDataPath = path.join(appPath, directoryName);
 
@@ -31,8 +32,8 @@ function getCompetitionFilePath(id) {
 }
 
 function saveXMLFile(filename, xmlContent) {
-  const filePath = getFileFromAppDataPath(filename);
-
+  debugger;
+  const filePath = "C:\\Users\\danie\\Desktop\\" + filename;
   try {
     fs.writeFileSync(filePath, xmlContent);
     console.log("Save XML:", filePath);

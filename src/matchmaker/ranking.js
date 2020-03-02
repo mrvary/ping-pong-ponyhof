@@ -224,44 +224,6 @@ function logRanking(ranking) {
   console.log(log);
 }
 
-function exportXML(players, matches, initJSON) {
-  var Parser = require("fast-xml-parser").j2xParser;
-  var he = require("he");
-
-  let matchesToAdd = [];
-  matches.forEach(match => {
-    matchesToAdd.push({
-      "player-a": match.player1,
-      nr: "1",
-      player2: match.player2
-    });
-  });
-
-  initJSON.tournament.competition.matches = {
-    match: matchesToAdd
-  };
-
-  var defaultOptions = {
-    attributeNamePrefix: "@_",
-    attrNodeName: "@", //default is false
-    textNodeName: "#text",
-    ignoreAttributes: true,
-    cdataTagName: "__cdata", //default is false
-    cdataPositionChar: "\\c",
-    format: false,
-    indentBy: "  ",
-    supressEmptyNode: false,
-    tagValueProcessor: a => he.encode(a, { useNamedReferences: true }), // default is a=>a
-    attrValueProcessor: a =>
-      he.encode(a, { isAttributeValue: isAttribute, useNamedReferences: true }) // default is a=>a
-  };
-
-  var parser = new Parser(defaultOptions);
-  var xml = parser.parse(initJSON);
-
-  debugger;
-}
-
 module.exports = {
   createCurrentRanking,
   calculateBHZ,
@@ -271,6 +233,5 @@ module.exports = {
   logRanking,
   createMatchResult,
   getParameterByPlayerId,
-  ttrCalculation,
-  exportXML
+  ttrCalculation
 };
