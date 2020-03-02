@@ -3,7 +3,7 @@ import "./ScoreBoard.css";
 
 import MainScore from "./MainScore";
 import Set from "./Set";
-import { isMatchFinished } from "../lib";
+import { isMatchFinished } from "../../shared/lib";
 
 function ScoreBoard({ match, sendSets, updateSets, addSet }) {
   // const showSets = () =>

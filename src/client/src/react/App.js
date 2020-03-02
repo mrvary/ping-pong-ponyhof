@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useReducer } from "react";
 import "./App.css";
-import { isMatchFinished } from "./lib";
+import { isMatchFinished } from "../shared/lib";
 
 // import shared
 import io from "socket.io-client";
@@ -141,13 +141,13 @@ function isNotLoggedIn(state, action) {
 }
 
 function updateSetsResponse(state, action) {
-  if (action.message === "SUCCESS") {
+  if (action.message === "success") {
     console.info("Sets successfully sent");
     return { ...state, match: undefined };
   }
 
   console.info("Could not send sets, trying again in 1000 ms.");
-  setTimeout(App.sendSets(state.match), 1000);
+  setTimeout(sendSets(state.match), 1000);
 }
 
 function roundAvailable(state, action) {
@@ -172,13 +172,20 @@ function roundAvailable(state, action) {
 }
 
 function loggedIn(state, action) {
-  const { isConnected, match, roundStarted, message } = action;
-  const newState = { ...state, isConnected, match, roundStarted, message };
+  const { match, roundStarted, message } = action.data;
 
   if (message) {
     console.error(message);
     return { ...state, message };
   }
+
+  const newState = {
+    ...state,
+    isConnected: !message,
+    match,
+    roundStarted,
+    message
+  };
 
   if (match && isMatchFinished(match)) {
     console.info("match is finished");
@@ -314,14 +321,7 @@ function App() {
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
-      const { roundStarted, match, message } = data;
-      dispatch({
-        type: ACTION_TYPE.LOGGED_IN,
-        message,
-        match,
-        isConnected: !message,
-        roundStarted
-      });
+      dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
