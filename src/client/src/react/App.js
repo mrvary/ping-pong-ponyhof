@@ -58,6 +58,10 @@ const initialState = {
 };
 
 const reducer = (state, action) => {
+  if (isNotLoggedIn(state, action)) {
+    return state;
+  }
+
   switch (action.type) {
     case ACTION_TYPE.SET_TABLE_NUMBER:
       return { ...state, tableNumber: action.tableNumber };
@@ -88,7 +92,13 @@ const reducer = (state, action) => {
       return roundAvailable(state, action);
 
     case ACTION_TYPE.COMPETITION_CANCELED:
-      return state;
+      return {
+        ...state,
+        match: undefined,
+        roundStarted: false,
+        message: "Turnier abgebrochen, kleinen Moment bitte!",
+        view: CLIENT_STATE.WAITING
+      };
 
     case ACTION_TYPE.MATCH_FINISHED:
       return {
@@ -106,6 +116,15 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+function isNotLoggedIn(state, action) {
+  return (
+    state.view === CLIENT_STATE.LOGIN &&
+    action.type !== ACTION_TYPE.LOGGED_IN &&
+    action.type !== ACTION_TYPE.SET_TABLE_NUMBER &&
+    action.type !== ACTION_TYPE.TABLES_AVAILABLE
+  );
+}
 
 function updateSetsResponse(state, action) {
   if (action.message === "SUCCESS") {
@@ -312,15 +331,11 @@ function App() {
       });
     });
 
-    // connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
-    //   console.info("SERVER->CLIENT: COMPETITION_CANCELED");
+    connection.on(socketIOMessages.CANCEL_COMPETITION, () => {
+      console.info("SERVER->CLIENT: COMPETITION_CANCELED");
 
-    //   if (view === "LOGIN") {
-    //     return;
-    //   }
-
-    // setView("NO_COMP");
-    // });
+      dispatch({ type: ACTION_TYPE.COMPETITION_CANCELED });
+    });
 
     socket = connection;
   }
