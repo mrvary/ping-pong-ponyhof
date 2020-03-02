@@ -155,10 +155,8 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS_REQUEST, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS_REQUEST);
-
+    console.log(args);
     const { tableNumber, sets } = args;
-    console.log(`---: #${tableNumber}`);
-    console.log(`---: ${sets}`);
 
     let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();

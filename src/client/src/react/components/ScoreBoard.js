@@ -5,7 +5,7 @@ import MainScore from "./MainScore";
 import Set from "./Set";
 import { isMatchFinished } from "../../shared/lib";
 
-function ScoreBoard({ match, sendSets, updateSets, addSet }) {
+function ScoreBoard({ match, sendSets, updateSets, addSet, tableNumber }) {
   // const showSets = () =>
   //   match.sets.map((set, index) => <Set key={index} index={index} set={set} />);
 
@@ -35,7 +35,9 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
       </div>
       <div className="score-board__container">
         {isMatchFinished(match) && (
-          <button onClick={sendSets(match)}>Spiel abschicken</button>
+          <button onClick={sendSets(match)(tableNumber)}>
+            Spiel abschicken
+          </button>
         )}
         {sets.length < 5 && !isMatchFinished(match) && (
           <button onClick={addSet}>Satz hinzufügen</button>

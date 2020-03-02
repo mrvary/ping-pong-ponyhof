@@ -219,13 +219,15 @@ function loggedIn(state, action) {
   };
 }
 
-const sendSets = dispatch => match => event => {
+const sendSets = dispatch => match => tableNumber => event => {
+  console.log(match);
   event.preventDefault();
   const finished = isMatchFinished(match);
   const data = {
     sets: match.sets,
     finished,
-    tableNumber: match.tableNumber
+    tableNumber
+    // tableNumber: match.tableNumber
   };
 
   console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
@@ -254,6 +256,7 @@ function App() {
         <MatchView
           onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
           match={state.match}
+          tableNumber={state.confirmedTableNumber}
           sendSets={sendSets(dispatch)}
           updateSets={updateSets}
           addSet={addSet}
@@ -319,7 +322,6 @@ function App() {
 
     connection.on(socketIOMessages.START_ROUND, data => {
       console.info("SERVER->CLIENT: START_ROUND");
-      console.log(data);
 
       data
         ? dispatch({
