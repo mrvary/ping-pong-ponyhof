@@ -13,6 +13,9 @@ import Header from "./components/Header";
 // electron
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../shared/ipc-messages");
+/*
+const {COMPETITION_STATE} = require('../shared/models/competition');
+*/
 
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
@@ -28,6 +31,7 @@ const App = () => {
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
   const [errorMessage, setErrorMessage] = useState("");
+  const [hasActivGame, setHasActivGame] = useState(false);
 
   useEffect(() => {
     getCompetitions();
@@ -52,6 +56,19 @@ const App = () => {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
+
+    //check for active game
+    /*
+    competitions.map(competition => {
+      if (
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      ) {
+        setHasActivGame(true);
+      }
+      return null;
+    });
+    */
   };
 
   const openXMLDialog = () => {
@@ -83,8 +100,7 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
-        console.log(args);
-        console.log(players);
+        console.log("tada: " + JSON.stringify(competition));
         competitionID = competition.id;
 
         setViewedCompetition(competition);
