@@ -20,3 +20,7 @@
 .popupEditTable--input {
   border: 0.1vh solid var(--error-color);
 }
+input {
+  width: 45px;
+  height: 25px;
+}

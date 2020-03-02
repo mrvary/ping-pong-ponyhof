@@ -57,10 +57,6 @@ let mainWindow = null;
 
 // application state variables
 let selectedCompetition = null;
-let selectedMatchesWithPlayers = [];
-
-let activeCompetition = null;
-let activeMatchesWithPlayers = [];
 
 // COMP_ACTIVE_ROUND_ACTIVE
 let matchStarted = false;
@@ -203,14 +199,6 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
-    // check if a competition is selected ...
-    if (activeCompetition) {
-      // ... than reset application state
-      activeCompetition = null;
-      activeMatchesWithPlayers = [];
-      console.log("Reset application state");
-    }
-
     // Delete the competition file
     fileManager.deleteTournamentJSONFile(competitionId);
 
@@ -222,6 +210,10 @@ function registerIPCMainEvents() {
       "ipc-main --> ipc-renderer:",
       ipcMessages.DELETE_COMPETITION_RESPONSE
     );
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_COMPETITION, event => {
+    server.sendCancelCompetitionBroadcast();
   });
 
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
@@ -311,13 +303,7 @@ function registerIPCMainEvents() {
     }
 
     let resultData;
-
     if (
-      activeCompetition &&
-      activeCompetition.competition.id === competitionId
-    ) {
-      resultData = activeCompetition;
-    } else if (
       selectedCompetition &&
       selectedCompetition.competition.id === competitionId
     ) {
@@ -368,6 +354,11 @@ function registerIPCMainEvents() {
     }
   });
 
+  ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
+    const { route } = args;
+    createWindow(route);
+  });
+
   ipcMain.on(ipcMessages.START_ROUND, () => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
 
@@ -391,8 +382,17 @@ function registerIPCMainEvents() {
     server.sendStartRoundBroadcast();
   });
 
+  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+
+    // TODO: remove last round from storage
+    server.sendCancelRoundBroadcast();
+  });
+
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
-    if (activeCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+    if (
+      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
+    ) {
       return;
     }
 
@@ -400,27 +400,20 @@ function registerIPCMainEvents() {
     // fire up matchmaker
     // save things
     const updatedCompetition = updateCompetitionStatus(
-      activeCompetition,
+      selectedCompetition.competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
+    selectedCompetition.competition = updatedCompetition;
+    metaRepository.updateCompetition(updatedCompetition);
 
-    // TODO: check this with Marco
-    activeCompetition = updatedCompetition;
-    //metaStorage.updateCompetition(updatedCompetition);
-
-    const matchesWithoutFreeTickets = selectedMatchesWithPlayers.filter(
-      ({ player1, player2 }) =>
-        player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
+    const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
+      ({ match }) =>
+        match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
     );
 
     server.sendNextRoundBroadcast({
       matchesWithPlayers: matchesWithoutFreeTickets
     });
-  });
-
-  ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
-    const { route } = args;
-    createWindow(route);
   });
 }
 
@@ -439,7 +432,10 @@ function initCompetition(competitionId) {
 
   // init matches ...
   let matches;
+  let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
+    isCompetitionCreated = true;
+
     // ... with matchmakers first round
     const drawing = createMatchesWithMatchmaker(players);
     players = drawing.players;
@@ -449,7 +445,7 @@ function initCompetition(competitionId) {
     competition = updateCompetitionRoundMatches(competition, matches);
     competition = updateCompetitionStatus(
       competition,
-      COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
+      COMPETITION_STATE.COMP_READY_ROUND_READY
     );
     metaRepository.updateCompetition(competition);
   } else {
@@ -461,6 +457,11 @@ function initCompetition(competitionId) {
   // init matches with players
   const matchesWithPlayers = mapMatchesWithPlayers(matches, players);
   console.log("competition and players and matches are selected");
+
+  // send next round action to client
+  if (isCompetitionCreated) {
+    server.sendNextRoundBroadcast({ matchesWithPlayers });
+  }
 
   return { competition, matchesWithPlayers };
 }
