@@ -44,6 +44,9 @@ const server = require("../modules/server/server");
 const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
+// client
+const { isMatchFinished } = require("../client/src/react/lib");
+
 // windows actions
 const uiActions = require("./actions/uiActions");
 const createMenu = require("./menu/main-menu");
@@ -264,15 +267,17 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = args;
 
+    // 1. initialize competition storage
+    const filePath = fileManager.getCompetitionFilePath(competitionId);
+    competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+
+    // 2. import data into databases
+    xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+
     let returnData;
-
     try {
-      // 1. initialize competition storage
-      const filePath = fileManager.getCompetitionFilePath(competitionId);
-      competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
-
       // 2. import data into databases
-      xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+      //xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
 
       // 3. create response message with success message
       returnData = {
@@ -333,6 +338,34 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
     console.log(args);
+
+    const { tableNumber, sets } = args;
+
+    // 2. find match by table number
+    let finished = false;
+    selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
+      matchWithPlayer => {
+        if (matchWithPlayer.tableNumber === tableNumber) {
+          // 3. update sets of match
+          const { match } = matchWithPlayer;
+          const updatedMatch = { ...match, sets };
+          matchWithPlayer.match = updatedMatch;
+
+          // 4. save match to storage
+          competitionStorage.updateMatch(updatedMatch);
+
+          // check if match is ready
+          finished = isMatchFinished(updatedMatch);
+        }
+
+        return matchWithPlayer;
+      }
+    );
+
+    // 5. send update match
+    if (finished) {
+      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+    }
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {

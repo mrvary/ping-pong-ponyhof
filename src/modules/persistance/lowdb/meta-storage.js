@@ -17,32 +17,40 @@ const ELEMENT_PATHS = { COMPETITIONS: "competitions" };
 let internalFilePath;
 let internalUseInMemory;
 
+let storage = null;
+
 // STATE OPERATIONS
 
 function init(filePath, useInMemory = true) {
   internalFilePath = filePath;
   internalUseInMemory = useInMemory;
 
+  if (storage) {
+    return;
+  }
+
+  storage = lowDBDao.open(filePath, useInMemory);
+
   initStateWithDefaults({ competitions: [] });
 }
 
 function initStateWithDefaults(jsonObject) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  lowDBDao.initStateWithDefaults(jsonObject);
+  lowDBDao.initStateWithDefaults(storage, jsonObject);
 }
 
 function getState() {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  return lowDBDao.getState();
+  return lowDBDao.getState(storage);
 }
 
 function clear() {
   const object = { competitions: [] };
-  lowDBDao.clear(object);
+  lowDBDao.clear(storage, object);
 }
 
 function close() {
-  lowDBDao.close();
+  if (storage) {
+    storage = null;
+  }
 }
 
 function createCompetition(competition) {
@@ -50,39 +58,38 @@ function createCompetition(competition) {
     throw new Error(ERROR_MESSAGES.CompetitionExistsException);
   }
 
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  lowDBDao.createElement(ELEMENT_PATHS.COMPETITIONS, competition);
+  lowDBDao.createElement(storage, ELEMENT_PATHS.COMPETITIONS, competition);
 }
 
 function updateCompetition(competition) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
+  const storedCompetition = lowDBDao.getElement(
+    storage,
+    ELEMENT_PATHS.COMPETITIONS,
+    {
+      id: competition.id
+    }
+  );
 
-  const storedCompetition = lowDBDao.getElement(ELEMENT_PATHS.COMPETITIONS, {
-    id: competition.id
-  });
   if (!storedCompetition) {
     createCompetition(competition);
     return;
   }
 
-  lowDBDao.updateElement(ELEMENT_PATHS.COMPETITIONS, competition, {
+  lowDBDao.updateElement(storage, ELEMENT_PATHS.COMPETITIONS, competition, {
     id: competition.id
   });
 }
 
 function deleteCompetition(id) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  lowDBDao.deleteElement(ELEMENT_PATHS.COMPETITIONS, { id: id });
+  lowDBDao.deleteElement(storage, ELEMENT_PATHS.COMPETITIONS, { id: id });
 }
 
 function getAllCompetitions() {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  return lowDBDao.getAllElements(ELEMENT_PATHS.COMPETITIONS);
+  return lowDBDao.getAllElements(storage, ELEMENT_PATHS.COMPETITIONS);
 }
 
 function getCompetition(id) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  return lowDBDao.getElement(ELEMENT_PATHS.COMPETITIONS, { id: id });
+  return lowDBDao.getElement(storage, ELEMENT_PATHS.COMPETITIONS, { id: id });
 }
 
 function hasCompetition(id) {

@@ -19,57 +19,81 @@ const ELEMENT_PATHS = {
 let internalFilePath;
 let internalUseInMemory;
 
+let storage = null;
+
 // STATE OPERATIONS
 
 function init(filePath, useInMemory = true) {
   internalFilePath = filePath;
   internalUseInMemory = useInMemory;
+
+  if (storage) {
+    return;
+  }
+
+  storage = lowDBDao.open(filePath, useInMemory);
 }
 
 function initStateWithDefaults(jsonObject) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  lowDBDao.initStateWithDefaults(jsonObject);
-  lowDBDao.createElements(ELEMENT_PATHS.MATCHES, []);
-  lowDBDao.createElements(ELEMENT_PATHS.PLAYERS, []);
+  lowDBDao.initStateWithDefaults(storage, jsonObject);
+  lowDBDao.createElements(storage, ELEMENT_PATHS.MATCHES, []);
+  lowDBDao.createElements(storage, ELEMENT_PATHS.PLAYERS, []);
 }
 
 function getState() {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  return lowDBDao.getState();
+  return lowDBDao.getState(storage);
 }
 
 function close() {
-  lowDBDao.close();
+  if (storage) {
+    storage = null;
+  }
 }
 
 // CRUD MATCHES
 
 function createMatches(matches) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  lowDBDao.createElements(ELEMENT_PATHS.MATCHES, matches);
+  lowDBDao.createElements(storage, ELEMENT_PATHS.MATCHES, matches);
+}
+
+function createMatch(match) {
+  lowDBDao.createElement(storage, ELEMENT_PATHS.MATCHES, match);
+}
+
+function updateMatch(match) {
+  const identifier = { id: match.id };
+
+  const storedMatch = lowDBDao.getElement(
+    storage,
+    ELEMENT_PATHS.MATCHES,
+    identifier
+  );
+
+  if (!storedMatch) {
+    createMatch(match);
+    return;
+  }
+
+  lowDBDao.updateElement(storage, ELEMENT_PATHS.MATCHES, match, identifier);
 }
 
 function getAllMatches() {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  return lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
+  return lowDBDao.getAllElements(storage, ELEMENT_PATHS.MATCHES);
 }
 
 function getMatchesByIds(ids) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  const matches = lowDBDao.getAllElements(ELEMENT_PATHS.MATCHES);
+  const matches = lowDBDao.getAllElements(storage, ELEMENT_PATHS.MATCHES);
   return matches.filter(match => ids.includes(match.id));
 }
 
 // PLAYER CRUD
 
 function createPlayers(players) {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  lowDBDao.createElements(ELEMENT_PATHS.PLAYERS, players);
+  lowDBDao.createElements(storage, ELEMENT_PATHS.PLAYERS, players);
 }
 
 function getAllPlayers() {
-  lowDBDao.open(internalFilePath, internalUseInMemory);
-  return lowDBDao.getAllElements(ELEMENT_PATHS.PLAYERS);
+  return lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
 }
 
 module.exports = {
@@ -81,6 +105,7 @@ module.exports = {
   close,
 
   createMatches,
+  updateMatch,
   getMatchesByIds,
 
   createPlayers,
