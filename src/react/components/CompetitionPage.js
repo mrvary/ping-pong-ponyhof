@@ -289,7 +289,6 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
-    IPCService.nextRound();
     handleCloseEndRound();
   };
 
@@ -366,29 +365,6 @@ const CompetitionPage = () => {
           buttonText="pausieren"
           mode="primary"
         ></Popup>
-        {
-          // DEBUG BUTTONS FOR CLIENT
-        }
-        <Button
-          primOnClick={() => IPCService.nextRound()}
-          primText="-> NEXT_ROUND"
-          mode="primary"
-        ></Button>
-        <Button
-          primOnClick={() => IPCService.startRound()}
-          primText="-> START_ROUND"
-          mode="primary"
-        ></Button>
-        <Button
-          primOnClick={() => IPCService.cancelRound()}
-          primText="-> CANCEL_ROUND"
-          mode="primary"
-        ></Button>
-        <Button
-          primOnClick={() => IPCService.cancelCompetition()}
-          primText="-> CANCEL_COMPETITION"
-          mode="primary"
-        ></Button>
       </div>
       <Footer title="Die Tabelle" />
     </div>
