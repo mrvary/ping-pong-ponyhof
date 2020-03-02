@@ -2,7 +2,7 @@ import React from "react";
 import "./MainScore.css";
 
 import PlayerScore from "./PlayerScore";
-import { setsWonPlayer1, setsWonPlayer2 } from "../lib";
+import { setsWonPlayer1, setsWonPlayer2 } from "../../shared/lib";
 
 function MainScore({ match }) {
   return (

@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useReducer } from "react";
 import "./App.css";
-import { isMatchFinished } from "./lib";
+import { isMatchFinished } from "../shared/lib";
 
 // import shared
 import io from "socket.io-client";
@@ -141,13 +141,13 @@ function isNotLoggedIn(state, action) {
 }
 
 function updateSetsResponse(state, action) {
-  if (action.message === "SUCCESS") {
+  if (action.message === "success") {
     console.info("Sets successfully sent");
     return { ...state, match: undefined };
   }
 
   console.info("Could not send sets, trying again in 1000 ms.");
-  setTimeout(App.sendSets(state.match), 1000);
+  setTimeout(sendSets(state.match), 1000);
 }
 
 function roundAvailable(state, action) {
