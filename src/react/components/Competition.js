@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-import './Competition.css';
+import "./Competition.css";
 
 // components
-import Popup from './Popup';
+import Popup from "./Popup";
 
-const COMPETITION_STATE = require('../../shared/models/competition-state');
+const COMPETITION_STATE = require("../../shared/models/competition-state");
 
 function Competition(props) {
   const {
@@ -23,9 +23,9 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let containerCss = 'competition__container';
-  if (state === 'comp-active-round-active') {
-    containerCss = 'competition__container competition__container--active';
+  let containerCss = "competition__container";
+  if (state === "comp-active-round-active") {
+    containerCss = "competition__container competition__container--active";
   }
 
   return (
@@ -76,7 +76,7 @@ const PuttingThrough = ({
   handleShowActiveError,
   hasActivGame
 }) => {
-  const competitionID = '/competition/' + id;
+  const competitionID = "/competition/" + id;
   if (
     hasActivGame &&
     (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
