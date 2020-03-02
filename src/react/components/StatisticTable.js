@@ -77,12 +77,9 @@ const StatisticTable = () => {
 
   return (
     <div>
-      <p>{competitionID}</p>;
       <CompetitionPageHeader
         playmode="Schweizer System"
         startDate="02.02.2020"
-        linkTitle="zurück zum Dashboard"
-        linkDestination={linkDestination}
       />
       <Table matches={matches} />
     </div>

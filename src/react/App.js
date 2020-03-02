@@ -17,6 +17,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
+let competitionID = null;
+
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
@@ -25,9 +27,11 @@ const App = () => {
   const [viewedCompetition, setViewedCompetition] = useState({});
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   useEffect(() => {
     getCompetitions();
-  }, competitions);
+  }, []);
 
   const getCompetitions = () => {
     if (USE_BROWSER) {
@@ -60,11 +64,11 @@ const App = () => {
       const { message } = args;
       console.log("message:", message);
 
-      // TODO: @William - Prüfe die Message auf "success" oder "cancel"
+      if (message === "success") {
+        getCompetition();
 
-      getCompetition();
-
-      setLinkDisabled(false);
+        setLinkDisabled(false);
+      }
     });
 
     ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
@@ -78,8 +82,12 @@ const App = () => {
           "ipc-main --> ipc-renderer",
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
-        const { competiton, players } = args;
-        setViewedCompetition(competiton);
+        const { competition, players } = args;
+        console.log(args);
+        console.log(players);
+        competitionID = competition.id;
+
+        setViewedCompetition(competition);
         setViewedPlayers(players);
       }
     );
@@ -93,20 +101,22 @@ const App = () => {
         "ipc-main --> ipc-renderer:",
         ipcMessages.IMPORT_XML_FILE_RESPONSE
       );
-      console.log(args);
-
       const { competitionId, message } = args;
 
       if (!competitionId) {
         setLinkDisabled(true);
         handleShowError();
+        setErrorMessage(message);
         return;
       }
 
       setCurrentId(competitionId);
     });
 
-    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
+    console.log(competitionID);
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
+      competitionId: competitionID
+    });
   };
 
   const deleteCompetition = id => {
@@ -146,6 +156,7 @@ const App = () => {
         setLinkDisabled={setLinkDisabled}
         viewedPlayers={viewedPlayers}
         viewedCompetition={viewedCompetition}
+        errorMessage={errorMessage}
       />
       {competitions.map(competition => (
         <Competition

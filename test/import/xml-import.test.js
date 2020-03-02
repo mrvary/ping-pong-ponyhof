@@ -11,7 +11,7 @@ const {
     ERROR_MESSAGES,
     readCompetitionXMLFileFromDisk,
     convertXMLToJSON
-} = require("../../src/modules/import/xml-import");
+} = require("../../src/modules/import/xml-importer");
 
 describe("readCompetitionXMLFileFromDisk()", () => {
     test("When_FilePathIsUndefined_Expect_FilePathIsNotDefinedException", () => {
