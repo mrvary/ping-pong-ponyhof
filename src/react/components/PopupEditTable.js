@@ -11,8 +11,8 @@ function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const endPopup = () => {
     setInputChanged(false);
     saveChanges(currentSets, tableNumber);
-    //console.log('save' + JSON.stringify(currentSets));
   };
+  //TODO: 0 differenz
 
   return (
     <Modal show={show} onHide={handleClose}>
@@ -159,15 +159,6 @@ const DisplaySet = ({
     setPlayer2Set(player2);
     setDifferenz(event.target.value);
 
-    console.log(
-      "ergebnis" +
-        player1 +
-        "+" +
-        player2 +
-        "=" +
-        checkValuesLegitimacy(parseInt(player1), parseInt(player2))
-    );
-
     if (checkValuesLegitimacy(player1, player2)) {
       setInputChanged(true);
       setCss("");
@@ -183,7 +174,6 @@ const DisplaySet = ({
     }
   };
   return (
-    //todo stop negatives
     <div className="popupEditTable--rows">
       <div>{"Set " + index + "  "}</div>
       <input

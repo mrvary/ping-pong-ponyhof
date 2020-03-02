@@ -116,11 +116,30 @@ const TableRow = ({ matchWithPlayers, active }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
+  const getWins = () => {
+    let p1 = 0;
+    let p2 = 0;
+    matchWithPlayers.match.sets.forEach(set => {
+      if (p1 === 3 || p2 === 3) {
+        return [p1, p2];
+      }
+      if (set.player1 === 0 && set.player2 === 0) {
+        return [p1, p2];
+      }
+      if (set.player1 > set.player2) {
+        p1++;
+      } else {
+        p2++;
+      }
+    });
+    return [p1, p2];
+  };
+  const [gameScore, setGameScore] = useState(getWins());
+
   const saveChanges = (sets, tableNumber) => {
-    //TODO save Changes from edited Table
-    console.log("tablenr" + tableNumber);
     const tableSets = { tableNumber, sets };
     ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
+    setGameScore(getWins());
     handleCloseEditMatch();
   };
 
@@ -180,9 +199,11 @@ const TableRow = ({ matchWithPlayers, active }) => {
           {" "}
           {stringSet[4]}{" "}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
+        <div className="competitionPage__table--elements competitionPage__centered competitionPage__table__score">
           {" "}
-          Ergebnis{" "}
+          {gameScore[0]}
+          {" : "}
+          {gameScore[1]}{" "}
         </div>
         <button
           onClick={handleShowEditMatch}
