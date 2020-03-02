@@ -196,8 +196,8 @@ function sendCancelRoundBroadcast() {
   sendBroadcast(socketIOMessages.CANCEL_ROUND);
 }
 
-function sendStartRoundBroadcast() {
-  sendBroadcast(socketIOMessages.START_ROUND);
+function sendStartRoundBroadcast(data) {
+  sendBroadcast(socketIOMessages.START_ROUND, data);
 }
 
 // this method is used to submit a broadcast event to all clients
