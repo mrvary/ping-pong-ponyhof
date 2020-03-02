@@ -364,7 +364,10 @@ function registerIPCMainEvents() {
     const { competition } = selectedCompetition;
 
     if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-      const updatedCompetition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
+      const updatedCompetition = updateCompetitionStatus(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
       selectedCompetition.competition = updatedCompetition;
       metaRepository.updateCompetition(updatedCompetition);
 
@@ -372,11 +375,19 @@ function registerIPCMainEvents() {
         matchesWithPlayers: selectedCompetition.matchesWithPlayers
       });
     } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
-      const updatedCompetition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
+      const updatedCompetition = updateCompetitionStatus(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
       selectedCompetition.competition = updatedCompetition;
       metaRepository.updateCompetition(updatedCompetition);
-    } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
-      const updatedCompetition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE);
+    } else if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    ) {
+      const updatedCompetition = updateCompetitionStatus(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+      );
       selectedCompetition.competition = updatedCompetition;
       metaRepository.updateCompetition(updatedCompetition);
 
