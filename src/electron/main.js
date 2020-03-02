@@ -19,7 +19,6 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
-  updateCompetitionRoundMatches,
   updateCompetitionStatus
 } = require("../shared/models/competition");
 
@@ -359,6 +358,59 @@ function registerIPCMainEvents() {
     createWindow(route);
   });
 
+  ipcMain.on(ipcMessages.START_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
+    const { competition } = selectedCompetition;
+
+    // update competition state and notify client
+    if (competition.state === COMPETITION_STATE.COMP_CREATED) {
+      selectedCompetition.competition = updateCompetitionState(
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
+      server.sendNextRoundBroadcast({
+        matchesWithPlayers: selectedCompetition.matchesWithPlayers
+      });
+    } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      selectedCompetition.competition = updateCompetitionState(
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
+      server.sendStartRoundBroadcast();
+    } else if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    ) {
+      selectedCompetition.competition = updateCompetitionState(
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+      );
+    }
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.CANCEL_COMPETITION);
+    const { competition } = selectedCompetition;
+
+    let newState;
+    if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+      newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
+      //TODO: Passiert hier noch was?
+    } else if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    ) {
+      newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+      //TODO: Passiert hier noch was?
+    } else {
+      return;
+    }
+
+    selectedCompetition.competition = updateCompetitionStatus(
+      competition,
+      newState
+    );
+    server.sendCancelCompetitionBroadcast();
+  });
+
   ipcMain.on(ipcMessages.START_ROUND, () => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
 
@@ -382,28 +434,6 @@ function registerIPCMainEvents() {
 
     matchStarted = true;
     server.sendStartRoundBroadcast();
-  });
-
-  ipcMain.on(ipcMessages.START_COMPETITION, event => {
-    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
-    const { competition } = selectedCompetition;
-
-    if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-      const updatedCompetition = updateCompetitionStatus(competition);
-      selectedCompetition.competition = updatedCompetition;
-      metaRepository.updateCompetition(updatedCompetition);
-
-      server.sendNextRoundBroadcast({
-        matchesWithPlayers: selectedCompetition.matchesWithPlayers
-      });
-    }
-  });
-
-  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
-    // check if it's a valid state transition (double check if all games are finished?)
-
-    // TODO: remove last round from storage
-    server.sendCancelRoundBroadcast();
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
@@ -431,6 +461,13 @@ function registerIPCMainEvents() {
     server.sendNextRoundBroadcast({
       matchesWithPlayers: matchesWithoutFreeTickets
     });
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+
+    // TODO: remove last round from storage
+    server.sendCancelRoundBroadcast();
   });
 }
 
@@ -495,6 +532,12 @@ function createMatchesWithMatchmaker(players) {
   console.log("Save matches and player in competition storage");
 
   return { matches, players };
+}
+
+function updateCompetitionState(competition, newState) {
+  competition = updateCompetitionStatus(competition, newState);
+  metaRepository.updateCompetition(competition);
+  return competition;
 }
 
 function mapMatchesWithPlayers(matches, players) {

@@ -20,6 +20,13 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
   ) {
     return {
       roundStarted: false,
+      tableNumber
+    };
+  }
+
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    return {
+      roundStarted: false,
       tableNumber,
       match: match
     };
