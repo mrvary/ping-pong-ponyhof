@@ -79,7 +79,7 @@ const reducer = (state, action) => {
       return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
 
     case ACTION_TYPE.ROUND_STARTED:
-      return { ...state, view: VIEW.MATCH };
+      return roundStarted(state, action);
 
     case ACTION_TYPE.ROUND_AVAILABLE:
       return roundAvailable(state, action);
@@ -143,6 +143,15 @@ function updateSetsResponse(state, action) {
 
   console.info("Could not send sets, trying again in 1000 ms.");
   setTimeout(sendSets(state.match), 1000);
+}
+
+function roundStarted(state, action) {
+  if (!action.matchesWithPlayers) {
+    return { ...state, view: VIEW.MATCH };
+  }
+
+  const newState = roundAvailable(state, action);
+  return { ...newState, view: VIEW.MATCH };
 }
 
 function roundAvailable(state, action) {
@@ -308,10 +317,16 @@ function App() {
       });
     });
 
-    connection.on(socketIOMessages.START_ROUND, () => {
+    connection.on(socketIOMessages.START_ROUND, data => {
       console.info("SERVER->CLIENT: START_ROUND");
+      console.log(data);
 
-      dispatch({ type: ACTION_TYPE.ROUND_STARTED });
+      data
+        ? dispatch({
+            type: ACTION_TYPE.ROUND_STARTED,
+            matchesWithPlayers: data.matchesWithPlayers
+          })
+        : dispatch({ type: ACTION_TYPE.ROUND_STARTED });
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {

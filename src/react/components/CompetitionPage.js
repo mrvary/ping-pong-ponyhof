@@ -307,6 +307,7 @@ const CompetitionPage = () => {
       competitionId: competitionID
     });
   };
+
   const [active, setActive] = useState(false);
   const handleActivate = () => {
     ipcRenderer.send(ipcMessages.START_COMPETITION);
@@ -377,10 +378,10 @@ const CompetitionPage = () => {
         ></Popup>
 
         <Button
-          primOnClick={handleShowEndRound}
-          primText="Runde beenden"
-          secOnClick={handleStartRound}
-          secText="Runde starten"
+          primOnClick={handleStartRound}
+          primText="Runde starten"
+          secOnClick={handleShowEndRound}
+          secText="Runde beenden"
           mode="primary"
           disableProp={!active}
         ></Button>

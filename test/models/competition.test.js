@@ -9,7 +9,7 @@ const config = require("../config");
 const {
   COMPETITION_STATE,
   createCompetitionFromJSON,
-  updateCompetitionStatus,  } = require("../../src/shared/models/competition");
+  setCompetitionState,  } = require("../../src/shared/models/competition");
 
 let jsonObject = null;
 
@@ -37,7 +37,7 @@ describe("setCompetitionStatus", () => {
     let competition = createCompetitionFromJSON(jsonObject);
 
     // ACT: Set new competition state
-    competition = updateCompetitionStatus(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
+    competition = setCompetitionState(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
 
     // ASSERT: check the competition state
     expect(competition.state).toBe(COMPETITION_STATE.COMP_READY_ROUND_READY);

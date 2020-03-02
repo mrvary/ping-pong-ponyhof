@@ -19,7 +19,7 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
-  updateCompetitionStatus
+  setCompetitionState
 } = require("../shared/models/competition");
 
 const {
@@ -56,9 +56,6 @@ let mainWindow = null;
 
 // application state variables
 let selectedCompetition = null;
-
-// COMP_ACTIVE_ROUND_ACTIVE
-let matchStarted = false;
 
 // init communication events
 registerIPCMainEvents();
@@ -158,9 +155,17 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
-    console.log(args);
+    const { tableNumber, sets } = args;
 
+    let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();
+
+    if (finished) {
+      mainWindow.webContents.send(
+        ipcMessages.UPDATE_MATCHES,
+        selectedCompetition
+      );
+    }
 
     server.ServerMainIOConnection.emit(
       serverMessages.UPDATE_SETS_RESPONSE,
@@ -322,30 +327,10 @@ function registerIPCMainEvents() {
 
   ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
-    console.log(args);
-
     const { tableNumber, sets } = args;
 
     // 2. find match by table number
-    let finished = false;
-    selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-      matchWithPlayer => {
-        if (matchWithPlayer.tableNumber === tableNumber) {
-          // 3. update sets of match
-          const { match } = matchWithPlayer;
-          const updatedMatch = { ...match, sets };
-          matchWithPlayer.match = updatedMatch;
-
-          // 4. save match to storage
-          competitionStorage.updateMatch(updatedMatch);
-
-          // check if match is ready
-          finished = isMatchFinished(updatedMatch);
-        }
-
-        return matchWithPlayer;
-      }
-    );
+    let finished = updateSetsByTableNumber(tableNumber, sets);
 
     // 5. send update match
     if (finished) {
@@ -365,7 +350,7 @@ function registerIPCMainEvents() {
     // update competition state and notify client
     if (competition.state === COMPETITION_STATE.COMP_CREATED) {
       selectedCompetition.competition = updateCompetitionState(
-        selectedCompetition.competition,
+        competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       );
       server.sendNextRoundBroadcast({
@@ -373,17 +358,19 @@ function registerIPCMainEvents() {
       });
     } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
       selectedCompetition.competition = updateCompetitionState(
-        selectedCompetition.competition,
+        competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       );
-      server.sendStartRoundBroadcast();
     } else if (
-      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+      competition.state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
     ) {
       selectedCompetition.competition = updateCompetitionState(
-        selectedCompetition.competition,
+        competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
+      server.sendStartRoundBroadcast({
+        matchesWithPlayers: selectedCompetition.matchesWithPlayers
+      });
     }
   });
 
@@ -401,10 +388,11 @@ function registerIPCMainEvents() {
       newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
       //TODO: Passiert hier noch was?
     } else {
+      console.log("no new state");
       return;
     }
 
-    selectedCompetition.competition = updateCompetitionStatus(
+    selectedCompetition.competition = updateCompetitionState(
       competition,
       newState
     );
@@ -413,26 +401,19 @@ function registerIPCMainEvents() {
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
+    const { competition } = selectedCompetition;
 
-    if (matchStarted) {
+    if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+      console.log("wrong state", selectedCompetition.state);
       return;
     }
 
-    if (
-      selectedCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-    ) {
-      return;
-    }
-
-    const updatedCompetition = updateCompetitionStatus(
-      selectedCompetition.competition,
-      COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    const newState = COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE;
+    selectedCompetition.competition = updateCompetitionState(
+      competition,
+      newState
     );
 
-    selectedCompetition.competition = updatedCompetition;
-    metaRepository.updateCompetition(updatedCompetition);
-
-    matchStarted = true;
     server.sendStartRoundBroadcast();
   });
 
@@ -446,7 +427,7 @@ function registerIPCMainEvents() {
     // check if it's a valid state transition (double check if all games are finished?)
     // fire up matchmaker
     // save things
-    const updatedCompetition = updateCompetitionStatus(
+    const updatedCompetition = setCompetitionState(
       selectedCompetition.competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
@@ -535,9 +516,35 @@ function createMatchesWithMatchmaker(players) {
 }
 
 function updateCompetitionState(competition, newState) {
-  competition = updateCompetitionStatus(competition, newState);
+  console.log("Change competition state:", competition.state, "-->", newState);
+  competition = setCompetitionState(competition, newState);
   metaRepository.updateCompetition(competition);
   return competition;
+}
+
+function updateSetsByTableNumber(tableNumber, sets) {
+  let finished = false;
+
+  selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
+    matchWithPlayer => {
+      if (matchWithPlayer.tableNumber === tableNumber) {
+        // 3. update sets of match
+        const { match } = matchWithPlayer;
+        const updatedMatch = { ...match, sets };
+        matchWithPlayer.match = updatedMatch;
+
+        // 4. save match to storage
+        competitionStorage.updateMatch(updatedMatch);
+
+        // check if match is ready
+        finished = isMatchFinished(updatedMatch);
+      }
+
+      return matchWithPlayer;
+    }
+  );
+
+  return finished;
 }
 
 function mapMatchesWithPlayers(matches, players) {
