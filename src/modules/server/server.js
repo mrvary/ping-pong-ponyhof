@@ -59,19 +59,6 @@ function initSocketIO() {
     sendBroadcast(socketIOMessages.AVAILABLE_TABLES, getAvailableTables());
 
     listenToClientEvent(clientSocket);
-    setUpEventEmitters(clientSocket);
-  });
-}
-
-function setUpEventEmitters(clientSocket) {
-  ServerMainIOConnection.on(serverMessages.STATE_RESPONSE, data => {
-    // send login response to client with his table number
-    clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, data);
-  });
-
-  ServerMainIOConnection.on(serverMessages.UPDATE_SETS_RESPONSE, data => {
-    // send response to client whether sets were successfully updated
-    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, data);
   });
 }
 
@@ -97,6 +84,11 @@ function listenToClientEvent(clientSocket) {
 // -----
 
 function clientLogin(clientSocket, tableNumber) {
+  ServerMainIOConnection.once(serverMessages.STATE_RESPONSE, data => {
+    // send login response to client with his table number
+    clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, data);
+  });
+
   // verify if max amount of connected devices/table is reached
   if (connectedClients.size === MAX_AMOUNT_TABLE) {
     clientSocket.emit(socketIOMessages.LOGIN_RESPONSE, {
@@ -149,6 +141,11 @@ function clientLogout(clientSocket) {
 // -----
 
 function updateSets(clientSocket, data) {
+  ServerMainIOConnection.once(serverMessages.UPDATE_SETS_RESPONSE, data => {
+    // send response to client whether sets were successfully updated
+    clientSocket.emit(socketIOMessages.UPDATE_SETS_RESPONSE, data);
+  });
+
   ServerMainIOConnection.emit(serverMessages.UPDATE_SETS, data);
 }
 

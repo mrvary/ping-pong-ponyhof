@@ -173,13 +173,20 @@ function roundAvailable(state, action) {
 }
 
 function loggedIn(state, action) {
-  const { isConnected, match, roundStarted, message } = action;
-  const newState = { ...state, isConnected, match, roundStarted, message };
+  const { match, roundStarted, message } = action.data;
 
   if (message) {
     console.error(message);
     return { ...state, message };
   }
+
+  const newState = {
+    ...state,
+    isConnected: !message,
+    match,
+    roundStarted,
+    message
+  };
 
   if (match && isMatchFinished(match)) {
     console.info("match is finished");
@@ -315,14 +322,7 @@ function App() {
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
-      const { roundStarted, match, message } = data;
-      dispatch({
-        type: ACTION_TYPE.LOGGED_IN,
-        message,
-        match,
-        isConnected: !message,
-        roundStarted
-      });
+      dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
