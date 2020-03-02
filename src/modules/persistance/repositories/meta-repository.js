@@ -4,21 +4,20 @@
 
 let metaStorage = require("../lowdb/meta-storage");
 
-let competitions = null;
-
 function init(filePath, useInMemory) {
   metaStorage.init(filePath, useInMemory);
 }
 
 function getAllCompetitions() {
-  // check if competitions are loaded from database
-  if (!competitions) {
-    // init competitions from database
-    competitions = metaStorage.getAllCompetitions();
-  }
-
+  // init competitions from database
+  const competitions = metaStorage.getAllCompetitions();
   console.log(`Get ${competitions.length} competitions from repository`);
+
   return competitions;
+}
+
+function getCompetition(id) {
+  return metaStorage.getCompetition(id);
 }
 
 function createCompetition(competition) {
@@ -38,7 +37,11 @@ function deleteCompetition(id) {
 
 module.exports = {
   init,
+
   getAllCompetitions,
+  getCompetition,
+
   createCompetition,
+  updateCompetition,
   deleteCompetition
 };

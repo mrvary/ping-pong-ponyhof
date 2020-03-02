@@ -17,6 +17,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
+let competitionID = null;
+
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
@@ -81,6 +83,10 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
+        console.log(args);
+        console.log(players);
+        competitionID = competition.id;
+
         setViewedCompetition(competition);
         setViewedPlayers(players);
       }
@@ -107,7 +113,10 @@ const App = () => {
       setCurrentId(competitionId);
     });
 
-    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
+    console.log(competitionID);
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
+      competitionId: competitionID
+    });
   };
 
   const deleteCompetition = id => {
