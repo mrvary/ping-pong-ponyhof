@@ -17,6 +17,6 @@
   font-size: 40px;
 }
 
-button {
+.score-board__container > button {
   margin: 30px 0;
 }
