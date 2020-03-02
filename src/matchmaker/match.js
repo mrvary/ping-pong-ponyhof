@@ -21,13 +21,16 @@ function createMatch({ player1, player2 }) {
     id: matchId,
     player1: player1,
     player2: player2,
-    sets: [
-      {
-        player1: 0,
-        player2: 0
-      }
-    ]
+    sets: []
   };
+
+  let i;
+  for (i = 0; i < 5; i++) {
+    match.sets.push({
+      player1: 0,
+      player2: 0
+    })
+  }
 
   matchId++;
   return match;

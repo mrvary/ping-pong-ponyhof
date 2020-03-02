@@ -306,6 +306,7 @@ function registerIPCMainEvents() {
     }
 
     let resultData;
+
     if (
       activeCompetition &&
       activeCompetition.competition.id === competitionId
