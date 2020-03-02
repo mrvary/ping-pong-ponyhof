@@ -30,6 +30,17 @@ function getCompetitionFilePath(id) {
   return getFileFromAppDataPath(`${id}.json`);
 }
 
+function saveXMLFile(filename, xmlContent) {
+  const filePath = getFileFromAppDataPath(filename);
+
+  try {
+    fs.writeFileSync(filePath, xmlContent);
+    console.log("Save XML:", filePath);
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 function deleteTournamentJSONFile(id) {
   const filePath = getCompetitionFilePath(id);
 
@@ -46,5 +57,7 @@ function deleteTournamentJSONFile(id) {
 module.exports = {
   getMetaStorageDatabasePath,
   getCompetitionFilePath,
+
+  saveXMLFile,
   deleteTournamentJSONFile
 };
