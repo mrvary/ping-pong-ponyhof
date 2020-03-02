@@ -9,15 +9,9 @@ const Memory = require("lowdb/adapters/Memory");
 
 const FilePathIsUndefinedException = "file path is undefined";
 
-let storage = null;
-
 // STATE OPERATIONS
 
 function open(filePath, useInMemory = true) {
-  if (storage) {
-    return;
-  }
-
   // check the parameter
   if (!useInMemory && !filePath) {
     throw new Error(FilePathIsUndefinedException);
@@ -25,32 +19,26 @@ function open(filePath, useInMemory = true) {
 
   // create a low db instance
   const adapter = useInMemory ? new Memory() : new FileSync(filePath);
-  storage = low(adapter);
+  return low(adapter);
 }
 
-function close() {
-  if (storage) {
-    storage = null;
-  }
-}
-
-function clear(object) {
+function clear(storage, object) {
   storage.setState(object).write();
 }
 
-function initStateWithDefaults(object) {
-  //storage.setState(jsonObject).write();
-  storage.defaults(object).write();
+function initStateWithDefaults(storage, object) {
+  storage.setState(object).write();
+  //storage.defaults(object).write();
 }
 
-function getState() {
+function getState(storage) {
   return storage.getState();
 }
 
 // CRUD FUNCTIONALITY
 
-function getAllElements(elementPath) {
-  if (!hasElementPath(elementPath)) {
+function getAllElements(storage, elementPath) {
+  if (!hasElementPath(storage, elementPath)) {
     // TODO: throw error
     return;
   }
@@ -58,8 +46,8 @@ function getAllElements(elementPath) {
   return storage.get(elementPath).value();
 }
 
-function getElement(elementPath, identifier) {
-  if (!hasElementPath(elementPath)) {
+function getElement(storage, elementPath, identifier) {
+  if (!hasElementPath(storage, elementPath)) {
     // TODO: throw error
     return;
   }
@@ -72,8 +60,8 @@ function getElement(elementPath, identifier) {
 
 // TODO: Create Object if Necessary
 
-function createElements(elementPath, elements) {
-  if (!hasElementPath(elementPath)) {
+function createElements(storage, elementPath, elements) {
+  if (!hasElementPath(storage, elementPath)) {
     // create new collection with data
     storage.set(elementPath, elements).write();
     return;
@@ -87,15 +75,15 @@ function createElements(elementPath, elements) {
   });
 }
 
-function createElement(elementPath, element, identifier = undefined) {
-  if (!hasElementPath(elementPath)) {
+function createElement(storage, elementPath, element, identifier = undefined) {
+  if (!hasElementPath(storage, elementPath)) {
     // create new collection with data
     storage.set(elementPath, [element]).write();
     return;
   }
 
   // check if a element with the identifier exists
-  if (identifier && hasElement(elementPath, identifier)) {
+  if (identifier && hasElement(storage, elementPath, identifier)) {
     // TODO: throw error
     return;
   }
@@ -106,8 +94,8 @@ function createElement(elementPath, element, identifier = undefined) {
     .write();
 }
 
-function updateElement(elementPath, element, identifier) {
-  if (!hasElementPath(elementPath)) {
+function updateElement(storage, elementPath, element, identifier) {
+  if (!hasElementPath(storage, elementPath)) {
     // create new collection with data
     storage.set(elementPath, [element]).write();
     return;
@@ -120,7 +108,7 @@ function updateElement(elementPath, element, identifier) {
     .write();
 }
 
-function deleteElement(elementPath, identifier) {
+function deleteElement(storage, elementPath, identifier) {
   if (!hasElement(elementPath, identifier)) {
     return;
   }
@@ -131,12 +119,12 @@ function deleteElement(elementPath, identifier) {
     .write();
 }
 
-function hasElement(elementPath, identifier) {
-  const element = getElement(elementPath, identifier);
+function hasElement(storage, elementPath, identifier) {
+  const element = getElement(storage, elementPath, identifier);
   return !!element;
 }
 
-function hasElementPath(elementPath) {
+function hasElementPath(storage, elementPath) {
   return storage.has(elementPath).value();
 }
 
@@ -144,7 +132,6 @@ module.exports = {
   FilePathIsUndefinedException,
 
   open,
-  close,
 
   clear,
   initStateWithDefaults,

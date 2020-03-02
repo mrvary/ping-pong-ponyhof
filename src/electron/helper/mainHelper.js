@@ -14,7 +14,10 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
     matchesWithPlayers => matchesWithPlayers.tableNumber === tableNumber
   );
 
-  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+  if (
+    state === COMPETITION_STATE.COMP_READY_ROUND_READY ||
+    state === COMPETITION_STATE.COMP_CREATED
+  ) {
     return {
       roundStarted: false,
       tableNumber,

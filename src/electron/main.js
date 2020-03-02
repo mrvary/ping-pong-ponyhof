@@ -44,6 +44,9 @@ const server = require("../modules/server/server");
 const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
+// client
+const { isMatchFinished } = require("../client/src/react/lib");
+
 // windows actions
 const uiActions = require("./actions/uiActions");
 const createMenu = require("./menu/main-menu");
@@ -54,10 +57,6 @@ let mainWindow = null;
 
 // application state variables
 let selectedCompetition = null;
-let selectedMatchesWithPlayers = [];
-
-let activeCompetition = null;
-let activeMatchesWithPlayers = [];
 
 // COMP_ACTIVE_ROUND_ACTIVE
 let matchStarted = false;
@@ -200,14 +199,6 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
-    // check if a competition is selected ...
-    if (activeCompetition) {
-      // ... than reset application state
-      activeCompetition = null;
-      activeMatchesWithPlayers = [];
-      console.log("Reset application state");
-    }
-
     // Delete the competition file
     fileManager.deleteTournamentJSONFile(competitionId);
 
@@ -268,15 +259,17 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = args;
 
+    // 1. initialize competition storage
+    const filePath = fileManager.getCompetitionFilePath(competitionId);
+    competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+
+    // 2. import data into databases
+    xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+
     let returnData;
-
     try {
-      // 1. initialize competition storage
-      const filePath = fileManager.getCompetitionFilePath(competitionId);
-      competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
-
       // 2. import data into databases
-      xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+      //xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
 
       // 3. create response message with success message
       returnData = {
@@ -311,11 +304,6 @@ function registerIPCMainEvents() {
 
     let resultData;
     if (
-      activeCompetition &&
-      activeCompetition.competition.id === competitionId
-    ) {
-      resultData = activeCompetition;
-    } else if (
       selectedCompetition &&
       selectedCompetition.competition.id === competitionId
     ) {
@@ -336,6 +324,34 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
     console.log(args);
+
+    const { tableNumber, sets } = args;
+
+    // 2. find match by table number
+    let finished = false;
+    selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
+      matchWithPlayer => {
+        if (matchWithPlayer.tableNumber === tableNumber) {
+          // 3. update sets of match
+          const { match } = matchWithPlayer;
+          const updatedMatch = { ...match, sets };
+          matchWithPlayer.match = updatedMatch;
+
+          // 4. save match to storage
+          competitionStorage.updateMatch(updatedMatch);
+
+          // check if match is ready
+          finished = isMatchFinished(updatedMatch);
+        }
+
+        return matchWithPlayer;
+      }
+    );
+
+    // 5. send update match
+    if (finished) {
+      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+    }
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
@@ -350,20 +366,37 @@ function registerIPCMainEvents() {
       return;
     }
 
-    if (activeCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    if (
+      selectedCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    ) {
       return;
     }
 
     const updatedCompetition = updateCompetitionStatus(
-      activeCompetition,
+      selectedCompetition.competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
     );
 
-    activeCompetition = updatedCompetition;
+    selectedCompetition.competition = updatedCompetition;
     metaRepository.updateCompetition(updatedCompetition);
 
     matchStarted = true;
     server.sendStartRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.START_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
+    const { competition } = selectedCompetition;
+
+    if (competition.state === COMPETITION_STATE.COMP_CREATED) {
+      const updatedCompetition = updateCompetitionStatus(competition);
+      selectedCompetition.competition = updatedCompetition;
+      metaRepository.updateCompetition(updatedCompetition);
+
+      server.sendNextRoundBroadcast({
+        matchesWithPlayers: selectedCompetition.matchesWithPlayers
+      });
+    }
   });
 
   ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
@@ -374,7 +407,9 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
-    if (activeCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
+    if (
+      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
+    ) {
       return;
     }
 
@@ -382,17 +417,15 @@ function registerIPCMainEvents() {
     // fire up matchmaker
     // save things
     const updatedCompetition = updateCompetitionStatus(
-      activeCompetition,
+      selectedCompetition.competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
+    selectedCompetition.competition = updatedCompetition;
+    metaRepository.updateCompetition(updatedCompetition);
 
-    // TODO: check this with Marco
-    activeCompetition = updatedCompetition;
-    //metaStorage.updateCompetition(updatedCompetition);
-
-    const matchesWithoutFreeTickets = selectedMatchesWithPlayers.filter(
-      ({ player1, player2 }) =>
-        player1.id !== "FreeTicket" && player2.id !== "FreeTicket"
+    const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
+      ({ match }) =>
+        match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
     );
 
     server.sendNextRoundBroadcast({
@@ -416,19 +449,22 @@ function initCompetition(competitionId) {
 
   // init matches ...
   let matches;
+  //let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
+    //isCompetitionCreated = true;
+
     // ... with matchmakers first round
     const drawing = createMatchesWithMatchmaker(players);
     players = drawing.players;
     matches = drawing.matches;
 
     // update competition in database
-    competition = updateCompetitionRoundMatches(competition, matches);
+    /*competition = updateCompetitionRoundMatches(competition, matches);
     competition = updateCompetitionStatus(
       competition,
-      COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
+      COMPETITION_STATE.COMP_READY_ROUND_READY
     );
-    metaRepository.updateCompetition(competition);
+    metaRepository.updateCompetition(competition);*/
   } else {
     // ... from competition storage
     matches = competitionStorage.getMatchesByIds(competition.round_matchIds);
@@ -438,6 +474,11 @@ function initCompetition(competitionId) {
   // init matches with players
   const matchesWithPlayers = mapMatchesWithPlayers(matches, players);
   console.log("competition and players and matches are selected");
+
+  // send next round action to client
+  /*if (isCompetitionCreated) {
+    server.sendNextRoundBroadcast({ matchesWithPlayers });
+  }*/
 
   return { competition, matchesWithPlayers };
 }
