@@ -9,7 +9,7 @@ const config = require("../config");
 const {
   COMPETITION_STATE,
   createCompetitionFromJSON,
-  updateCompetitionStatus,  } = require("../../src/modules/models/competition");
+  updateCompetitionStatus,  } = require("../../src/shared/models/competition");
 
 let jsonObject = null;
 
