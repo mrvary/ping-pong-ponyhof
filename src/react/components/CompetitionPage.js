@@ -213,12 +213,14 @@ const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
   const [competitionData, setCompetitionData] = useState({});
+
   useEffect(() => {
     function handleMatchesStatusChanged(
       event,
       { competition, matchesWithPlayers }
     ) {
       console.log("IPC-Main-->IPC-Renderer:", matchesWithPlayers);
+      console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
     }
