@@ -130,6 +130,7 @@ function updateSetsResponse(state, action) {
     console.info("Sets successfully sent");
     return { ...state, match: undefined };
   }
+
   console.info("Could not send sets, trying again in 1000 ms.");
   setTimeout(App.sendSets(state.match), 1000);
 }
@@ -143,18 +144,16 @@ function roundAvailable(state, action) {
     const { match, player1, player2 } = matchForTable;
     return {
       ...state,
-      match: {
-        ...match,
-        player1,
-        player2
-      },
+      match: { ...match, player1, player2 },
       view: VIEW.NEXT_PLAYERS,
       message: ""
     };
   }
+
   console.error(
-    "Couldn't start round. No match found for table " + state.tableNumber
+    `Couldn't start round. No match for table ${state.tableNumber}`
   );
+
   return state;
 }
 
@@ -219,10 +218,7 @@ function App() {
       );
     }
 
-    if (
-      state.view === VIEW.NEXT_PLAYERS ||
-      state.view === VIEW.MATCH
-    ) {
+    if (state.view === VIEW.NEXT_PLAYERS || state.view === VIEW.MATCH) {
       return (
         <MatchView
           onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
