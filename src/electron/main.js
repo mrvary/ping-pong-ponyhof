@@ -119,20 +119,20 @@ function initHTTPServer() {
         "Server-->IPC-Main:",
         serverMessages.UPDATE_CONNECTION_STATUS
       );
-      console.log(args);
       const { connectedDevice, tableNumber } = args;
 
-      if (selectedMatchesWithPlayers.length > 0) {
-        selectedMatchesWithPlayers = selectedMatchesWithPlayers.map(match => {
-          if (match.tableNumber === tableNumber) {
-            return { ...match, connectedDevice };
+      selectedMatchesWithPlayers = selectedMatchesWithPlayers.map(
+        matchWithPlayers => {
+          if (matchWithPlayers.tableNumber === tableNumber) {
+            return { ...matchWithPlayers, connectedDevice };
           }
 
-          return match;
-        });
-      }
+          return matchWithPlayers;
+        }
+      );
 
       mainWindow.webContents.send(ipcMessages.UPDATE_MATCHES, {
+        competition: selectedCompetition,
         matchesWithPlayers: selectedMatchesWithPlayers
       });
     }
