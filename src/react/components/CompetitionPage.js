@@ -312,7 +312,6 @@ const CompetitionPage = () => {
   };
 
   const handleEndRound = () => {
-    ipcRenderer.send(ipcMessages.NEXT_ROUND);
     handleCloseEndRound();
   };
 

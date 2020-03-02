@@ -14,7 +14,7 @@ function ScoreBoard({ match, sendSets }) {
     <>
       <MainScore match={match} />
       <div className="score-board__container">{showSets()}</div>
-      <button onClick={sendSets(match.sets)}>Send sets</button>
+      <button onClick={sendSets(match)}>Send sets</button>
     </>
   );
 }
