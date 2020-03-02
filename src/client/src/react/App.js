@@ -36,13 +36,14 @@ const CLIENT_STATE = {
 };
 
 const ACTION_TYPE = {
-  SET_TABLE_NUMBER: "setTableNumber",
-  LOGGED_IN: "loggedIn",
-  TABLES_AVAILABLE: "tablesAvailable",
-  ROUND_CANCELED: "roundCanceled",
-  ROUND_STARTED: "roundStarted",
-  ROUND_AVAILABLE: "roundAvailable",
-  COMPETITION_CANCELED: "competitionCanceled"
+  SET_TABLE_NUMBER: "set-table-number",
+  LOGGED_IN: "logged-in",
+  TABLES_AVAILABLE: "tables-available",
+  ROUND_CANCELED: "round-canceled",
+  ROUND_STARTED: "round-started",
+  ROUND_AVAILABLE: "round-available",
+  COMPETITION_CANCELED: "competition-canceled",
+  MATCH_FINISHED: "match-finished"
 };
 
 const initialState = {
@@ -80,7 +81,7 @@ const reducer = (state, action) => {
       };
 
     case ACTION_TYPE.ROUND_STARTED:
-      return state;
+      return { ...state, view: CLIENT_STATE.MATCH };
 
     case ACTION_TYPE.ROUND_AVAILABLE:
       return roundAvailable(state, action);
@@ -88,20 +89,34 @@ const reducer = (state, action) => {
     case ACTION_TYPE.COMPETITION_CANCELED:
       return state;
 
+    case ACTION_TYPE.MATCH_FINISHED:
+      return {
+        ...state,
+        match: undefined,
+        roundStarted: false,
+        message: "Runde beendet. Demnächst geht es weiter.",
+        view: CLIENT_STATE.WAITING
+      };
+
     default:
       return state;
   }
 };
 
 function roundAvailable(state, action) {
-  const localMatch = action.matches.find(
+  const matchForTable = action.matches.find(
     match => match.tableNumber === state.tableNumber
   );
 
-  if (localMatch) {
+  if (matchForTable) {
+    const { match, player1, player2 } = matchForTable;
     return {
       ...state,
-      match: localMatch,
+      match: {
+        ...match,
+        player1,
+        player2
+      },
       view: CLIENT_STATE.NEXT_PLAYERS,
       message: ""
     };
@@ -191,7 +206,7 @@ function App() {
         <MatchView
           onlyShowNextPlayers={state.view === CLIENT_STATE.NEXT_PLAYERS}
           match={state.match}
-          // sendSets={sendSets}
+          sendSets={sendSets}
         />
       );
     }
@@ -208,27 +223,24 @@ function App() {
     event.preventDefault();
     console.info("CLIENT->SERVER: LOGIN_REQUEST");
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
-    // setWaitingMessage("waiting for server response");
-    // setView("WAITING");
   };
 
-  // const sendSets = match => event => {
-  //   const finished = isMatchFinished(match);
-  //   const data = {
-  //     sets: match.sets,
-  //     finished,
-  //     tableNumber: match.tableNumber
-  //   };
+  const sendSets = match => event => {
+    event.preventDefault();
+    const finished = isMatchFinished(match);
+    const data = {
+      sets: match.sets,
+      finished,
+      tableNumber: match.tableNumber
+    };
 
-  //   console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
-  //   socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
+    console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
 
-  //   if (finished) {
-  //     localMatch(undefined);
-  //     setWaitingMessage("waiting for next round");
-  //     setView("WAITING");
-  //   }
-  // };
+    if (finished) {
+      dispatch({ type: ACTION_TYPE.MATCH_FINISHED });
+    }
+  };
 
   const handleTableNumberChange = event => {
     const newTableNumber = parseInt(event.target.value, 10);
@@ -272,16 +284,11 @@ function App() {
       });
     });
 
-    // connection.on(socketIOMessages.START_ROUND, () => {
-    //   console.info("SERVER->CLIENT: START_ROUND");
+    connection.on(socketIOMessages.START_ROUND, () => {
+      console.info("SERVER->CLIENT: START_ROUND");
 
-    //   if (view !== "NEXT_PLAYERS") {
-    //     console.error("Wrong view, could not start round");
-    //     return;
-    //   }
-
-    //   setView("MATCH");
-    // });
+      dispatch({ type: ACTION_TYPE.ROUND_STARTED });
+    });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
       console.info("SERVER->CLIENT: CANCEL_ROUND");
