@@ -2,8 +2,8 @@
   --prim-background-color: #f4f4f4;
   --sec-background-color: white;
 
-  --button-color: #84afce;
-  --button-hover-color: #99bad1;
+  --button-color: rgb(131, 175, 206);
+  --button-hover-color: rgb(153, 186, 209);
   --button-disabled-color: #f4f4f4;
 
   --grey-out-color: #4d4d4d;
@@ -19,4 +19,6 @@
 
   --anti-color: #b788ba;
   --main-color: #f4f4f4;
+
+  --shadow-color: #a1a1a1;
 }

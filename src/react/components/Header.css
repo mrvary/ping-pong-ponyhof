@@ -5,8 +5,9 @@
 }
 
 .header__picture {
-  height: 70vh;
-  background-image: url("../../assets/images/ellen-qin-fIMqGvVaATk-unsplash_zugeschnitten.jpg");
+  width: 100%;
+  height: auto;
+  background-image: url('../../assets/images/ellen-qin-fIMqGvVaATk-unsplash_zugeschnitten.jpg');
 }
 
 .header__title {
@@ -18,10 +19,10 @@
 
 .header__match-box {
   width: 35vh;
-  height: 50vh;
+  height: 44vh;
   border: none;
   background: var(--sec-background-color);
-  color: var(--grey-out-color);
+  color: var(--prim-font-color);
   font-size: 2.5vh;
   border-radius: 2vh;
   margin: 10vh 4vh;
@@ -32,28 +33,38 @@
   align-items: center;
 }
 
+.header__match-box--alignment-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3.5vh;
+}
+
+.header__match-box--icon {
+  width: 12%;
+  content: url('../../assets/icons/svg/plus_icon.svg');
+  margin: 1vh;
+}
 .header__match-box--title {
   font-size: small;
-  text-align: center;
-  font-size: 2.5vh;
+  font-size: 2vh;
 }
 
 .header__upload-xml-button {
   width: 27vh;
   height: 20vh;
-  color: var(--prim-font-color);
-  font-size: 2vh;
-  border: 0.3vh solid var(--prim-font-color);
+  color: var(--grey-out-color);
+  font-size: 1.6vh;
+  border: 0vh solid var(--grey-out-color);
+  box-shadow: 0.5vh 0.5vh 1vh var(--shadow-color);
   background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
   margin: 5vh 0vh;
-  padding: 2vh;
 }
 
 .header__upload-xml-button:hover {
   color: var(--grey-out-color);
-  border: 0.1vh solid var(--grey-out-color);
 }
 
 .header__upload-xml-button:focus {
