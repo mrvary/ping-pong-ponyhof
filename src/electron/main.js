@@ -365,13 +365,26 @@ function registerIPCMainEvents() {
 
     // update competition state and notify client
     if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-      selectedCompetition.competition = updateCompetitionState(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
-      server.sendNextRoundBroadcast({matchesWithPlayers: selectedCompetition.matchesWithPlayers});
+      selectedCompetition.competition = updateCompetitionState(
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
+      server.sendNextRoundBroadcast({
+        matchesWithPlayers: selectedCompetition.matchesWithPlayers
+      });
     } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
-      selectedCompetition.competition = updateCompetitionState(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_READY);
+      selectedCompetition.competition = updateCompetitionState(
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
       server.sendStartRoundBroadcast();
-    } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
-      selectedCompetition.competition = updateCompetitionState(selectedCompetition.competition, COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE);
+    } else if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    ) {
+      selectedCompetition.competition = updateCompetitionState(
+        selectedCompetition.competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+      );
     }
   });
 
@@ -380,9 +393,7 @@ function registerIPCMainEvents() {
     const { competition } = selectedCompetition;
 
     if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-
     }
-
   });
 
   ipcMain.on(ipcMessages.START_ROUND, () => {
