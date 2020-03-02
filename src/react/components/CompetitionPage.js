@@ -311,7 +311,6 @@ const CompetitionPage = () => {
 
   return (
     <div>
-      <p>competitionID: {competitionID}</p>
       <CompetitionPageHeader
         playmode={competitionData.playmode}
         startDate={competitionData.date}

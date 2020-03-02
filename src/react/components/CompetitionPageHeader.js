@@ -11,10 +11,7 @@ function CompetitionPage__Header({
   return (
     <div className="competitionPage__header-alignment">
       {" "}
-      <Link
-        className="competitionPage__link-back-to-overview"
-        to={linkDestination}
-      >
+      <Link className="competitionPage__link" to={linkDestination}>
         {" "}
         {linkTitle}{" "}
       </Link>

@@ -11,6 +11,7 @@ function PopupReviewPlayer({
   viewedPlayers,
   viewedCompetition
 }) {
+  console.log("Object" + JSON.stringify(viewedCompetition));
   return (
     <Modal show={show} onHide={() => handleClose(true)}>
       <Modal.Header closeButton className="popup__header-text">
@@ -20,13 +21,16 @@ function PopupReviewPlayer({
       <Modal.Body>
         <div className="popup__centered">
           <p className="popup__body-small-text">
+            Datum: {viewedCompetition.date}
+          </p>
+          <p className="popup__body-small-text">
             Folgende Spieler sind im Spiel:
           </p>
           <div>
             {viewedPlayers.map(player => (
-              <p className="popup__names">
+              <li key={player.id} className="popup__names">
                 {player.firstname + " " + player.lastname}
-              </p>
+              </li>
             ))}
           </div>
           <Button
