@@ -1,14 +1,14 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
-import "./Competition.css";
+import './Competition.css';
 
 // components
-import Popup from "./Popup";
+import Popup from './Popup';
 
 function Competition(props) {
   const {
-    competition: { id, name, state, date, playmode },
+    competition: { id, state, playmode },
     deleteCompetition
   } = props;
 
@@ -20,9 +20,9 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let containerCss = "competition__container";
-  if (state === "comp-active-round-active") {
-    containerCss = "competition__container competition__container--active";
+  let containerCss = 'competition__container';
+  if (state === 'comp-active-round-active') {
+    containerCss = 'competition__container competition__container--active';
   }
 
   return (
@@ -63,12 +63,17 @@ function Competition(props) {
 
 const PuttingThrough = (props, handleShowActiveError) => {
   const {
-    competition: { id, name, state, date, playmode }
+    competition: { id, name, state, date }
   } = props;
 
-  const competitionID = "/competition/" + id;
-  if (state === "") {
-    return <div onClick={handleShowActiveError}></div>;
+  const competitionID = '/competition/' + id;
+  if (state === '') {
+    return (
+      <div
+        onClick={handleShowActiveError}
+        className="competition__btn competition__btn--gameload competition__link"
+      ></div>
+    );
   } else {
     return (
       <Link
