@@ -43,6 +43,7 @@ const ACTION_TYPE = {
   ROUND_STARTED: "round-started",
   ROUND_AVAILABLE: "round-available",
   COMPETITION_CANCELED: "competition-canceled",
+  MATCH_SEND_RESPONSE: "match-send-request",
   MATCH_FINISHED: "match-finished"
 };
 
@@ -92,16 +93,28 @@ const reducer = (state, action) => {
     case ACTION_TYPE.MATCH_FINISHED:
       return {
         ...state,
-        match: undefined,
+        match: action.match,
         roundStarted: false,
         message: "Runde beendet. Demnächst geht es weiter.",
         view: CLIENT_STATE.WAITING
       };
 
+    case ACTION_TYPE.UPDATE_SETS_RESPONSE:
+      return updateSetsResponse(state, action);
+
     default:
       return state;
   }
 };
+
+function updateSetsResponse(state, action) {
+  if (action.message === "SUCCESS") {
+    console.info("Sets successfully sent");
+    return { ...state, match: undefined };
+  }
+  console.info("Could not send sets, trying again in 1000 ms.");
+  setTimeout(App.sendSets(state.match), 1000);
+}
 
 function roundAvailable(state, action) {
   const matchForTable = action.matches.find(
@@ -176,16 +189,6 @@ function setTableNumber(currentNumber, tables) {
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  // set tableNumber when availableTables are non-empty
-  // useEffect(() => {
-  //   if (state.tableNumber < 0 && state.availableTables.length > 0) {
-  //     dispatch({
-  //       type: "setTableNumber",
-  //       tableNumber: state.availableTables[0]
-  //     });
-  //   }
-  // }, [state]);
-
   const content = () => {
     if (state.view === CLIENT_STATE.LOGIN) {
       return (
@@ -238,7 +241,7 @@ function App() {
     socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
 
     if (finished) {
-      dispatch({ type: ACTION_TYPE.MATCH_FINISHED });
+      dispatch({ type: ACTION_TYPE.MATCH_FINISHED, match });
     }
   };
 
@@ -296,20 +299,18 @@ function App() {
       dispatch({ type: ACTION_TYPE.ROUND_CANCELED });
     });
 
-    // connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, () => {
-    //   console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
+    connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, data => {
+      console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
 
-    //   console.info("Could not send sets, trying again in 1000 ms.");
-    //   const { sets } = localMatch;
-    //   setInterval(
-    //     () =>
-    //       socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, {
-    //         tableNumber,
-    //         sets
-    //       }),
-    //     1000
-    //   );
-    // });
+      if (!data) {
+        console.error("Missing data in UPDATE_SETS_RESPONSE");
+      }
+
+      dispatch({
+        type: ACTION_TYPE.UPDATE_SETS_RESPONSE,
+        message: data.message || ""
+      });
+    });
 
     // connection.on(socketIOMessages.COMPETITION_CANCELED, () => {
     //   console.info("SERVER->CLIENT: COMPETITION_CANCELED");
