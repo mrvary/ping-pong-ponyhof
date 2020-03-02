@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, { useEffect, useReducer } from "react";
 import "./App.css";
 import { isMatchFinished } from "./lib";
 
@@ -44,7 +44,10 @@ const ACTION_TYPE = {
   ROUND_AVAILABLE: "round-available",
   COMPETITION_CANCELED: "competition-canceled",
   MATCH_SEND_RESPONSE: "match-send-request",
-  MATCH_FINISHED: "match-finished"
+  MATCH_FINISHED: "match-finished",
+  SETS_UPDATED: "sets-updated",
+  ADD_SET: "add-set",
+  UPDATE_SETS_RESPONSE: "update-sets-response"
 };
 
 const initialState = {
@@ -99,7 +102,19 @@ const reducer = (state, action) => {
       return { newStateWithoutMatch, match: action.match };
 
     case ACTION_TYPE.UPDATE_SETS_RESPONSE:
-      return updateSetsResponse(state, action);
+      // TODO
+      // return updateSetsResponse(state, action);
+      return switchToWaiting(state, "Runde beendet. Demnächst geht es weiter.");
+
+    case ACTION_TYPE.SETS_UPDATED:
+      return { ...state, match: { ...state.match, sets: action.sets } };
+
+    case ACTION_TYPE.ADD_SET:
+      const newSet = { player1: 0, player2: 0 };
+      return {
+        ...state,
+        match: { ...state.match, sets: [...state.match.sets, newSet] }
+      };
 
     default:
       return state;
@@ -203,6 +218,23 @@ function setTableNumber(currentNumber, tables) {
   return currentNumber;
 }
 
+const sendSets = dispatch => match => event => {
+  event.preventDefault();
+  const finished = isMatchFinished(match);
+  const data = {
+    sets: match.sets,
+    finished,
+    tableNumber: match.tableNumber
+  };
+
+  console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+  socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
+
+  if (finished) {
+    dispatch({ type: ACTION_TYPE.MATCH_FINISHED, match });
+  }
+};
+
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -223,7 +255,9 @@ function App() {
         <MatchView
           onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
           match={state.match}
-          sendSets={sendSets}
+          sendSets={sendSets(dispatch)}
+          updateSets={updateSets}
+          addSet={addSet}
         />
       );
     }
@@ -242,21 +276,20 @@ function App() {
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
   };
 
-  const sendSets = match => event => {
-    event.preventDefault();
-    const finished = isMatchFinished(match);
-    const data = {
-      sets: match.sets,
-      finished,
-      tableNumber: match.tableNumber
-    };
+  const updateSets = match => player => setIndex => event => {
+    const newSets = match.sets.map((set, index) => {
+      if (setIndex === index) {
+        set[player] = parseInt(event.target.value, 10);
+        return set;
+      }
+      return set;
+    });
 
-    console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
-    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
+    dispatch({ type: ACTION_TYPE.SETS_UPDATED, sets: newSets });
+  };
 
-    if (finished) {
-      dispatch({ type: ACTION_TYPE.MATCH_FINISHED, match });
-    }
+  const addSet = () => {
+    dispatch({ type: ACTION_TYPE.ADD_SET });
   };
 
   const handleTableNumberChange = event => {
@@ -322,7 +355,7 @@ function App() {
 
       dispatch({
         type: ACTION_TYPE.UPDATE_SETS_RESPONSE,
-        message: data.message || ""
+        message: data ? data.message || "" : ""
       });
     });
 
@@ -337,7 +370,7 @@ function App() {
 
   return (
     <div className="client-container">
-      <Title title={TITLE} />
+      <Title text={TITLE} />
       <ConnectionStatus isConnected={state.isConnected} />
       {content()}
     </div>
