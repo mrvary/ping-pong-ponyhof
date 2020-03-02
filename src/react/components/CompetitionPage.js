@@ -17,13 +17,27 @@ const ipcMessages = require("../../shared/ipc-messages");
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
+  const [showPopupIP, setShowPopupIP] = useState(false);
+  const handleCloseIP = () => setShowPopupIP(false);
+  const handleShowIP = () => setShowPopupIP(true);
+
   const statisticID = "/statisticTable/" + competitionID;
   return (
     <div className="competitionPage__link-alignment">
-      <div className="competitionPage__link-ip-adress-statistic">
+      <div
+        className="competitionPage__link-ip-adress-statistic"
+        onClick={handleShowIP}
+      >
         {" "}
         IP-Adresse{" "}
       </div>
+      <Popup
+        show={showPopupIP}
+        handleClose={handleCloseIP}
+        header="Verbinde mit"
+        bodyText="IP"
+        mode="noBtn"
+      ></Popup>
       <p
         onClick={() => openStatisticWindow(statisticID)}
         className="competitionPage__link-ip-adress-statistic"
@@ -93,7 +107,6 @@ const TableRow = ({ matchWithPlayers, active }) => {
   ]);
   let index = 0;
 
-  //console.log('stringyfy' + JSON.stringify(matchWithPlayers.match));
   matchWithPlayers.match.sets.forEach(set => {
     stringSet[index] = set.player1 + " : " + set.player2;
     index++;
