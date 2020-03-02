@@ -158,15 +158,15 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
-    const {tableNumber, sets} = args;
+    const { tableNumber, sets } = args;
 
     let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();
 
     if (finished) {
       mainWindow.webContents.send(
-          ipcMessages.UPDATE_MATCHES,
-          selectedCompetition
+        ipcMessages.UPDATE_MATCHES,
+        selectedCompetition
       );
     }
 
@@ -532,22 +532,22 @@ function updateSetsByTableNumber(tableNumber, sets) {
   let finished = false;
 
   selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-      matchWithPlayer => {
-        if (matchWithPlayer.tableNumber === tableNumber) {
-          // 3. update sets of match
-          const { match } = matchWithPlayer;
-          const updatedMatch = { ...match, sets };
-          matchWithPlayer.match = updatedMatch;
+    matchWithPlayer => {
+      if (matchWithPlayer.tableNumber === tableNumber) {
+        // 3. update sets of match
+        const { match } = matchWithPlayer;
+        const updatedMatch = { ...match, sets };
+        matchWithPlayer.match = updatedMatch;
 
-          // 4. save match to storage
-          competitionStorage.updateMatch(updatedMatch);
+        // 4. save match to storage
+        competitionStorage.updateMatch(updatedMatch);
 
-          // check if match is ready
-          finished = isMatchFinished(updatedMatch);
-        }
-
-        return matchWithPlayer;
+        // check if match is ready
+        finished = isMatchFinished(updatedMatch);
       }
+
+      return matchWithPlayer;
+    }
   );
 
   return finished;
