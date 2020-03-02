@@ -231,7 +231,7 @@ function exportXML(players, matches, initJSON) {
   let matchesToAdd = [];
   matches.forEach(match => {
     matchesToAdd.push({
-      player1: match.player1,
+      "player-a": match.player1,
       nr: "1",
       player2: match.player2
     });
@@ -255,8 +255,10 @@ function exportXML(players, matches, initJSON) {
     attrValueProcessor: a =>
       he.encode(a, { isAttributeValue: isAttribute, useNamedReferences: true }) // default is a=>a
   };
+
   var parser = new Parser(defaultOptions);
   var xml = parser.parse(initJSON);
+
   debugger;
 }
 
