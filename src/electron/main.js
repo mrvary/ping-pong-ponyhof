@@ -504,7 +504,8 @@ function initCompetition(competitionId) {
     matches = drawing.matches;
 
     // update competition in database
-    competition = setCompetitionRoundMatches(competition, matches);
+    const { currentRound } = competition;
+    competition = setCompetitionRoundMatches(competition, currentRound, matches);
     competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_READY_ROUND_READY
@@ -512,7 +513,12 @@ function initCompetition(competitionId) {
     metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
-    matches = competitionStorage.getMatchesByIds(competition.round_matchIds);
+
+    const { currentRound, rounds } = competition;
+    const { matchIds } = rounds.find(round => round.roundNumber === currentRound);
+    console.log(matchIds);
+
+    matches = competitionStorage.getMatchesByIds(matchIds);
     console.log("Get matches from competition database");
   }
 

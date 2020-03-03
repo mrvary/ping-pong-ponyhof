@@ -6,6 +6,8 @@
 const PLAYMODE = require("./competition-playmode");
 const COMPETITION_STATE = require("./competition-state");
 
+const { createRound } = require("./round");
+
 /**
  * createCompetitionFromJSON: dataFromJSON -> Competition
  */
@@ -20,13 +22,15 @@ function createCompetition(dataFromJSON) {
     name: dataFromJSON["name"],
     date: dataFromJSON["start-date"],
     playmode: dataFromJSON.competition["preliminary-round-playmode"],
-    round_match_Ids: [],
+    currentRound: 1,
+    rounds: [],
     state: COMPETITION_STATE.COMP_CREATED
   };
 }
 
-function setCompetitionRoundMatches(competition, matches) {
-  return { ...competition, round_matchIds: matches.map(match => match.id) };
+function setCompetitionRoundMatches(competition, roundNumber, matches) {
+  const round = createRound(roundNumber, matches);
+  return { ...competition,  rounds: [...competition.rounds, round] };
 }
 
 function setCompetitionState(competition, newStatus) {

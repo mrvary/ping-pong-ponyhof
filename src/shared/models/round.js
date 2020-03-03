@@ -1,11 +1,11 @@
 /**
- * @author Marco Geobel
+ * @author Marco Goebel
  */
 
-function createRound(roundNumber, matchIds) {
+function createRound(roundNumber, matches) {
   return {
-    round: roundNumber,
-    matches: matchIds
+    roundNumber: roundNumber,
+    matchIds: matches.map(match => match.id)
   };
 }
 
