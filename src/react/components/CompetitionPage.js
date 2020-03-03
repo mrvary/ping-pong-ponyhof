@@ -102,7 +102,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ matchWithPlayers, active, singleGameScore }) => {
+const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
   const [stringSet, setStringSet] = useState([
     '0 : 0',
     '0 : 0',
@@ -202,7 +202,7 @@ const TableRow = ({ matchWithPlayers, active, singleGameScore }) => {
         <button
           onClick={handleShowEditMatch}
           className={activeButtonCss}
-          disabled={!active || matchWithPlayers.connectedDevice}
+          disabled={!active || matchWithPlayers.connectedDevice || !nextRound}
         >
           bearbeiten
         </button>
@@ -221,9 +221,10 @@ const TableRow = ({ matchWithPlayers, active, singleGameScore }) => {
  *
  *
  */
-const Table = ({ matchesWithPlayers, active, gamesScore }) => {
+const Table = ({ matchesWithPlayers, active, gamesScore, nextRound }) => {
   let tableCss =
-    'competitionPage__table' + (active ? '--barrierGreen' : '--barrierRed');
+    'competitionPage__table' +
+    (active && nextRound ? '--barrierGreen' : '--barrierRed');
   let counter = 0;
   return (
     <div className={tableCss}>
@@ -236,6 +237,7 @@ const Table = ({ matchesWithPlayers, active, gamesScore }) => {
             key={matchWithPlayers.match.id}
             matchWithPlayers={matchWithPlayers}
             active={active}
+            nextRound={nextRound}
             singleGameScore={singleGameScore}
           />
         );
@@ -417,6 +419,7 @@ const CompetitionPage = () => {
       <Table
         matchesWithPlayers={matchesWithPlayers}
         active={active}
+        nextRound={nextRound}
         gamesScore={gamesScore}
       />
       <div className="competitionPage__Bottom-Buttons">
