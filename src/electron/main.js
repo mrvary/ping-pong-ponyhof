@@ -323,7 +323,10 @@ function registerIPCMainEvents() {
     }
 
     let resultData;
-    if (selectedCompetition && selectedCompetition.competition.id === competitionId) {
+    if (
+      selectedCompetition &&
+      selectedCompetition.competition.id === competitionId
+    ) {
       resultData = selectedCompetition;
     } else {
       // load competition
@@ -503,7 +506,10 @@ function initCompetition(competitionId) {
 
     // update competition in database
     competition = setCompetitionRoundMatches(competition, matches);
-    competition = setCompetitionState(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
+    competition = setCompetitionState(
+      competition,
+      COMPETITION_STATE.COMP_READY_ROUND_READY
+    );
     metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
@@ -525,7 +531,10 @@ function initCompetition(competitionId) {
 
 // use matchmaker to draw the next round and update players
 function createMatchesWithMatchmaker(players, currentMatches) {
-  const lastMatchId = currentMatches.length > 0 ? currentMatches[currentMatches.length - 1].id : 0;
+  const lastMatchId =
+    currentMatches.length > 0
+      ? currentMatches[currentMatches.length - 1].id
+      : 0;
 
   const matches = matchmaker.drawRound(players, lastMatchId);
   players = updatePlayersAfterDrawing(players, matches);

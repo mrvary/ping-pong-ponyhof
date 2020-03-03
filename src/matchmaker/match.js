@@ -17,7 +17,6 @@ function createMatches(pairings, lastMatchId) {
 
 // createMatch : {player1: Player, player2: Player} -> Match
 function createMatch({ player1, player2 }, matchId) {
-
   const match = {
     id: matchId,
     player1: player1,

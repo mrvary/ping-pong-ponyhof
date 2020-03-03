@@ -105,9 +105,9 @@ function updatePlayer(player) {
   const identifier = { id: player.id };
 
   const storedPlayer = lowDBDao.getElement(
-      storage,
-      ELEMENT_PATHS.PLAYERS,
-      identifier
+    storage,
+    ELEMENT_PATHS.PLAYERS,
+    identifier
   );
 
   if (!storedPlayer) {
