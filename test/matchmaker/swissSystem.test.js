@@ -1,7 +1,7 @@
 const { drawRound } = require("../../src/matchmaker/drawing");
 
 const {
-  tournamentJSON,
+  tournamentJSON16Players,
   tournamentJSON15Players
 } = require("./player.test.data");
 
@@ -18,7 +18,7 @@ const {
   updateWinner
 } = require("../../src/matchmaker/player");
 
-let players = createPlayersFromJSON(tournamentJSON15Players);
+let players = createPlayersFromJSON(tournamentJSON16Players);
 
 describe("playCompetition", () => {
   const roundsToPlay = 6;
