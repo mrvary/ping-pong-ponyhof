@@ -5,24 +5,37 @@
 }
 
 .header__picture {
-  height: 70vh;
-  background-image: url("../../assets/images/ellen-qin-fIMqGvVaATk-unsplash_zugeschnitten.jpg");
+  width: 100%;
+  height: auto;
+  background-image: url("../../assets/images/Bild3.png");
+}
+
+.header__alignment-logo-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10vh;
+  justify-content: flex-start;
+}
+
+.header__logo {
+  width: 60%;
+  content: url("../../assets/icons/svg/Logo4.svg");
+  margin-bottom: 2vh;
 }
 
 .header__title {
-  margin: 20vh 10vh;
-  font-size: 6vh;
+  font-size: 3vh;
   color: var(--sec-font-color);
   justify-content: center;
 }
 
 .header__match-box {
   width: 35vh;
-  height: 50vh;
+  height: 44vh;
   border: none;
   background: var(--sec-background-color);
-  color: var(--grey-out-color);
-  font-size: 2.5vh;
+  color: var(--prim-font-color);
   border-radius: 2vh;
   margin: 10vh 4vh;
   padding: 3vh;
@@ -32,36 +45,45 @@
   align-items: center;
 }
 
+.header__match-box--alignment-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 3.5vh;
+}
+
+.header__match-box--icon {
+  width: 12%;
+  content: url("../../assets/icons/svg/plus_icon.svg");
+  margin: 1vh;
+}
 .header__match-box--title {
   font-size: small;
-  text-align: center;
-  font-size: 2.5vh;
+  font-size: 2vh;
 }
 
 .header__upload-xml-button {
   width: 27vh;
   height: 20vh;
-  color: var(--prim-font-color);
-  font-size: 2vh;
-  border: 0.3vh solid var(--prim-font-color);
+  color: var(--grey-out-color);
+  font-size: 1.6vh;
+  border: 0vh solid var(--grey-out-color);
+  box-shadow: 0.5vh 0.5vh 1vh var(--shadow-color);
   background: var(--sec-background-color);
   top: 60px;
   border-radius: 2vh;
   margin: 5vh 0vh;
-  padding: 2vh;
 }
 
 .header__upload-xml-button:hover {
   color: var(--grey-out-color);
-  border: 0.1vh solid var(--grey-out-color);
 }
 
 .header__upload-xml-button:focus {
   outline: 0;
 }
-.header__upload-xml-button--true {
-  border: 0.5vh solid var(--success-color);
-}
+
+/* benutzen wir das? */
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
@@ -73,6 +95,7 @@
   background: var(--button-color);
   cursor: pointer;
 }
+
 .header__link {
   display: flex;
   justify-content: center;

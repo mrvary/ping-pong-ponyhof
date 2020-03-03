@@ -12,6 +12,10 @@ const {
   logRanking
 } = require("../../src/matchmaker/ranking");
 
+const { exportXML } = require("../../src/modules/export/xml-exporter");
+
+const { testXMLasJSON } = require("./tournament.test.data");
+
 const {
   createPlayersFromJSON,
   updatePlayersAfterDrawing,
@@ -52,11 +56,15 @@ describe("playCompetition", () => {
 
     //5.5 log ranking
     logRanking(ranking);
+
+    //6. export final XML
+    if (round === 6) exportXML(players, matches, testXMLasJSON);
   }
 
   test("match length of the last round", () => {
     expect(currentMatches.length).toEqual(players.length / 2);
   });
+
   test("gamesWon ", () => {
     let sumGamesWon = 0;
     players.forEach(player => {
@@ -65,7 +73,7 @@ describe("playCompetition", () => {
     expect(sumGamesWon).toBe((roundsToPlay * players.length) / 2);
   });
 
-  //TODO check if the sum of all players mus be 0?
+  //TODO check if the sum of all players must be 0?
   //sometimes the result is 1 or 2
   test("ttr difference of all players together  ", () => {
     let ttrDiff = 0;

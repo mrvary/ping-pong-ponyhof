@@ -2,8 +2,8 @@
   --prim-background-color: #f4f4f4;
   --sec-background-color: white;
 
-  --button-color: #84afce;
-  --button-hover-color: #99bad1;
+  --button-color: rgb(131, 175, 206);
+  --button-hover-color: rgb(153, 186, 209);
   --button-disabled-color: #f4f4f4;
 
   --grey-out-color: #4d4d4d;
@@ -14,9 +14,11 @@
 
   --success-color: green;
   --error-color: red;
-  --inactive-color: orange;
+  --inactive-color: rgb(255, 165, 0);
   --active-compet-color: #84afce;
 
-  --anti-color: #b788ba;
+  --anti-color: rgb(183, 136, 186);
   --main-color: #f4f4f4;
+
+  --shadow-color: #a1a1a1;
 }
