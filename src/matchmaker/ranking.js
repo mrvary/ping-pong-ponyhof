@@ -1,7 +1,8 @@
+const { getMatchWinner } = require("./match.js");
+
 // calculateBHZ : [players], [matches] -> [rankning]
 function createCurrentRanking(players, matches) {
   let ranking = [];
-
   players.forEach(player => {
     const ttrDifference = calculateTTRDifference(player, players);
     ranking.push({
@@ -10,7 +11,7 @@ function createCurrentRanking(players, matches) {
       firstname: player.firstname,
       lastname: player.lastname,
       gamesWon: player.gamesWon,
-      gamesLost: player.matchIds.length - player.gamesWon,
+      gamesLost: calculateGamesLost(player, matches),
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
       //ttr_begin: player.ttr,
@@ -57,7 +58,7 @@ function calculateBHZ(playerToCalculate, players) {
   return bhz;
 }
 
-// calculateTTRDifference : playerToCalculate, [players] -> Number
+// calculateTTRDifference : player, [players] -> Number
 function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
   const opponents = playerToCalculate.opponentIds.filter(
@@ -85,6 +86,21 @@ function calculateTTRDifference(playerToCalculate, players) {
     ttrDifference -= 16;
 
   return ttrDifference;
+}
+
+// calculateGamesLost : player, [matches] -> Number
+function calculateGamesLost(player, matches) {
+  let gamesFinished = 0;
+  matches.forEach(match => {
+    if (player.matchIds.includes(match.id)) {
+      debugger;
+      let getWinner = getMatchWinner(match);
+      if (getWinner !== false) {
+        gamesFinished++;
+      }
+    }
+  });
+  return gamesFinished - player.gamesWon;
 }
 
 //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
