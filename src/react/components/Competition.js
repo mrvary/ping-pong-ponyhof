@@ -24,7 +24,10 @@ function Competition(props) {
   const handleShowDelete = () => setShowPopupDelete(true);
 
   let containerCss = "competition__container";
-  if (state === "comp-active-round-active") {
+  if (
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+    state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+  ) {
     containerCss = "competition__container competition__container--active";
   }
 
@@ -79,8 +82,10 @@ const PuttingThrough = ({
   const competitionID = "/competition/" + id;
   if (
     hasActiveGame &&
-    (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-      state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE)
+    !(
+      state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+      state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    )
   ) {
     return (
       <div
