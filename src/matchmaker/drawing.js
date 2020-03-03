@@ -10,13 +10,13 @@ const {
 const { createMatches } = require("./match.js");
 
 // drawRound : [players] -> [matches]
-function drawRound(players) {
+function drawRound(players, lastMatchId) {
   const pairings =
     players[0].matchIds.length === 0
       ? drawFirstRound(players)
       : drawLaterRound(players);
 
-  return createMatches(pairings);
+  return createMatches(pairings, lastMatchId);
 }
 
 // drawFirstRound : [players] -> [pairings]

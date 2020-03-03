@@ -19,6 +19,7 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
+  setCompetitionRoundMatches,
   setCompetitionState
 } = require("../shared/models/competition");
 
@@ -265,17 +266,28 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = args;
 
-    // 1. initialize competition storage
-    const filePath = fileManager.getCompetitionFilePath(competitionId);
-    competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
-
-    // 2. import data into databases
-    xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
-
     let returnData;
     try {
+      if (selectedCompetition) {
+        const { competition } = selectedCompetition;
+
+        if (
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+        ) {
+          const message =
+            "Ein Tunier ist im Moment aktiv. Bitte erst das aktive Turnier pausieren";
+          console.log(message);
+          throw new Error(message);
+        }
+      }
+
+      // 1. initialize competition storage
+      const filePath = fileManager.getCompetitionFilePath(competitionId);
+      competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+
       // 2. import data into databases
-      //xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+      xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
 
       // 3. create response message with success message
       returnData = {
@@ -301,7 +313,9 @@ function registerIPCMainEvents() {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITION_MATCHES_REQUEST
     );
+
     const { competitionId } = args;
+    console.log(competitionId);
 
     if (!competitionId) {
       console.log("Parameter competitionId is undefined");
@@ -343,8 +357,8 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
     const { route } = args;
 
-    const showStatisticView = route.includes("statisticTable");
-    if (showStatisticView) {
+    const isStatisticView = route.includes("statisticTable");
+    if (isStatisticView) {
       statisticWindow = createWindow(route);
     }
   });
@@ -484,19 +498,18 @@ function initCompetition(competitionId) {
   // init matches ...
   let matches;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-
     // ... with matchmakers first round
-    const drawing = createMatchesWithMatchmaker(players);
+    const drawing = createMatchesWithMatchmaker(players, []);
     players = drawing.players;
     matches = drawing.matches;
 
     // update competition in database
-    /*competition = updateCompetitionRoundMatches(competition, matches);
-    competition = updateCompetitionStatus(
+    competition = setCompetitionRoundMatches(competition, matches);
+    competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_READY_ROUND_READY
     );
-    metaRepository.updateCompetition(competition);*/
+    metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
     matches = competitionStorage.getMatchesByIds(competition.round_matchIds);
@@ -511,13 +524,18 @@ function initCompetition(competitionId) {
 }
 
 // use matchmaker to draw the next round and update players
-function createMatchesWithMatchmaker(players) {
-  const matches = matchmaker.drawRound(players);
+function createMatchesWithMatchmaker(players, currentMatches) {
+  const lastMatchId =
+    currentMatches.length > 0
+      ? currentMatches[currentMatches.length - 1].id
+      : 0;
+
+  const matches = matchmaker.drawRound(players, lastMatchId);
   players = updatePlayersAfterDrawing(players, matches);
   console.log("Get matches from matchmaker");
 
   // update competition
-  competitionStorage.createPlayers(players);
+  competitionStorage.updatePlayers(players);
   competitionStorage.createMatches(matches);
   console.log("Save matches and player in competition storage");
 
@@ -570,6 +588,10 @@ function updateRanking() {
 
   const rankings = createCurrentRanking(players, matches);
   console.log("update ranking table");
+
+  if (!statisticWindow) {
+    return;
+  }
 
   statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
     competition: selectedCompetition.competition,

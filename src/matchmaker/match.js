@@ -1,22 +1,22 @@
 const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
 
-let matchId = 0;
-
 // createMatches : [{player1: Player, player2: Player}] -> [Match]
-function createMatches(pairings) {
+function createMatches(pairings, lastMatchId) {
   let remainingPairings = [...pairings];
+  let matchId = lastMatchId > 0 ? lastMatchId++ : lastMatchId;
 
   let matches = [];
   while (remainingPairings.length > 0) {
-    const match = createMatch(remainingPairings.shift());
+    const match = createMatch(remainingPairings.shift(), matchId);
     matches.push(match);
+    matchId++;
   }
 
   return matches;
 }
 
 // createMatch : {player1: Player, player2: Player} -> Match
-function createMatch({ player1, player2 }) {
+function createMatch({ player1, player2 }, matchId) {
   const match = {
     id: matchId,
     player1: player1,
@@ -32,7 +32,6 @@ function createMatch({ player1, player2 }) {
     });
   }
 
-  matchId++;
   return match;
 }
 

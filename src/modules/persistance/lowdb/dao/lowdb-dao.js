@@ -27,8 +27,8 @@ function clear(storage, object) {
 }
 
 function initStateWithDefaults(storage, object) {
-  storage.setState(object).write();
-  //storage.defaults(object).write();
+  //storage.setState(object).write();
+  storage.defaults(object).write();
 }
 
 function getState(storage) {
@@ -109,7 +109,7 @@ function updateElement(storage, elementPath, element, identifier) {
 }
 
 function deleteElement(storage, elementPath, identifier) {
-  if (!hasElement(elementPath, identifier)) {
+  if (!hasElement(storage, elementPath, identifier)) {
     return;
   }
 
