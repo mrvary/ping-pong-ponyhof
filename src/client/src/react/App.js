@@ -215,7 +215,7 @@ function roundAvailable(state, action) {
   if (matchForTable) {
     return {
       ...state,
-      match: matchForTable.match,
+      match: filterAllUnplayedSetsExceptOne(matchForTable.match),
       view: VIEW.NEXT_PLAYERS,
       message: ""
     };
@@ -230,16 +230,17 @@ function roundAvailable(state, action) {
 
 function filterAllUnplayedSetsExceptOne(match) {
   const allPlayedSets = match.sets.filter(
-    set => set.player1 === 0 && set.player2
+    set => set.player1 !== 0 && set.player2 !== 0
   );
   const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
 
   return { ...match, sets: updatedSets };
 }
 
-function padSetsWithEmptySets(sets) {
-  while (sets.length < 5) {
-    sets.push({ player1: 0, player2: 0 });
+function padSetArrayWithEmptySets(sets) {
+  const paddedArray = [...sets];
+  while (paddedArray.length < 5) {
+    paddedArray.push({ player1: 0, player2: 0 });
   }
 
   return sets;
@@ -264,7 +265,7 @@ function App() {
     event.preventDefault();
 
     const requestData = {
-      sets: padSetsWithEmptySets(match.sets),
+      sets: padSetArrayWithEmptySets(match.sets),
       finished: isMatchFinished(match),
       tableNumber: state.confirmedTableNumber
     };
