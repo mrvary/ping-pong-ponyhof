@@ -559,25 +559,30 @@ function updateSetsByTableNumber(tableNumber, sets) {
   let finished = false;
 
   selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-    matchWithPlayer => {
-      if (matchWithPlayer.tableNumber === tableNumber) {
+    matchWithPlayers => {
+      if (matchWithPlayers.tableNumber === tableNumber) {
         // 3. update sets of match
-        const { match } = matchWithPlayer;
+        const { match } = matchWithPlayers;
         const updatedMatch = { ...match, sets };
-        matchWithPlayer.match = updatedMatch;
+        matchWithPlayers.match = updatedMatch;
 
         // 4. save match to storage
-        competitionStorage.updateMatch(updatedMatch);
+        updateMatch(matchWithPlayers);
 
         // check if match is ready
         finished = isMatchFinished(updatedMatch);
       }
 
-      return matchWithPlayer;
+      return matchWithPlayers;
     }
   );
 
   return finished;
+}
+
+function updateMatch(matchWithPlayers) {
+  const match = getMatchFromMatchWithPlayer(matchWithPlayers);
+  competitionStorage.updateMatch(match);
 }
 
 function updateRanking() {
@@ -626,4 +631,32 @@ function mapMatchesWithPlayers(matches, players) {
   });
 
   return matchesWithPlayers;
+}
+
+function getMatchFromMatchWithPlayer(matchWithPlayers) {
+  const {match} = matchWithPlayers;
+
+  const copyMatch = {...match};
+  copyMatch.player1 = copyMatch.player1.id;
+  copyMatch.player2 = copyMatch.player2.id;
+
+  return copyMatch;
+}
+
+function splitMatchesWithPlayer(matchesWithPlayers) {
+  let matches = [];
+  let players = [];
+
+  matchesWithPlayers.forEach(matchWithPlayers => {
+    const player1 = matchWithPlayers.match.player1;
+    const player2 = matchWithPlayers.match.player2;
+
+    players.push(player1);
+    player2.push(player2);
+
+    const match = getMatchFromMatchWithPlayer(matchWithPlayers);
+    matches.push(match);
+  });
+
+  return {matches, players}
 }
