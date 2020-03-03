@@ -7,7 +7,6 @@ import Title from "../components/Title";
 function MatchView({
   onlyShowNextPlayers,
   match,
-  tableNumber,
   sendSets,
   updateSets,
   addSet
@@ -22,7 +21,6 @@ function MatchView({
           sendSets={sendSets}
           updateSets={updateSets}
           addSet={addSet}
-          tableNumber={tableNumber}
         />
       )}
     </div>

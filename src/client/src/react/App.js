@@ -60,6 +60,12 @@ const initialState = {
   roundStarted: false
 };
 
+//
+//
+// ----- REDUCER
+//
+//
+
 const reducer = (state, action) => {
   if (isNotLoggedIn(state, action)) {
     return state;
@@ -90,17 +96,8 @@ const reducer = (state, action) => {
         "Turnier abgebrochen, kleinen Moment bitte!"
       );
 
-    case ACTION_TYPE.MATCH_FINISHED:
-      const newStateWithoutMatch = switchToWaiting(
-        state,
-        "Runde beendet. Demnächst geht es weiter."
-      );
-      return { newStateWithoutMatch, match: action.match };
-
     case ACTION_TYPE.UPDATE_SETS_RESPONSE:
-      // TODO
-      // return updateSetsResponse(state, action);
-      return switchToWaiting(state, "Runde beendet. Demnächst geht es weiter.");
+      return updateSetsResponse(state, action);
 
     case ACTION_TYPE.SETS_UPDATED:
       return { ...state, match: { ...state.match, sets: action.sets } };
@@ -116,6 +113,57 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+function loggedIn(state, action) {
+  const { match, roundStarted, message, tableNumber } = action.data;
+
+  if (message) {
+    console.error(message);
+    return { ...state, message };
+  }
+
+  const newState = {
+    ...state,
+    isConnected: !message,
+    roundStarted,
+    message,
+    confirmedTableNumber: tableNumber
+  };
+
+  if (match && isMatchFinished(match)) {
+    console.info("match is finished");
+    return {
+      ...newState,
+      match: filterAllUnplayedSetsExceptOne(match),
+      message: "Spiel beendet. Warten auf die nächste Runde.",
+      view: VIEW.WAITING
+    };
+  }
+
+  if (match && roundStarted) {
+    console.info("round is started");
+    return {
+      ...newState,
+      match: filterAllUnplayedSetsExceptOne(match),
+      view: VIEW.MATCH
+    };
+  }
+
+  if (match) {
+    console.info("round is started");
+    return {
+      ...newState,
+      match: filterAllUnplayedSetsExceptOne(match),
+      view: VIEW.NEXT_PLAYERS
+    };
+  }
+
+  return {
+    ...newState,
+    message: "Kein laufendes Turnier.",
+    view: VIEW.WAITING
+  };
+}
 
 function switchToWaiting(state, message) {
   return {
@@ -138,11 +186,16 @@ function isNotLoggedIn(state, action) {
 function updateSetsResponse(state, action) {
   if (action.message === "success") {
     console.info("Sets successfully sent");
-    return { ...state, match: undefined };
+    return state;
   }
 
-  console.info("Could not send sets, trying again in 1000 ms.");
-  setTimeout(sendSets(state.match), 1000);
+  if (action.message === "finished") {
+    console.info("Sets successfully sent. Match is finished.");
+    return switchToWaiting(state, "Runde beendet. Demnächst geht es weiter.");
+  }
+
+  console.info("Could not send sets");
+  return { ...state, message: action.message };
 }
 
 function roundStarted(state, action) {
@@ -155,7 +208,6 @@ function roundStarted(state, action) {
 }
 
 function roundAvailable(state, action) {
-  console.log(action.matchesWithPlayers);
   const matchForTable = action.matchesWithPlayers.find(
     match => match.tableNumber === state.confirmedTableNumber
   );
@@ -176,49 +228,6 @@ function roundAvailable(state, action) {
   return state;
 }
 
-function loggedIn(state, action) {
-  const { match, roundStarted, message, tableNumber } = action.data;
-
-  if (message) {
-    console.error(message);
-    return { ...state, message };
-  }
-
-  const newState = {
-    ...state,
-    isConnected: !message,
-    match: filterAllUnplayedSetsExceptOne(match),
-    roundStarted,
-    message,
-    confirmedTableNumber: tableNumber
-  };
-
-  if (match && isMatchFinished(match)) {
-    console.info("match is finished");
-    return {
-      ...newState,
-      message: "Spiel beendet. Warten auf die nächste Runde.",
-      view: VIEW.WAITING
-    };
-  }
-
-  if (match && roundStarted) {
-    console.info("round is started");
-    return { ...newState, view: VIEW.MATCH };
-  }
-
-  if (match) {
-    console.info("round is started");
-    return { ...newState, view: VIEW.NEXT_PLAYERS };
-  }
-
-  return {
-    ...newState,
-    message: "Kein laufendes Turnier.",
-    view: VIEW.WAITING
-  };
-}
-
 function filterAllUnplayedSetsExceptOne(match) {
   const allPlayedSets = match.sets.filter(
     set => set.player1 === 0 && set.player2
@@ -228,63 +237,40 @@ function filterAllUnplayedSetsExceptOne(match) {
   return { ...match, sets: updatedSets };
 }
 
-const sendSets = dispatch => match => tableNumber => event => {
-  console.log(match);
-  event.preventDefault();
-  const finished = isMatchFinished(match);
-  const data = {
-    sets: match.sets,
-    finished,
-    tableNumber
-    // tableNumber: match.tableNumber
-  };
-
-  console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
-  socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, data);
-
-  if (finished) {
-    dispatch({ type: ACTION_TYPE.MATCH_FINISHED, match });
+function padSetsWithEmptySets(sets) {
+  while (sets.length < 5) {
+    sets.push({ player1: 0, player2: 0 });
   }
-};
+
+  return sets;
+}
+
+//
+//
+// ----- APP COMPONENT
+//
+//
 
 function App() {
   const [state, dispatch] = useReducer(reducer, initialState);
-
-  const content = () => {
-    if (state.view === VIEW.LOGIN) {
-      return (
-        <LoginView
-          availableTables={state.availableTables}
-          sendTableNumber={sendTableNumber}
-        />
-      );
-    }
-
-    if (state.view === VIEW.NEXT_PLAYERS || state.view === VIEW.MATCH) {
-      return (
-        <MatchView
-          onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
-          match={state.match}
-          tableNumber={state.confirmedTableNumber}
-          sendSets={sendSets(dispatch)}
-          updateSets={updateSets}
-          addSet={addSet}
-        />
-      );
-    }
-
-    if (state.view === VIEW.WAITING) {
-      return <WaitingView message={state.message} />;
-    }
-
-    // render nothing if none of the above states
-    return <></>;
-  };
 
   const sendTableNumber = tableNumber => event => {
     event.preventDefault();
     console.info("CLIENT->SERVER: LOGIN_REQUEST");
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
+  };
+
+  const sendSets = match => event => {
+    event.preventDefault();
+
+    const requestData = {
+      sets: padSetsWithEmptySets(match.sets),
+      finished: isMatchFinished(match),
+      tableNumber: state.confirmedTableNumber
+    };
+
+    console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+    socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, requestData);
   };
 
   const updateSets = match => player => setIndex => event => {
@@ -302,6 +288,12 @@ function App() {
   const addSet = () => {
     dispatch({ type: ACTION_TYPE.ADD_SET });
   };
+
+  //
+  //
+  // ----- SOCKETS
+  //
+  //
 
   // register sockets for client - server communication
   if (!socket) {
@@ -350,7 +342,7 @@ function App() {
       console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
 
       if (!data) {
-        console.error("Missing data in UPDATE_SETS_RESPONSE");
+        console.error("No data in UPDATE_SETS_RESPONSE");
       }
 
       dispatch({
@@ -371,6 +363,42 @@ function App() {
   // const liink =
   //   'Ein Turnier wartet auf dich -> <a href="http://192.168.2.182:4000"><a>';
   // const link = `whatsapp://send?text=${encodeURIComponent(liink)}`;
+
+  //
+  //
+  // ----- VIEW
+  //
+  //
+
+  const content = () => {
+    if (state.view === VIEW.LOGIN) {
+      return (
+        <LoginView
+          availableTables={state.availableTables}
+          sendTableNumber={sendTableNumber}
+        />
+      );
+    }
+
+    if (state.view === VIEW.NEXT_PLAYERS || state.view === VIEW.MATCH) {
+      return (
+        <MatchView
+          onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
+          match={state.match}
+          sendSets={sendSets}
+          updateSets={updateSets}
+          addSet={addSet}
+        />
+      );
+    }
+
+    if (state.view === VIEW.WAITING) {
+      return <WaitingView message={state.message} />;
+    }
+
+    // render nothing if none of the above states
+    return <></>;
+  };
 
   return (
     <div className="client-container">

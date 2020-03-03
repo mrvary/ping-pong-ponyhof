@@ -156,10 +156,12 @@ function initHTTPServer() {
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS_REQUEST, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS_REQUEST);
     console.log(args);
-    const { tableNumber, sets } = args;
+    const { tableNumber, sets, finished } = args;
 
-    let finished = updateSetsByTableNumber(tableNumber, sets);
-    const responseData = createUpdateSetsResponseData();
+    updateSetsByTableNumber(tableNumber, sets);
+    const responseData = finished
+      ? { message: "finished" }
+      : { message: "success" };
 
     if (finished) {
       mainWindow.webContents.send(
@@ -331,12 +333,10 @@ function registerIPCMainEvents() {
     const { tableNumber, sets } = args;
 
     // 2. find match by table number
-    let finished = updateSetsByTableNumber(tableNumber, sets);
+    updateSetsByTableNumber(tableNumber, sets);
 
-    // 5. send update match
-    if (finished) {
-      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
-    }
+    // 3. send update match
+    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
@@ -524,8 +524,6 @@ function updateCompetitionState(competition, newState) {
 }
 
 function updateSetsByTableNumber(tableNumber, sets) {
-  let finished = false;
-
   selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
     matchWithPlayer => {
       if (matchWithPlayer.tableNumber === tableNumber) {
@@ -536,16 +534,11 @@ function updateSetsByTableNumber(tableNumber, sets) {
 
         // 4. save match to storage
         competitionStorage.updateMatch(updatedMatch);
-
-        // check if match is ready
-        finished = isMatchFinished(updatedMatch);
       }
 
       return matchWithPlayer;
     }
   );
-
-  return finished;
 }
 
 function mapMatchesWithPlayers(matches, players) {
