@@ -27,6 +27,8 @@ module.exports = {
 
   OPEN_NEW_WINDOW: "open-new-window",
 
+  GET_RANKING_REQUEST: "get-ranking-request",
+
   // ********************************
   // ipc-main -> ipc-renderer
   // ********************************
@@ -37,5 +39,6 @@ module.exports = {
   GET_COMPETITION_PREVIEW_RESPONSE: "get-competition-preview-response",
   IMPORT_XML_FILE_RESPONSE: "import-xml-file_response",
 
-  UPDATE_MATCHES: "update-matches"
+  UPDATE_MATCHES: "update-matches",
+  UPDATE_RANKING: "update-ranking"
 };
