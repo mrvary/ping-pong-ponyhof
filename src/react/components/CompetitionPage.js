@@ -267,11 +267,10 @@ const CompetitionPage = () => {
 
   const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
-    matchesWithPlayers.map(allMatch => {
+    matchesWithPlayers.forEach(allMatch => {
       if (!isMatchFinished(allMatch.match)) {
         matchesFinished = false;
       }
-      return null;
     });
     setMatchesFinished(matchesFinished);
   };
