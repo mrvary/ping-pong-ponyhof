@@ -14,10 +14,10 @@
 
   --success-color: green;
   --error-color: red;
-  --inactive-color: orange;
+  --inactive-color: rgb(255, 165, 0);
   --active-compet-color: #84afce;
 
-  --anti-color: #b788ba;
+  --anti-color: rgb(183, 136, 186);
   --main-color: #f4f4f4;
 
   --shadow-color: #a1a1a1;

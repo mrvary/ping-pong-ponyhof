@@ -30,7 +30,10 @@ function Header({
           viewedCompetition={viewedCompetition}
           errorMessage={errorMessage}
         />
-        <strong className="header__title">{title}</strong>
+        <div className="header__alignment-logo-title">
+          <div className="header__logo"></div>
+          <strong className="header__title">{title}</strong>
+        </div>
       </div>
     </section>
   );

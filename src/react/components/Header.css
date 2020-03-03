@@ -7,12 +7,25 @@
 .header__picture {
   width: 100%;
   height: auto;
-  background-image: url('../../assets/images/ellen-qin-fIMqGvVaATk-unsplash_zugeschnitten.jpg');
+  background-image: url('../../assets/images/Bild3.png');
+}
+
+.header__alignment-logo-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10vh;
+  justify-content: flex-start;
+}
+
+.header__logo {
+  width: 100%;
+  content: url('../../assets/icons/svg/Logo4.svg');
+  margin-bottom: 2vh;
 }
 
 .header__title {
-  margin: 20vh 10vh;
-  font-size: 6vh;
+  font-size: 2.5vh;
   color: var(--sec-font-color);
   justify-content: center;
 }
