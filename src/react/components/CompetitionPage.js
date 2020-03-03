@@ -8,10 +8,12 @@ import Popup from "./Popup";
 import Button from "./Button";
 import CompetitionPageHeader from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
+import Competition from "./Competition";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
+const COMPETITION_STATE = require("../../shared/models/competition-state");
 const {
   isMatchFinished,
   setsWonPlayer1,
@@ -252,6 +254,12 @@ const CompetitionPage = () => {
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
       checkForFinishedRound(matchesWithPlayers);
+      if (
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      ) {
+        setActive(competition.state);
+      }
     }
 
     ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
