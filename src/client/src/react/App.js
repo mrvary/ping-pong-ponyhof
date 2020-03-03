@@ -150,7 +150,7 @@ function loggedIn(state, action) {
   }
 
   if (match) {
-    console.info("round is started");
+    console.info("round is available");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
