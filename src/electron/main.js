@@ -163,12 +163,10 @@ function initHTTPServer() {
       ? { message: "finished" }
       : { message: "success" };
 
-    if (finished) {
-      mainWindow.webContents.send(
-        ipcMessages.UPDATE_MATCHES,
-        selectedCompetition
-      );
-    }
+    mainWindow.webContents.send(
+      ipcMessages.UPDATE_MATCHES,
+      selectedCompetition
+    );
 
     server.ServerMainIOConnection.emit(
       serverMessages.UPDATE_SETS_RESPONSE,
