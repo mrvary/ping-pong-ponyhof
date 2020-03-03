@@ -6,7 +6,6 @@ const { saveXMLFile } = require("../persistance/file-manager");
 
 function exportXML(players, matches, initJSON) {
   var Parser = require("fast-xml-parser").j2xParser;
-  var he = require("he");
 
   let matchesToAdd = [];
   matches.forEach(match => {
@@ -51,8 +50,7 @@ function exportXML(players, matches, initJSON) {
     ignoreAttributes: false,
     format: true,
     indentBy: "  ",
-    supressEmptyNode: false,
-    tagValueProcessor: a => he.encode(a, { useNamedReferences: true }) // default is a=>a
+    supressEmptyNode: false
   };
 
   var parser = new Parser(defaultOptions);
