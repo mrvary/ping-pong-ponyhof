@@ -97,6 +97,27 @@ function createPlayers(players) {
   lowDBDao.createElements(storage, ELEMENT_PATHS.PLAYERS, players);
 }
 
+function updatePlayers(players) {
+  players.forEach(player => updatePlayer(player));
+}
+
+function updatePlayer(player) {
+  const identifier = { id: player.id };
+
+  const storedPlayer = lowDBDao.getElement(
+      storage,
+      ELEMENT_PATHS.PLAYERS,
+      identifier
+  );
+
+  if (!storedPlayer) {
+    createPlayers(player);
+    return;
+  }
+
+  lowDBDao.updateElement(storage, ELEMENT_PATHS.PLAYERS, player, identifier);
+}
+
 function getAllPlayers() {
   return lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
 }
@@ -111,8 +132,10 @@ module.exports = {
 
   createMatches,
   updateMatch,
+  getAllMatches,
   getMatchesByIds,
 
   createPlayers,
+  updatePlayers,
   getAllPlayers
 };

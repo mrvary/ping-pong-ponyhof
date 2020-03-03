@@ -276,7 +276,7 @@ function registerIPCMainEvents() {
           competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
         ) {
           const message =
-            "Ein Tunier ist im Moment aktiv. Bitte erste pausieren";
+            "Ein Tunier ist im Moment aktiv. Bitte erst das aktive Turnier pausieren";
           console.log(message);
           throw new Error(message);
         }
@@ -313,7 +313,9 @@ function registerIPCMainEvents() {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITION_MATCHES_REQUEST
     );
+
     const { competitionId } = args;
+    console.log(competitionId);
 
     if (!competitionId) {
       console.log("Parameter competitionId is undefined");
@@ -321,10 +323,7 @@ function registerIPCMainEvents() {
     }
 
     let resultData;
-    if (
-      selectedCompetition &&
-      selectedCompetition.competition.id === competitionId
-    ) {
+    if (selectedCompetition && selectedCompetition.competition.id === competitionId) {
       resultData = selectedCompetition;
     } else {
       // load competition
@@ -498,12 +497,13 @@ function initCompetition(competitionId) {
   //let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
     // ... with matchmakers first round
-    const drawing = createMatchesWithMatchmaker(players);
+    const drawing = createMatchesWithMatchmaker(players, []);
     players = drawing.players;
     matches = drawing.matches;
 
     // update competition in database
     competition = setCompetitionRoundMatches(competition, matches);
+    competition = setCompetitionState(competition, COMPETITION_STATE.COMP_READY_ROUND_READY);
     metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
@@ -524,13 +524,15 @@ function initCompetition(competitionId) {
 }
 
 // use matchmaker to draw the next round and update players
-function createMatchesWithMatchmaker(players) {
-  const matches = matchmaker.drawRound(players);
+function createMatchesWithMatchmaker(players, currentMatches) {
+  const lastMatchId = currentMatches.length > 0 ? currentMatches[currentMatches.length - 1].id : 0;
+
+  const matches = matchmaker.drawRound(players, lastMatchId);
   players = updatePlayersAfterDrawing(players, matches);
   console.log("Get matches from matchmaker");
 
   // update competition
-  competitionStorage.createPlayers(players);
+  competitionStorage.updatePlayers(players);
   competitionStorage.createMatches(matches);
   console.log("Save matches and player in competition storage");
 
