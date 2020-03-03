@@ -19,7 +19,7 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
-    setCompetitionRoundMatches,
+  setCompetitionRoundMatches,
   setCompetitionState
 } = require("../shared/models/competition");
 
@@ -268,12 +268,15 @@ function registerIPCMainEvents() {
 
     let returnData;
     try {
-
       if (selectedCompetition) {
-        const {competition} = selectedCompetition;
-        
-        if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-          const message = "Ein Tunier ist im Moment aktiv. Bitte erste pausieren";
+        const { competition } = selectedCompetition;
+
+        if (
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+        ) {
+          const message =
+            "Ein Tunier ist im Moment aktiv. Bitte erste pausieren";
           console.log(message);
           throw new Error(message);
         }
@@ -318,10 +321,12 @@ function registerIPCMainEvents() {
     }
 
     let resultData;
-    if (selectedCompetition && selectedCompetition.competition.id === competitionId) {
+    if (
+      selectedCompetition &&
+      selectedCompetition.competition.id === competitionId
+    ) {
       resultData = selectedCompetition;
     } else {
-
       // load competition
       resultData = initCompetition(competitionId);
 
@@ -492,7 +497,6 @@ function initCompetition(competitionId) {
   let matches;
   //let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-
     // ... with matchmakers first round
     const drawing = createMatchesWithMatchmaker(players);
     players = drawing.players;
