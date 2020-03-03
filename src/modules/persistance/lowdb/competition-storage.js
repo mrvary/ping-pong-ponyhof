@@ -24,9 +24,6 @@ let storage = null;
 // STATE OPERATIONS
 
 function init(filePath, useInMemory = true) {
-  internalFilePath = filePath;
-  internalUseInMemory = useInMemory;
-
   if (internalFilePath !== filePath) {
     close();
   }
@@ -34,6 +31,9 @@ function init(filePath, useInMemory = true) {
   if (storage) {
     return;
   }
+
+  internalFilePath = filePath;
+  internalUseInMemory = useInMemory;
 
   storage = lowDBDao.open(filePath, useInMemory);
 }
@@ -51,6 +51,7 @@ function getState() {
 function close() {
   if (storage) {
     storage = null;
+    console.log("close current competition storage");
   }
 }
 

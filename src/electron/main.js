@@ -265,17 +265,15 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = args;
 
-    // 1. initialize competition storage
-    const filePath = fileManager.getCompetitionFilePath(competitionId);
-    competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
-
-    // 2. import data into databases
-    xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
-
     let returnData;
     try {
+
+      // 1. initialize competition storage
+      const filePath = fileManager.getCompetitionFilePath(competitionId);
+      competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+
       // 2. import data into databases
-      //xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+      xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
 
       // 3. create response message with success message
       returnData = {
