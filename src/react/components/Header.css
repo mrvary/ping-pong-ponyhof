@@ -7,7 +7,7 @@
 .header__picture {
   width: 100%;
   height: auto;
-  background-image: url('../../assets/images/Bild3.png');
+  background-image: url("../../assets/images/Bild3.png");
   margin-bottom: 3vh;
 }
 
@@ -21,7 +21,7 @@
 
 .header__logo {
   width: 60%;
-  content: url('../../assets/icons/svg/Logo4.svg');
+  content: url("../../assets/icons/svg/Logo4.svg");
   margin-bottom: 2vh;
 }
 
@@ -55,7 +55,7 @@
 
 .header__match-box--icon {
   width: 12%;
-  content: url('../../assets/icons/svg/plus_icon.svg');
+  content: url("../../assets/icons/svg/plus_icon.svg");
   margin: 1vh;
 }
 .header__match-box--title {

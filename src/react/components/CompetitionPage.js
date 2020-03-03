@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import './CompetitionPage.css';
-import '../Colors.css';
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import "./CompetitionPage.css";
+import "../Colors.css";
 
 // components
-import Popup from './Popup';
-import Button from './Button';
-import CompetitionPageHeader from './CompetitionPageHeader';
-import PopupEditTable from './PopupEditTable';
+import Popup from "./Popup";
+import Button from "./Button";
+import CompetitionPageHeader from "./CompetitionPageHeader";
+import PopupEditTable from "./PopupEditTable";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require('../../shared/ipc-messages');
-const COMPETITION_STATE = require('../../shared/models/competition-state');
+const ipcMessages = require("../../shared/ipc-messages");
+const COMPETITION_STATE = require("../../shared/models/competition-state");
 const {
   isMatchFinished,
   setsWonPlayer1,
   setsWonPlayer2
-} = require('../../client/src/shared/lib');
+} = require("../../client/src/shared/lib");
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({
@@ -29,16 +29,16 @@ const IpAdressAndStatisticLink = ({
   const handleCloseIP = () => setShowPopupIP(false);
   const handleShowIP = () => setShowPopupIP(true);
 
-  const statisticID = '/statisticTable/' + competitionID;
-  let roundDisplay = 'Runde: ' + round;
+  const statisticID = "/statisticTable/" + competitionID;
+  let roundDisplay = "Runde: " + round;
   return (
     <div className="competitionPage__link-alignment">
       <div
         className="competitionPage__link-ip-adress-statistic"
         onClick={handleShowIP}
       >
-        {' '}
-        IP-Adresse{' '}
+        {" "}
+        IP-Adresse{" "}
       </div>
       <Popup
         show={showPopupIP}
@@ -63,44 +63,44 @@ const TableHeadline = () => {
     <div className="competitionPage__centered">
       <div className="competitionPage__table competitionPage__table--def">
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Tisch{' '}
+          {" "}
+          Tisch{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
+          {" "}
           Spieler 1
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          :{' '}
+          {" "}
+          :{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Spieler 2{' '}
+          {" "}
+          Spieler 2{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 1{' '}
+          {" "}
+          Satz 1{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 2{' '}
+          {" "}
+          Satz 2{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 3{' '}
+          {" "}
+          Satz 3{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 4{' '}
+          {" "}
+          Satz 4{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 5{' '}
+          {" "}
+          Satz 5{" "}
         </strong>
         <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Ergebnis{' '}
+          {" "}
+          Ergebnis{" "}
         </strong>
       </div>
     </div>
@@ -109,16 +109,16 @@ const TableHeadline = () => {
 
 const TableRow = ({ matchWithPlayers, active }) => {
   const [stringSet, setStringSet] = useState([
-    '0 : 0',
-    '0 : 0',
-    '0 : 0',
-    '0 : 0',
-    '0 : 0'
+    "0 : 0",
+    "0 : 0",
+    "0 : 0",
+    "0 : 0",
+    "0 : 0"
   ]);
   let index = 0;
 
   matchWithPlayers.match.sets.forEach(set => {
-    stringSet[index] = set.player1 + ' : ' + set.player2;
+    stringSet[index] = set.player1 + " : " + set.player2;
     index++;
   });
 
@@ -136,7 +136,7 @@ const TableRow = ({ matchWithPlayers, active }) => {
       setsWonPlayer2(matchWithPlayers.match)
     ]);
     console.log(
-      'score: ',
+      "score: ",
       setGameScore([
         setsWonPlayer1(matchWithPlayers.match),
         setsWonPlayer2(matchWithPlayers.match)
@@ -145,19 +145,19 @@ const TableRow = ({ matchWithPlayers, active }) => {
     handleCloseEditMatch();
   };
 
-  let tischCss = 'liRed';
+  let tischCss = "liRed";
   if (matchWithPlayers.connectedDevice) {
-    tischCss = 'liGreen';
+    tischCss = "liGreen";
   }
-  let activeButtonCss = 'competitionPage__table__bearbeiten-btn';
+  let activeButtonCss = "competitionPage__table__bearbeiten-btn";
   if (!active) {
     activeButtonCss =
-      'competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive';
+      "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
   }
-  let matchDoneCss = 'competitionPage__table competitionPage__table--values';
+  let matchDoneCss = "competitionPage__table competitionPage__table--values";
   if (isMatchFinished(matchWithPlayers.match)) {
     matchDoneCss =
-      'competitionPage__table competitionPage__table--values competitionPage__table__matchDone';
+      "competitionPage__table competitionPage__table--values competitionPage__table__matchDone";
   }
 
   return (
@@ -171,46 +171,46 @@ const TableRow = ({ matchWithPlayers, active }) => {
           </li>
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
+          {" "}
           {matchWithPlayers.match.player1.firstname +
-            ' ' +
+            " " +
             matchWithPlayers.match.player1.lastname}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          :{' '}
+          {" "}
+          :{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
+          {" "}
           {matchWithPlayers.match.player2.firstname +
-            ' ' +
-            matchWithPlayers.match.player2.lastname}{' '}
+            " " +
+            matchWithPlayers.match.player2.lastname}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[0]}{' '}
+          {" "}
+          {stringSet[0]}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[1]}{' '}
+          {" "}
+          {stringSet[1]}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[2]}{' '}
+          {" "}
+          {stringSet[2]}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[3]}{' '}
+          {" "}
+          {stringSet[3]}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[4]}{' '}
+          {" "}
+          {stringSet[4]}{" "}
         </div>
         <div className="competitionPage__table--elements competitionPage__centered competitionPage__table__score">
-          {' '}
+          {" "}
           {gameScore[0]}
-          {' : '}
-          {gameScore[1]}{' '}
+          {" : "}
+          {gameScore[1]}{" "}
         </div>
         <button
           onClick={handleShowEditMatch}
@@ -233,7 +233,7 @@ const TableRow = ({ matchWithPlayers, active }) => {
 
 const Table = ({ matchesWithPlayers, active }) => {
   let tableCss =
-    'competitionPage__table' + (active ? '--barrierGreen' : '--barrierRed');
+    "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
   return (
     <div className={tableCss}>
       <TableHeadline />
@@ -261,7 +261,7 @@ const CompetitionPage = () => {
       event,
       { competition, matchesWithPlayers }
     ) {
-      console.log('IPC-Main-->IPC-Renderer:');
+      console.log("IPC-Main-->IPC-Renderer:");
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
@@ -300,8 +300,8 @@ const CompetitionPage = () => {
       const matches = [
         {
           id: 3,
-          player1: 'Samuel Geiger',
-          player2: 'Marius Bach',
+          player1: "Samuel Geiger",
+          player2: "Marius Bach",
           sets: [
             { player1: 11, player2: 13 },
             { player1: 4, player2: 11 }
@@ -311,8 +311,8 @@ const CompetitionPage = () => {
         },
         {
           id: 4,
-          player1: 'Edith Finch',
-          player2: 'Finch Assozial',
+          player1: "Edith Finch",
+          player2: "Finch Assozial",
           sets: [
             { player1: 13, player2: 15 },
             { player1: 14, player2: 16 }
@@ -336,7 +336,7 @@ const CompetitionPage = () => {
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
   const [nextRound, setNextRound] = useState(false);
-  const [round, setRound] = useState('0'); //vllt weg
+  const [round, setRound] = useState("0"); //vllt weg
   //Turnier beenden
   //TODO: a Reaction
 
@@ -400,7 +400,7 @@ const CompetitionPage = () => {
         playmode={competitionData.playmode}
         startDate={competitionData.date}
         linkTitle="zur Übersicht"
-        linkDestination={'/'}
+        linkDestination={"/"}
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}
@@ -430,7 +430,7 @@ const CompetitionPage = () => {
           primText="Turnier starten"
           secOnClick={handleShowGoInactive}
           secText="Turnier pausieren"
-          mode={active ? 'secondary' : 'primary'}
+          mode={active ? "secondary" : "primary"}
           disableProp={endGame}
         ></Button>
         <Popup
@@ -448,7 +448,7 @@ const CompetitionPage = () => {
           primText="Runde starten"
           secOnClick={handleShowEndRound}
           secText="Nächste Runde"
-          mode={nextRound ? 'secondary' : 'primary'}
+          mode={nextRound ? "secondary" : "primary"}
           disableProp={endGame || !active}
         ></Button>
         <Popup
