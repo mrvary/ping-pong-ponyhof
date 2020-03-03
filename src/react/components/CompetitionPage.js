@@ -315,6 +315,33 @@ const CompetitionPage = () => {
     });
   };
 
+  //Turnier beenden
+
+  const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
+  const handleCloseReDoRound = () => setShowPopupReDoRound(false);
+  const handleShowReDoRound = () => setShowPopupReDoRound(true);
+
+  const handleEndTournament = () => {
+    handleCloseReDoRound();
+  };
+
+  //Spiel starten / nächste Runde
+
+  const [showPopupEndRound, setShowPopupEndRound] = useState(false);
+  const handleCloseEndRound = () => setShowPopupEndRound(false);
+  const handleShowEndRound = () => {
+    if (!matchesFinished) {
+      setShowPopupEndRound(true);
+    } else {
+      //TODO: next Round
+    }
+  };
+  const handleStartRound = () => {
+    ipcRenderer.send(ipcMessages.START_ROUND);
+  };
+
+  //Turnier aktivieren / deactivieren
+
   const [active, setActive] = useState(false);
   const handleActivate = () => {
     ipcRenderer.send(ipcMessages.START_COMPETITION);
@@ -325,30 +352,9 @@ const CompetitionPage = () => {
     setActive(false);
     handleCloseGoInactive();
   };
-
-  const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
-  const handleCloseReDoRound = () => setShowPopupReDoRound(false);
-  const handleShowReDoRound = () => setShowPopupReDoRound(true);
-
-  const [showPopupEndRound, setShowPopupEndRound] = useState(false);
-  const handleCloseEndRound = () => setShowPopupEndRound(false);
-  const handleShowEndRound = () => setShowPopupEndRound(true);
-
   const [showPopupGoInactive, setShowPopupGoInactive] = useState(false);
   const handleCloseGoInactive = () => setShowPopupGoInactive(false);
   const handleShowGoInactive = () => setShowPopupGoInactive(true);
-
-  const handleEndTournament = () => {
-    handleCloseReDoRound();
-  };
-
-  const handleEndRound = () => {
-    handleCloseEndRound();
-  };
-
-  const handleStartRound = () => {
-    ipcRenderer.send(ipcMessages.START_ROUND);
-  };
 
   const openStatisticWindow = route => {
     ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
@@ -372,7 +378,6 @@ const CompetitionPage = () => {
           primOnClick={handleShowReDoRound}
           primText="Runde abbrechen"
           mode="primary"
-          disableProp={!matchesFinished}
         ></Button>
         <Popup
           show={showPopupReDoRound}
@@ -388,25 +393,22 @@ const CompetitionPage = () => {
           primOnClick={handleStartRound}
           primText="Runde starten"
           secOnClick={handleShowEndRound}
-          secText="Runde beenden"
-          mode="primary"
-          disableProp={!active}
+          secText="Nächste Runde"
+          mode={true ? 'secondary' : 'primary'}
         ></Button>
         <Popup
           show={showPopupEndRound}
           handleClose={handleCloseEndRound}
-          header="Bist du dir sicher?"
-          bodyText="Möchtest du wirklich die Runde beenden?"
-          buttonFunk={() => handleEndRound()}
-          buttonText="Beenden"
-          mode="primary"
+          header="Geht net"
+          bodyText="Spiel noch nicht fertig"
+          mode="noBtn"
         ></Popup>
 
         <Button
           primOnClick={handleActivate}
-          primText="Spiel starten"
+          primText="Turnier starten"
           secOnClick={handleShowGoInactive}
-          secText="Spiel pausieren"
+          secText="Turnier pausieren"
           mode={active ? 'secondary' : 'primary'}
         ></Button>
         <Popup
