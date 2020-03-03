@@ -141,9 +141,14 @@ const TableRow = ({ matchWithPlayers, active }) => {
     activeButtonCss =
       'competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive';
   }
+  let matchDoneCss = 'competitionPage__centered';
+  if (isMatchFinished(matchWithPlayers.match)) {
+    matchDoneCss =
+      'competitionPage__centered competitionPage__table__matchDone';
+  }
 
   return (
-    <div className="competitionPage__centered">
+    <div className={matchDoneCss}>
       <div className="competitionPage__table competitionPage__table--values">
         <div className="competitionPage__table--elements competitionPage__centered">
           <li id={tischCss} className="competitionPage__centered">

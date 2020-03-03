@@ -42,19 +42,16 @@ body {
   font: 10vw;
 }
 #liGreen::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--success-color);
 }
 #liRed::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--error-color);
 }
 
-/* for testing
-  border: 0.1vh solid var(--grey-out-color);
-*/
 .competitionPage__table__bearbeiten-btn {
   font-size: 2vh;
   border: none;
@@ -101,4 +98,9 @@ body {
 
 .competitionPage__link-ip-adress-statistic:hover {
   color: var(--link-font-hover-color);
+}
+
+.competitionPage__table__matchDone {
+  border: 0.1vh solid var(--success-color);
+  border-radius: 2vh;
 }
