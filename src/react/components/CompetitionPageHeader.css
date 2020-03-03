@@ -30,7 +30,6 @@
   text-decoration: underline;
   font-size: 2vh;
   border: none;
-  margin: 2vh 2vh;
   color: var(--grey-out-color);
 }
 .competitionPage__link:focus {
@@ -41,4 +40,16 @@
 }
 .competitionPage__table__score {
   font-weight: bold;
+}
+.competitionPage__header-logo {
+  content: url('../../assets/icons/svg/Logo5.svg');
+  width: 20%;
+}
+.competitionPage__header-logo-alignment {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  flex-direction: row;
+  margin: 1vh 1vh;
+  height: 6vh;
 }

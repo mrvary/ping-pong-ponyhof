@@ -15,7 +15,9 @@
   --success-color: green;
   --error-color: red;
   --inactive-color: rgb(255, 165, 0);
-  --active-compet-color: #84afce;
+
+  --active-compet-color: rgb(153, 186, 209);
+  --active-match-color: rgba(213, 246, 213, 0.637);
 
   --anti-color: rgb(183, 136, 186);
   --main-color: #f4f4f4;
