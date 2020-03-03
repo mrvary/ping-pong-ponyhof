@@ -1,6 +1,6 @@
-import React from 'react';
-import './CompetitionPageHeader.css';
-import { Link } from 'react-router-dom';
+import React from "react";
+import "./CompetitionPageHeader.css";
+import { Link } from "react-router-dom";
 
 function CompetitionPage__Header({
   playmode,
@@ -10,12 +10,12 @@ function CompetitionPage__Header({
 }) {
   return (
     <div className="competitionPage__header-alignment">
-      {' '}
+      {" "}
       <div className="competitionPage__header-logo-alignment">
         <div className="competitionPage__header-logo"></div>
         <Link className="competitionPage__link" to={linkDestination}>
-          {' '}
-          {linkTitle}{' '}
+          {" "}
+          {linkTitle}{" "}
         </Link>
       </div>
       <div className="competitionPage__header-alignment-right">
