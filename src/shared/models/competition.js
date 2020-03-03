@@ -20,7 +20,7 @@ function createCompetition(dataFromJSON) {
     name: dataFromJSON["name"],
     date: dataFromJSON["start-date"],
     playmode: dataFromJSON.competition["preliminary-round-playmode"],
-    round_matchIds: [],
+    round_match_Ids: [],
     state: COMPETITION_STATE.COMP_CREATED
   };
 }

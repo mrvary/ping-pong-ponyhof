@@ -483,9 +483,7 @@ function initCompetition(competitionId) {
 
   // init matches ...
   let matches;
-  //let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-    //isCompetitionCreated = true;
 
     // ... with matchmakers first round
     const drawing = createMatchesWithMatchmaker(players);
@@ -508,11 +506,6 @@ function initCompetition(competitionId) {
   // init matches with players
   const matchesWithPlayers = mapMatchesWithPlayers(matches, players);
   console.log("competition and players and matches are selected");
-
-  // send next round action to client
-  /*if (isCompetitionCreated) {
-    server.sendNextRoundBroadcast({ matchesWithPlayers });
-  }*/
 
   return { competition, matchesWithPlayers };
 }
