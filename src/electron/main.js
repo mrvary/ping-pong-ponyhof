@@ -373,14 +373,18 @@ function registerIPCMainEvents() {
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       );
-      server.sendNextRoundBroadcast({
-        matchesWithPlayers: selectedCompetition.matchesWithPlayers
-      });
+
     } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
       selectedCompetition.competition = updateCompetitionState(
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       );
+
+      if (competition.currentRound === 1) {
+        server.sendNextRoundBroadcast({
+          matchesWithPlayers: selectedCompetition.matchesWithPlayers
+        });
+      }
     } else if (
       competition.state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
     ) {
@@ -439,8 +443,7 @@ function registerIPCMainEvents() {
 
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
     if (
-      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
-    ) {
+      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY) {
       return;
     }
 
