@@ -42,13 +42,6 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
   }
 }
 
-function createUpdateSetsResponseData() {
-  return {
-    message: "success"
-  };
-}
-
 module.exports = {
-  createStateResponseData,
-  createUpdateSetsResponseData
+  createStateResponseData
 };
