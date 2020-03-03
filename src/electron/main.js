@@ -598,7 +598,7 @@ function updateRanking() {
   if (!statisticWindow) {
     return;
   }
-  
+
   statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
     competition: selectedCompetition.competition,
     rankings
