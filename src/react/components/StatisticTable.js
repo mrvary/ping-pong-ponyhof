@@ -35,7 +35,18 @@ const TableRow = ({ ranking }) => {
       </div>
 
       <div className="bottomRow">
-          {ranking.matches.map(match => <div> {match.opponentFirstname + " " + match.opponentLastname + " " + match.opponentSets + " : " + match.ownSets} </div>)}
+        {ranking.matches.map(match => (
+          <div>
+            {" "}
+            {match.opponentFirstname +
+              " " +
+              match.opponentLastname +
+              " " +
+              match.opponentSets +
+              " : " +
+              match.ownSets}{" "}
+          </div>
+        ))}
       </div>
     </div>
   );
