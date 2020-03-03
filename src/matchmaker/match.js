@@ -1,4 +1,4 @@
-const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
+const { createMatchResult } = require("./ranking.js");
 
 let matchId = 0;
 
@@ -135,6 +135,17 @@ function logMatches(matches, players) {
       "\n";
   });
   console.log(log);
+}
+
+// getParameterByPlayerId : id, [players], parameter -> value
+function getParameterByPlayerId(playerId, players, parameter) {
+  let value;
+  players.forEach(player => {
+    if (player.id === playerId) {
+      value = player[parameter];
+    }
+  });
+  return value;
 }
 
 module.exports = {

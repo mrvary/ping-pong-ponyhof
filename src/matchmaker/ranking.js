@@ -2,12 +2,6 @@
 function createCurrentRanking(players, matches) {
   let ranking = [];
 
-  //copy call by value
-  let dummyMatches = JSON.parse(JSON.stringify(matches));
-
-  //update dummy matches with additional information
-  addMatchDetails(players, dummyMatches);
-
   players.forEach(player => {
     const ttrDifference = calculateTTRDifference(player, players);
     ranking.push({
@@ -22,7 +16,7 @@ function createCurrentRanking(players, matches) {
       //ttr_begin: player.ttr,
       ttr_now: player.qttr + ttrDifference,
       ttr_diff: ttrDifference,
-      matches: getMatchesInvolved(player, dummyMatches)
+      matches: getMatchesInvolved(player, matches)
     });
   });
 
@@ -120,19 +114,17 @@ function getMatchesInvolved(player, matches) {
     if (player.matchIds.includes(match.id)) {
       let opponentFirstname = "";
       let opponentLastname = "";
-      let ownSets = 0;
-      let opponentSets = 0;
-
-      if (match.player1 === player.id) {
-        opponentFirstname = match.player2firstname;
-        opponentLastname = match.player2lastname;
-        ownSets = match.result.player1;
-        opponentSets = match.result.player2;
+      let matchResult = createMatchResult(match);
+      if (match.player1.id === player.id) {
+        opponentFirstname = match.player2.firstname;
+        opponentLastname = match.player2.lastname;
+        ownSets = matchResult.player1;
+        opponentSets = matchResult.player2;
       } else {
-        opponentFirstname = match.player1firstname;
-        opponentLastname = match.player1lastname;
-        ownSets = match.result.player2;
-        opponentSets = match.result.player1;
+        opponentFirstname = match.player1.firstname;
+        opponentLastname = match.player1.lastname;
+        ownSets = matchResult.player2;
+        opponentSets = matchResult.player1;
       }
 
       let finalMatch = {
@@ -148,44 +140,6 @@ function getMatchesInvolved(player, matches) {
   return mactchesInvolved;
 }
 
-// addMatchDetails : [players], [matches] -> [matches]
-function addMatchDetails(players, matches) {
-  matches.forEach(match => {
-    match.player1firstname = getParameterByPlayerId(
-      match.player1,
-      players,
-      "firstname"
-    );
-    match.player2firstname = getParameterByPlayerId(
-      match.player2,
-      players,
-      "firstname"
-    );
-    match.player1lastname = getParameterByPlayerId(
-      match.player1,
-      players,
-      "lastname"
-    );
-    match.player2lastname = getParameterByPlayerId(
-      match.player2,
-      players,
-      "lastname"
-    );
-    match.result = createMatchResult(match);
-  });
-}
-
-// getParameterByPlayerId : id, [players], parameter -> value
-function getParameterByPlayerId(playerId, players, parameter) {
-  let value;
-  players.forEach(player => {
-    if (player.id === playerId) {
-      value = player[parameter];
-    }
-  });
-  return value;
-}
-
 // createMatchResult : match -> JSON
 function createMatchResult(match) {
   let player1SetsWon = 0;
@@ -193,7 +147,7 @@ function createMatchResult(match) {
 
   match.sets.forEach(set => {
     //player1 has more points
-    if (set.player1 - 1 > set.player2) {
+    if (set.player1 - 1 > set.player2 && set.player1) {
       player1SetsWon++;
     }
     //player2 has more points
@@ -236,7 +190,7 @@ function logRanking(ranking) {
     player.matches.forEach(match => {
       log += match.opponentLastname + " ";
       log += match.ownSets + ":";
-      log += match.opponentSets + "\t\t";
+      log += match.opponentSets + "\t";
     });
     log += "\n";
   });
@@ -248,9 +202,7 @@ module.exports = {
   calculateBHZ,
   calculateTTRDifference,
   getMatchesInvolved,
-  addMatchDetails,
   logRanking,
   createMatchResult,
-  getParameterByPlayerId,
   ttrCalculation
 };
