@@ -161,9 +161,7 @@ function createMatchResult(match) {
 
 // logRanking : [ranking] -> console.log(ranking)
 function logRanking(ranking) {
-  const round = ranking[0].matches.length;
-  let log = "---------Ranking after Round " + round + " --------\n";
-  log +=
+  let log =
     "Platz\tName\t\tS:N\tBHZ\tTTR-Start\tTTR-Aktuell\tTTR-Diff\t" +
     "|\t1.Runde\t\t2.Runde\t\t3.Runde\t\t4.Runde\t\t5.Runde\t\t6.Runde\n";
 
