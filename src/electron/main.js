@@ -32,6 +32,7 @@ const { updatePlayersAfterDrawing } = require("../matchmaker/player");
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
+const { createCurrentRanking } = require("../matchmaker/ranking");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -53,6 +54,7 @@ const createWindow = require("./window");
 
 // electron windows
 let mainWindow = null;
+let statisticWindow = null;
 
 // application state variables
 let selectedCompetition = null;
@@ -332,15 +334,19 @@ function registerIPCMainEvents() {
     // 2. find match by table number
     let finished = updateSetsByTableNumber(tableNumber, sets);
 
+    updateRanking();
+
     // 5. send update match
-    if (finished) {
-      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
-    }
+    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
     const { route } = args;
-    createWindow(route);
+
+    const showStatisticView = route.includes("statisticTable");
+    if (showStatisticView) {
+      statisticWindow = createWindow(route);
+    }
   });
 
   ipcMain.on(ipcMessages.START_COMPETITION, event => {
@@ -450,6 +456,16 @@ function registerIPCMainEvents() {
     // TODO: remove last round from storage
     server.sendCancelRoundBroadcast();
   });
+
+  ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
+    console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
+
+    if (!statisticWindow) {
+      return;
+    }
+
+    updateRanking();
+  });
 }
 
 function initCompetition(competitionId) {
@@ -545,6 +561,27 @@ function updateSetsByTableNumber(tableNumber, sets) {
   );
 
   return finished;
+}
+
+function updateRanking() {
+  // get current players and matches
+  let matches = [];
+  let players = [];
+  selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
+    const { player1, player2 } = matchWithPlayers.match;
+
+    matches.push(matchWithPlayers.match);
+    players.push(player1);
+    players.push(player2);
+  });
+
+  const rankings = createCurrentRanking(players, matches);
+  console.log("update ranking table");
+
+  statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
+    competition: selectedCompetition.competition,
+    rankings
+  });
 }
 
 function mapMatchesWithPlayers(matches, players) {
