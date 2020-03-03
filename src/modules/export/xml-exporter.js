@@ -11,10 +11,12 @@ function exportXML(players, matches, initJSON) {
   let matchesToAdd = [];
   matches.forEach(match => {
     matchesToAdd.push({
-      group: "Schweizer System (Runde 1)",
-      nr: 9000,
+      //todo add round nr
+      group: "Schweizer System",
+      nr: match.id,
       "player-a": match.player1,
       "player-b": match.player2,
+      //todo set other values
       "matches-a": 0,
       "matches-b": 0,
       "sets-a": 0,
@@ -55,8 +57,9 @@ function exportXML(players, matches, initJSON) {
 
   var parser = new Parser(defaultOptions);
   var xml = parser.parse(initJSON);
+  //ToDo add to check against .dtd schema
 
-  saveXMLFile("grrr.xml", xml);
+  saveXMLFile("finalesErgebnis.xml", xml);
 }
 
 module.exports = {
