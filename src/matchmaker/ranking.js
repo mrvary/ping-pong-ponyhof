@@ -19,7 +19,7 @@ function createCurrentRanking(players, matches) {
       gamesLost: player.matchIds.length - player.gamesWon,
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
-      // ttr_beginn: player.qttr,
+      //ttr_begin: player.ttr,
       ttr_now: player.qttr + ttrDifference,
       ttr_diff: ttrDifference,
       matches: getMatchesInvolved(player, dummyMatches)
