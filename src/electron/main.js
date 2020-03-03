@@ -595,6 +595,10 @@ function updateRanking() {
   const rankings = createCurrentRanking(players, matches);
   console.log("update ranking table");
 
+  if (!statisticWindow) {
+    return;
+  }
+  
   statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
     competition: selectedCompetition.competition,
     rankings
