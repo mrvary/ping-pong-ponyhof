@@ -25,7 +25,7 @@
 }
 
 .header__title {
-  font-size: 2.5vh;
+  font-size: 3vh;
   color: var(--sec-font-color);
   justify-content: center;
 }
@@ -36,7 +36,6 @@
   border: none;
   background: var(--sec-background-color);
   color: var(--prim-font-color);
-  font-size: 2.5vh;
   border-radius: 2vh;
   margin: 10vh 4vh;
   padding: 3vh;
@@ -84,6 +83,7 @@
   outline: 0;
 }
 
+/* benutzen wir das? */
 .header__loslegen-link {
   width: 27vh;
   height: 6.5vh;
@@ -95,6 +95,7 @@
   background: var(--button-color);
   cursor: pointer;
 }
+
 .header__link {
   display: flex;
   justify-content: center;
