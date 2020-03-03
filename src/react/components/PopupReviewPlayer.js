@@ -19,13 +19,17 @@ function PopupReviewPlayer({
 
       <Modal.Body>
         <div className="popup__centered">
-          <p className="popup__body-small-text">
-            Datum: {viewedCompetition.date}
+          <strong className="popup__body-small-text">
+            {viewedCompetition.name}
+          </strong>
+          <p className="popup__body-smaller-text">{viewedCompetition.date}</p>
+          <p className="popup__body-smaller-text popup__extra-margin">
+            {viewedCompetition.playmode}
           </p>
           <p className="popup__body-small-text">
-            Folgende Spieler sind im Spiel:
+            Folgende Spieler sind im Turnier:
           </p>
-          <div>
+          <div className="popup__player-List">
             {viewedPlayers.map(player => (
               <li key={player.id} className="popup__names">
                 {player.firstname + " " + player.lastname}

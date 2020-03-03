@@ -6,14 +6,16 @@ body {
   margin: 2vh 2vh;
 }
 .competitionPage__table--barrierGreen {
-  border: 0.2vh solid var(--success-color);
   margin: 1vh;
   border-radius: 2vh;
+  padding-bottom: 1vh;
 }
 .competitionPage__table--barrierRed {
-  border: 0.2vh solid var(--inactive-color);
   margin: 1vh;
   border-radius: 2vh;
+  padding-bottom: 1vh;
+  opacity: 0.4;
+  filter: alpha(opacity = 40);
 }
 .competitionPage__centered {
   display: flex;
@@ -39,7 +41,7 @@ body {
 .competitionPage__table--elements {
   color: var(--prim-font-color);
   height: 7vh;
-  font: 10vw;
+  font-size: 2vh;
 }
 #liGreen::before {
   content: "■";
@@ -101,6 +103,5 @@ body {
 }
 
 .competitionPage__table__matchDone {
-  border: 0.1vh solid var(--success-color);
-  border-radius: 2vh;
+  background: var(--active-match-color);
 }
