@@ -19,6 +19,7 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
+  setCompetitionRoundMatches,
   setCompetitionState
 } = require("../shared/models/competition");
 
@@ -32,6 +33,7 @@ const { updatePlayersAfterDrawing } = require("../matchmaker/player");
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
+const { createCurrentRanking } = require("../matchmaker/ranking");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -53,6 +55,7 @@ const createWindow = require("./window");
 
 // electron windows
 let mainWindow = null;
+let statisticWindow = null;
 
 // application state variables
 let selectedCompetition = null;
@@ -264,17 +267,28 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = args;
 
-    // 1. initialize competition storage
-    const filePath = fileManager.getCompetitionFilePath(competitionId);
-    competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
-
-    // 2. import data into databases
-    xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
-
     let returnData;
     try {
+      if (selectedCompetition) {
+        const { competition } = selectedCompetition;
+
+        if (
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+        ) {
+          const message =
+            "Ein Tunier ist im Moment aktiv. Bitte erst das aktive Turnier pausieren";
+          console.log(message);
+          throw new Error(message);
+        }
+      }
+
+      // 1. initialize competition storage
+      const filePath = fileManager.getCompetitionFilePath(competitionId);
+      competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+
       // 2. import data into databases
-      //xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+      xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
 
       // 3. create response message with success message
       returnData = {
@@ -300,7 +314,9 @@ function registerIPCMainEvents() {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITION_MATCHES_REQUEST
     );
+
     const { competitionId } = args;
+    console.log(competitionId);
 
     if (!competitionId) {
       console.log("Parameter competitionId is undefined");
@@ -333,13 +349,19 @@ function registerIPCMainEvents() {
     // 2. find match by table number
     updateSetsByTableNumber(tableNumber, sets);
 
-    // 3. send update match
+    updateRanking();
+
+    // 5. send update match
     event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
     const { route } = args;
-    createWindow(route);
+
+    const isStatisticView = route.includes("statisticTable");
+    if (isStatisticView) {
+      statisticWindow = createWindow(route);
+    }
   });
 
   ipcMain.on(ipcMessages.START_COMPETITION, event => {
@@ -449,6 +471,16 @@ function registerIPCMainEvents() {
     // TODO: remove last round from storage
     server.sendCancelRoundBroadcast();
   });
+
+  ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
+    console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
+
+    if (!statisticWindow) {
+      return;
+    }
+
+    updateRanking();
+  });
 }
 
 function initCompetition(competitionId) {
@@ -468,20 +500,18 @@ function initCompetition(competitionId) {
   let matches;
   //let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-    //isCompetitionCreated = true;
-
     // ... with matchmakers first round
-    const drawing = createMatchesWithMatchmaker(players);
+    const drawing = createMatchesWithMatchmaker(players, []);
     players = drawing.players;
     matches = drawing.matches;
 
     // update competition in database
-    /*competition = updateCompetitionRoundMatches(competition, matches);
-    competition = updateCompetitionStatus(
+    competition = setCompetitionRoundMatches(competition, matches);
+    competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_READY_ROUND_READY
     );
-    metaRepository.updateCompetition(competition);*/
+    metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
     matches = competitionStorage.getMatchesByIds(competition.round_matchIds);
@@ -501,13 +531,18 @@ function initCompetition(competitionId) {
 }
 
 // use matchmaker to draw the next round and update players
-function createMatchesWithMatchmaker(players) {
-  const matches = matchmaker.drawRound(players);
+function createMatchesWithMatchmaker(players, currentMatches) {
+  const lastMatchId =
+    currentMatches.length > 0
+      ? currentMatches[currentMatches.length - 1].id
+      : 0;
+
+  const matches = matchmaker.drawRound(players, lastMatchId);
   players = updatePlayersAfterDrawing(players, matches);
   console.log("Get matches from matchmaker");
 
   // update competition
-  competitionStorage.createPlayers(players);
+  competitionStorage.updatePlayers(players);
   competitionStorage.createMatches(matches);
   console.log("Save matches and player in competition storage");
 
@@ -537,6 +572,31 @@ function updateSetsByTableNumber(tableNumber, sets) {
       return matchWithPlayer;
     }
   );
+}
+
+function updateRanking() {
+  // get current players and matches
+  let matches = [];
+  let players = [];
+  selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
+    const { player1, player2 } = matchWithPlayers.match;
+
+    matches.push(matchWithPlayers.match);
+    players.push(player1);
+    players.push(player2);
+  });
+
+  const rankings = createCurrentRanking(players, matches);
+  console.log("update ranking table");
+
+  if (!statisticWindow) {
+    return;
+  }
+
+  statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
+    competition: selectedCompetition.competition,
+    rankings
+  });
 }
 
 function mapMatchesWithPlayers(matches, players) {

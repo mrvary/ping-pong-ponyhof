@@ -32,7 +32,6 @@ function getCompetitionFilePath(id) {
 
 function saveXMLFile(filename, xmlContent) {
   const filePath = getFileFromAppDataPath(filename);
-
   try {
     fs.writeFileSync(filePath, xmlContent);
     console.log("Save XML:", filePath);

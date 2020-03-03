@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
+
 import "./StatisticTable.css";
-import { useParams } from "react-router-dom";
 import "../Colors.css";
+
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
-// shared service
-// import IPCService from "../../shared/ipc/ipcRendererService";
-// const USE_BROWSER = false;
+// ipc communication
+const ipcRenderer = window.electron.ipcRenderer;
+const ipcMessages = require("../../shared/ipc-messages");
 
 const TableHeader = () => {
   return (
@@ -15,22 +16,22 @@ const TableHeader = () => {
       <div>Name</div>
       <div>S:N</div>
       <div>BHZ</div>
-      <div>TTR</div>
-      <div>TTR-Beginn</div>
+      <div>QTTR</div>
+      <div>TTR-Diff</div>
     </div>
   );
 };
 
-const TableRow = ({ match }) => {
+const TableRow = ({ ranking }) => {
   return (
     <div className="containerBody">
-      <div className="ranking">{match.id + 1}</div>
+      <div className="ranking">{ranking.place}</div>
       <div className="topRow">
-        <div> {match.lastname} </div>
-        <div> hi </div>
-        <div> 3 </div>
-        <div> 4 </div>
-        <div> 5 </div>
+        <div> {ranking.firstname + " " + ranking.lastname} </div>
+        <div> {ranking.gamesWon + " : " + ranking.gamesLost} </div>
+        <div> {ranking.bhz} </div>
+        <div> {ranking.qttr} </div>
+        <div> {ranking.ttr_diff} </div>
       </div>
 
       <div className="bottomRow">
@@ -45,43 +46,52 @@ const TableRow = ({ match }) => {
   );
 };
 
-const Table = ({ matches }) => {
+const Table = ({ rankings }) => {
   return (
     <div>
       <TableHeader />
-      {matches.map(match => {
-        return <TableRow key={match.id} match={match} />;
+      {rankings.map(ranking => {
+        return <TableRow key={ranking.id} ranking={ranking} />;
       })}
     </div>
   );
 };
 
 const StatisticTable = () => {
-  //link to competitionPage
-  const { competitionID } = useParams();
-  const linkDestination = "/competition/" + competitionID;
+  const [competition, setCompetition] = useState({});
+  const [rankings, setRankings] = useState([]);
 
-  //falsche daten
-  //dummy match
-  const { competitionID_1 } = useParams();
-  const [matches, setMatches] = useState([]);
-  const [players, setPlayer] = useState([]);
+  useEffect(() => {
+    function handleRankingStatusChanged(event, { competition, rankings }) {
+      console.log("ipc-main --> ipc-renderer", rankings);
+      console.log(competition);
+      setCompetition(competition);
+      setRankings(rankings);
+    }
 
-  // IPCService.getMatchesByCompetition(competitionID_1, matchData => {
-  //   console.log(matchData.matchesWithPlayers);
-  //   setMatches(matchData.matchesWithPlayers);
+    ipcRenderer.on(ipcMessages.UPDATE_RANKING, handleRankingStatusChanged);
 
-  //   const playerData = IPCService.getPlayersByPlayerId();
-  //   setPlayer(playerData);
-  // });
+    getRanking();
+
+    return () => {
+      ipcRenderer.removeListener(
+        ipcMessages.UPDATE_RANKING,
+        handleRankingStatusChanged
+      );
+    };
+  }, []);
+
+  const getRanking = () => {
+    ipcRenderer.send(ipcMessages.GET_RANKING_REQUEST);
+  };
 
   return (
     <div>
       <CompetitionPageHeader
-        playmode="Schweizer System"
-        startDate="02.02.2020"
+        playmode={competition.playmode}
+        startDate={competition.date}
       />
-      <Table matches={matches} />
+      <Table rankings={rankings} />
     </div>
   );
 };

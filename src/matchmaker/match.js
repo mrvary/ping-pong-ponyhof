@@ -1,22 +1,22 @@
 const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
 
-let matchId = 0;
-
 // createMatches : [{player1: Player, player2: Player}] -> [Match]
-function createMatches(pairings) {
+function createMatches(pairings, lastMatchId) {
   let remainingPairings = [...pairings];
+  let matchId = lastMatchId > 0 ? lastMatchId++ : lastMatchId;
 
   let matches = [];
   while (remainingPairings.length > 0) {
-    const match = createMatch(remainingPairings.shift());
+    const match = createMatch(remainingPairings.shift(), matchId);
     matches.push(match);
+    matchId++;
   }
 
   return matches;
 }
 
 // createMatch : {player1: Player, player2: Player} -> Match
-function createMatch({ player1, player2 }) {
+function createMatch({ player1, player2 }, matchId) {
   const match = {
     id: matchId,
     player1: player1,
@@ -24,15 +24,14 @@ function createMatch({ player1, player2 }) {
     sets: []
   };
 
-  let i;
-  for (i = 0; i < 5; i++) {
+  const MAXIMUM_SETS = 5;
+  for (let i = 0; i < MAXIMUM_SETS; i++) {
     match.sets.push({
       player1: 0,
       player2: 0
     });
   }
 
-  matchId++;
   return match;
 }
 
@@ -97,15 +96,12 @@ function getMatchWinner(match) {
   let player2SetsWon = 0;
 
   match.sets.forEach(set => {
-    //the first set is init. with 0:0
-    //in this case e.player1 = e.player2 and noone gets setWon++
-
     //player1 has more points
-    if (set.player1 > set.player2) {
+    if (set.player1 - 1 > set.player2) {
       player1SetsWon++;
     }
     //player2 has more points
-    if (set.player1 < set.player2) {
+    if (set.player1 < set.player2 - 1) {
       player2SetsWon++;
     }
   });

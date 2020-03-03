@@ -4,6 +4,8 @@ function createCurrentRanking(players, matches) {
 
   //copy call by value
   let dummyMatches = JSON.parse(JSON.stringify(matches));
+
+  //update dummy matches with additional information
   addMatchDetails(players, dummyMatches);
 
   players.forEach(player => {
@@ -17,10 +19,10 @@ function createCurrentRanking(players, matches) {
       gamesLost: player.matchIds.length - player.gamesWon,
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
-      ttr_beginn: player.qttr,
+      // ttr_beginn: player.qttr,
       ttr_now: player.qttr + ttrDifference,
       ttr_diff: ttrDifference,
-      matches: getMatchesInvolved(player.matchIds, dummyMatches)
+      matches: getMatchesInvolved(player, dummyMatches)
     });
   });
 
@@ -72,7 +74,7 @@ function calculateTTRDifference(playerToCalculate, players) {
   let opponentTTR = [];
   players.forEach(player => {
     if (opponents.includes(player.id)) {
-      //ToDO in future use player.ttr
+      //ToDo in future use player.ttr
       opponentTTR.push(player.qttr);
     }
   });
@@ -112,10 +114,35 @@ function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
 }
 
 // getMatchesInvolved : [Numbers], [matches] -> [matches]
-function getMatchesInvolved(matchIds, matches) {
+function getMatchesInvolved(player, matches) {
   let mactchesInvolved = [];
   matches.forEach(match => {
-    if (matchIds.includes(match.id)) mactchesInvolved.push(match);
+    if (player.matchIds.includes(match.id)) {
+      let opponentFirstname = "";
+      let opponentLastname = "";
+      let ownSets = 0;
+      let opponentSets = 0;
+
+      if (match.player1 === player.id) {
+        opponentFirstname = match.player2firstname;
+        opponentLastname = match.player2lastname;
+        ownSets = match.result.player1;
+        opponentSets = match.result.player2;
+      } else {
+        opponentFirstname = match.player1firstname;
+        opponentLastname = match.player1lastname;
+        ownSets = match.result.player2;
+        opponentSets = match.result.player1;
+      }
+
+      let finalMatch = {
+        opponentFirstname: opponentFirstname,
+        opponentLastname: opponentLastname,
+        ownSets: ownSets,
+        opponentSets: opponentSets
+      };
+      mactchesInvolved.push(finalMatch);
+    }
   });
 
   return mactchesInvolved;
@@ -207,17 +234,9 @@ function logRanking(ranking) {
 
     // create for each match a summary -> Krause 3:0
     player.matches.forEach(match => {
-      if (match.player1 === player.id) {
-        log += match.player2lastname + " ";
-      } else {
-        log += match.player1lastname + " ";
-      }
-
-      if (match.player1 === player.id) {
-        log += match.result.player1 + ":" + match.result.player2 + "\t";
-      } else {
-        log += match.result.player2 + ":" + match.result.player1 + "\t";
-      }
+      log += match.opponentLastname + " ";
+      log += match.ownSets + ":";
+      log += match.opponentSets + "\t\t";
     });
     log += "\n";
   });
