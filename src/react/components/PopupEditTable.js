@@ -89,7 +89,7 @@ const DisplaySet = ({
     let zerostate = false;
     let legitInput = true;
 
-    newSets.map(set => {
+    newSets.forEach(set => {
       if (parseInt(set.player1) === 0 && parseInt(set.player2) === 0) {
         zerostate = true;
       } else {
@@ -98,13 +98,12 @@ const DisplaySet = ({
         } else if (parseInt(set.player2) > parseInt(set.player1)) {
           winsPlayer2++;
         }
-
         if (zerostate) {
           legitInput = false;
         }
       }
-      return null;
     });
+
     if (winsPlayer1 > 3 || winsPlayer2 > 3) {
       legitInput = false;
     }
