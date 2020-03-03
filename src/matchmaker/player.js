@@ -36,6 +36,7 @@ function createPlayer(dataFromJSON) {
     matchIds: [],
     opponentIds: [],
     qttr: parseInt(ttr, 10),
+    //ToDo change to quitInRound : x
     active: true
   };
 }

@@ -1,7 +1,7 @@
 const { drawRound } = require("../../src/matchmaker/drawing");
 
 const {
-  tournamentJSON,
+  tournamentJSON16Players,
   tournamentJSON15Players
 } = require("./player.test.data");
 
@@ -18,7 +18,7 @@ const {
   updateWinner
 } = require("../../src/matchmaker/player");
 
-let players = createPlayersFromJSON(tournamentJSON15Players);
+let players = createPlayersFromJSON(tournamentJSON16Players);
 
 describe("playCompetition", () => {
   const roundsToPlay = 6;
@@ -42,7 +42,7 @@ describe("playCompetition", () => {
     });
 
     //3.3 log matches
-    //logMatches(currentMatches, players);
+    logMatches(currentMatches, players);
 
     //4. update winner
     players = updateWinner(players, currentMatches);
@@ -51,7 +51,8 @@ describe("playCompetition", () => {
     ranking = createCurrentRanking(players, matches);
 
     //5.5 log ranking
-    //logRanking(ranking);
+    logRanking(ranking);
+  }
 
   test("match length of the last round", () => {
     expect(currentMatches.length).toEqual(players.length / 2);
