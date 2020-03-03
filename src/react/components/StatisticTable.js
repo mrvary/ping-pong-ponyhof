@@ -35,12 +35,7 @@ const TableRow = ({ ranking }) => {
       </div>
 
       <div className="bottomRow">
-        <div> 1 </div>
-        <div> 2 </div>
-        <div> 3 </div>
-        <div> 4 </div>
-        <div> 5 </div>
-        <div> 6 </div>
+          {ranking.matches.map(match => <div> {match.opponentFirstname + " " + match.opponentLastname + " " + match.opponentSets + " : " + match.ownSets} </div>)}
       </div>
     </div>
   );
@@ -64,7 +59,7 @@ const StatisticTable = () => {
   useEffect(() => {
     function handleRankingStatusChanged(event, { competition, rankings }) {
       console.log("ipc-main --> ipc-renderer", rankings);
-      console.log(competition);
+      console.log(competition, rankings);
       setCompetition(competition);
       setRankings(rankings);
     }
