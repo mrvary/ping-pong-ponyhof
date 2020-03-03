@@ -16,7 +16,7 @@ import Title from "./components/Title";
 const TITLE = "TTRace";
 
 let socket;
-const isDev = false;
+const isDev = true;
 
 const getServerURL = () => {
   // for development: the requested server is the webserver
