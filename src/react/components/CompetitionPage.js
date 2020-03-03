@@ -256,6 +256,7 @@ const CompetitionPage = () => {
       event,
       { competition, matchesWithPlayers }
     ) {
+      updateResult(matchesWithPlayers);
       console.log('IPC-Main-->IPC-Renderer:');
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
@@ -267,7 +268,6 @@ const CompetitionPage = () => {
       ) {
         setActive(competition.state);
       }
-      updateResult(matchesWithPlayers);
     }
     ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
