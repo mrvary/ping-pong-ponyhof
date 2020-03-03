@@ -8,7 +8,6 @@ import Popup from "./Popup";
 import Button from "./Button";
 import CompetitionPageHeader from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
-import Competition from "./Competition";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
@@ -142,15 +141,15 @@ const TableRow = ({ matchWithPlayers, active }) => {
     activeButtonCss =
       "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
   }
-  let matchDoneCss = "competitionPage__centered";
+  let matchDoneCss = "competitionPage__table competitionPage__table--values";
   if (isMatchFinished(matchWithPlayers.match)) {
     matchDoneCss =
-      "competitionPage__centered competitionPage__table__matchDone";
+      "competitionPage__table competitionPage__table--values competitionPage__table__matchDone";
   }
 
   return (
-    <div className={matchDoneCss}>
-      <div className="competitionPage__table competitionPage__table--values">
+    <div className="competitionPage__centered">
+      <div className={matchDoneCss}>
         <div className="competitionPage__table--elements competitionPage__centered">
           <li id={tischCss} className="competitionPage__centered">
             <span>&#xa0;</span>
@@ -326,7 +325,7 @@ const CompetitionPage = () => {
   const [nextRound, setNextRound] = useState(false);
 
   //Turnier beenden
-  //alle buttons inactive
+  //TODO: a Reaction
 
   //Runde abbrechen
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
@@ -335,8 +334,9 @@ const CompetitionPage = () => {
   //nicht in erste runde
   // runde abbrechen aufgerufen
   // immernoch nächste runde
-  const handleEndTournament = () => {
+  const reDoRound = () => {
     handleCloseReDoRound();
+    //TODO: call dabase for last round
   };
 
   //Spiel starten / nächste Runde
@@ -404,9 +404,9 @@ const CompetitionPage = () => {
         <Popup
           show={showPopupReDoRound}
           handleClose={handleCloseReDoRound}
-          header="Sicher?"
-          bodyText="Bisher erreichte Ergebnisse der Runde werden gelöscht und eine neue Runde wird geloßt"
-          buttonFunk={() => handleEndTournament()}
+          header="Möchtest du die aktuelle Runde abbrechen?"
+          bodyText="Alle bereits gespielten Ergebnisse der Runde gehen dabei verloren!"
+          buttonFunk={() => reDoRound()}
           buttonText="Runde abbrechen"
           mode="primary"
         ></Popup>
@@ -423,7 +423,7 @@ const CompetitionPage = () => {
           show={showPopupEndRound}
           handleClose={handleCloseEndRound}
           header="Achtung!"
-          bodyText="Die Runde kann nur beendet werden, wenn alle Matches fertig sind"
+          bodyText="Die Runde kann nur beendet werden, wenn alle Matches fertig gespielt sind"
           mode="noBtn"
         ></Popup>
 

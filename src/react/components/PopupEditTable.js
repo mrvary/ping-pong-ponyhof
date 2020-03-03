@@ -15,7 +15,7 @@ function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
 
   return (
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton>Edit</Modal.Header>
+      <Modal.Header closeButton>Bearbeiten</Modal.Header>
 
       <Modal.Body>
         <DisplaySetHandler
