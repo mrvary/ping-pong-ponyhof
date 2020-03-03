@@ -22,7 +22,7 @@ const {
   updateWinner
 } = require("../../src/matchmaker/player");
 
-let players = createPlayersFromJSON(tournamentJSON16Players);
+let players = createPlayersFromJSON(tournamentJSON15Players);
 
 describe("playCompetition", () => {
   const roundsToPlay = 6;
@@ -52,13 +52,23 @@ describe("playCompetition", () => {
     players = updateWinner(players, currentMatches);
 
     //5. create ranking
+    //5.1 map players to matches
+    matches.forEach(match => {
+      match.player1 = players.find(
+        player => player.id === match.player1 || player.id === match.player1.id
+      );
+      match.player2 = players.find(
+        player => player.id === match.player2 || player.id === match.player2.id
+      );
+    });
+
     ranking = createCurrentRanking(players, matches);
 
     //5.5 log ranking
     logRanking(ranking);
 
     //6. export final XML
-    if (round === 6) exportXML(players, matches, testXMLasJSON);
+    //if (round === 6) exportXML(players, matches, testXMLasJSON);
   }
 
   test("match length of the last round", () => {
