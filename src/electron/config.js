@@ -12,7 +12,7 @@ const network = require("./helper/networkHelper");
 
 // server config
 const SERVER_HOST = isDev ? "localhost" : network.getIpAddress();
-const SERVER_PORT = process.env.SERVER_PORT || 80;
+const SERVER_PORT = process.env.SERVER_PORT || 4000;
 
 // electron config
 const ELECTRON_START_URL =
@@ -26,7 +26,7 @@ const ELECTRON_START_URL =
   });
 
 // lowDB config
-const USE_IN_MEMORY_STORAGE = false;
+const USE_IN_MEMORY_STORAGE = true;
 
 module.exports = {
   SERVER_HOST,
