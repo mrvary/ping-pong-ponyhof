@@ -30,7 +30,10 @@ function Header({
           viewedCompetition={viewedCompetition}
           errorMessage={errorMessage}
         />
-        <strong className="header__title">{title}</strong>
+        <div className="header__alignment-logo-title">
+          <div className="header__logo"></div>
+          <strong className="header__title">{title}</strong>
+        </div>
       </div>
     </section>
   );
@@ -53,7 +56,10 @@ const HeaderBox = ({
 
   return (
     <div className="header__match-box">
-      <p className="header__match-box--title">Neues Turnier anlegen</p>
+      <div className="header__match-box--alignment-title">
+        <div className="header__match-box--icon"></div>
+        <div className="header__match-box--title">Neues Turnier anlegen</div>
+      </div>
       <UploadXML openXMLDialog={openXMLDialog} linkDisabled={linkDisabled} />
       <PopupReviewPlayer
         show={!linkDisabled}
@@ -75,7 +81,7 @@ const HeaderBox = ({
 };
 
 const UploadXML = ({ openXMLDialog, linkDisabled }) => {
-  let xmlText = "Lade hier deine XML Datei hoch!";
+  let xmlText = "Klicke hier um deine XML Datei hochzuladen!";
   let xmlUploadedCss = "header__upload-xml-button";
 
   if (!linkDisabled) {
