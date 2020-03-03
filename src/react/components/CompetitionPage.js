@@ -248,11 +248,11 @@ const CompetitionPage = () => {
       event,
       { competition, matchesWithPlayers }
     ) {
-      console.log('IPC-Main-->IPC-Renderer:', matchesWithPlayers);
+      console.log('IPC-Main-->IPC-Renderer:');
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
-      checkForFinishedRound();
+      checkForFinishedRound(matchesWithPlayers);
     }
 
     ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
@@ -266,10 +266,10 @@ const CompetitionPage = () => {
     };
   }, []);
 
-  const checkForFinishedRound = () => {
+  const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
-    matchesWithPlayers.matches.map(match => {
-      if (!isMatchFinished(match)) {
+    matchesWithPlayers.map(allMatch => {
+      if (!isMatchFinished(allMatch.match)) {
         matchesFinished = false;
       }
       return null;
