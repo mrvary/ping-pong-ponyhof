@@ -27,6 +27,10 @@ function init(filePath, useInMemory = true) {
   internalFilePath = filePath;
   internalUseInMemory = useInMemory;
 
+  if (internalFilePath !== filePath) {
+    close();
+  }
+
   if (storage) {
     return;
   }
