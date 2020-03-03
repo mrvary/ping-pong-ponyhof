@@ -12,7 +12,7 @@ const network = require("./helper/networkHelper");
 
 // server config
 const SERVER_HOST = isDev ? "localhost" : network.getIpAddress();
-const SERVER_PORT = process.env.SERVER_PORT || 4000;
+const SERVER_PORT = process.env.SERVER_PORT || 80;
 
 // electron config
 const ELECTRON_START_URL =

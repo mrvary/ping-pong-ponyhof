@@ -1,12 +1,21 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./LoginView.css";
 
-function LoginView({
-  tableNumber,
-  sendTableNumber,
-  tableNumberChanged,
-  availableTables
-}) {
+function LoginView({ sendTableNumber, availableTables }) {
+  const [tableNumber, setTableNumber] = useState(-1);
+
+  useEffect(() => {
+    const numberNotSetYet = tableNumber < 1;
+    const numberNotAvailable = !availableTables.find(
+      number => number === tableNumber
+    );
+
+    if (numberNotSetYet || numberNotAvailable) {
+      // pick first available number
+      setTableNumber(availableTables[0]);
+    }
+  }, [availableTables, tableNumber]);
+
   return (
     <>
       <div className="login">
@@ -16,7 +25,7 @@ function LoginView({
           </label>
           <select
             className="login-select"
-            onChange={tableNumberChanged}
+            onChange={event => setTableNumber(Number(event.target.value))}
             value={tableNumber}
           >
             {availableTables.map(table => {
@@ -28,7 +37,10 @@ function LoginView({
               );
             })}
           </select>
-          <button className="login-button" onClick={sendTableNumber}>
+          <button
+            className="login-button"
+            onClick={sendTableNumber(tableNumber)}
+          >
             OK
           </button>
         </form>

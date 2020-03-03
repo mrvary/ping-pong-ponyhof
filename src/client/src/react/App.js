@@ -1,6 +1,6 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useReducer } from "react";
 import "./App.css";
-import { isMatchFinished } from "./lib";
+import { isMatchFinished } from "../shared/lib";
 
 // import shared
 import io from "socket.io-client";
@@ -16,7 +16,7 @@ import Title from "./components/Title";
 const TITLE = "TTRace";
 
 let socket;
-const isDev = true;
+const isDev = false;
 
 const getServerURL = () => {
   // for development: the requested server is the webserver
@@ -36,7 +36,7 @@ const VIEW = {
 };
 
 const ACTION_TYPE = {
-  SET_TABLE_NUMBER: "set-table-number",
+  // SET_TABLE_NUMBER: "set-table-number",
   LOGGED_IN: "logged-in",
   TABLES_AVAILABLE: "tables-available",
   ROUND_CANCELED: "round-canceled",
@@ -55,7 +55,7 @@ const initialState = {
   isConnected: false,
   availableTables: [],
   match: undefined,
-  tableNumber: undefined,
+  confirmedTableNumber: -1,
   message: "",
   roundStarted: false
 };
@@ -66,24 +66,20 @@ const reducer = (state, action) => {
   }
 
   switch (action.type) {
-    case ACTION_TYPE.SET_TABLE_NUMBER:
-      return { ...state, tableNumber: action.tableNumber };
-
     case ACTION_TYPE.LOGGED_IN:
       return loggedIn(state, action);
 
     case ACTION_TYPE.TABLES_AVAILABLE:
       return {
         ...state,
-        availableTables: action.availableTables,
-        tableNumber: setTableNumber(state.tableNumber, action.availableTables)
+        availableTables: action.availableTables
       };
 
     case ACTION_TYPE.ROUND_CANCELED:
       return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
 
     case ACTION_TYPE.ROUND_STARTED:
-      return { ...state, view: VIEW.MATCH };
+      return roundStarted(state, action);
 
     case ACTION_TYPE.ROUND_AVAILABLE:
       return roundAvailable(state, action);
@@ -135,24 +131,33 @@ function isNotLoggedIn(state, action) {
   return (
     state.view === VIEW.LOGIN &&
     action.type !== ACTION_TYPE.LOGGED_IN &&
-    action.type !== ACTION_TYPE.SET_TABLE_NUMBER &&
     action.type !== ACTION_TYPE.TABLES_AVAILABLE
   );
 }
 
 function updateSetsResponse(state, action) {
-  if (action.message === "SUCCESS") {
+  if (action.message === "success") {
     console.info("Sets successfully sent");
     return { ...state, match: undefined };
   }
 
   console.info("Could not send sets, trying again in 1000 ms.");
-  setTimeout(App.sendSets(state.match), 1000);
+  setTimeout(sendSets(state.match), 1000);
+}
+
+function roundStarted(state, action) {
+  if (!action.matchesWithPlayers) {
+    return { ...state, view: VIEW.MATCH };
+  }
+
+  const newState = roundAvailable(state, action);
+  return { ...newState, view: VIEW.MATCH };
 }
 
 function roundAvailable(state, action) {
+  console.log(action.matchesWithPlayers);
   const matchForTable = action.matchesWithPlayers.find(
-    match => match.tableNumber === state.tableNumber
+    match => match.tableNumber === state.confirmedTableNumber
   );
 
   if (matchForTable) {
@@ -172,13 +177,21 @@ function roundAvailable(state, action) {
 }
 
 function loggedIn(state, action) {
-  const { isConnected, match, roundStarted, message } = action;
-  const newState = { ...state, isConnected, match, roundStarted, message };
+  const { match, roundStarted, message, tableNumber } = action.data;
 
   if (message) {
     console.error(message);
     return { ...state, message };
   }
+
+  const newState = {
+    ...state,
+    isConnected: !message,
+    match,
+    roundStarted,
+    message,
+    confirmedTableNumber: tableNumber
+  };
 
   if (match && isMatchFinished(match)) {
     console.info("match is finished");
@@ -206,17 +219,6 @@ function loggedIn(state, action) {
   };
 }
 
-function setTableNumber(currentNumber, tables) {
-  const isNotSet = currentNumber < 1;
-  const isNotAvailable = !tables.find(n => n === currentNumber);
-
-  if (isNotSet || isNotAvailable) {
-    // pick first available number
-    return tables[0];
-  }
-  return currentNumber;
-}
-
 const sendSets = dispatch => match => event => {
   event.preventDefault();
   const finished = isMatchFinished(match);
@@ -242,9 +244,7 @@ function App() {
       return (
         <LoginView
           availableTables={state.availableTables}
-          tableNumber={state.tableNumber}
-          sendTableNumber={sendTableNumber(state.tableNumber)}
-          tableNumberChanged={handleTableNumberChange}
+          sendTableNumber={sendTableNumber}
         />
       );
     }
@@ -291,15 +291,6 @@ function App() {
     dispatch({ type: ACTION_TYPE.ADD_SET });
   };
 
-  const handleTableNumberChange = event => {
-    const newTableNumber = parseInt(event.target.value, 10);
-
-    dispatch({
-      type: ACTION_TYPE.SET_TABLE_NUMBER,
-      tableNumber: newTableNumber
-    });
-  };
-
   // register sockets for client - server communication
   if (!socket) {
     const base_url = getServerURL();
@@ -314,14 +305,7 @@ function App() {
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
-      const { roundStarted, match, message } = data;
-      dispatch({
-        type: ACTION_TYPE.LOGGED_IN,
-        message,
-        match,
-        isConnected: !message,
-        roundStarted
-      });
+      dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
@@ -333,10 +317,16 @@ function App() {
       });
     });
 
-    connection.on(socketIOMessages.START_ROUND, () => {
+    connection.on(socketIOMessages.START_ROUND, data => {
       console.info("SERVER->CLIENT: START_ROUND");
+      console.log(data);
 
-      dispatch({ type: ACTION_TYPE.ROUND_STARTED });
+      data
+        ? dispatch({
+            type: ACTION_TYPE.ROUND_STARTED,
+            matchesWithPlayers: data.matchesWithPlayers
+          })
+        : dispatch({ type: ACTION_TYPE.ROUND_STARTED });
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {

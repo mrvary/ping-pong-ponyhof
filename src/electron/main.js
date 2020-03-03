@@ -19,9 +19,8 @@ const xmlImporter = require("../modules/import/xml-importer");
 // competition model
 const {
   COMPETITION_STATE,
-  updateCompetitionRoundMatches,
-  updateCompetitionStatus
-} = require("../modules/models/competition");
+  setCompetitionState
+} = require("../shared/models/competition");
 
 const {
   createStateResponseData,
@@ -33,6 +32,7 @@ const { updatePlayersAfterDrawing } = require("../matchmaker/player");
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
+const { createCurrentRanking } = require("../matchmaker/ranking");
 
 // persistence
 const fileManager = require("../modules/persistance/file-manager");
@@ -45,7 +45,7 @@ const serverMessages = require("../modules/server/serverMessages");
 const ipcMessages = require("../shared/ipc-messages");
 
 // client
-const { isMatchFinished } = require("../client/src/react/lib");
+const { isMatchFinished } = require("../client/src/shared/lib");
 
 // windows actions
 const uiActions = require("./actions/uiActions");
@@ -54,12 +54,10 @@ const createWindow = require("./window");
 
 // electron windows
 let mainWindow = null;
+let statisticWindow = null;
 
 // application state variables
 let selectedCompetition = null;
-
-// COMP_ACTIVE_ROUND_ACTIVE
-let matchStarted = false;
 
 // init communication events
 registerIPCMainEvents();
@@ -159,9 +157,17 @@ function initHTTPServer() {
 
   server.ServerMainIOConnection.on(serverMessages.UPDATE_SETS, args => {
     console.log("Server-->IPC-Main:", serverMessages.UPDATE_SETS);
-    console.log(args);
+    const { tableNumber, sets } = args;
 
+    let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();
+
+    if (finished) {
+      mainWindow.webContents.send(
+        ipcMessages.UPDATE_MATCHES,
+        selectedCompetition
+      );
+    }
 
     server.ServerMainIOConnection.emit(
       serverMessages.UPDATE_SETS_RESPONSE,
@@ -323,87 +329,98 @@ function registerIPCMainEvents() {
 
   ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
-    console.log(args);
-
     const { tableNumber, sets } = args;
 
     // 2. find match by table number
-    let finished = false;
-    selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-      matchWithPlayer => {
-        if (matchWithPlayer.tableNumber === tableNumber) {
-          // 3. update sets of match
-          const { match } = matchWithPlayer;
-          const updatedMatch = { ...match, sets };
-          matchWithPlayer.match = updatedMatch;
+    let finished = updateSetsByTableNumber(tableNumber, sets);
 
-          // 4. save match to storage
-          competitionStorage.updateMatch(updatedMatch);
-
-          // check if match is ready
-          finished = isMatchFinished(updatedMatch);
-        }
-
-        return matchWithPlayer;
-      }
-    );
+    updateRanking();
 
     // 5. send update match
-    if (finished) {
-      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
-    }
+    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
   });
 
   ipcMain.on(ipcMessages.OPEN_NEW_WINDOW, (event, args) => {
     const { route } = args;
-    createWindow(route);
-  });
 
-  ipcMain.on(ipcMessages.START_ROUND, () => {
-    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
-
-    if (matchStarted) {
-      return;
+    const showStatisticView = route.includes("statisticTable");
+    if (showStatisticView) {
+      statisticWindow = createWindow(route);
     }
-
-    if (
-      selectedCompetition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-    ) {
-      return;
-    }
-
-    const updatedCompetition = updateCompetitionStatus(
-      selectedCompetition.competition,
-      COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-    );
-
-    selectedCompetition.competition = updatedCompetition;
-    metaRepository.updateCompetition(updatedCompetition);
-
-    matchStarted = true;
-    server.sendStartRoundBroadcast();
   });
 
   ipcMain.on(ipcMessages.START_COMPETITION, event => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_COMPETITION);
     const { competition } = selectedCompetition;
 
+    // update competition state and notify client
     if (competition.state === COMPETITION_STATE.COMP_CREATED) {
-      const updatedCompetition = updateCompetitionStatus(competition);
-      selectedCompetition.competition = updatedCompetition;
-      metaRepository.updateCompetition(updatedCompetition);
-
+      selectedCompetition.competition = updateCompetitionState(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
       server.sendNextRoundBroadcast({
+        matchesWithPlayers: selectedCompetition.matchesWithPlayers
+      });
+    } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
+      selectedCompetition.competition = updateCompetitionState(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
+    } else if (
+      competition.state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
+    ) {
+      selectedCompetition.competition = updateCompetitionState(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+      );
+      server.sendStartRoundBroadcast({
         matchesWithPlayers: selectedCompetition.matchesWithPlayers
       });
     }
   });
 
-  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
-    // check if it's a valid state transition (double check if all games are finished?)
+  ipcMain.on(ipcMessages.CANCEL_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.CANCEL_COMPETITION);
+    const { competition } = selectedCompetition;
 
-    // TODO: remove last round from storage
-    server.sendCancelRoundBroadcast();
+    let newState;
+    if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+      newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
+      //TODO: Passiert hier noch was?
+    } else if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    ) {
+      newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+      //TODO: Passiert hier noch was?
+    } else {
+      console.log("no new state");
+      return;
+    }
+
+    selectedCompetition.competition = updateCompetitionState(
+      competition,
+      newState
+    );
+    server.sendCancelCompetitionBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.START_ROUND, () => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
+    const { competition } = selectedCompetition;
+
+    if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+      console.log("wrong state", selectedCompetition.state);
+      return;
+    }
+
+    const newState = COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE;
+    selectedCompetition.competition = updateCompetitionState(
+      competition,
+      newState
+    );
+
+    server.sendStartRoundBroadcast();
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, () => {
@@ -416,7 +433,7 @@ function registerIPCMainEvents() {
     // check if it's a valid state transition (double check if all games are finished?)
     // fire up matchmaker
     // save things
-    const updatedCompetition = updateCompetitionStatus(
+    const updatedCompetition = setCompetitionState(
       selectedCompetition.competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
@@ -431,6 +448,23 @@ function registerIPCMainEvents() {
     server.sendNextRoundBroadcast({
       matchesWithPlayers: matchesWithoutFreeTickets
     });
+  });
+
+  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+    // check if it's a valid state transition (double check if all games are finished?)
+
+    // TODO: remove last round from storage
+    server.sendCancelRoundBroadcast();
+  });
+
+  ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
+    console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
+
+    if (!statisticWindow) {
+      return;
+    }
+
+    updateRanking();
   });
 }
 
@@ -495,6 +529,59 @@ function createMatchesWithMatchmaker(players) {
   console.log("Save matches and player in competition storage");
 
   return { matches, players };
+}
+
+function updateCompetitionState(competition, newState) {
+  console.log("Change competition state:", competition.state, "-->", newState);
+  competition = setCompetitionState(competition, newState);
+  metaRepository.updateCompetition(competition);
+  return competition;
+}
+
+function updateSetsByTableNumber(tableNumber, sets) {
+  let finished = false;
+
+  selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
+    matchWithPlayer => {
+      if (matchWithPlayer.tableNumber === tableNumber) {
+        // 3. update sets of match
+        const { match } = matchWithPlayer;
+        const updatedMatch = { ...match, sets };
+        matchWithPlayer.match = updatedMatch;
+
+        // 4. save match to storage
+        competitionStorage.updateMatch(updatedMatch);
+
+        // check if match is ready
+        finished = isMatchFinished(updatedMatch);
+      }
+
+      return matchWithPlayer;
+    }
+  );
+
+  return finished;
+}
+
+function updateRanking() {
+  // get current players and matches
+  let matches = [];
+  let players = [];
+  selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
+    const { player1, player2 } = matchWithPlayers.match;
+
+    matches.push(matchWithPlayers.match);
+    players.push(player1);
+    players.push(player2);
+  });
+
+  const rankings = createCurrentRanking(players, matches);
+  console.log("update ranking table");
+
+  statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
+    competition: selectedCompetition.competition,
+    rankings
+  });
 }
 
 function mapMatchesWithPlayers(matches, players) {

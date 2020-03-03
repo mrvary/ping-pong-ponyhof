@@ -13,7 +13,11 @@ import PopupEditTable from "./PopupEditTable";
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
-
+const {
+  isMatchFinished,
+  setsWonPlayer1,
+  setsWonPlayer2
+} = require("../../client/src/shared/lib");
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
@@ -116,11 +120,15 @@ const TableRow = ({ matchWithPlayers, active }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
+  const [gameScore, setGameScore] = useState([0, 0]);
+
   const saveChanges = (sets, tableNumber) => {
-    //TODO save Changes from edited Table
-    console.log("tablenr" + tableNumber);
     const tableSets = { tableNumber, sets };
     ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
+    setGameScore([
+      setsWonPlayer1(matchWithPlayers.match),
+      setsWonPlayer2(matchWithPlayers.match)
+    ]);
     handleCloseEditMatch();
   };
 
@@ -133,9 +141,14 @@ const TableRow = ({ matchWithPlayers, active }) => {
     activeButtonCss =
       "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
   }
+  let matchDoneCss = "competitionPage__centered";
+  if (isMatchFinished(matchWithPlayers.match)) {
+    matchDoneCss =
+      "competitionPage__centered competitionPage__table__matchDone";
+  }
 
   return (
-    <div className="competitionPage__centered">
+    <div className={matchDoneCss}>
       <div className="competitionPage__table competitionPage__table--values">
         <div className="competitionPage__table--elements competitionPage__centered">
           <li id={tischCss} className="competitionPage__centered">
@@ -180,9 +193,11 @@ const TableRow = ({ matchWithPlayers, active }) => {
           {" "}
           {stringSet[4]}{" "}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
+        <div className="competitionPage__table--elements competitionPage__centered competitionPage__table__score">
           {" "}
-          Ergebnis{" "}
+          {gameScore[0]}
+          {" : "}
+          {gameScore[1]}{" "}
         </div>
         <button
           onClick={handleShowEditMatch}
@@ -286,12 +301,14 @@ const CompetitionPage = () => {
       competitionId: competitionID
     });
   };
+
   const [active, setActive] = useState(false);
   const handleActivate = () => {
     ipcRenderer.send(ipcMessages.START_COMPETITION);
     setActive(true);
   };
   const handleDisactivate = () => {
+    ipcRenderer.send(ipcMessages.CANCEL_COMPETITION);
     setActive(false);
     handleCloseGoInactive();
   };
@@ -355,10 +372,10 @@ const CompetitionPage = () => {
         ></Popup>
 
         <Button
-          primOnClick={handleShowEndRound}
-          primText="Runde beenden"
-          secOnClick={handleStartRound}
-          secText="Runde starten"
+          primOnClick={handleStartRound}
+          primText="Runde starten"
+          secOnClick={handleShowEndRound}
+          secText="Runde beenden"
           mode="primary"
           disableProp={!active}
         ></Button>
@@ -389,7 +406,6 @@ const CompetitionPage = () => {
           mode="primary"
         ></Popup>
       </div>
-      <Footer title="Die Tabelle" />
     </div>
   );
 };

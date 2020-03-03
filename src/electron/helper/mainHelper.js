@@ -1,4 +1,4 @@
-const { COMPETITION_STATE } = require("../../modules/models/competition");
+const { COMPETITION_STATE } = require("../../shared/models/competition");
 
 function createStateResponseData({ tableNumber, selectedCompetition }) {
   if (!selectedCompetition) {
@@ -20,6 +20,13 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
   ) {
     return {
       roundStarted: false,
+      tableNumber
+    };
+  }
+
+  if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    return {
+      roundStarted: false,
       tableNumber,
       match: match
     };
@@ -37,7 +44,11 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
   }
 }
 
-function createUpdateSetsResponseData() {}
+function createUpdateSetsResponseData() {
+  return {
+    message: "success"
+  };
+}
 
 module.exports = {
   createStateResponseData,

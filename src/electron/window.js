@@ -29,8 +29,8 @@ function createWindow(route) {
   let newWindow = new BrowserWindow({
     x: x,
     y: y,
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 900,
     icon: appIcon,
     webPreferences: {
       nodeIntegration: false,

@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const { PLAYMODE, COMPETITION_STATE } = require("../../src/modules/models/competition");
+const { PLAYMODE, COMPETITION_STATE } = require("../../src/shared/models/competition");
 
 const expectedCompetitionWithDefaultValues = {
     id: "d5lK%2BhCCjzbPE4bd9mBdQKIx1P%2FxYXr0",

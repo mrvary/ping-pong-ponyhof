@@ -3,16 +3,8 @@
  */
 
 // Constants
-const PLAYMODE = { SCHWEIZER_SYSTEM: "Schweizer System" };
-
-const COMPETITION_STATE = {
-  COMP_CREATED: "comp-created",
-  COMP_READY_ROUND_READY: "comp-ready-round-ready",
-  COMP_READY_ROUND_ACTIVE: "comp-ready-round-active",
-  COMP_ACTIVE_ROUND_READY: "comp-active-round-ready",
-  COMP_ACTIVE_ROUND_ACTIVE: "comp-active-round-active",
-  COMP_COMPLETED: "comp-completed"
-};
+const PLAYMODE = require("./competition-playmode");
+const COMPETITION_STATE = require("./competition-state");
 
 /**
  * createCompetitionFromJSON: dataFromJSON -> Competition
@@ -33,17 +25,11 @@ function createCompetition(dataFromJSON) {
   };
 }
 
-function updateCompetitionRoundMatches(competition, matches) {
+function setCompetitionRoundMatches(competition, matches) {
   return { ...competition, round_matchIds: matches.map(match => match.id) };
 }
 
-function updateCompetitionStatus(competition, newStatus) {
-  console.log(
-    "Set new competition status:",
-    competition.status,
-    "-->",
-    newStatus
-  );
+function setCompetitionState(competition, newStatus) {
   return { ...competition, state: newStatus };
 }
 
@@ -51,6 +37,6 @@ module.exports = {
   PLAYMODE,
   COMPETITION_STATE,
   createCompetitionFromJSON,
-  updateCompetitionRoundMatches,
-  updateCompetitionStatus
+  setCompetitionRoundMatches,
+  setCompetitionState
 };

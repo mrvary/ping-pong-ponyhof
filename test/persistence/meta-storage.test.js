@@ -14,7 +14,7 @@ const {
     expectedUpdatedCompetition,
     expectedAllCompetitions
 } = require("../models/competition.test.data");
-const { createCompetitionFromJSON, COMPETITION_STATE } = require("../../src/modules/models/competition");
+const { createCompetitionFromJSON, COMPETITION_STATE } = require("../../src/shared/models/competition");
 
 let jsonObject = null;
 

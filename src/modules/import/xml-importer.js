@@ -6,7 +6,9 @@ const fs = require("fs");
 const parser = require("fast-xml-parser");
 
 // competition model
-const { createCompetitionFromJSON } = require("../models/competition");
+const {
+  createCompetitionFromJSON
+} = require("../../shared/models/competition");
 
 // player model
 const { createPlayersFromJSON } = require("../../matchmaker/player");
