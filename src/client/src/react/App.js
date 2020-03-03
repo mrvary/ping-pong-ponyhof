@@ -187,7 +187,7 @@ function loggedIn(state, action) {
   const newState = {
     ...state,
     isConnected: !message,
-    match,
+    match: filterAllUnplayedSetsExceptOne(match),
     roundStarted,
     message,
     confirmedTableNumber: tableNumber
@@ -217,6 +217,15 @@ function loggedIn(state, action) {
     message: "Kein laufendes Turnier.",
     view: VIEW.WAITING
   };
+}
+
+function filterAllUnplayedSetsExceptOne(match) {
+  const allPlayedSets = match.sets.filter(
+    set => set.player1 === 0 && set.player2
+  );
+  const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
+
+  return { ...match, sets: updatedSets };
 }
 
 const sendSets = dispatch => match => tableNumber => event => {
