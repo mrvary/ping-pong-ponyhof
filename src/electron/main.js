@@ -347,7 +347,6 @@ function registerIPCMainEvents() {
     if (showStatisticView) {
       statisticWindow = createWindow(route);
     }
-
   });
 
   ipcMain.on(ipcMessages.START_COMPETITION, event => {
@@ -458,7 +457,7 @@ function registerIPCMainEvents() {
     server.sendCancelRoundBroadcast();
   });
 
-  ipcMain.on(ipcMessages.GET_RANKING_REQUEST, (event) => {
+  ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
     console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
 
     if (!statisticWindow) {
@@ -469,7 +468,7 @@ function registerIPCMainEvents() {
     let matches = [];
     let players = [];
     selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
-      const { player1, player2  } = matchWithPlayers.match;
+      const { player1, player2 } = matchWithPlayers.match;
 
       matches.push(matchWithPlayers.match);
       players.push(player1);

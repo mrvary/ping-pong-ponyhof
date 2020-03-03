@@ -58,29 +58,31 @@ const Table = ({ rankings }) => {
 };
 
 const StatisticTable = () => {
-
   const [competition, setCompetition] = useState({});
   const [rankings, setRankings] = useState([]);
 
   useEffect(() => {
-      function handleRankingStatusChanged(event, { competition, rankings }) {
-          console.log("ipc-main --> ipc-renderer", rankings);
-          console.log(competition);
-          setCompetition(competition);
-          setRankings(rankings);
-      }
+    function handleRankingStatusChanged(event, { competition, rankings }) {
+      console.log("ipc-main --> ipc-renderer", rankings);
+      console.log(competition);
+      setCompetition(competition);
+      setRankings(rankings);
+    }
 
-      ipcRenderer.on(ipcMessages.UPDATE_RANKING, handleRankingStatusChanged);
+    ipcRenderer.on(ipcMessages.UPDATE_RANKING, handleRankingStatusChanged);
 
-      getRanking();
+    getRanking();
 
-      return () => {
-          ipcRenderer.removeListener(ipcMessages.UPDATE_RANKING, handleRankingStatusChanged);
-      }
-  },[]);
+    return () => {
+      ipcRenderer.removeListener(
+        ipcMessages.UPDATE_RANKING,
+        handleRankingStatusChanged
+      );
+    };
+  }, []);
 
   const getRanking = () => {
-      ipcRenderer.send(ipcMessages.GET_RANKING_REQUEST);
+    ipcRenderer.send(ipcMessages.GET_RANKING_REQUEST);
   };
 
   return (
