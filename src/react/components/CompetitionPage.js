@@ -13,7 +13,11 @@ import PopupEditTable from "./PopupEditTable";
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
-
+const {
+  isMatchFinished,
+  setsWonPlayer1,
+  setsWonPlayer2
+} = require("../../client/src/shared/lib");
 const USE_BROWSER = false;
 
 const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
@@ -116,30 +120,15 @@ const TableRow = ({ matchWithPlayers, active }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
-  const getWins = () => {
-    let p1 = 0;
-    let p2 = 0;
-    matchWithPlayers.match.sets.forEach(set => {
-      if (p1 === 3 || p2 === 3) {
-        return [p1, p2];
-      }
-      if (set.player1 === 0 && set.player2 === 0) {
-        return [p1, p2];
-      }
-      if (set.player1 > set.player2) {
-        p1++;
-      } else {
-        p2++;
-      }
-    });
-    return [p1, p2];
-  };
-  const [gameScore, setGameScore] = useState(getWins());
+  const [gameScore, setGameScore] = useState([0, 0]);
 
   const saveChanges = (sets, tableNumber) => {
     const tableSets = { tableNumber, sets };
     ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
-    setGameScore(getWins());
+    setGameScore([
+      setsWonPlayer1(matchWithPlayers.match),
+      setsWonPlayer2(matchWithPlayers.match)
+    ]);
     handleCloseEditMatch();
   };
 
@@ -152,9 +141,14 @@ const TableRow = ({ matchWithPlayers, active }) => {
     activeButtonCss =
       "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
   }
+  let matchDoneCss = "competitionPage__centered";
+  if (isMatchFinished(matchWithPlayers.match)) {
+    matchDoneCss =
+      "competitionPage__centered competitionPage__table__matchDone";
+  }
 
   return (
-    <div className="competitionPage__centered">
+    <div className={matchDoneCss}>
       <div className="competitionPage__table competitionPage__table--values">
         <div className="competitionPage__table--elements competitionPage__centered">
           <li id={tischCss} className="competitionPage__centered">
