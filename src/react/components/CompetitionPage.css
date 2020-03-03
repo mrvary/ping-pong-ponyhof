@@ -44,12 +44,12 @@ body {
   font-size: 2vh;
 }
 #liGreen::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--success-color);
 }
 #liRed::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--error-color);
 }
@@ -104,4 +104,7 @@ body {
 
 .competitionPage__table__matchDone {
   background: var(--active-match-color);
+}
+
+.competitionPage__round {
 }
