@@ -20,12 +20,14 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
               <input
                 className="score-board__set-container-item"
                 type="number"
+                min="0"
                 value={set.player1}
                 onChange={updateSets(match)("player1")(index)}
               ></input>
               <input
                 className="score-board__set-container-item"
                 type="number"
+                min="0"
                 value={set.player2}
                 onChange={updateSets(match)("player2")(index)}
               ></input>
