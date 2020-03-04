@@ -29,7 +29,10 @@ const {
 } = require("./helper/mainHelper");
 
 // player model
-const { updatePlayersAfterDrawing } = require("../matchmaker/player");
+const {
+  updatePlayersAfterDrawing,
+  updateWinner
+} = require("../matchmaker/player");
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
@@ -73,6 +76,9 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
+  // TODO: Save current app state into database
+  // TODO: Send disconnect to clients
+
   server.shutdownServer();
 });
 
@@ -379,9 +385,12 @@ function registerIPCMainEvents() {
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       );
-      server.sendNextRoundBroadcast({
-        matchesWithPlayers: selectedCompetition.matchesWithPlayers
-      });
+
+      if (competition.currentRound === 1) {
+        server.sendNextRoundBroadcast({
+          matchesWithPlayers: selectedCompetition.matchesWithPlayers
+        });
+      }
     } else if (
       competition.state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
     ) {
@@ -438,30 +447,58 @@ function registerIPCMainEvents() {
     server.sendStartRoundBroadcast();
   });
 
-  ipcMain.on(ipcMessages.NEXT_ROUND, () => {
-    if (
-      selectedCompetition.state !== COMPETITION_STATE.COMP_READY_ROUND_READY
-    ) {
-      return;
-    }
-
+  ipcMain.on(ipcMessages.NEXT_ROUND, event => {
     // check if it's a valid state transition (double check if all games are finished?)
     // fire up matchmaker
     // save things
-    const updatedCompetition = setCompetitionState(
-      selectedCompetition.competition,
+
+    let { competition, matchesWithPlayers } = selectedCompetition;
+
+    if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      return;
+    }
+
+    competition.currentRound++;
+
+    // use matchmaker to draw next round
+    let { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
+    players = updateWinner(players, matches);
+
+    const drawing = createMatchesWithMatchmaker(players, matches);
+    players = drawing.players;
+    matches = drawing.matches;
+
+    // update competition in database
+    let { currentRound } = competition;
+    competition = setCompetitionRoundMatches(
+      competition,
+      currentRound,
+      matches
+    );
+    competition = setCompetitionState(
+      competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
-    selectedCompetition.competition = updatedCompetition;
-    metaRepository.updateCompetition(updatedCompetition);
+    metaRepository.updateCompetition(competition);
 
-    const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
+    /*const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
       ({ match }) =>
         match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
-    );
+    );*/
+
+    // init matches with players
+    const newMatchesWithPlayers = mapMatchesWithPlayers(matches, players);
+    console.log("competition and players and matches are ready for next round");
+
+    selectedCompetition = {
+      competition: competition,
+      matchesWithPlayers: newMatchesWithPlayers
+    };
+
+    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
 
     server.sendNextRoundBroadcast({
-      matchesWithPlayers: matchesWithoutFreeTickets
+      matchesWithPlayers: selectedCompetition.matchesWithPlayers
     });
   });
 
@@ -498,7 +535,6 @@ function initCompetition(competitionId) {
 
   // init matches ...
   let matches;
-  //let isCompetitionCreated = false;
   if (competition.state === COMPETITION_STATE.COMP_CREATED) {
     // ... with matchmakers first round
     const drawing = createMatchesWithMatchmaker(players, []);
@@ -506,7 +542,12 @@ function initCompetition(competitionId) {
     matches = drawing.matches;
 
     // update competition in database
-    competition = setCompetitionRoundMatches(competition, matches);
+    const { currentRound } = competition;
+    competition = setCompetitionRoundMatches(
+      competition,
+      currentRound,
+      matches
+    );
     competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_READY_ROUND_READY
@@ -514,18 +555,20 @@ function initCompetition(competitionId) {
     metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
-    matches = competitionStorage.getMatchesByIds(competition.round_matchIds);
+
+    const { currentRound, rounds } = competition;
+    const { matchIds } = rounds.find(
+      round => round.roundNumber === currentRound
+    );
+    console.log(matchIds);
+
+    matches = competitionStorage.getMatchesByIds(matchIds);
     console.log("Get matches from competition database");
   }
 
   // init matches with players
   const matchesWithPlayers = mapMatchesWithPlayers(matches, players);
   console.log("competition and players and matches are selected");
-
-  // send next round action to client
-  /*if (isCompetitionCreated) {
-    server.sendNextRoundBroadcast({ matchesWithPlayers });
-  }*/
 
   return { competition, matchesWithPlayers };
 }
@@ -534,8 +577,10 @@ function initCompetition(competitionId) {
 function createMatchesWithMatchmaker(players, currentMatches) {
   const lastMatchId =
     currentMatches.length > 0
-      ? currentMatches[currentMatches.length - 1].id
+      ? currentMatches[currentMatches.length - 1].id + 1
       : 0;
+
+  console.log("LAST_MATCH_ID:", lastMatchId);
 
   const matches = matchmaker.drawRound(players, lastMatchId);
   players = updatePlayersAfterDrawing(players, matches);
@@ -558,20 +603,25 @@ function updateCompetitionState(competition, newState) {
 
 function updateSetsByTableNumber(tableNumber, sets) {
   selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-    matchWithPlayer => {
-      if (matchWithPlayer.tableNumber === tableNumber) {
+    matchWithPlayers => {
+      if (matchWithPlayers.tableNumber === tableNumber) {
         // 3. update sets of match
-        const { match } = matchWithPlayer;
+        const { match } = matchWithPlayers;
         const updatedMatch = { ...match, sets };
-        matchWithPlayer.match = updatedMatch;
+        matchWithPlayers.match = updatedMatch;
 
         // 4. save match to storage
-        competitionStorage.updateMatch(updatedMatch);
+        updateMatch(matchWithPlayers);
       }
 
-      return matchWithPlayer;
+      return matchWithPlayers;
     }
   );
+}
+
+function updateMatch(matchWithPlayers) {
+  const match = getMatchFromMatchWithPlayer(matchWithPlayers);
+  competitionStorage.updateMatch(match);
 }
 
 function updateRanking() {
@@ -620,4 +670,32 @@ function mapMatchesWithPlayers(matches, players) {
   });
 
   return matchesWithPlayers;
+}
+
+function getMatchFromMatchWithPlayer(matchWithPlayers) {
+  const { match } = matchWithPlayers;
+
+  const copyMatch = { ...match };
+  copyMatch.player1 = copyMatch.player1.id;
+  copyMatch.player2 = copyMatch.player2.id;
+
+  return copyMatch;
+}
+
+function splitMatchesWithPlayer(matchesWithPlayers) {
+  let matches = [];
+  let players = [];
+
+  matchesWithPlayers.forEach(matchWithPlayers => {
+    const player1 = matchWithPlayers.match.player1;
+    const player2 = matchWithPlayers.match.player2;
+
+    players.push(player1);
+    players.push(player2);
+
+    const match = getMatchFromMatchWithPlayer(matchWithPlayers);
+    matches.push(match);
+  });
+
+  return { matches, players };
 }

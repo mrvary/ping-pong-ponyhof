@@ -8,6 +8,7 @@ import Popup from "./Popup";
 import Button from "./Button";
 import CompetitionPageHeader from "./CompetitionPageHeader";
 import PopupEditTable from "./PopupEditTable";
+import { render } from "react-dom";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
@@ -107,7 +108,7 @@ const TableHeadline = () => {
   );
 };
 
-const TableRow = ({ matchWithPlayers, active }) => {
+const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
   const [stringSet, setStringSet] = useState([
     "0 : 0",
     "0 : 0",
@@ -126,22 +127,9 @@ const TableRow = ({ matchWithPlayers, active }) => {
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
 
-  const [gameScore, setGameScore] = useState([0, 0]);
-
   const saveChanges = (sets, tableNumber) => {
     const tableSets = { tableNumber, sets };
     ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
-    setGameScore([
-      setsWonPlayer1(matchWithPlayers.match),
-      setsWonPlayer2(matchWithPlayers.match)
-    ]);
-    console.log(
-      "score: ",
-      setGameScore([
-        setsWonPlayer1(matchWithPlayers.match),
-        setsWonPlayer2(matchWithPlayers.match)
-      ])
-    );
     handleCloseEditMatch();
   };
 
@@ -159,7 +147,12 @@ const TableRow = ({ matchWithPlayers, active }) => {
     matchDoneCss =
       "competitionPage__table competitionPage__table--values competitionPage__table__matchDone";
   }
-
+  let score;
+  if (singleGameScore === undefined) {
+    score = [0, 0];
+  } else {
+    score = singleGameScore;
+  }
   return (
     <div className="competitionPage__centered">
       <div className={matchDoneCss}>
@@ -208,14 +201,14 @@ const TableRow = ({ matchWithPlayers, active }) => {
         </div>
         <div className="competitionPage__table--elements competitionPage__centered competitionPage__table__score">
           {" "}
-          {gameScore[0]}
+          {score[0]}
           {" : "}
-          {gameScore[1]}{" "}
+          {score[1]}{" "}
         </div>
         <button
           onClick={handleShowEditMatch}
           className={activeButtonCss}
-          disabled={!active || matchWithPlayers.connectedDevice}
+          disabled={!active || matchWithPlayers.connectedDevice || !nextRound}
         >
           bearbeiten
         </button>
@@ -230,19 +223,28 @@ const TableRow = ({ matchWithPlayers, active }) => {
     </div>
   );
 };
-
-const Table = ({ matchesWithPlayers, active }) => {
+/**
+ *
+ *
+ */
+const Table = ({ matchesWithPlayers, active, gamesScore, nextRound }) => {
   let tableCss =
-    "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
+    "competitionPage__table" +
+    (active && nextRound ? "--barrierGreen" : "--barrierRed");
+  let counter = 0;
   return (
     <div className={tableCss}>
       <TableHeadline />
       {matchesWithPlayers.map(matchWithPlayers => {
+        let singleGameScore = gamesScore[counter];
+        counter++;
         return (
           <TableRow
             key={matchWithPlayers.match.id}
             matchWithPlayers={matchWithPlayers}
             active={active}
+            nextRound={nextRound}
+            singleGameScore={singleGameScore}
           />
         );
       })}
@@ -255,12 +257,14 @@ const CompetitionPage = () => {
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
   const [competitionData, setCompetitionData] = useState({});
   const [matchesFinished, setMatchesFinished] = useState(false);
+  const [gamesScore, setGamesScore] = useState([]);
 
   useEffect(() => {
     function handleMatchesStatusChanged(
       event,
       { competition, matchesWithPlayers }
     ) {
+      updateResult(matchesWithPlayers);
       console.log("IPC-Main-->IPC-Renderer:");
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
@@ -273,7 +277,6 @@ const CompetitionPage = () => {
         setActive(competition.state);
       }
     }
-
     ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
 
@@ -284,6 +287,19 @@ const CompetitionPage = () => {
       );
     };
   }, []);
+
+  const updateResult = matchesWithPlayers => {
+    let counter = 0;
+    matchesWithPlayers.forEach(allMatch => {
+      let newGamesScore = gamesScore;
+      newGamesScore[counter] = [
+        setsWonPlayer1(allMatch.match),
+        setsWonPlayer2(allMatch.match)
+      ];
+      counter++;
+      setGamesScore(newGamesScore);
+    });
+  };
 
   const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
@@ -336,7 +352,6 @@ const CompetitionPage = () => {
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
   const [nextRound, setNextRound] = useState(false);
-  const [round, setRound] = useState("0"); //vllt weg
   //Turnier beenden
   //TODO: a Reaction
 
@@ -355,12 +370,16 @@ const CompetitionPage = () => {
   //Spiel starten / nächste Runde
 
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
-  const handleCloseEndRound = () => setShowPopupEndRound(false);
+  const handleCloseEndRound = () => {
+    console.log("handleCloseRound");
+    setShowPopupEndRound(false);
+  };
 
   const handleShowEndRound = () => {
     if (!matchesFinished) {
       setShowPopupEndRound(true);
     } else {
+      ipcRenderer.send(ipcMessages.NEXT_ROUND);
       setNextRound(false);
       //TODO: next Round
       //schicken ist finished
@@ -405,9 +424,14 @@ const CompetitionPage = () => {
       <IpAdressAndStatisticLink
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
-        round={round}
+        round={competitionData.currentRound}
       />
-      <Table matchesWithPlayers={matchesWithPlayers} active={active} />
+      <Table
+        matchesWithPlayers={matchesWithPlayers}
+        active={active}
+        nextRound={nextRound}
+        gamesScore={gamesScore}
+      />
       <div className="competitionPage__Bottom-Buttons">
         <Button
           primOnClick={handleShowReDoRound}
