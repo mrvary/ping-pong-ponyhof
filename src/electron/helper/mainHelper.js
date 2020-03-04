@@ -15,9 +15,9 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
   );
 
   if (
-    (state === COMPETITION_STATE.COMP_READY_ROUND_READY ||
-      state === COMPETITION_STATE.COMP_CREATED,
-    state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE)
+    state === COMPETITION_STATE.COMP_READY_ROUND_READY ||
+    state === COMPETITION_STATE.COMP_CREATED ||
+    state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
   ) {
     return {
       roundStarted: false,

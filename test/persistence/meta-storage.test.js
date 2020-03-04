@@ -138,7 +138,7 @@ describe("updateCompetition()", () => {
         metaStorage.createCompetition(competition);
 
         // ACT
-        competition.round_matchIds = [ 0, 1, 2, 3, 4, 5 ];
+        competition.round_match_Ids = [ 0, 1, 2, 3, 4, 5 ];
         competition.state = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
         metaStorage.updateCompetition(competition);
 
