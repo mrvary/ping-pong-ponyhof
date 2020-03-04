@@ -5,10 +5,25 @@
   right: 23vw;
 }
 
+.connection__table-number {
+  position: absolute;
+  font-size: 50px;
+  right: 48px;
+  top: 27px;
+  color: white;
+  font-family: "Crimson Text", serif;
+  text-align: center;
+}
+
 @media (min-width: 504px) {
   .connection {
     top: 10px;
     left: 100px;
+  }
+  .connection__table-number {
+    position: relative;
+    left: -65px;
+    top: -30px;
   }
 }
 

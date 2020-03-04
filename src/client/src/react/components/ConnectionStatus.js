@@ -8,6 +8,7 @@ function ConnectionStatus({ isConnected }) {
   return (
     <div className="connection">
       <div className={iconCss}></div>
+      <span className="connection__table-number">4</span>
     </div>
   );
 }
