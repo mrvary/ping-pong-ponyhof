@@ -1,18 +1,23 @@
-.login {
+.login__container {
+  color: green;
+}
+/* .login {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
 
-.login-form {
+
+
+.login__form {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-flow: row wrap;
 }
 
-.login-select {
+.login__select {
   width: 40px;
   height: 40px;
   display: inline-block;
@@ -29,13 +34,13 @@ select {
   text-align-last: center;
 }
 
-.login-button {
+.login__button {
   border-radius: 5px;
   width: 40px;
   height: 40px;
 }
 
-.login-text {
+.login__text {
   font-size: 32px;
   display: block;
   flex-basis: 100%;
@@ -47,4 +52,4 @@ break {
   width: 0px;
   height: 0px;
   overflow: hidden;
-}
+} */

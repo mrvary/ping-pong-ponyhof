@@ -1,15 +1,17 @@
-:root {
-  --main-bg-color: #f4f4f4;
-  --primary-color: #bad;
-  --secondary-color: #faceff;
-  --text-color: white;
+.app__container {
+  background: #2c332f;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.client-container {
-  color: var(--text-color);
-  padding: 1%;
-  height: 100vh;
-  background-image: url("../assets/background.jpg");
-  background-size: auto;
-  background-repeat: no-repeat;
+@media (min-width: 504px) {
+  .app__container {
+    background-image: url("../assets/background.png");
+    background-repeat: no-repeat;
+    background-size: 270vh;
+    background-position-x: center;
+  }
 }

@@ -8,5 +8,14 @@
 }
 
 html {
-  box-sizing: border-box;
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: "Crimson Text", serif;
+  /* background-color: #efefef; */
 }

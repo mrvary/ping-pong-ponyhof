@@ -18,13 +18,13 @@ function LoginView({ sendTableNumber, availableTables }) {
 
   return (
     <>
-      <div className="login">
-        <form className="login-form">
-          <label htmlFor="login-input-field" className="login-text">
+      <div className="login__container">
+        <form className="login__form">
+          <label htmlFor="login__input-field" className="login__text">
             Tischnummer
           </label>
           <select
-            className="login-select"
+            className="login__select"
             onChange={event => setTableNumber(Number(event.target.value))}
             value={tableNumber}
           >
@@ -38,7 +38,7 @@ function LoginView({ sendTableNumber, availableTables }) {
             })}
           </select>
           <button
-            className="login-button"
+            className="login__button"
             onClick={sendTableNumber(tableNumber)}
           >
             OK
