@@ -150,7 +150,7 @@ function loggedIn(state, action) {
   }
 
   if (match) {
-    console.info("round is started");
+    console.info("round is available");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -230,7 +230,7 @@ function roundAvailable(state, action) {
 
 function filterAllUnplayedSetsExceptOne(match) {
   const allPlayedSets = match.sets.filter(
-    set => set.player1 !== 0 && set.player2 !== 0
+    set => set.player1 !== 0 || set.player2 !== 0
   );
   const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
 
