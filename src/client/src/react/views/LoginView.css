@@ -22,8 +22,8 @@
   line-height: 47px;
   color: white;
   position: relative;
-  left: 240px;
-  top: 200px;
+  left: 120px;
+  top: 100px;
 }
 
 @media (min-width: 504px) {
@@ -35,16 +35,15 @@
 
 .login__select {
   position: relative;
-  /* left: -20px; */
-  left: 70px;
-  top: 300px;
+  left: -50px;
+  top: 200px;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   text-align-last: center;
   width: 80px;
   height: 80px;
-  border-radius: 20%;
+  border-radius: 10px;
   font-size: 40px;
 }
 
@@ -52,6 +51,37 @@
   .login__select {
     left: -40px;
     top: 23vh;
+  }
+}
+
+.login__button {
+  position: relative;
+  /* left: -20px; */
+  left: -140px;
+  top: 300px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-align-last: center;
+  width: 80px;
+  border-radius: 5px;
+  font-size: 20px;
+  cursor: pointer;
+  background-color: black;
+  color: white;
+  border: 2px solid black;
+}
+
+.login__button:hover {
+  color: black;
+  background-color: white;
+  border: 2px solid black;
+}
+
+@media (min-width: 504px) {
+  .login__button {
+    left: -130px;
+    top: 34vh;
   }
 }
 
