@@ -1,4 +1,4 @@
-// calculateBHZ : [players], [matches] -> [rankning]
+// createCurrentRanking : [players], [matches] -> [ranking]
 function createCurrentRanking(players, matches) {
   let ranking = [];
 
@@ -16,7 +16,7 @@ function createCurrentRanking(players, matches) {
       firstname: player.firstname,
       lastname: player.lastname,
       gamesWon: player.gamesWon,
-      gamesLost: player.matchIds.length - player.gamesWon,
+      gamesLost: calculateGamesLost(player, matches),
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
       // ttr_beginn: player.qttr,
@@ -49,6 +49,21 @@ function createCurrentRanking(players, matches) {
     ranking[i].place = i + 1;
   }
   return ranking;
+}
+
+// calculateGamesLost : player, [matches] -> Number
+function calculateGamesLost(player, matches) {
+  let gamesFinished = 0;
+  matches.forEach(match => {
+    if (player.matchIds.includes(match.id)) {
+      debugger;
+      let getWinner = getMatchWinner(match);
+      if (getWinner !== false) {
+        gamesFinished++;
+      }
+    }
+  });
+  return gamesFinished - player.gamesWon;
 }
 
 // calculateBHZ : player, [matches] -> bhz
@@ -111,6 +126,30 @@ function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
     ttrDifference - (ttrOpponnents.length - gamesWon) * 16
   );
   return ttrDifference;
+}
+
+// getMatchWinner : match -> id
+// id = id of playerWon or if noone has won so far id = "0"
+function getMatchWinner(match) {
+  let player1SetsWon = 0;
+  let player2SetsWon = 0;
+
+  match.sets.forEach(set => {
+    //player1 has more points
+    if (set.player1 - 1 > set.player2) {
+      player1SetsWon++;
+    }
+    //player2 has more points
+    if (set.player1 < set.player2 - 1) {
+      player2SetsWon++;
+    }
+  });
+
+  if (player1SetsWon === 3) return match.player1;
+
+  if (player2SetsWon === 3) return match.player2;
+
+  return "0";
 }
 
 // getMatchesInvolved : [Numbers], [matches] -> [matches]
