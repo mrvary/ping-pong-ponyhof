@@ -342,12 +342,16 @@ const CompetitionPage = () => {
   //Spiel starten / nächste Runde
 
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
-  const handleCloseEndRound = () => setShowPopupEndRound(false);
+  const handleCloseEndRound = () =>  {
+    console.log("handleCloseRound");
+    setShowPopupEndRound(false);
+  };
 
   const handleShowEndRound = () => {
     if (!matchesFinished) {
       setShowPopupEndRound(true);
     } else {
+      ipcRenderer.send(ipcMessages.NEXT_ROUND);
       setNextRound(false);
       //TODO: next Round
       //schicken ist finished
