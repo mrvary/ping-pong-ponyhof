@@ -3,7 +3,9 @@ function setsWon(match, player, opponent) {
   let result = 0;
 
   result = match.sets.filter(
-    set => set[player] >= 11 && set[player] - 2 >= set[opponent]
+    set =>
+      (set[player] === 11 && set[opponent] <= 9) ||
+      (set[player] > 11 && set[opponent] === set[player] - 2)
   ).length;
 
   return result;
