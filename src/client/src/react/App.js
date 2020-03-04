@@ -47,7 +47,8 @@ const ACTION_TYPE = {
   MATCH_FINISHED: "match-finished",
   SETS_UPDATED: "sets-updated",
   ADD_SET: "add-set",
-  UPDATE_SETS_RESPONSE: "update-sets-response"
+  UPDATE_SETS_RESPONSE: "update-sets-response",
+  LOG_OUT: "log-out"
 };
 
 const initialState = {
@@ -107,6 +108,12 @@ const reducer = (state, action) => {
       return {
         ...state,
         match: { ...state.match, sets: [...state.match.sets, newSet] }
+      };
+
+    case ACTION_TYPE.LOG_OUT:
+      return {
+        ...initialState,
+        availableTables: state.availableTables
       };
 
     default:
@@ -191,7 +198,7 @@ function updateSetsResponse(state, action) {
 
   if (action.message === "finished") {
     console.info("Sets successfully sent. Match is finished.");
-    return switchToWaiting(state, "Runde beendet. Demnächst geht es weiter.");
+    return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
   }
 
   console.info("Could not send sets");
@@ -288,6 +295,11 @@ function App() {
 
   const addSet = () => {
     dispatch({ type: ACTION_TYPE.ADD_SET });
+  };
+
+  const logOut = event => {
+    event.preventDefault();
+    dispatch({ type: ACTION_TYPE.LOG_OUT });
   };
 
   //
@@ -402,9 +414,15 @@ function App() {
   };
 
   return (
-    <div className="client-container">
-      <Title text={TITLE} />
-      <ConnectionStatus isConnected={state.isConnected} />
+    <div className="app__container">
+      <div className="app__logo"></div>
+      {state.view !== VIEW.LOGIN && (
+        <ConnectionStatus
+          isConnected={state.isConnected}
+          tableNumber={state.confirmedTableNumber}
+          logOut={logOut}
+        />
+      )}
       {content()}
       {/* <a href={link}>LINK</a> */}
     </div>

@@ -1,15 +1,31 @@
-:root {
-  --main-bg-color: #f4f4f4;
-  --primary-color: #bad;
-  --secondary-color: #faceff;
-  --text-color: white;
+.app__container {
+  background: black;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.client-container {
-  color: var(--text-color);
-  padding: 1%;
-  height: 100vh;
-  background-image: url("../assets/background.jpg");
-  background-size: auto;
-  background-repeat: no-repeat;
+@media (min-width: 504px) {
+  .app__container {
+    background-image: url("../assets/background.png");
+    background-repeat: no-repeat;
+    background-size: 270vh;
+    background-position-x: center;
+  }
+}
+
+.app__logo {
+  position: absolute;
+  top: 7vh;
+  content: url("../assets/logo.svg");
+  width: 100px;
+}
+
+@media (min-width: 504px) {
+  .app__logo {
+    top: 7vh;
+    left: 8vh;
+  }
 }

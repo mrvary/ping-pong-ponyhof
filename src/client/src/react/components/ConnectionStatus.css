@@ -1,10 +1,36 @@
 .connection {
+  position: absolute;
   padding: 20px;
+  top: 3vw;
+  right: 23vw;
+}
+
+.connection__table-number {
+  position: absolute;
+  font-size: 50px;
+  right: 48px;
+  top: 27px;
+  color: white;
+  font-family: "Crimson Text", serif;
+  text-align: center;
+  cursor: pointer;
+}
+
+@media (min-width: 504px) {
+  .connection {
+    top: 10px;
+    left: 100px;
+  }
+  .connection__table-number {
+    position: relative;
+    left: -65px;
+    top: -30px;
+  }
 }
 
 .connection-icon {
-  width: 10px;
-  height: 10px;
+  width: 10vh;
+  height: 10vh;
   border-radius: 50%;
   display: inline-block;
   margin-top: 5px;
@@ -12,9 +38,9 @@
 }
 
 .connection-icon__connected {
-  background: green;
+  background: olive;
 }
 
 .connection-icon__disconnected {
-  background: red;
+  background: salmon;
 }
