@@ -13,7 +13,12 @@
 }
 
 .score-board__set-container-item {
-  width: 20%;
+  width: 20vw;
+  font-size: 40px;
+  margin: 0 10vw;
+}
+
+.score-board__set-delimiter {
   font-size: 40px;
 }
 
