@@ -1,5 +1,5 @@
 .ball__container {
-  position: relative;
+  position: absolute;
   right: 140px;
 }
 
@@ -226,9 +226,9 @@
 
 @media (min-width: 504px) {
   .ball__container {
-    position: relative;
-    right: 180px;
-    top: -120px;
+    position: absoute;
+    left: 200px;
+    top: 120px;
   }
 
   @-webkit-keyframes bounce {
