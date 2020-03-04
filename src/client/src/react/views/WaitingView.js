@@ -4,10 +4,10 @@ import "./WaitingView.css";
 function WaitingView({ message }) {
   return (
     <>
-      <p>{message}</p>
-      <div className="ball__container">
-        <div className="ball"></div>
-        <div className="shadow"></div>
+      <p className="waiting-view__message">{message}</p>
+      <div className="waiting-view__ball-container">
+        <div className="waiting-view__ball"></div>
+        <div className="waiting-view__shadow"></div>
       </div>
     </>
   );

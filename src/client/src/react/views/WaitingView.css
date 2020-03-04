@@ -1,9 +1,9 @@
-.ball__container {
+.waiting-view__ball-container {
   position: absolute;
   right: 140px;
 }
 
-.shadow {
+.waiting-view__shadow {
   position: absolute;
   top: 30vh;
   left: 50%;
@@ -16,6 +16,13 @@
   -moz-animation: pulse 0.5s infinite alternate;
   -o-animation: pulse 0.5s infinite alternate;
   animation: pulse 0.5s infinite alternate;
+}
+
+.waiting-view__message {
+  color: white;
+  font-family: "Crimson Text", serif;
+  font-size: 30px;
+  text-align: center;
 }
 
 @-webkit-keyframes pulse {
@@ -89,7 +96,7 @@
   }
 }
 
-.ball {
+.waiting-view__ball {
   position: relative;
   background: #f7f7f7;
   top: 5em;
@@ -225,7 +232,7 @@
 }
 
 @media (min-width: 504px) {
-  .ball__container {
+  .waiting-view__ball-container {
     position: absoute;
     left: 200px;
     top: 120px;
