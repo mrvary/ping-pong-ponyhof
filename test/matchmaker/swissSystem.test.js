@@ -35,7 +35,6 @@ describe("playCompetition", () => {
     //1. create new matches for the round (drawing)
     currentMatches = drawRound(players, matchId);
     matchId += 8;
-    debugger;
     //2. update the players with the created matches
     players = updatePlayersAfterDrawing(players, currentMatches);
 
