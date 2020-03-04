@@ -28,13 +28,6 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
         {sets.map((set, index) => {
           return (
             <div key={index} className="score-board__set-container">
-              <datalist id="score-numbers">
-                <option value="0" />
-                <option value="1" />
-                <option value="2" />
-                <option value="3" />
-                <option value="4" />
-              </datalist>
               <select
                 list="score-numbers"
                 className="score-board__set-container-item"
