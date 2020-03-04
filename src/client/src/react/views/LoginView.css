@@ -35,16 +35,26 @@
 
 .login__select {
   position: relative;
-  left: 240px;
-  top: 200px;
+  /* left: -20px; */
+  left: 70px;
+  top: 300px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  text-align-last: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 20%;
+  font-size: 40px;
 }
 
 @media (min-width: 504px) {
   .login__select {
-    top: 113px;
-    left: 130px;
+    left: -40px;
+    top: 23vh;
   }
 }
+
 /* .login {
   position: absolute;
   left: 50%;
