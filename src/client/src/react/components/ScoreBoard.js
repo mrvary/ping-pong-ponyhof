@@ -3,7 +3,11 @@ import "./ScoreBoard.css";
 
 import MainScore from "./MainScore";
 import Set from "./Set";
-import { isMatchFinished } from "../../shared/lib";
+import {
+  isMatchFinished,
+  setsWonPlayer1,
+  setsWonPlayer2
+} from "../../shared/lib";
 
 const MAX_INPUT = 50;
 
@@ -57,12 +61,18 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
         {isMatchFinished(match) && (
           <button onClick={sendSets(match)}>Spiel abschicken</button>
         )}
-        {sets.length < 5 && !isMatchFinished(match) && (
-          <button onClick={addSet}>Satz hinzufügen</button>
-        )}
+        {sets.length < 5 &&
+          !isMatchFinished(match) &&
+          everySetIsValid(match) && (
+            <button onClick={addSet}>Satz hinzufügen</button>
+          )}
       </div>
     </>
   );
+}
+
+function everySetIsValid(match) {
+  return setsWonPlayer1(match) + setsWonPlayer2(match) === match.sets.length;
 }
 
 export default ScoreBoard;
