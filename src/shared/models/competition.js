@@ -30,7 +30,7 @@ function createCompetition(dataFromJSON) {
 
 function setCompetitionRoundMatches(competition, roundNumber, matches) {
   const round = createRound(roundNumber, matches);
-  return { ...competition,  rounds: [...competition.rounds, round] };
+  return { ...competition, rounds: [...competition.rounds, round] };
 }
 
 function setCompetitionState(competition, newStatus) {

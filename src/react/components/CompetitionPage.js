@@ -342,7 +342,7 @@ const CompetitionPage = () => {
   //Spiel starten / nächste Runde
 
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
-  const handleCloseEndRound = () =>  {
+  const handleCloseEndRound = () => {
     console.log("handleCloseRound");
     setShowPopupEndRound(false);
   };

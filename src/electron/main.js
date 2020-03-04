@@ -29,7 +29,10 @@ const {
 } = require("./helper/mainHelper");
 
 // player model
-const { updatePlayersAfterDrawing, updateWinner } = require("../matchmaker/player");
+const {
+  updatePlayersAfterDrawing,
+  updateWinner
+} = require("../matchmaker/player");
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
@@ -165,10 +168,10 @@ function initHTTPServer() {
     let finished = updateSetsByTableNumber(tableNumber, sets);
     const responseData = createUpdateSetsResponseData();
 
-      mainWindow.webContents.send(
-        ipcMessages.UPDATE_MATCHES,
-        selectedCompetition
-      );
+    mainWindow.webContents.send(
+      ipcMessages.UPDATE_MATCHES,
+      selectedCompetition
+    );
 
     server.ServerMainIOConnection.emit(
       serverMessages.UPDATE_SETS_RESPONSE,
@@ -373,7 +376,6 @@ function registerIPCMainEvents() {
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       );
-
     } else if (competition.state === COMPETITION_STATE.COMP_READY_ROUND_READY) {
       selectedCompetition.competition = updateCompetitionState(
         competition,
@@ -441,12 +443,12 @@ function registerIPCMainEvents() {
     server.sendStartRoundBroadcast();
   });
 
-  ipcMain.on(ipcMessages.NEXT_ROUND, (event) => {
+  ipcMain.on(ipcMessages.NEXT_ROUND, event => {
     // check if it's a valid state transition (double check if all games are finished?)
     // fire up matchmaker
     // save things
 
-    let {competition, matchesWithPlayers} = selectedCompetition;
+    let { competition, matchesWithPlayers } = selectedCompetition;
 
     if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
       return;
@@ -464,10 +466,14 @@ function registerIPCMainEvents() {
 
     // update competition in database
     let { currentRound } = competition;
-    competition = setCompetitionRoundMatches(competition, currentRound, matches);
+    competition = setCompetitionRoundMatches(
+      competition,
+      currentRound,
+      matches
+    );
     competition = setCompetitionState(
-        competition,
-        COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      competition,
+      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
     metaRepository.updateCompetition(competition);
 
@@ -533,7 +539,11 @@ function initCompetition(competitionId) {
 
     // update competition in database
     const { currentRound } = competition;
-    competition = setCompetitionRoundMatches(competition, currentRound, matches);
+    competition = setCompetitionRoundMatches(
+      competition,
+      currentRound,
+      matches
+    );
     competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_READY_ROUND_READY
@@ -543,7 +553,9 @@ function initCompetition(competitionId) {
     // ... from competition storage
 
     const { currentRound, rounds } = competition;
-    const { matchIds } = rounds.find(round => round.roundNumber === currentRound);
+    const { matchIds } = rounds.find(
+      round => round.roundNumber === currentRound
+    );
     console.log(matchIds);
 
     matches = competitionStorage.getMatchesByIds(matchIds);
@@ -664,9 +676,9 @@ function mapMatchesWithPlayers(matches, players) {
 }
 
 function getMatchFromMatchWithPlayer(matchWithPlayers) {
-  const {match} = matchWithPlayers;
+  const { match } = matchWithPlayers;
 
-  const copyMatch = {...match};
+  const copyMatch = { ...match };
   copyMatch.player1 = copyMatch.player1.id;
   copyMatch.player2 = copyMatch.player2.id;
 
@@ -688,5 +700,5 @@ function splitMatchesWithPlayer(matchesWithPlayers) {
     matches.push(match);
   });
 
-  return {matches, players}
+  return { matches, players };
 }
