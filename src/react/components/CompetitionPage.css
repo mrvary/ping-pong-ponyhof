@@ -105,3 +105,6 @@ body {
 .competitionPage__table__matchDone {
   background: var(--active-match-color);
 }
+
+.competitionPage__round {
+}

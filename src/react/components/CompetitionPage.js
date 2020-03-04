@@ -21,12 +21,17 @@ const {
 } = require("../../client/src/shared/lib");
 const USE_BROWSER = false;
 
-const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
+const IpAdressAndStatisticLink = ({
+  competitionID,
+  openStatisticWindow,
+  round
+}) => {
   const [showPopupIP, setShowPopupIP] = useState(false);
   const handleCloseIP = () => setShowPopupIP(false);
   const handleShowIP = () => setShowPopupIP(true);
 
   const statisticID = "/statisticTable/" + competitionID;
+  let roundDisplay = "Runde: " + round;
   return (
     <div className="competitionPage__link-alignment">
       <div
@@ -43,6 +48,7 @@ const IpAdressAndStatisticLink = ({ competitionID, openStatisticWindow }) => {
         bodyText="IP"
         mode="noBtn"
       ></Popup>
+      <strong className="competitionPage__round">{roundDisplay}</strong>
       <p
         onClick={() => openStatisticWindow(statisticID)}
         className="competitionPage__link-ip-adress-statistic"
@@ -346,7 +352,7 @@ const CompetitionPage = () => {
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
   const [nextRound, setNextRound] = useState(false);
-
+  const [round, setRound] = useState("0"); //vllt weg
   //Turnier beenden
   //TODO: a Reaction
 
@@ -415,6 +421,7 @@ const CompetitionPage = () => {
       <IpAdressAndStatisticLink
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
+        round={round}
       />
       <Table
         matchesWithPlayers={matchesWithPlayers}
@@ -440,22 +447,6 @@ const CompetitionPage = () => {
         ></Popup>
 
         <Button
-          primOnClick={handleStartRound}
-          primText="Runde starten"
-          secOnClick={handleShowEndRound}
-          secText="Nächste Runde"
-          mode={nextRound ? "secondary" : "primary"}
-          disableProp={endGame || !active}
-        ></Button>
-        <Popup
-          show={showPopupEndRound}
-          handleClose={handleCloseEndRound}
-          header="Achtung!"
-          bodyText="Die Runde kann nur beendet werden, wenn alle Matches fertig gespielt sind"
-          mode="noBtn"
-        ></Popup>
-
-        <Button
           primOnClick={handleActivate}
           primText="Turnier starten"
           secOnClick={handleShowGoInactive}
@@ -471,6 +462,22 @@ const CompetitionPage = () => {
           buttonFunk={() => handleDisactivate()}
           buttonText="pausieren"
           mode="primary"
+        ></Popup>
+
+        <Button
+          primOnClick={handleStartRound}
+          primText="Runde starten"
+          secOnClick={handleShowEndRound}
+          secText="Nächste Runde"
+          mode={nextRound ? "secondary" : "primary"}
+          disableProp={endGame || !active}
+        ></Button>
+        <Popup
+          show={showPopupEndRound}
+          handleClose={handleCloseEndRound}
+          header="Achtung!"
+          bodyText="Die Runde kann nur beendet werden, wenn alle Matches fertig gespielt sind"
+          mode="noBtn"
         ></Popup>
       </div>
     </div>

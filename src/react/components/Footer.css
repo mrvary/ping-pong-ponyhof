@@ -3,6 +3,7 @@
   color: var(--font-color);
   font-size: large;
   text-align: center;
+  margin-top: 3vh;
 }
 
 .footer__pictureCredits {
