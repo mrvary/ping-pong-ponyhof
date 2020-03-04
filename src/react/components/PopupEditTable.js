@@ -6,15 +6,18 @@ import Button from "./Button";
 
 function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const [inputChanged, setInputChanged] = useState(false);
-  const [currentSets, changeCurrentSets] = useState(sets);
+  const [currentSets, changeCurrentSets] = useState([...sets]);
 
   const endPopup = () => {
     setInputChanged(false);
     saveChanges(currentSets, tableNumber);
   };
+  const onHide = () => {
+    handleClose();
+  };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>Bearbeiten</Modal.Header>
 
       <Modal.Body>
