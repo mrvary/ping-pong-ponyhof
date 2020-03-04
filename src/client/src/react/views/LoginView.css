@@ -77,6 +77,13 @@
   border: 2px solid black;
 }
 
+@media (max-width: 350px) {
+  .login__button {
+    position: absolute;
+    left: 50%;
+  }
+}
+
 @media (min-width: 504px) {
   .login__button {
     left: -130px;
