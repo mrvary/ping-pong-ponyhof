@@ -6,6 +6,9 @@ const { app, Menu, shell } = require("electron");
 
 const config = require("../config");
 const uiActions = require("../actions/uiActions");
+const fileManager = require("../../modules/persistance/file-manager");
+
+const actions = new Map();
 
 // Event handler
 const reload = (item, focusedWindow) => {
@@ -31,6 +34,15 @@ const showURL = () => {
   uiActions.showInfoBox("URL-Info", `URL: ${url}`);
 };
 
+const exportCompetition = () => {
+  /*const fileName = "exportTournament.xml";
+  const filePath = fileManager.getApplicationDir("documents") + "/" + fileName;
+
+  uiActions.showSaveDialog(filePath);*/
+  const func = actions.get("export");
+  func();
+};
+
 // main menu template
 const template = [
   {
@@ -43,6 +55,10 @@ const template = [
       {
         label: "Server URL anzeigen",
         click: showURL
+      },
+      {
+        label: "Turnier exportieren",
+        click: exportCompetition
       },
       {
         type: "separator"
@@ -158,6 +174,7 @@ const template = [
   }
 ];
 
+// menu for mac
 if (process.platform === "darwin") {
   const name = app.getName();
   template.unshift({
@@ -182,9 +199,16 @@ if (process.platform === "darwin") {
   });
 }
 
+function registerAction(name, func) {
+  actions.set(name, func);
+}
+
 function createMenu() {
   const mainMenu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(mainMenu);
 }
 
-module.exports = createMenu;
+module.exports = {
+  createMenu,
+  registerAction
+};
