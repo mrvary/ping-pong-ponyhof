@@ -29,11 +29,13 @@ describe("playCompetition", () => {
   let matches = [];
   let currentMatches;
   let ranking;
+  let matchId = 0;
 
   for (let round = 1; round <= roundsToPlay; round++) {
     //1. create new matches for the round (drawing)
-    currentMatches = drawRound(players);
-
+    currentMatches = drawRound(players, matchId);
+    matchId += 8;
+    debugger;
     //2. update the players with the created matches
     players = updatePlayersAfterDrawing(players, currentMatches);
 
@@ -58,7 +60,7 @@ describe("playCompetition", () => {
     logRanking(ranking);
 
     //6. export final XML
-    if (round === 6) exportXML(players, matches, testXMLasJSON);
+    //if (round === 6) exportXML(players, matches, testXMLasJSON);
   }
 
   test("match length of the last round", () => {
