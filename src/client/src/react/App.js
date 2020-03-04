@@ -405,7 +405,10 @@ function App() {
     <div className="app__container">
       <div className="app__logo"></div>
       {state.view !== VIEW.LOGIN && (
-        <ConnectionStatus isConnected={state.isConnected} />
+        <ConnectionStatus
+          isConnected={state.isConnected}
+          tableNumber={state.confirmedTableNumber}
+        />
       )}
       {content()}
       {/* <a href={link}>LINK</a> */}
