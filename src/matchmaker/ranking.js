@@ -56,7 +56,6 @@ function calculateGamesLost(player, matches) {
   let gamesFinished = 0;
   matches.forEach(match => {
     if (player.matchIds.includes(match.id)) {
-      debugger;
       let getWinner = getMatchWinner(match);
       if (getWinner !== false) {
         gamesFinished++;
