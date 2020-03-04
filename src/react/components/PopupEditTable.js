@@ -1,20 +1,23 @@
-import { Modal } from "react-bootstrap";
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./PopupEditTable.css";
-import Button from "./Button";
+import { Modal } from 'react-bootstrap';
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './PopupEditTable.css';
+import Button from './Button';
 
 function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const [inputChanged, setInputChanged] = useState(false);
-  const [currentSets, changeCurrentSets] = useState(sets);
+  const [currentSets, changeCurrentSets] = useState([...sets]);
 
   const endPopup = () => {
     setInputChanged(false);
     saveChanges(currentSets, tableNumber);
   };
+  const onHide = () => {
+    handleClose();
+  };
 
   return (
-    <Modal show={show} onHide={handleClose}>
+    <Modal show={show} onHide={onHide}>
       <Modal.Header closeButton>Bearbeiten</Modal.Header>
 
       <Modal.Body>
@@ -151,7 +154,7 @@ const DisplaySet = ({
         toSecondMode(parseInt(event.target.value), parseInt(player2Set))
       );
       setInputChanged(true);
-      setCss("");
+      setCss('');
       let newSets = currentSets;
       newSets[index - 1] = {
         player1: parseInt(event.target.value),
@@ -161,7 +164,7 @@ const DisplaySet = ({
     } else {
       setInputChanged(false);
       setDifferenz(0);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
 
@@ -180,7 +183,7 @@ const DisplaySet = ({
         toSecondMode(parseInt(player1Set), parseInt(event.target.value))
       );
       setInputChanged(true);
-      setCss("");
+      setCss('');
       let newSets = currentSets;
       newSets[index - 1] = {
         player1: parseInt(player1Set),
@@ -190,7 +193,7 @@ const DisplaySet = ({
     } else {
       setInputChanged(false);
       setDifferenz(0);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
 
@@ -206,7 +209,7 @@ const DisplaySet = ({
       checkLegitTotalInput(player1, player2)
     ) {
       setInputChanged(true);
-      setCss("");
+      setCss('');
       let newSets = currentSets;
       newSets[index - 1] = {
         player1: parseInt(player1),
@@ -215,7 +218,7 @@ const DisplaySet = ({
       changeCurrentSets(newSets);
     } else {
       setInputChanged(false);
-      setCss("popupEditTable--input");
+      setCss('popupEditTable--input');
     }
   };
 
@@ -224,11 +227,11 @@ const DisplaySet = ({
   const [differenz, setDifferenz] = useState(
     toSecondMode(parseInt(set.player1), parseInt(set.player2))
   );
-  let [css, setCss] = useState("");
+  let [css, setCss] = useState('');
 
   return (
     <div className="popupEditTable--rows">
-      <div>{"Set " + index + "  "}</div>
+      <div>{'Set ' + index + '  '}</div>
       <input
         className={css}
         type="number"
@@ -238,7 +241,7 @@ const DisplaySet = ({
         onChange={checkInput1}
         name="player1Set"
       ></input>
-      <div> {" : "} </div>
+      <div> {' : '} </div>
       <input
         className={css}
         type="number"
