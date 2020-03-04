@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useState } from "react";
 import "./ConnectionStatus.css";
 
 function ConnectionStatus({ isConnected, tableNumber }) {
   const iconCss = isConnected
     ? "connection-icon connection-icon__connected"
     : "connection-icon connection-icon__disconnected";
+
+  const [number, setNumber] = useState(tableNumber);
+
+  const toggleToX = () => {
+    setNumber("X");
+  };
+
+  const toggleToNumber = () => {
+    setNumber(tableNumber);
+  };
+
   return (
     <div className="connection">
       <div className={iconCss}></div>
-      <span className="connection__table-number">{tableNumber}</span>
+      <span
+        className="connection__table-number"
+        onMouseOver={toggleToX}
+        onMouseOut={toggleToNumber}
+      >
+        {number}
+      </span>
     </div>
   );
 }
