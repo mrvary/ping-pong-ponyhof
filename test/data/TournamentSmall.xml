@@ -12,7 +12,7 @@
         <person lastname="Söder" firstname="Markus" birthyear="1971" licence-nr="311006257" club-nr="311006" club-name="CSU" region="Oberbayern-Mitte" sub-region="Oberbayern-Mitte" club-federation-nickname="ByTTV" ttr="1590" sex="1" internal-nr="NU1012534"/>
       </player>
       <player type="single" id="PLAYER3">
-        <person lastname="Seehoffer" firstname="Horst" birthyear="1980" licence-nr="309036278" club-nr="309036" club-name="CSU" region="Schwaben-Nord" sub-region="Schwaben-Nord" club-federation-nickname="ByTTV" ttr="1474" sex="1" internal-nr="NU1535004"/>
+        <person lastname="Seehofer" firstname="Horst" birthyear="1980" licence-nr="309036278" club-nr="309036" club-name="CSU" region="Schwaben-Nord" sub-region="Schwaben-Nord" club-federation-nickname="ByTTV" ttr="1474" sex="1" internal-nr="NU1535004"/>
       </player>
       <player type="single" id="PLAYER4">
         <person lastname="Scheuer" firstname="Andreas" birthyear="2003" licence-nr="311066398" club-nr="311066" club-name="CSU" region="Oberbayern-Mitte" sub-region="Oberbayern-Mitte" club-federation-nickname="ByTTV" ttr="1034" sex="1" internal-nr="NU1831615"/>
@@ -31,6 +31,9 @@
       </player>
       <player type="single" id="PLAYER9">
         <person lastname="Amthor" firstname="Philipp" birthyear="1977" licence-nr="311055215" club-nr="311055" club-name="CDU" region="Oberbayern-Mitte" sub-region="Oberbayern-Mitte" club-federation-nickname="ByTTV" ttr="1222" sex="1" internal-nr="NU1968031"/>
+      </player>
+      <player type="single" id="PLAYER10">
+        <person lastname="Roth" firstname="Claudia" birthyear="1977" licence-nr="311055215" club-nr="311055" club-name="Bündnis/Die Grünen" region="Oberbayern-Mitte" sub-region="Oberbayern-Mitte" club-federation-nickname="ByTTV" ttr="1222" sex="1" internal-nr="NU1968031"/>
       </player>
     </players>
   </competition>

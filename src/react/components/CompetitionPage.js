@@ -352,7 +352,6 @@ const CompetitionPage = () => {
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
   const [nextRound, setNextRound] = useState(false);
-  const [round, setRound] = useState("0"); //vllt weg
   //Turnier beenden
   //TODO: a Reaction
 
@@ -425,7 +424,7 @@ const CompetitionPage = () => {
       <IpAdressAndStatisticLink
         competitionID={competitionID}
         openStatisticWindow={openStatisticWindow}
-        round={round}
+        round={competitionData.currentRound}
       />
       <Table
         matchesWithPlayers={matchesWithPlayers}

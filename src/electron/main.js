@@ -77,6 +77,7 @@ app.on("ready", () => {
 
 app.on("before-quit", () => {
   // TODO: Save current app state into database
+  // TODO: Send disconnect to clients
 
   server.shutdownServer();
 });
