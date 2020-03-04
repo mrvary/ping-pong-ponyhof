@@ -269,6 +269,9 @@ const CompetitionPage = () => {
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
+      setNextRound(
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
       checkForFinishedRound(matchesWithPlayers);
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
@@ -381,10 +384,6 @@ const CompetitionPage = () => {
     } else {
       ipcRenderer.send(ipcMessages.NEXT_ROUND);
       setNextRound(false);
-      //TODO: next Round
-      //schicken ist finished
-      //MATCHMAKER  magic
-      //-> alles auf null
     }
   };
   const handleStartRound = () => {
@@ -436,7 +435,13 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleShowReDoRound}
           primText="Runde abbrechen"
-          mode="primary"
+          secOnClick={() => setEndGame(true)}
+          secText="Turnier beenden"
+          mode={
+            competitionData.currentRound === 5 && matchesFinished
+              ? 'secondary'
+              : 'primary'
+          }
           disableProp={endGame || !active || competitionData.currentRound === 1}
         ></Button>
         <Popup
