@@ -404,7 +404,9 @@ function App() {
   return (
     <div className="client-container">
       <Title text={TITLE} />
-      <ConnectionStatus isConnected={state.isConnected} />
+      {state.view !== VIEW.LOGIN && (
+        <ConnectionStatus isConnected={state.isConnected} />
+      )}
       {content()}
       {/* <a href={link}>LINK</a> */}
     </div>
