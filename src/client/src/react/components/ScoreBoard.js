@@ -57,7 +57,6 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
         {isMatchFinished(match) && (
           <button onClick={sendSets(match)}>Spiel abschicken</button>
         )}
-        <button onClick={sendSets(match)}>Spiel abschicken</button>
         {sets.length < 5 && !isMatchFinished(match) && (
           <button onClick={addSet}>Satz hinzufügen</button>
         )}
