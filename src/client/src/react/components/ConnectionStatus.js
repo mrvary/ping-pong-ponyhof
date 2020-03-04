@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./ConnectionStatus.css";
 
-function ConnectionStatus({ isConnected, tableNumber }) {
+function ConnectionStatus({ isConnected, tableNumber, logOut }) {
   const iconCss = isConnected
     ? "connection-icon connection-icon__connected"
     : "connection-icon connection-icon__disconnected";
@@ -23,6 +23,7 @@ function ConnectionStatus({ isConnected, tableNumber }) {
         className="connection__table-number"
         onMouseOver={toggleToX}
         onMouseOut={toggleToNumber}
+        onClick={logOut}
       >
         {number}
       </span>
