@@ -502,10 +502,18 @@ function registerIPCMainEvents() {
     });
   });
 
-  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+  ipcMain.on(ipcMessages.CANCEL_ROUND, (event) => {
     // check if it's a valid state transition (double check if all games are finished?)
+    const { competition } = selectedCompetition;
 
-    // TODO: remove last round from storage
+    // TODO: remove round from storage
+    // 1. delete round from db
+    const { currentRound } = competition;
+
+    // 2. load last round
+
+    // 3. update round and send to GUIs
+
     server.sendCancelRoundBroadcast();
   });
 
