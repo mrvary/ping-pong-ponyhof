@@ -198,7 +198,7 @@ function updateSetsResponse(state, action) {
 
   if (action.message === "finished") {
     console.info("Sets successfully sent. Match is finished.");
-    return switchToWaiting(state, "Runde beendet. Demnächst geht es weiter.");
+    return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
   }
 
   console.info("Could not send sets");
