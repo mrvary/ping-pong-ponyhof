@@ -403,6 +403,7 @@ function App() {
 
   return (
     <div className="app__container">
+      <div className="app__logo"></div>
       <Title text={TITLE} />
       {state.view !== VIEW.LOGIN && (
         <ConnectionStatus isConnected={state.isConnected} />

@@ -15,3 +15,17 @@
     background-position-x: center;
   }
 }
+
+.app__logo {
+  position: absolute;
+  top: 7vh;
+  content: url("../assets/logo.svg");
+  width: 100px;
+}
+
+@media (min-width: 504px) {
+  .app__logo {
+    top: 7vh;
+    left: 8vh;
+  }
+}
