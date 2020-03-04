@@ -24,7 +24,7 @@
 
 .competition__btn--gameload {
   width: 150vh;
-  font-size: 2.5vh;
+  font-size: 2vh;
   text-decoration: none;
   color: var(--prim-font-color);
 }
