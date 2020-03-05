@@ -37,6 +37,9 @@ function initCompetitionStorage(competitionId, useInMemory, jsonObject) {
 }
 
 function deleteCompetitionStorage(competitionId) {
+  // Close connection of competition storage
+  competitionStorage.close();
+
   // Delete the competition file
   fileManager.deleteTournamentJSONFile(competitionId);
 
