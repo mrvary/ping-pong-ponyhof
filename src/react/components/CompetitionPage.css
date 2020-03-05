@@ -22,7 +22,9 @@ body {
   justify-content: center;
   align-items: center;
 }
-
+.competitionPage__table--height {
+  height: 76vh;
+}
 .competitionPage__table {
   width: 80%;
   border-radius: 2vh;
@@ -44,12 +46,12 @@ body {
   font-size: 2vh;
 }
 #liGreen::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--success-color);
 }
 #liRed::before {
-  content: "■";
+  content: '■';
   font-size: 1.2em;
   color: var(--error-color);
 }

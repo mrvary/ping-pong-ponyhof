@@ -229,21 +229,23 @@ const Table = ({ matchesWithPlayers, active, gamesScore, nextRound }) => {
     'competitionPage__table' + (active ? '--barrierGreen' : '--barrierRed');
   let counter = 0;
   return (
-    <div className={tableCss}>
-      <TableHeadline />
-      {matchesWithPlayers.map(matchWithPlayers => {
-        let singleGameScore = gamesScore[counter];
-        counter++;
-        return (
-          <TableRow
-            key={matchWithPlayers.match.id}
-            matchWithPlayers={matchWithPlayers}
-            active={active}
-            nextRound={nextRound}
-            singleGameScore={singleGameScore}
-          />
-        );
-      })}
+    <div className="competitionPage__table--height">
+      <div className={tableCss}>
+        <TableHeadline />
+        {matchesWithPlayers.map(matchWithPlayers => {
+          let singleGameScore = gamesScore[counter];
+          counter++;
+          return (
+            <TableRow
+              key={matchWithPlayers.match.id}
+              matchWithPlayers={matchWithPlayers}
+              active={active}
+              nextRound={nextRound}
+              singleGameScore={singleGameScore}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
