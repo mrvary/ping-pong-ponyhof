@@ -5,6 +5,8 @@
 const fs = require("fs");
 const parser = require("fast-xml-parser");
 
+const config = require("../../electron/config");
+
 // competition model
 const {
   createCompetitionFromJSON
@@ -62,7 +64,7 @@ function createCompetitionPreview() {
   };
 }
 
-function importXMLIntoDatabases(metaRepository, competitionStorage) {
+function importXMLIntoDatabases(dbManager) {
   if (!competition) {
     const errorMessage = "Competition is not initialized";
     console.log(errorMessage);
@@ -75,15 +77,20 @@ function importXMLIntoDatabases(metaRepository, competitionStorage) {
     throw new Error(errorMessage);
   }
 
-  // Initialize default values of competition storage
-  competitionStorage.initStateWithDefaults(jsonObject);
-  console.log("Initialized competition storage with json object");
+  // initialize competition storage
+  dbManager.initCompetitionStorage(
+    competition.id,
+    config.USE_IN_MEMORY_STORAGE,
+    jsonObject
+  );
 
   // save players into competition storage
-  competitionStorage.createPlayers(players);
+  const playerRepository = dbManager.getPlayerRepository();
+  playerRepository.createPlayers(players);
   console.log("Save players into competition storage");
 
   // save competition meta infos into meta storage
+  const metaRepository = dbManager.getMetaRepository();
   metaRepository.createCompetition(competition);
   console.log("Save competition meta infos into meta storage");
 

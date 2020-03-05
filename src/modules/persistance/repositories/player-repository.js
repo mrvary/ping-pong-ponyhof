@@ -4,45 +4,44 @@
 
 let _storage = null;
 
-let players = null;
-
 function init(storage) {
-    _storage = storage;
+  _storage = storage;
 }
 
 function getAll() {
-    if (!players) {
-        players = _storage.getAllPlayers();
-    }
-
-    return players;
+  return _storage.getAllPlayers();
 }
 
 function getById(id) {
-    if (!players) {
-        players = _storage.getAllPlayers();
-    }
+  return _storage.getPlayer(id);
+}
 
-    return players.find(player => player.id === id);
+function createPlayers(players) {
+  _storage.createPlayers(players);
+  console.log("Create players in storage");
+}
+
+function updatePlayers(players) {
+  _storage.updatePlayers(players);
+  console.log("Update players in storage");
 }
 
 function updatePlayer(updatedPlayer) {
-    if (!players) {
-        players = _storage.getAllPlayers();
-    }
-
-    // update player in list
+  /*// update player in list
     const foundIndex = players.findIndex(player => player.id === updatedPlayer.id);
-    players[foundIndex] = updatedPlayer;
+    players[foundIndex] = updatedPlayer;*/
 
-    // update player in storage
-    _storage.updatePlayer(updatedPlayer);
-    console.log("Update player in competition storage");
+  // update player in storage
+  _storage.updatePlayer(updatedPlayer);
+  console.log("Update player in competition storage");
 }
 
 module.exports = {
-    getAll,
-    getById,
-    updatePlayer
-};
+  init,
 
+  getAll,
+  getById,
+  createPlayers,
+  updatePlayers,
+  updatePlayer
+};

@@ -27,7 +27,6 @@ function clear(storage, object) {
 }
 
 function initStateWithDefaults(storage, object) {
-  //storage.setState(object).write();
   storage.defaults(object).write();
 }
 

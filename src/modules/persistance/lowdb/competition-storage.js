@@ -38,6 +38,10 @@ function init(filePath, useInMemory = true) {
   storage = lowDBDao.open(filePath, useInMemory);
 }
 
+function isInitialized() {
+  return !!storage;
+}
+
 function initStateWithDefaults(jsonObject) {
   lowDBDao.initStateWithDefaults(storage, jsonObject);
   lowDBDao.createElements(storage, ELEMENT_PATHS.MATCHES, []);
@@ -120,14 +124,20 @@ function updatePlayer(player) {
 
 function getAllPlayers() {
   const players = lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
+  console.log(players);
   console.log(`Get ${players.length} players from storage`);
   return players;
+}
+
+function getPlayer(id) {
+  return lowDBDao.getElement(storage, ELEMENT_PATHS.PLAYERS, { id: id });
 }
 
 module.exports = {
   ERROR_MESSAGES,
 
   init,
+  isInitialized,
   initStateWithDefaults,
   getState,
   close,
@@ -140,5 +150,6 @@ module.exports = {
   createPlayers,
   updatePlayers,
   updatePlayer,
-  getAllPlayers
+  getAllPlayers,
+  getPlayer
 };
