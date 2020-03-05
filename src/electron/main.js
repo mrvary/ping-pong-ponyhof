@@ -214,7 +214,10 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
-    if (selectedCompetition && selectedCompetition.competition.id === competitionId) {
+    if (
+      selectedCompetition &&
+      selectedCompetition.competition.id === competitionId
+    ) {
       selectedCompetition = null;
     }
 
