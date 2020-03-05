@@ -30,8 +30,6 @@ function init(filePath, useInMemory = true) {
   }
 
   storage = lowDBDao.open(filePath, useInMemory);
-
-  initStateWithDefaults({ competitions: [] });
 }
 
 function initStateWithDefaults(jsonObject) {

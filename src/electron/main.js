@@ -40,9 +40,7 @@ const matchmaker = require("../matchmaker/drawing");
 const { createCurrentRanking } = require("../matchmaker/ranking");
 
 // persistence
-const fileManager = require("../modules/persistance/file-manager");
-const metaRepository = require("../modules/persistance/repositories/meta-repository");
-const competitionStorage = require("../modules/persistance/lowdb/competition-storage");
+const dbManager = require("../modules/persistance/database-manager");
 
 // communication
 const server = require("../modules/server/server");
@@ -88,8 +86,11 @@ initHTTPServer();
 
 app.on("ready", () => {
   initDevTools();
-  initMetaRepository();
 
+  // init competitions storage
+  dbManager.initMetaRepository(config.USE_IN_MEMORY_STORAGE);
+
+  // init main window
   mainWindow = createWindow();
   registerAction("export", exportXML);
   createMenu();
@@ -188,6 +189,7 @@ function initHTTPServer() {
     const { tableNumber, sets, finished } = args;
 
     updateSetsByTableNumber(tableNumber, sets);
+
     const responseData = finished
       ? { message: "finished" }
       : { message: "success" };
@@ -204,11 +206,6 @@ function initHTTPServer() {
   });
 }
 
-function initMetaRepository() {
-  const filePath = fileManager.getMetaStorageDatabasePath();
-  metaRepository.init(filePath, config.USE_IN_MEMORY_STORAGE);
-}
-
 function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, event => {
     console.log(
@@ -216,10 +213,14 @@ function registerIPCMainEvents() {
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
 
+    // Get all competitions from database
+    const metaRepository = dbManager.getMetaRepository();
+    const competitions = metaRepository.getAllCompetitions();
+
+    const resultData = { competitions };
+
     // send competitions to renderer process
-    event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, {
-      competitions: metaRepository.getAllCompetitions()
-    });
+    event.sender.send(ipcMessages.GET_COMPETITIONS_RESPONSE, resultData);
     console.log(
       "ipc-main --> ipc-renderer:",
       ipcMessages.GET_COMPETITIONS_RESPONSE
@@ -233,21 +234,13 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
-    // Delete the competition file
-    fileManager.deleteTournamentJSONFile(competitionId);
-
-    // Delete competition from meta file
-    metaRepository.deleteCompetition(competitionId);
+    dbManager.deleteCompetitionStorage(competitionId);
 
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
     console.log(
       "ipc-main --> ipc-renderer:",
       ipcMessages.DELETE_COMPETITION_RESPONSE
     );
-  });
-
-  ipcMain.on(ipcMessages.CANCEL_COMPETITION, event => {
-    server.sendCancelCompetitionBroadcast();
   });
 
   ipcMain.on(ipcMessages.OPEN_FILE_DIALOG_REQUEST, event => {
@@ -261,7 +254,9 @@ function registerIPCMainEvents() {
       xmlImporter.setFilePath(filePath);
       console.log("Selected XML File:", filePath);
 
-      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, { message });
+      const resultData = { message };
+
+      event.sender.send(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, resultData);
       console.log(
         "ipc-main --> ipc-renderer:",
         ipcMessages.OPEN_FILE_DIALOG_RESPONSE
@@ -309,12 +304,8 @@ function registerIPCMainEvents() {
         }
       }
 
-      // 1. initialize competition storage
-      const filePath = fileManager.getCompetitionFilePath(competitionId);
-      competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
-
       // 2. import data into databases
-      xmlImporter.importXMLIntoDatabases(metaRepository, competitionStorage);
+      xmlImporter.importXMLIntoDatabases(dbManager);
 
       // 3. create response message with success message
       returnData = {
@@ -342,7 +333,6 @@ function registerIPCMainEvents() {
     );
 
     const { competitionId } = args;
-    console.log(competitionId);
 
     if (!competitionId) {
       console.log("Parameter competitionId is undefined");
@@ -350,6 +340,7 @@ function registerIPCMainEvents() {
     }
 
     let resultData;
+
     if (
       selectedCompetition &&
       selectedCompetition.competition.id === competitionId
@@ -454,7 +445,7 @@ function registerIPCMainEvents() {
     const { competition } = selectedCompetition;
 
     if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
-      console.log("wrong state", selectedCompetition.state);
+      console.log("wrong state", competition.state);
       return;
     }
 
@@ -495,10 +486,13 @@ function registerIPCMainEvents() {
       currentRound,
       matches
     );
+
     competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
     );
+
+    const metaRepository = dbManager.getMetaRepository();
     metaRepository.updateCompetition(competition);
 
     /*const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
@@ -550,7 +544,9 @@ function registerIPCMainEvents() {
       competition = deleteCurrentRound(competition, matchesWithPlayers);
       console.log("Delete round from database");
 
-      const players = competitionStorage.getAllPlayers();
+      const playerRepository = dbManager.getPlayerRepository();
+      const players = playerRepository.getAll();
+
       const matches = getMatchesByRound(competition);
 
       const previousMatchesWithPlayers = mapMatchesWithPlayers(
@@ -578,15 +574,16 @@ function registerIPCMainEvents() {
 
 function initCompetition(competitionId) {
   // get competition from meta repository
+  const metaRepository = dbManager.getMetaRepository();
   let competition = metaRepository.getCompetition(competitionId);
   console.log(`Get competition ${competitionId} from competitions`);
 
-  // init competition storage
-  const filePath = fileManager.getCompetitionFilePath(competitionId);
-  competitionStorage.init(filePath, config.USE_IN_MEMORY_STORAGE);
+  // init competition database
+  dbManager.initCompetitionStorage(competitionId, config.USE_IN_MEMORY_STORAGE);
 
   // get players from competition storage
-  let players = competitionStorage.getAllPlayers();
+  const playerRepository = dbManager.getPlayerRepository();
+  let players = playerRepository.getAll();
   console.log("Get players from competition database");
 
   // init matches ...
@@ -634,9 +631,11 @@ function createMatchesWithMatchmaker(players, currentMatches) {
   players = updatePlayersAfterDrawing(players, matches);
   console.log("Get matches from matchmaker");
 
-  // update competition
-  competitionStorage.updatePlayers(players);
-  competitionStorage.createMatches(matches);
+  const playerRepository = dbManager.getPlayerRepository();
+  playerRepository.updatePlayers(players);
+
+  const matchRepository = dbManager.getMatchRepository();
+  matchRepository.createMatches(matches);
   console.log("Save matches and player in competition storage");
 
   return { matches, players };
@@ -645,7 +644,10 @@ function createMatchesWithMatchmaker(players, currentMatches) {
 function updateCompetitionState(competition, newState) {
   console.log("Change competition state:", competition.state, "-->", newState);
   competition = setCompetitionState(competition, newState);
+
+  const metaRepository = dbManager.getMetaRepository();
   metaRepository.updateCompetition(competition);
+
   return competition;
 }
 
@@ -669,7 +671,9 @@ function updateSetsByTableNumber(tableNumber, sets) {
 
 function updateMatch(matchWithPlayers) {
   const match = getMatchFromMatchWithPlayer(matchWithPlayers);
-  competitionStorage.updateMatch(match);
+
+  const matchRepository = dbManager.getMatchRepository();
+  matchRepository.updateMatch(match);
 }
 
 function updateRanking() {
@@ -756,15 +760,19 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
   const roundsWithoutCurrent = rounds.filter(
     round => round.roundNumber !== currentRound
   );
+
   const updatedCompetition = {
     ...competition,
     rounds: [...competition.rounds, roundsWithoutCurrent],
     currentRound: currentRound - 1
   };
+
+  const metaRepository = dbManager.getMetaRepository();
   metaRepository.updateCompetition(updatedCompetition);
 
   // delete matches in database
-  competitionStorage.deleteMatches(matchIds);
+  const matchRepository = dbManager.getMatchRepository();
+  matchRepository.deleteMatches(matchIds);
 
   // update players after cancel round
   const { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
@@ -776,7 +784,8 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
     player.opponentIds.pop();
   });
 
-  competitionStorage.updatePlayers(players);
+  const playerRepository = dbManager.getPlayerRepository();
+  playerRepository.updatePlayers(players);
 
   return updatedCompetition;
 }
@@ -784,8 +793,8 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
 function getMatchesByRound(competition) {
   const { currentRound, rounds } = competition;
   const { matchIds } = rounds.find(round => round.roundNumber === currentRound);
-
-  const matches = competitionStorage.getMatchesByIds(matchIds);
+  const matchRepository = dbManager.getMatchRepository();
+  const matches = matchRepository.getMatchesByIds(matchIds);
   console.log("Get matches from competition database");
 
   return matches;
