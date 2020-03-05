@@ -486,7 +486,7 @@ function registerIPCMainEvents() {
       currentRound,
       matches
     );
-    
+
     competition = setCompetitionState(
       competition,
       COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
