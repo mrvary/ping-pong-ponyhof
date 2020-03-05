@@ -119,7 +119,9 @@ function updatePlayer(player) {
 }
 
 function getAllPlayers() {
-  return lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
+  const players = lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
+  console.log(`Get ${players.length} players from storage`);
+  return players;
 }
 
 module.exports = {
@@ -137,5 +139,6 @@ module.exports = {
 
   createPlayers,
   updatePlayers,
+  updatePlayer,
   getAllPlayers
 };
