@@ -11,9 +11,6 @@ const expressApp = require("../server/app");
 const socketIOMessages = require("../../client/src/shared/socketIOMessages");
 const serverMessages = require("./serverMessages");
 
-// models
-const { COMPETITION_STATE } = require("../../shared/models/competition");
-
 // constants
 const MAX_AMOUNT_TABLE = 8;
 const ALL_POTENTIAL_TABLES = range(1, MAX_AMOUNT_TABLE + 1);
@@ -65,14 +62,14 @@ function initSocketIO() {
 // CLIENT -> SERVER COMMUNICATION
 
 function listenToClientEvent(clientSocket) {
-  // event fired every time a client sends a table number
+  // event fired every time a client logs in with a table number
   clientSocket.on(socketIOMessages.LOGIN_REQUEST, ({ tableNumber }) => {
     clientLogin(clientSocket, tableNumber);
   });
 
   // event fired when a client disconnects, remove it from the list
   clientSocket.on(socketIOMessages.DISCONNECT, () => {
-    clientLogout(clientSocket);
+    clientDisconnect(clientSocket);
   });
 
   // event fired when a client sends new sets
@@ -122,7 +119,7 @@ function clientLogin(clientSocket, tableNumber) {
 
 // -----
 
-function clientLogout(clientSocket) {
+function clientDisconnect(clientSocket) {
   // check if client is logged in
   if (connectedClients.has(clientSocket.id)) {
     // delete client from active connections and notify renderer
