@@ -7,8 +7,7 @@ import "../Colors.css";
 import Popup from "./Popup";
 import Button from "./Button";
 import CompetitionPageHeader from "./CompetitionPageHeader";
-import PopupEditTable from "./PopupEditTable";
-import { render } from "react-dom";
+import CompetitionPageTable from "./CompetitionPageTable";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
@@ -21,14 +20,17 @@ const {
 } = require("../../client/src/shared/lib");
 const USE_BROWSER = false;
 
-const IpAdressAndStatisticLink = ({
-  competitionID,
-  openStatisticWindow,
-  round
-}) => {
+/**
+ * Links to IP-adress and opens statistic table
+ */
+const IpAdressAndStatisticLink = ({ competitionID, round }) => {
   const [showPopupIP, setShowPopupIP] = useState(false);
   const handleCloseIP = () => setShowPopupIP(false);
   const handleShowIP = () => setShowPopupIP(true);
+
+  const openStatisticWindow = route => {
+    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
+  };
 
   const statisticID = "/statisticTable/" + competitionID;
   let roundDisplay = "Runde: " + round;
@@ -58,199 +60,10 @@ const IpAdressAndStatisticLink = ({
     </div>
   );
 };
-
-const TableHeadline = () => {
-  return (
-    <div className="competitionPage__centered">
-      <div className="competitionPage__table competitionPage__table--def">
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Tisch{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Spieler 1
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          :{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Spieler 2{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 1{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 2{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 3{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 4{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Satz 5{" "}
-        </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          Ergebnis{" "}
-        </strong>
-      </div>
-    </div>
-  );
-};
-
-const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
-  const [stringSet, setStringSet] = useState([
-    "0 : 0",
-    "0 : 0",
-    "0 : 0",
-    "0 : 0",
-    "0 : 0"
-  ]);
-  let index = 0;
-
-  matchWithPlayers.match.sets.forEach(set => {
-    stringSet[index] = set.player1 + " : " + set.player2;
-    index++;
-  });
-
-  const [showPopupEditMatch, setShowPopupEditMatch] = useState(false);
-  const handleCloseEditMatch = () => setShowPopupEditMatch(false);
-  const handleShowEditMatch = () => setShowPopupEditMatch(true);
-
-  const saveChanges = (sets, tableNumber) => {
-    const tableSets = { tableNumber, sets };
-    ipcRenderer.send(ipcMessages.UPDATE_SETS, tableSets);
-    handleCloseEditMatch();
-  };
-
-  let tischCss = "liRed";
-  if (matchWithPlayers.connectedDevice) {
-    tischCss = "liGreen";
-  }
-  let activeButtonCss = "competitionPage__table__bearbeiten-btn";
-
-  if (!active || !nextRound) {
-    activeButtonCss =
-      "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
-  }
-  let matchDoneCss = "competitionPage__table competitionPage__table--values";
-  if (isMatchFinished(matchWithPlayers.match)) {
-    matchDoneCss =
-      "competitionPage__table competitionPage__table--values competitionPage__table__matchDone";
-  }
-  let score;
-  if (singleGameScore === undefined) {
-    score = [0, 0];
-  } else {
-    score = singleGameScore;
-  }
-  return (
-    <div className="competitionPage__centered">
-      <div className={matchDoneCss}>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          <li id={tischCss} className="competitionPage__centered">
-            <span>&#xa0;</span>
-            <span>&#xa0;</span>
-            <span>{matchWithPlayers.tableNumber}</span>
-          </li>
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {matchWithPlayers.match.player1.firstname +
-            " " +
-            matchWithPlayers.match.player1.lastname}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          :{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {matchWithPlayers.match.player2.firstname +
-            " " +
-            matchWithPlayers.match.player2.lastname}{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[0]}{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[1]}{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[2]}{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[3]}{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {" "}
-          {stringSet[4]}{" "}
-        </div>
-        <div className="competitionPage__table--elements competitionPage__centered competitionPage__table__score">
-          {" "}
-          {score[0]}
-          {" : "}
-          {score[1]}{" "}
-        </div>
-        <button
-          onClick={handleShowEditMatch}
-          className={activeButtonCss}
-          disabled={!active || matchWithPlayers.connectedDevice || !nextRound}
-        >
-          bearbeiten
-        </button>
-        <PopupEditTable
-          show={showPopupEditMatch}
-          handleClose={handleCloseEditMatch}
-          sets={matchWithPlayers.match.sets}
-          saveChanges={saveChanges}
-          tableNumber={matchWithPlayers.tableNumber}
-        ></PopupEditTable>
-      </div>
-    </div>
-  );
-};
-
-const Table = ({ matchesWithPlayers, active, gamesScore, nextRound }) => {
-  let tableCss =
-    "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
-  let counter = 0;
-  return (
-    <div className="competitionPage__table--height">
-      <div className={tableCss}>
-        <TableHeadline />
-        {matchesWithPlayers.map(matchWithPlayers => {
-          let singleGameScore = gamesScore[counter];
-          counter++;
-          return (
-            <TableRow
-              key={matchWithPlayers.match.id}
-              matchWithPlayers={matchWithPlayers}
-              active={active}
-              nextRound={nextRound}
-              singleGameScore={singleGameScore}
-            />
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
+/**
+ * The Competition Page contains the Information about the current
+ * competition and match, with the ability to control and change it
+ */
 const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
@@ -258,6 +71,8 @@ const CompetitionPage = () => {
   const [matchesFinished, setMatchesFinished] = useState(false);
   const [gamesScore, setGamesScore] = useState([]);
 
+  /** Updates all states if something changes
+   */
   useEffect(() => {
     function handleMatchesStatusChanged(
       event,
@@ -269,7 +84,7 @@ const CompetitionPage = () => {
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
       setNextRound(
-        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
       checkForFinishedRound(matchesWithPlayers);
       if (
@@ -290,6 +105,10 @@ const CompetitionPage = () => {
     };
   }, []);
 
+  /** checks the current state of the current matches and calculates
+   *  the current result of the each match
+   *  */
+
   const updateResult = matchesWithPlayers => {
     let counter = 0;
     matchesWithPlayers.forEach(allMatch => {
@@ -302,7 +121,9 @@ const CompetitionPage = () => {
       setGamesScore(newGamesScore);
     });
   };
-
+  /** checks all matches if finished and if all are done
+   *  sets matchesFinished true
+   */
   const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
     matchesWithPlayers.forEach(allMatch => {
@@ -353,31 +174,27 @@ const CompetitionPage = () => {
 
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
-  const [nextRound, setNextRound] = useState(false);
-  //Turnier beenden
-  //TODO: a Reaction
 
   //Runde abbrechen
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
   const handleShowReDoRound = () => setShowPopupReDoRound(true);
-  //nicht in erste runde
-  // runde abbrechen aufgerufen
-  // immernoch nächste runde
   const reDoRound = () => {
     ipcRenderer.send(ipcMessages.CANCEL_ROUND);
     handleCloseReDoRound();
-    //TODO: call dabase for last round
   };
 
-  //Spiel starten / nächste Runde
-
+  // Spiel starten
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => {
     console.log("handleCloseRound");
     setShowPopupEndRound(false);
   };
 
+  // Nächste Runde
+  const [nextRound, setNextRound] = useState(
+    competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+  );
   const handleShowEndRound = () => {
     if (!matchesFinished) {
       setShowPopupEndRound(true);
@@ -392,7 +209,6 @@ const CompetitionPage = () => {
   };
 
   //Turnier aktivieren / deactivieren
-
   const [active, setActive] = useState(false);
   const handleActivate = () => {
     ipcRenderer.send(ipcMessages.START_COMPETITION);
@@ -407,11 +223,6 @@ const CompetitionPage = () => {
   const handleCloseGoInactive = () => setShowPopupGoInactive(false);
   const handleShowGoInactive = () => setShowPopupGoInactive(true);
 
-  const openStatisticWindow = route => {
-    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
-  };
-
-  //am anfang runde starten
   return (
     <div>
       <CompetitionPageHeader
@@ -422,10 +233,9 @@ const CompetitionPage = () => {
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}
-        openStatisticWindow={openStatisticWindow}
         round={competitionData.currentRound}
       />
-      <Table
+      <CompetitionPageTable
         matchesWithPlayers={matchesWithPlayers}
         active={active}
         nextRound={nextRound}

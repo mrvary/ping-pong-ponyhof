@@ -47,7 +47,7 @@ function Competition(props) {
         show={showPopupActiveError}
         handleClose={handleCloseActiveError}
         header="Achtung!"
-        bodyText="Ein anderes Spiel ist aktiv"
+        bodyText="Ein anderes Turnier ist aktiv"
         mode="noBtn"
       ></Popup>
 
@@ -82,6 +82,7 @@ const PuttingThrough = ({
   hasActiveGame
 }) => {
   const competitionID = "/competition/" + id;
+
   if (
     hasActiveGame &&
     !(

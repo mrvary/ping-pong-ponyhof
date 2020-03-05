@@ -45,6 +45,7 @@ const App = () => {
     ipcRenderer.once(ipcMessages.GET_COMPETITIONS_RESPONSE, (event, args) => {
       const { competitions } = args;
       setCompetitions(competitions);
+      updateActiveState(competitions);
     });
 
     // trigger event to get competitions from ipc-main
@@ -53,18 +54,22 @@ const App = () => {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
+  };
 
-    //check for active game
+  const updateActiveState = competitions => {
     setHasActiveGame(false);
+    console.log("started here");
     competitions.map(competition => {
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       ) {
         setHasActiveGame(true);
+        console.log("and past here");
       }
       return null;
     });
+    console.log("hasActiveGame", hasActiveGame);
   };
 
   const openXMLDialog = () => {
@@ -147,6 +152,16 @@ const App = () => {
     ipcRenderer.send(ipcMessages.DELETE_COMPETITION_REQUEST, {
       competitionId: id
     });
+    // set hasActivGame false if deleted competition was activ
+    competitions.forEach(competition => {
+      if (
+        competition.id === id &&
+        (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY)
+      ) {
+        setHasActiveGame(false);
+      }
+    });
   };
 
   return (
@@ -161,6 +176,7 @@ const App = () => {
         viewedPlayers={viewedPlayers}
         viewedCompetition={viewedCompetition}
         errorMessage={errorMessage}
+        hasActiveGame={hasActiveGame}
       />
       {competitions.map(competition => (
         <Competition

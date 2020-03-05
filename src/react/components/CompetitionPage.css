@@ -5,75 +5,6 @@ body {
 .competitionPage__competition-time {
   margin: 2vh 2vh;
 }
-.competitionPage__table--barrierGreen {
-  margin: 1vh;
-  border-radius: 2vh;
-  padding-bottom: 1vh;
-}
-.competitionPage__table--barrierRed {
-  margin: 1vh;
-  border-radius: 2vh;
-  padding-bottom: 1vh;
-  opacity: 0.4;
-  filter: alpha(opacity = 40);
-}
-.competitionPage__centered {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.competitionPage__table--height {
-  height: 76vh;
-}
-.competitionPage__table {
-  width: 80%;
-  border-radius: 2vh;
-  background: var(--sec-background-color);
-  font-size: 2vh;
-  color: var(--prim-font-color);
-  display: grid;
-  grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
-}
-.competitionPage__table--def {
-  margin: 2vh 0vh;
-}
-.competitionPage__table--values {
-  margin: 0.3vh 0vh;
-}
-.competitionPage__table--elements {
-  color: var(--prim-font-color);
-  height: 7vh;
-  font-size: 2vh;
-}
-#liGreen::before {
-  content: "■";
-  font-size: 1.2em;
-  color: var(--success-color);
-}
-#liRed::before {
-  content: "■";
-  font-size: 1.2em;
-  color: var(--error-color);
-}
-
-.competitionPage__table__bearbeiten-btn {
-  font-size: 2vh;
-  border: none;
-  background: var(--prim-background-color);
-  color: var(--prim-font-color);
-}
-.competitionPage__table__bearbeiten-btn:hover {
-  color: var(--grey-out-color);
-}
-.competitionPage__table__bearbeiten-btn:focus {
-  outline: 0;
-}
-.competitionPage__table__bearbeiten-btn--notActive:hover {
-  color: var(--prim-font-color);
-}
-.competitionPage__table__bearbeiten-btn--notActive {
-  opacity: 0.4;
-}
 
 .competitionPage__link-ip-adress-statistic {
   text-decoration: underline;
@@ -105,10 +36,6 @@ body {
 
 .competitionPage__link-ip-adress-statistic:hover {
   color: var(--link-font-hover-color);
-}
-
-.competitionPage__table__matchDone {
-  background: var(--active-match-color);
 }
 
 .competitionPage__round {
