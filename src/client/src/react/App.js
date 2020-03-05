@@ -36,7 +36,6 @@ const VIEW = {
 };
 
 const ACTION_TYPE = {
-  // SET_TABLE_NUMBER: "set-table-number",
   LOGGED_IN: "logged-in",
   TABLES_AVAILABLE: "tables-available",
   ROUND_CANCELED: "round-canceled",
