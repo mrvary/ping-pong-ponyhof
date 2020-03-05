@@ -502,19 +502,47 @@ function registerIPCMainEvents() {
     });
   });
 
-  ipcMain.on(ipcMessages.CANCEL_ROUND, (event) => {
+  ipcMain.on(ipcMessages.CANCEL_ROUND, event => {
+    let { competition, matchesWithPlayers } = selectedCompetition;
+
     // check if it's a valid state transition (double check if all games are finished?)
-    const { competition } = selectedCompetition;
+    if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    ) {
+      // update competition state
+      selectedCompetition.competition = setCompetitionState(
+        competition,
+        COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+      );
 
-    // TODO: remove round from storage
-    // 1. delete round from db
-    const { currentRound } = competition;
+      // delete current round
+      const { currentRound } = competition;
 
-    // 2. load last round
+      if (currentRound === 1) {
+        console.log("The first round can not be deleted");
+        return;
+      }
 
-    // 3. update round and send to GUIs
+      // send cancel round to clients
+      server.sendCancelRoundBroadcast();
 
-    server.sendCancelRoundBroadcast();
+      competition = deleteCurrentRound(competition, matchesWithPlayers);
+      console.log("Delete round from database");
+
+      const players = competitionStorage.getAllPlayers();
+      const matches = getMatchesByRound(competition);
+
+      const previousMatchesWithPlayers = mapMatchesWithPlayers(
+        matches,
+        players
+      );
+
+      selectedCompetition.competition = competition;
+      selectedCompetition.matchesWithPlayers = previousMatchesWithPlayers;
+
+      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+    }
   });
 
   ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
@@ -563,15 +591,7 @@ function initCompetition(competitionId) {
     metaRepository.updateCompetition(competition);
   } else {
     // ... from competition storage
-
-    const { currentRound, rounds } = competition;
-    const { matchIds } = rounds.find(
-      round => round.roundNumber === currentRound
-    );
-    console.log(matchIds);
-
-    matches = competitionStorage.getMatchesByIds(matchIds);
-    console.log("Get matches from competition database");
+    matches = getMatchesByRound(competition);
   }
 
   // init matches with players
@@ -706,4 +726,47 @@ function splitMatchesWithPlayer(matchesWithPlayers) {
   });
 
   return { matches, players };
+}
+
+function deleteCurrentRound(competition, matchesWithPlayers) {
+  const { currentRound, rounds } = competition;
+  const { matchIds } = rounds.find(round => round.roundNumber === currentRound);
+
+  // delete round in competition
+  const roundsWithoutCurrent = rounds.filter(
+    round => round.roundNumber !== currentRound
+  );
+  const updatedCompetition = {
+    ...competition,
+    rounds: [...competition.rounds, roundsWithoutCurrent],
+    currentRound: currentRound - 1
+  };
+  metaRepository.updateCompetition(updatedCompetition);
+
+  // delete matches in database
+  competitionStorage.deleteMatches(matchIds);
+
+  // update players after cancel round
+  const { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
+
+  players.forEach(player => {
+    // remove last matchId
+    player.matchIds.pop();
+    // remove last opponentId
+    player.opponentIds.pop();
+  });
+
+  competitionStorage.updatePlayers(players);
+
+  return updatedCompetition;
+}
+
+function getMatchesByRound(competition) {
+  const { currentRound, rounds } = competition;
+  const { matchIds } = rounds.find(round => round.roundNumber === currentRound);
+
+  const matches = competitionStorage.getMatchesByIds(matchIds);
+  console.log("Get matches from competition database");
+
+  return matches;
 }
