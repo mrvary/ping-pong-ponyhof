@@ -1,8 +1,8 @@
-import { Modal } from "react-bootstrap";
-import React, { useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./PopupReviewPlayer.css";
-import Button from "./Button";
+import { Modal } from 'react-bootstrap';
+import React, { useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './PopupReviewPlayer.css';
+import Button from './Button';
 
 function PopupReviewPlayer({
   show,
@@ -13,26 +13,28 @@ function PopupReviewPlayer({
 }) {
   return (
     <Modal show={show} onHide={() => handleClose(true)}>
-      <Modal.Header closeButton className="popup__header-text">
+      <Modal.Header closeButton className="popupReviewPlayer__header-text">
         Turnier anlegen
       </Modal.Header>
 
       <Modal.Body>
-        <div className="popup__centered">
-          <strong className="popup__body-small-text">
+        <div className="popupReviewPlayer__centered">
+          <strong className="popupReviewPlayer__body-small-text">
             {viewedCompetition.name}
           </strong>
-          <p className="popup__body-smaller-text">{viewedCompetition.date}</p>
-          <p className="popup__body-smaller-text popup__extra-margin">
+          <p className="popupReviewPlayer__body-smaller-text">
+            {viewedCompetition.date}
+          </p>
+          <p className="popupReviewPlayer__body-smaller-text popupReviewPlayer__extra-margin">
             {viewedCompetition.playmode}
           </p>
-          <p className="popup__body-small-text">
+          <p className="popupReviewPlayer__body-small-text">
             Folgende Spieler sind im Turnier:
           </p>
-          <div className="popup__player-List">
+          <div className="popupReviewPlayer__player-List">
             {viewedPlayers.map(player => (
-              <li key={player.id} className="popup__names">
-                {player.firstname + " " + player.lastname}
+              <li key={player.id} className="popupReviewPlayer__names">
+                {player.firstname + ' ' + player.lastname}
               </li>
             ))}
           </div>

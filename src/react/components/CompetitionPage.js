@@ -223,14 +223,10 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     </div>
   );
 };
-/**
- *
- *
- */
+
 const Table = ({ matchesWithPlayers, active, gamesScore, nextRound }) => {
   let tableCss =
-    'competitionPage__table' +
-    (active && nextRound ? '--barrierGreen' : '--barrierRed');
+    'competitionPage__table' + (active ? '--barrierGreen' : '--barrierRed');
   let counter = 0;
   return (
     <div className={tableCss}>

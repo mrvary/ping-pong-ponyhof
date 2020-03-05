@@ -1,3 +1,21 @@
+.popupEditTable__header--text {
+  margin: 1vh 2vh;
+  margin-bottom: 0vh;
+  color: var(--prim-font-color);
+  font-size: 3vh;
+  display: flex;
+}
+.popupEditTable__header--center {
+  width: 60vh;
+  display: flex;
+  justify-content: center;
+  height: 5vh;
+}
+.popupEditTable__body--button {
+  width: 60vh;
+  display: flex;
+  justify-content: center;
+}
 .popupEditTable--columns {
   display: flex;
   flex-direction: column;
@@ -12,13 +30,6 @@
   margin: 1vh;
   height: 5vh;
 }
-/*
-  .popupEditTable--text {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-*/
 .popupEditTable--input {
   border: 0.1vh solid var(--error-color);
 }
