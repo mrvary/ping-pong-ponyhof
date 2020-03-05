@@ -82,6 +82,10 @@ function updateMatch(match) {
   lowDBDao.updateElement(storage, ELEMENT_PATHS.MATCHES, match, identifier);
 }
 
+function deleteMatch(id) {
+  lowDBDao.deleteElement(storage, ELEMENT_PATHS.MATCHES, { id: id });
+}
+
 function getAllMatches() {
   return lowDBDao.getAllElements(storage, ELEMENT_PATHS.MATCHES);
 }
@@ -89,6 +93,10 @@ function getAllMatches() {
 function getMatchesByIds(ids) {
   const matches = lowDBDao.getAllElements(storage, ELEMENT_PATHS.MATCHES);
   return matches.filter(match => ids.includes(match.id));
+}
+
+function deleteMatches(ids) {
+  ids.forEach(id => deleteMatch(id));
 }
 
 // PLAYER CRUD
@@ -138,6 +146,8 @@ module.exports = {
 
   createMatches,
   updateMatch,
+  deleteMatch,
+  deleteMatches,
   getAllMatches,
   getMatchesByIds,
 
