@@ -20,14 +20,17 @@ const {
 } = require("../../client/src/shared/lib");
 const USE_BROWSER = false;
 
-const IpAdressAndStatisticLink = ({
-  competitionID,
-  openStatisticWindow,
-  round
-}) => {
+/**
+ * Links to IP-adress and opens statistic table
+ */
+const IpAdressAndStatisticLink = ({ competitionID, round }) => {
   const [showPopupIP, setShowPopupIP] = useState(false);
   const handleCloseIP = () => setShowPopupIP(false);
   const handleShowIP = () => setShowPopupIP(true);
+
+  const openStatisticWindow = route => {
+    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
+  };
 
   const statisticID = "/statisticTable/" + competitionID;
   let roundDisplay = "Runde: " + round;
@@ -57,7 +60,10 @@ const IpAdressAndStatisticLink = ({
     </div>
   );
 };
-
+/**
+ * The Competition Page contains the Information about the current
+ * competition and match, with the ability to control and change it
+ */
 const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
@@ -65,6 +71,8 @@ const CompetitionPage = () => {
   const [matchesFinished, setMatchesFinished] = useState(false);
   const [gamesScore, setGamesScore] = useState([]);
 
+  /** Updates all states if something changes
+   */
   useEffect(() => {
     function handleMatchesStatusChanged(
       event,
@@ -97,6 +105,10 @@ const CompetitionPage = () => {
     };
   }, []);
 
+  /** checks the current state of the current matches and calculates
+   *  the current result of the each match
+   *  */
+
   const updateResult = matchesWithPlayers => {
     let counter = 0;
     matchesWithPlayers.forEach(allMatch => {
@@ -109,7 +121,9 @@ const CompetitionPage = () => {
       setGamesScore(newGamesScore);
     });
   };
-
+  /** checks all matches if finished and if all are done
+   *  sets matchesFinished true
+   */
   const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
     matchesWithPlayers.forEach(allMatch => {
@@ -160,30 +174,26 @@ const CompetitionPage = () => {
 
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
-  const [nextRound, setNextRound] = useState(
-    competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-  );
 
   //Runde abbrechen
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
   const handleShowReDoRound = () => setShowPopupReDoRound(true);
-
-  // runde abbrechen aufgerufen
-  // immernoch nächste runde
-
   const reDoRound = () => {
     handleCloseReDoRound();
   };
 
-  //Spiel starten / nächste Runde
-
+  // Spiel starten
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => {
     console.log("handleCloseRound");
     setShowPopupEndRound(false);
   };
 
+  // Nächste Runde
+  const [nextRound, setNextRound] = useState(
+    competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+  );
   const handleShowEndRound = () => {
     if (!matchesFinished) {
       setShowPopupEndRound(true);
@@ -198,7 +208,6 @@ const CompetitionPage = () => {
   };
 
   //Turnier aktivieren / deactivieren
-
   const [active, setActive] = useState(false);
   const handleActivate = () => {
     ipcRenderer.send(ipcMessages.START_COMPETITION);
@@ -213,11 +222,6 @@ const CompetitionPage = () => {
   const handleCloseGoInactive = () => setShowPopupGoInactive(false);
   const handleShowGoInactive = () => setShowPopupGoInactive(true);
 
-  const openStatisticWindow = route => {
-    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
-  };
-
-  //am anfang runde starten
   return (
     <div>
       <CompetitionPageHeader
@@ -228,7 +232,6 @@ const CompetitionPage = () => {
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}
-        openStatisticWindow={openStatisticWindow}
         round={competitionData.currentRound}
       />
       <CompetitionPageTable

@@ -6,6 +6,9 @@ const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
 const { isMatchFinished } = require("../../client/src/shared/lib");
 
+/**
+ * Competition Table covers the entire table of the currently played round
+ */
 function CompetitionPageTable({
   matchesWithPlayers,
   active,
@@ -36,7 +39,9 @@ function CompetitionPageTable({
     </div>
   );
 }
-
+/**
+ * Declares the column names of the table
+ */
 const TableHeadline = () => {
   return (
     <div className="competitionPageTable--centered">
@@ -76,6 +81,10 @@ const TableHeadline = () => {
   );
 };
 
+/**
+ * creates a row for each match currently played with "bearbeiten" option
+ * can call PopupEdtTable
+ */
 const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
   const [showPopupEditMatch, setShowPopupEditMatch] = useState(false);
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
