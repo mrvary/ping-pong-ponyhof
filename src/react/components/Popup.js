@@ -1,8 +1,8 @@
 import { Modal } from "react-bootstrap";
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./Button";
 import Button from "./Button";
+import "./Popup.css";
 
 function Popup({
   show,
@@ -15,18 +15,22 @@ function Popup({
 }) {
   return (
     <Modal show={show} onHide={handleClose}>
-      <Modal.Header closeButton className="popup__header-text">
-        {header}
+      <Modal.Header closeButton className="popup__header--text">
+        <div className="popup__header--center">
+          <p>{header}</p>
+        </div>
       </Modal.Header>
 
       <Modal.Body>
         <div>
-          <p className="popup__body-small-text">{bodyText}</p>
-          <InsertButton
-            mode={mode}
-            buttonText={buttonText}
-            buttonFunk={buttonFunk}
-          ></InsertButton>
+          <p className="popup__body--small-text">{bodyText}</p>
+          <div className="popup__body--button">
+            <InsertButton
+              mode={mode}
+              buttonText={buttonText}
+              buttonFunk={buttonFunk}
+            ></InsertButton>
+          </div>
         </div>
       </Modal.Body>
     </Modal>

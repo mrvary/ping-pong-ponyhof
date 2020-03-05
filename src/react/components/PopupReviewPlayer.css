@@ -1,31 +1,31 @@
-.popup__header-text {
+.popupReviewPlayer__header-text {
   margin: 1vh 2vh;
   color: var(--prim-font-color);
   font-size: large;
   text-align: center;
 }
 
-.popup__body-small-text {
+.popupReviewPlayer__body-small-text {
   margin-bottom: 1vh;
   color: var(--prim-font-color);
   font-size: medium;
   text-align: left;
 }
-.popup__body-smaller-text {
+.popupReviewPlayer__body-smaller-text {
   font-size: small;
   margin-bottom: 1vh;
 }
 
-.popup__centered {
+.popupReviewPlayer__centered {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
 }
-.popup__names {
+.popupReviewPlayer__names {
   color: var(--tert-font-color);
 }
-.popup__player-List {
+.popupReviewPlayer__player-List {
   padding: 6vh;
   padding-top: 2vh;
   padding-bottom: 2vh;
@@ -34,6 +34,6 @@
   margin-bottom: 1vh;
   margin-top: 1vh;
 }
-.popup__extra-margin {
+.popupReviewPlayer__extra-margin {
   margin-bottom: 3vh;
 }

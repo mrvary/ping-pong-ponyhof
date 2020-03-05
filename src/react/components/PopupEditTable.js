@@ -18,7 +18,11 @@ function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
 
   return (
     <Modal show={show} onHide={onHide}>
-      <Modal.Header closeButton>Bearbeiten</Modal.Header>
+      <Modal.Header closeButton className="popup__header--text">
+        <div className="popup__header--center">
+          <p>Bearbeiten</p>
+        </div>
+      </Modal.Header>
 
       <Modal.Body>
         <DisplaySetHandler
@@ -26,12 +30,14 @@ function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
           changeCurrentSets={changeCurrentSets}
           currentSets={currentSets}
         ></DisplaySetHandler>
-        <Button
-          mode="primary"
-          primText="Speichern"
-          primOnClick={endPopup}
-          disableProp={!inputChanged}
-        ></Button>
+        <div className="popupEditTable__body--button">
+          <Button
+            mode="primary"
+            primText="Speichern"
+            primOnClick={endPopup}
+            disableProp={!inputChanged}
+          ></Button>
+        </div>
       </Modal.Body>
     </Modal>
   );
