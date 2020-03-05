@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-import './Competition.css';
+import "./Competition.css";
 
 // components
-import Popup from './Popup';
+import Popup from "./Popup";
 
-const COMPETITION_STATE = require('../../shared/models/competition-state');
+const COMPETITION_STATE = require("../../shared/models/competition-state");
 
 function Competition(props) {
   const {
@@ -23,14 +23,14 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let popupText = 'Willst du dieses Spiel wirklich löschen?';
-  let containerCss = 'competition__container';
+  let popupText = "Willst du dieses Spiel wirklich löschen?";
+  let containerCss = "competition__container";
   if (
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
   ) {
-    popupText = 'Das laufende Turnier wird gelöscht!';
-    containerCss = 'competition__container competition__container--active';
+    popupText = "Das laufende Turnier wird gelöscht!";
+    containerCss = "competition__container competition__container--active";
   }
 
   return (
@@ -81,7 +81,7 @@ const PuttingThrough = ({
   handleShowActiveError,
   hasActiveGame
 }) => {
-  const competitionID = '/competition/' + id;
+  const competitionID = "/competition/" + id;
   if (
     hasActiveGame &&
     !(
