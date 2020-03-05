@@ -373,10 +373,6 @@ function App() {
     socket = connection;
   }
 
-  // const liink =
-  //   'Ein Turnier wartet auf dich -> <a href="http://192.168.2.182:4000"><a>';
-  // const link = `whatsapp://send?text=${encodeURIComponent(liink)}`;
-
   //
   //
   // ----- VIEW
@@ -424,7 +420,6 @@ function App() {
         />
       )}
       {content()}
-      {/* <a href={link}>LINK</a> */}
     </div>
   );
 }
