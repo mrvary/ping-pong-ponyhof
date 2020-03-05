@@ -71,6 +71,9 @@ body {
 .competitionPage__table__bearbeiten-btn--notActive:hover {
   color: var(--prim-font-color);
 }
+.competitionPage__table__bearbeiten-btn--notActive {
+  opacity: 0.4;
+}
 
 .competitionPage__link-ip-adress-statistic {
   text-decoration: underline;

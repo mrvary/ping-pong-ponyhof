@@ -138,7 +138,8 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     tischCss = 'liGreen';
   }
   let activeButtonCss = 'competitionPage__table__bearbeiten-btn';
-  if (!active) {
+
+  if (!active || !nextRound) {
     activeButtonCss =
       'competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive';
   }
