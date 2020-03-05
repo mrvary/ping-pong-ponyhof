@@ -214,6 +214,10 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
+    if (selectedCompetition && selectedCompetition.competition.id === competitionId) {
+      selectedCompetition = null;
+    }
+
     dbManager.deleteCompetitionStorage(competitionId);
 
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
