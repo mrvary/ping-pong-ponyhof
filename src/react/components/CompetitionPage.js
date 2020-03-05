@@ -365,6 +365,7 @@ const CompetitionPage = () => {
   // runde abbrechen aufgerufen
   // immernoch nächste runde
   const reDoRound = () => {
+    ipcRenderer.send(ipcMessages.CANCEL_ROUND);
     handleCloseReDoRound();
     //TODO: call dabase for last round
   };

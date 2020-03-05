@@ -122,8 +122,14 @@ function getAllPlayers() {
   return lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
 }
 
+function getImportedData() {
+  return lowDBDao.getAllElements(storage, "tournament");
+}
+
 module.exports = {
   ERROR_MESSAGES,
+
+  getImportedData,
 
   init,
   initStateWithDefaults,

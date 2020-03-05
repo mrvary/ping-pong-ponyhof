@@ -15,6 +15,7 @@ const config = require("./config");
 
 // xml import
 const xmlImporter = require("../modules/import/xml-importer");
+const xmlExporter = require("../modules/export/xml-exporter");
 
 // competition model
 const {
@@ -53,7 +54,7 @@ const { isMatchFinished } = require("../client/src/shared/lib");
 
 // windows actions
 const uiActions = require("./actions/uiActions");
-const createMenu = require("./menu/main-menu");
+const { createMenu, registerAction } = require("./menu/main-menu");
 const createWindow = require("./window");
 
 // electron windows
@@ -62,6 +63,24 @@ let statisticWindow = null;
 
 // application state variables
 let selectedCompetition = null;
+
+const exportXML = () => {
+  const fileName = "exportTournament.xml";
+  const filePath = fileManager.getApplicationDir("documents") + "/" + fileName;
+
+  if (selectedCompetition) {
+    uiActions.showSaveDialog(filePath).then(filePath => {
+      const { competition, matchesWithPlayers } = selectedCompetition;
+
+      // get players and matches
+      const players = competitionStorage.getAllPlayers();
+      const matches = competitionStorage.getAllMatches();
+      const jsonObject = competitionStorage.getImportedData();
+
+      xmlExporter.exportXML(players, matches, jsonObject);
+    });
+  }
+};
 
 // init communication events
 registerIPCMainEvents();
@@ -72,6 +91,7 @@ app.on("ready", () => {
   initMetaRepository();
 
   mainWindow = createWindow();
+  registerAction("export", exportXML);
   createMenu();
 });
 
@@ -502,10 +522,18 @@ function registerIPCMainEvents() {
     });
   });
 
-  ipcMain.on(ipcMessages.CANCEL_ROUND, () => {
+  ipcMain.on(ipcMessages.CANCEL_ROUND, event => {
     // check if it's a valid state transition (double check if all games are finished?)
+    const { competition } = selectedCompetition;
 
-    // TODO: remove last round from storage
+    // TODO: remove round from storage
+    // 1. delete round from db
+    const { currentRound } = competition;
+
+    // 2. load last round
+
+    // 3. update round and send to GUIs
+
     server.sendCancelRoundBroadcast();
   });
 

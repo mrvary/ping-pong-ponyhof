@@ -39,7 +39,7 @@ function exportXML(players, matches, initJSON) {
     });
   });
 
-  initJSON.tournament.competition.matches = {
+  initJSON.competition.matches = {
     match: matchesToAdd
   };
 
