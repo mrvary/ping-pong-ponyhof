@@ -76,6 +76,9 @@ const reducer = (state, action) => {
     case ACTION_TYPE.LOGGED_IN:
       return loggedIn(state, action);
 
+    case ACTION_TYPE.LOGGED_OUT:
+      return { ...initialState, availableTables: action.availableTables };
+
     case ACTION_TYPE.TABLES_AVAILABLE:
       return {
         ...state,
@@ -299,6 +302,9 @@ function App() {
 
   const logOut = event => {
     event.preventDefault();
+
+    console.info("CLIENT->SERVER: LOGOUT_REQUEST");
+    socket.emit(socketIOMessages.LOGOUT_REQUEST);
     dispatch({ type: ACTION_TYPE.LOG_OUT });
   };
 
@@ -323,6 +329,12 @@ function App() {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
       dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
+    });
+
+    connection.on(socketIOMessages.LOGOUT_RESPONSE, tables => {
+      console.info("SERVER->CLIENT: LOGOUT_RESPONSE");
+
+      dispatch({ type: ACTION_TYPE.LOGGED_OUT, availableTables: tables });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
