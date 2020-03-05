@@ -249,7 +249,7 @@ function padSetArrayWithEmptySets(sets) {
     paddedArray.push({ player1: 0, player2: 0 });
   }
 
-  return sets;
+  return paddedArray;
 }
 
 //
