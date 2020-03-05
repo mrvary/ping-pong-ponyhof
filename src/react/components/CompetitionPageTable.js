@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './CompetitionPageTable.css';
 import PopupEditTable from './PopupEditTable';
+
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require('../../shared/ipc-messages');
 const { isMatchFinished } = require('../../client/src/shared/lib');
@@ -12,10 +13,10 @@ function CompetitionPageTable({
   nextRound
 }) {
   let tableCss =
-    'competitionPage__table' + (active ? '--barrierGreen' : '--barrierRed');
+    'competitionPageTable' + (active ? '--barrierGreen' : '--barrierRed');
   let counter = 0;
   return (
-    <div className="competitionPage__table--height">
+    <div className="competitionPageTable--height">
       <div className={tableCss}>
         <TableHeadline />
         {matchesWithPlayers.map(matchWithPlayers => {
@@ -38,47 +39,37 @@ function CompetitionPageTable({
 
 const TableHeadline = () => {
   return (
-    <div className="competitionPage__centered">
-      <div className="competitionPage__table competitionPage__table--def">
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Tisch{' '}
+    <div className="competitionPageTable--centered">
+      <div className="competitionPageTable">
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Tisch
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
           Spieler 1
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          :{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          :
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Spieler 2{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Spieler 2
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 1{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Satz 1
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 2{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Satz 2
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 3{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Satz 3
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 4{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Satz 4
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Satz 5{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Satz 5
         </strong>
-        <strong className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          Ergebnis{' '}
+        <strong className="competitionPageTable--elements competitionPageTable--centered">
+          Ergebnis
         </strong>
       </div>
     </div>
@@ -86,20 +77,6 @@ const TableHeadline = () => {
 };
 
 const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
-  const [stringSet, setStringSet] = useState([
-    '0 : 0',
-    '0 : 0',
-    '0 : 0',
-    '0 : 0',
-    '0 : 0'
-  ]);
-  let index = 0;
-
-  matchWithPlayers.match.sets.forEach(set => {
-    stringSet[index] = set.player1 + ' : ' + set.player2;
-    index++;
-  });
-
   const [showPopupEditMatch, setShowPopupEditMatch] = useState(false);
   const handleCloseEditMatch = () => setShowPopupEditMatch(false);
   const handleShowEditMatch = () => setShowPopupEditMatch(true);
@@ -110,20 +87,20 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     handleCloseEditMatch();
   };
 
-  let tischCss = 'liRed';
+  let tischCss = 'competitionPageTable__liRed';
   if (matchWithPlayers.connectedDevice) {
-    tischCss = 'liGreen';
+    tischCss = 'competitionPageTable__liGreen';
   }
-  let activeButtonCss = 'competitionPage__table__bearbeiten-btn';
+  let activeButtonCss = 'competitionPageTable__bearbeiten-btn';
 
   if (!active || !nextRound) {
     activeButtonCss =
-      'competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive';
+      'competitionPageTable__bearbeiten-btn competitionPageTable__bearbeiten-btn--notActive';
   }
-  let matchDoneCss = 'competitionPage__table competitionPage__table--values';
+  let matchDoneCss = 'competitionPageTable competitionPageTable--values';
   if (isMatchFinished(matchWithPlayers.match)) {
     matchDoneCss =
-      'competitionPage__table competitionPage__table--values competitionPage__table__matchDone';
+      'competitionPageTable competitionPageTable--values competitionPageTable__matchDone';
   }
   let score;
   if (singleGameScore === undefined) {
@@ -132,56 +109,57 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     score = singleGameScore;
   }
   return (
-    <div className="competitionPage__centered">
+    <div className="competitionPageTable--centered">
       <div className={matchDoneCss}>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          <li id={tischCss} className="competitionPage__centered">
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          <li id={tischCss} className="competitionPageTable--centered">
             <span>&#xa0;</span>
             <span>&#xa0;</span>
             <span>{matchWithPlayers.tableNumber}</span>
           </li>
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.player1.firstname +
             ' ' +
             matchWithPlayers.match.player1.lastname}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          :{' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          :
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.player2.firstname +
             ' ' +
-            matchWithPlayers.match.player2.lastname}{' '}
+            matchWithPlayers.match.player2.lastname}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[0]}{' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          {matchWithPlayers.match.sets[0].player1}
+          {' : '}
+          {matchWithPlayers.match.sets[0].player2}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[1]}{' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          {matchWithPlayers.match.sets[1].player1}
+          {' : '}
+          {matchWithPlayers.match.sets[1].player2}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[2]}{' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          {matchWithPlayers.match.sets[2].player1}
+          {' : '}
+          {matchWithPlayers.match.sets[2].player2}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[3]}{' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          {matchWithPlayers.match.sets[3].player1}
+          {' : '}
+          {matchWithPlayers.match.sets[3].player2}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered">
-          {' '}
-          {stringSet[4]}{' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered">
+          {matchWithPlayers.match.sets[4].player1}
+          {' : '}
+          {matchWithPlayers.match.sets[4].player2}
         </div>
-        <div className="competitionPage__table--elements competitionPage__centered competitionPage__table__score">
-          {' '}
+        <div className="competitionPageTable--elements competitionPageTable--centered competitionPageTable__score">
           {score[0]}
           {' : '}
-          {score[1]}{' '}
+          {score[1]}
         </div>
         <button
           onClick={handleShowEditMatch}

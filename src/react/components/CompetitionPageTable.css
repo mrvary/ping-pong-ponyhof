@@ -1,0 +1,69 @@
+.competitionPageTable {
+  margin: 2vh 0vh;
+  width: 80%;
+  border-radius: 2vh;
+  background: var(--sec-background-color);
+  font-size: 2vh;
+  color: var(--prim-font-color);
+  display: grid;
+  grid-template-columns: 10% 10% 10% 10% 10% 10% 10% 10% 10% 10% 10%;
+}
+.competitionPageTable--centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.competitionPageTable--height {
+  height: 76vh;
+}
+.competitionPageTable__bearbeiten-btn {
+  font-size: 2vh;
+  border: none;
+  background: var(--prim-background-color);
+  color: var(--prim-font-color);
+}
+.competitionPageTable__bearbeiten-btn:hover {
+  color: var(--grey-out-color);
+}
+.competitionPageTable__bearbeiten-btn:focus {
+  outline: 0;
+}
+.competitionPageTable__bearbeiten-btn--notActive:hover {
+  color: var(--prim-font-color);
+}
+.competitionPageTable__bearbeiten-btn--notActive {
+  opacity: 0.4;
+}
+.competitionPageTable--values {
+  margin: 0.3vh 0vh;
+}
+.competitionPageTable--elements {
+  color: var(--prim-font-color);
+  height: 7vh;
+  font-size: 2vh;
+}
+#competitionPageTable__liGreen::before {
+  content: '■';
+  font-size: 1.2em;
+  color: var(--success-color);
+}
+#competitionPageTable--liRed::before {
+  content: '■';
+  font-size: 1.2em;
+  color: var(--error-color);
+}
+.competitionPageTable--barrierGreen {
+  margin: 1vh;
+  border-radius: 2vh;
+  padding-bottom: 1vh;
+}
+.competitionPageTable--barrierRed {
+  margin: 1vh;
+  border-radius: 2vh;
+  padding-bottom: 1vh;
+  opacity: 0.4;
+  filter: alpha(opacity = 40);
+}
+.competitionPageTable__matchDone {
+  background: var(--active-match-color);
+}
