@@ -86,6 +86,10 @@ function updateMatch(match) {
   lowDBDao.updateElement(storage, ELEMENT_PATHS.MATCHES, match, identifier);
 }
 
+function deleteMatch(id) {
+  lowDBDao.deleteElement(storage, ELEMENT_PATHS.MATCHES, { id: id });
+}
+
 function getAllMatches() {
   return lowDBDao.getAllElements(storage, ELEMENT_PATHS.MATCHES);
 }
@@ -93,6 +97,10 @@ function getAllMatches() {
 function getMatchesByIds(ids) {
   const matches = lowDBDao.getAllElements(storage, ELEMENT_PATHS.MATCHES);
   return matches.filter(match => ids.includes(match.id));
+}
+
+function deleteMatches(ids) {
+  ids.forEach(id => deleteMatch(id));
 }
 
 // PLAYER CRUD
@@ -124,7 +132,6 @@ function updatePlayer(player) {
 
 function getAllPlayers() {
   const players = lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
-  console.log(players);
   console.log(`Get ${players.length} players from storage`);
   return players;
 }
@@ -133,8 +140,14 @@ function getPlayer(id) {
   return lowDBDao.getElement(storage, ELEMENT_PATHS.PLAYERS, { id: id });
 }
 
+function getImportedData() {
+  return lowDBDao.getAllElements(storage, "tournament");
+}
+
 module.exports = {
   ERROR_MESSAGES,
+
+  getImportedData,
 
   init,
   isInitialized,
@@ -144,6 +157,8 @@ module.exports = {
 
   createMatches,
   updateMatch,
+  deleteMatch,
+  deleteMatches,
   getAllMatches,
   getMatchesByIds,
 

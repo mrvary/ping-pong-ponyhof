@@ -1,13 +1,24 @@
-.popup__header-text {
+.popup__header--text {
   margin: 1vh 2vh;
+  margin-bottom: 0vh;
   color: var(--prim-font-color);
-  font-size: large;
-  text-align: center;
+  font-size: 3vh;
+  display: flex;
+}
+.popup__header--center {
+  width: 60vh;
+  display: flex;
+  justify-content: center;
+  height: 5vh;
 }
 
-.popup__body-small-text {
+.popup__body--small-text {
   margin: 1vh 2vh;
-  color: var(--prim-font-color);
-  font-size: medium;
-  text-align: left;
+  margin-bottom: 3vh;
+}
+
+.popup__body--button {
+  width: 60vh;
+  display: flex;
+  justify-content: center;
 }

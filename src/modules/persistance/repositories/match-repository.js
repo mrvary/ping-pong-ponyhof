@@ -31,11 +31,16 @@ function updateMatch(updatedMatch) {
   console.log("Update match in competition storage");
 }
 
+function deleteMatches(matches) {
+  _storage.deleteMatches(matches);
+}
+
 module.exports = {
   init,
 
   getAll,
   getMatchesByIds,
   createMatches,
-  updateMatch
+  updateMatch,
+  deleteMatches
 };

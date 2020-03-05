@@ -138,7 +138,8 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     tischCss = "liGreen";
   }
   let activeButtonCss = "competitionPage__table__bearbeiten-btn";
-  if (!active) {
+
+  if (!active || !nextRound) {
     activeButtonCss =
       "competitionPage__table__bearbeiten-btn competitionPage__table__bearbeiten-btn--notActive";
   }
@@ -223,31 +224,29 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     </div>
   );
 };
-/**
- *
- *
- */
+
 const Table = ({ matchesWithPlayers, active, gamesScore, nextRound }) => {
   let tableCss =
-    "competitionPage__table" +
-    (active && nextRound ? "--barrierGreen" : "--barrierRed");
+    "competitionPage__table" + (active ? "--barrierGreen" : "--barrierRed");
   let counter = 0;
   return (
-    <div className={tableCss}>
-      <TableHeadline />
-      {matchesWithPlayers.map(matchWithPlayers => {
-        let singleGameScore = gamesScore[counter];
-        counter++;
-        return (
-          <TableRow
-            key={matchWithPlayers.match.id}
-            matchWithPlayers={matchWithPlayers}
-            active={active}
-            nextRound={nextRound}
-            singleGameScore={singleGameScore}
-          />
-        );
-      })}
+    <div className="competitionPage__table--height">
+      <div className={tableCss}>
+        <TableHeadline />
+        {matchesWithPlayers.map(matchWithPlayers => {
+          let singleGameScore = gamesScore[counter];
+          counter++;
+          return (
+            <TableRow
+              key={matchWithPlayers.match.id}
+              matchWithPlayers={matchWithPlayers}
+              active={active}
+              nextRound={nextRound}
+              singleGameScore={singleGameScore}
+            />
+          );
+        })}
+      </div>
     </div>
   );
 };
@@ -269,6 +268,9 @@ const CompetitionPage = () => {
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
+      setNextRound(
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+      );
       checkForFinishedRound(matchesWithPlayers);
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
@@ -363,6 +365,7 @@ const CompetitionPage = () => {
   // runde abbrechen aufgerufen
   // immernoch nächste runde
   const reDoRound = () => {
+    ipcRenderer.send(ipcMessages.CANCEL_ROUND);
     handleCloseReDoRound();
     //TODO: call dabase for last round
   };
@@ -381,10 +384,6 @@ const CompetitionPage = () => {
     } else {
       ipcRenderer.send(ipcMessages.NEXT_ROUND);
       setNextRound(false);
-      //TODO: next Round
-      //schicken ist finished
-      //MATCHMAKER  magic
-      //-> alles auf null
     }
   };
   const handleStartRound = () => {
@@ -436,8 +435,14 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleShowReDoRound}
           primText="Runde abbrechen"
-          mode="primary"
-          disableProp={endGame || !active}
+          secOnClick={() => setEndGame(true)}
+          secText="Turnier beenden"
+          mode={
+            competitionData.currentRound === 5 && matchesFinished
+              ? "secondary"
+              : "primary"
+          }
+          disableProp={endGame || !active || competitionData.currentRound === 1}
         ></Button>
         <Popup
           show={showPopupReDoRound}
