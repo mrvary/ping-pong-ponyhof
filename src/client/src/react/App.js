@@ -292,7 +292,8 @@ function App() {
     dispatch({ type: ACTION_TYPE.SETS_UPDATED, sets: newSets });
   };
 
-  const addSet = () => {
+  const addSet = event => {
+    sendSets(state.match)(event);
     dispatch({ type: ACTION_TYPE.ADD_SET });
   };
 
