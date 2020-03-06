@@ -1,8 +1,4 @@
-.competitionPage__link-back-to-overview {
-  display: none;
-}
-
-.containerHeader {
+.statisticTable__table-header {
   display: grid;
   grid-template-columns: 10% 30% 20% 20% 10% 10% 10%;
   grid-auto-rows: minmax(4vh, auto);
@@ -13,7 +9,7 @@
   font-weight: 700;
 }
 
-.containerBody {
+.statisticTable__table-body {
   display: grid;
   grid-template-columns: 10% 30% 20% 20% 10% 10% 10%;
   grid-auto-rows: minmax(4vh, auto);
@@ -23,7 +19,7 @@
   border-bottom: 0.1vh solid var(--shadow-color);
 }
 
-.ranking {
+.statisticTable__ranking {
   grid-row: 1/3;
   border-right: 0.1vh solid var(--shadow-color);
   padding: 2vh;
@@ -31,18 +27,18 @@
   font-weight: 200;
 }
 
-.bottomRow {
+.statisticTable__bottom-row {
   grid-column: 2/7;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(6, 20%);
   border-top: 0.1vh solid var(--shadow-color);
   padding: 1vh;
 }
 
-.seperation:nth-child(odd) {
+.statisticTable__seperation-color:nth-child(odd) {
   background-color: var(--table-background-color);
 }
 
-.name {
+.statisticTable__name {
   font-weight: 700;
 }
