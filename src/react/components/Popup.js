@@ -1,8 +1,8 @@
-import { Modal } from "react-bootstrap";
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import Button from "./Button";
-import "./Popup.css";
+import { Modal } from 'react-bootstrap';
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from './Button';
+import './Popup.css';
 
 function Popup({
   show,
@@ -37,7 +37,7 @@ function Popup({
   );
 }
 const InsertButton = ({ mode, buttonText, buttonFunk }) => {
-  if (mode === "noBtn") {
+  if (mode === 'noBtn') {
     return null;
   }
   return (

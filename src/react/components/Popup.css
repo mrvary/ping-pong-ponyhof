@@ -18,7 +18,6 @@
 }
 
 .popup__body--button {
-  width: 60vh;
   display: flex;
   justify-content: center;
 }
