@@ -58,18 +58,15 @@ const App = () => {
 
   const updateActiveState = competitions => {
     setHasActiveGame(false);
-    console.log('started here');
     competitions.map(competition => {
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
       ) {
         setHasActiveGame(true);
-        console.log('and past here');
       }
       return null;
     });
-    console.log('hasActiveGame', hasActiveGame);
   };
 
   const openXMLDialog = () => {
