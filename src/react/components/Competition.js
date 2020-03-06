@@ -23,7 +23,7 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let popupText = "Willst du dieses Spiel wirklich löschen?";
+  let popupText = "Willst du dieses Turnier wirklich löschen?";
   let containerCss = "competition__container";
   if (
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||

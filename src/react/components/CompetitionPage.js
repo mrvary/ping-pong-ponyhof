@@ -78,11 +78,12 @@ const CompetitionPage = () => {
       event,
       { competition, matchesWithPlayers }
     ) {
-      updateResult(matchesWithPlayers);
+      updateMatchesResults(matchesWithPlayers);
       console.log("IPC-Main-->IPC-Renderer:");
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
+      checkForEndGame(competition);
       setNextRound(
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
@@ -105,11 +106,18 @@ const CompetitionPage = () => {
     };
   }, []);
 
+  /** checks if game is in last round and changes button if so
+   */
+  const checkForEndGame = competition => {
+    if (competition.currentRound === 3) {
+      setLastRoundDisplay(["Turnier beenden", setEndGame(true)]);
+    }
+  };
+
   /** checks the current state of the current matches and calculates
    *  the current result of the each match
    *  */
-
-  const updateResult = matchesWithPlayers => {
+  const updateMatchesResults = matchesWithPlayers => {
     let counter = 0;
     matchesWithPlayers.forEach(allMatch => {
       let newGamesScore = gamesScore;
@@ -132,6 +140,7 @@ const CompetitionPage = () => {
       }
     });
     setMatchesFinished(matchesFinished);
+    console.log("matchesFinished", matchesFinished);
   };
 
   const updateCompetition = () => {
@@ -172,9 +181,6 @@ const CompetitionPage = () => {
     });
   };
 
-  //Spiel zu ende
-  const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
-
   //Runde abbrechen
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
@@ -187,15 +193,15 @@ const CompetitionPage = () => {
   // Spiel starten
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => {
-    console.log("handleCloseRound");
     setShowPopupEndRound(false);
   };
-
   // Nächste Runde
   const [nextRound, setNextRound] = useState(
     competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
   );
-  const handleShowEndRound = () => {
+  const handleShowEndRound = matchesFinished => {
+    console.log("matchesFinishedEnd", matchesFinished);
+
     if (!matchesFinished) {
       setShowPopupEndRound(true);
     } else {
@@ -207,6 +213,16 @@ const CompetitionPage = () => {
     ipcRenderer.send(ipcMessages.START_ROUND);
     setNextRound(true);
   };
+
+  //Spiel zu ende
+  const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
+  const giveStateToHandleShowEndRound = () => {
+    handleShowEndRound(matchesFinished);
+  };
+  const [lastRoundDisplay, setLastRoundDisplay] = useState([
+    "Nächste Runde",
+    giveStateToHandleShowEndRound
+  ]);
 
   //Turnier aktivieren / deactivieren
   const [active, setActive] = useState(false);
@@ -245,19 +261,13 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleShowReDoRound}
           primText="Runde abbrechen"
-          secOnClick={() => setEndGame(true)}
-          secText="Turnier beenden"
-          mode={
-            competitionData.currentRound === 5 && matchesFinished
-              ? "secondary"
-              : "primary"
-          }
+          mode="primary"
           disableProp={endGame || !active || competitionData.currentRound === 1}
         ></Button>
         <Popup
           show={showPopupReDoRound}
           handleClose={handleCloseReDoRound}
-          header="Möchtest du die aktuelle Runde abbrechen?"
+          header="Runde wirklich abbrechen?"
           bodyText="Alle bereits gespielten Ergebnisse der Runde gehen dabei verloren!"
           buttonFunk={() => reDoRound()}
           buttonText="Runde abbrechen"
@@ -285,8 +295,8 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleStartRound}
           primText="Runde starten"
-          secOnClick={handleShowEndRound}
-          secText="Nächste Runde"
+          secOnClick={lastRoundDisplay[1]}
+          secText={lastRoundDisplay[0]}
           mode={nextRound ? "secondary" : "primary"}
           disableProp={endGame || !active}
         ></Button>
