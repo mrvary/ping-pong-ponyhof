@@ -606,6 +606,11 @@ function registerIPCMainEvents() {
     console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
     updateRanking();
   });
+
+  ipcMain.on(ipcMessages.GET_IP_ADDRESS_REQUEST, event => {
+    const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+    event.sender.send(ipcMessages.GET_IP_ADDRESS_RESPONSE, { ipAddress: url });
+  });
 }
 
 function initCompetition(competitionId) {
