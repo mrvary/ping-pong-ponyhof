@@ -788,7 +788,7 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
 
   const updatedCompetition = {
     ...competition,
-    rounds: [...competition.rounds, roundsWithoutCurrent],
+    rounds: roundsWithoutCurrent,
     currentRound: currentRound - 1
   };
 
