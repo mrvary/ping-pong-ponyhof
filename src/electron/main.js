@@ -190,6 +190,7 @@ function initHTTPServer() {
     const { tableNumber, sets, finished } = args;
 
     updateSetsByTableNumber(tableNumber, sets);
+    updateRanking();
 
     const responseData = finished
       ? { message: "finished" }
@@ -526,6 +527,8 @@ function registerIPCMainEvents() {
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
 
+    updateRanking();
+
     server.sendNextRoundBroadcast({
       matchesWithPlayers: selectedCompetition.matchesWithPlayers
     });
@@ -540,7 +543,7 @@ function registerIPCMainEvents() {
       competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
     ) {
       // update competition state
-      selectedCompetition.competition = setCompetitionState(
+      competition = setCompetitionState(
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
@@ -573,16 +576,13 @@ function registerIPCMainEvents() {
       selectedCompetition.matchesWithPlayers = previousMatchesWithPlayers;
 
       event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+
+      updateRanking();
     }
   });
 
   ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
     console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
-
-    if (!statisticWindow) {
-      return;
-    }
-
     updateRanking();
   });
 }
@@ -693,23 +693,19 @@ function updateMatch(matchWithPlayers) {
 }
 
 function updateRanking() {
-  // get current players and matches
-  let matches = [];
-  let players = [];
-  selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
-    const { player1, player2 } = matchWithPlayers.match;
-
-    matches.push(matchWithPlayers.match);
-    players.push(player1);
-    players.push(player2);
-  });
-
-  const rankings = createCurrentRanking(players, matches);
-  console.log("update ranking table");
-
   if (!statisticWindow) {
     return;
   }
+
+  // get current players and matches
+  const playerRepository = dbManager.getPlayerRepository();
+  const players = playerRepository.getAll();
+
+  const matchRepository = dbManager.getMatchRepository();
+  const matches = matchRepository.getAll();
+
+  const rankings = createCurrentRanking(players, matches);
+  console.log("update ranking table");
 
   statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
     competition: selectedCompetition.competition,
