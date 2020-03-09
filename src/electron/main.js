@@ -51,8 +51,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // client
 const { isMatchFinished } = require("../client/src/shared/lib");
 
-// windows actions
-const uiActions = require("./actions/uiActions");
+// windows dialog
+const uiActions = require("./dialog/dialog");
 const { createMenu, registerAction } = require("./menu/main-menu");
 const createWindow = require("./window");
 

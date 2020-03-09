@@ -5,7 +5,7 @@
 const { app, Menu, shell } = require("electron");
 
 const config = require("../config");
-const uiActions = require("../actions/uiActions");
+const uiActions = require("../dialog/dialog");
 const fileManager = require("../../modules/persistance/file-manager");
 
 const actions = new Map();
