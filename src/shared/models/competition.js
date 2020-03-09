@@ -29,7 +29,7 @@ function createCompetition(dataFromJSON) {
 }
 
 function setCompetitionCurrentRound(competition, roundNumber) {
-  return { ... competition, currentRound: roundNumber};
+  return { ...competition, currentRound: roundNumber };
 }
 
 function setCompetitionRoundMatches(competition, roundNumber, matches) {
