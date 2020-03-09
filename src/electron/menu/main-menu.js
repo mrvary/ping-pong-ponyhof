@@ -5,8 +5,6 @@
 const { app, Menu, shell } = require("electron");
 
 const config = require("../config");
-const uiActions = require("../dialog/dialog");
-const fileManager = require("../../modules/persistance/file-manager");
 
 const actions = new Map();
 
@@ -29,16 +27,7 @@ const openRepositoryOnGitHub = () => {
   shell.openExternal(url);
 };
 
-const showURL = () => {
-  const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
-  uiActions.showInfoBox("URL-Info", `URL: ${url}`);
-};
-
 const exportCompetition = () => {
-  /*const fileName = "exportTournament.xml";
-  const filePath = fileManager.getApplicationDir("documents") + "/" + fileName;
-
-  uiActions.showSaveDialog(filePath);*/
   const func = actions.get("export");
   func();
 };
@@ -51,10 +40,6 @@ const template = [
       {
         label: "Client öffnen",
         click: openClient
-      },
-      {
-        label: "Server URL anzeigen",
-        click: showURL
       },
       {
         label: "Turnier exportieren",
