@@ -119,7 +119,8 @@ app.on("before-quit", () => {
   const matchRepository = dbManager.getMatchRepository();
   matchRepository.updateMatches(matches);
 
-  // TODO: Send disconnect to clients
+  // send disconnect to clients
+  server.sendAppDisconnectBroadcast();
 
   server.shutdownServer();
 });
