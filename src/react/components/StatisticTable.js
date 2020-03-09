@@ -42,9 +42,9 @@ const TableRow = ({ ranking }) => {
               " " +
               match.opponentLastname +
               " " +
-              match.opponentSets +
+              match.ownSets +
               " : " +
-              match.ownSets}{" "}
+              match.opponentSets}{" "}
           </div>
         ))}
       </div>
