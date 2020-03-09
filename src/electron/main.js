@@ -20,6 +20,7 @@ const xmlExporter = require("../modules/export/xml-exporter");
 // competition model
 const {
   COMPETITION_STATE,
+  setCompetitionCurrentRound,
   setCompetitionRoundMatches,
   setCompetitionState
 } = require("../shared/models/competition");
@@ -488,7 +489,11 @@ function registerIPCMainEvents() {
 
     // set round counter of competition to next round
     let { currentRound } = competition;
-    currentRound++;
+    let nextRound = currentRound + 1;
+    currentRound = nextRound;
+
+    // update current round
+    competition = setCompetitionCurrentRound(competition, nextRound);
 
     // update rounds of competition
     competition = setCompetitionRoundMatches(
@@ -783,7 +788,7 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
 
   const updatedCompetition = {
     ...competition,
-    rounds: [...competition.rounds, roundsWithoutCurrent],
+    rounds: roundsWithoutCurrent,
     currentRound: currentRound - 1
   };
 
