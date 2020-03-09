@@ -37,7 +37,6 @@ function deleteMatches(matches) {
 
 module.exports = {
   init,
-
   getAll,
   getMatchesByIds,
   createMatches,
