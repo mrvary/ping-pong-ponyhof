@@ -98,7 +98,27 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
-  // TODO: Save current app state into database
+  let { competition, matchesWithPlayers } = selectedCompetition;
+
+  // Set current active competition to ready state
+  let newState;
+  if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
+  } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+    newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+  }
+
+  updateCompetitionState(competition, newState);
+
+  // Save current app state into storages
+  const { players, matches } = splitMatchesWithPlayer(matchesWithPlayers);
+
+  const playerRepository = dbManager.getPlayerRepository();
+  playerRepository.updatePlayers(players);
+
+  const matchRepository = dbManager.getMatchRepository();
+  matchRepository.updateMatches(matches);
+
   // TODO: Send disconnect to clients
 
   server.shutdownServer();

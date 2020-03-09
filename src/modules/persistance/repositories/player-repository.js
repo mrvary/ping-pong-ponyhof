@@ -27,10 +27,6 @@ function updatePlayers(players) {
 }
 
 function updatePlayer(updatedPlayer) {
-  /*// update player in list
-    const foundIndex = players.findIndex(player => player.id === updatedPlayer.id);
-    players[foundIndex] = updatedPlayer;*/
-
   // update player in storage
   _storage.updatePlayer(updatedPlayer);
   console.log("Update player in competition storage");
