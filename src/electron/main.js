@@ -470,39 +470,38 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, event => {
-    // check if it's a valid state transition (double check if all games are finished?)
-    // fire up matchmaker
-    // save things
-
     let { competition, matchesWithPlayers } = selectedCompetition;
 
+    // check if it's a valid state transition (double check if all games are finished?)
     if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
       return;
     }
 
-    competition.currentRound++;
-
-    // use matchmaker to draw next round
+    // update players data after matches are finished
     let { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
     players = updateWinner(players, matches);
 
+    // use matchmaker to draw next round
     const drawing = createMatchesWithMatchmaker(players, matches);
     players = drawing.players;
     matches = drawing.matches;
 
-    // update competition in database
+    // set round counter of competition to next round
     let { currentRound } = competition;
+    currentRound++;
+
+    // update rounds of competition
     competition = setCompetitionRoundMatches(
       competition,
       currentRound,
       matches
     );
 
-    competition = setCompetitionState(
-      competition,
-      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-    );
+    // update competition state
+    const newState = COMPETITION_STATE.COMP_ACTIVE_ROUND_READY;
+    competition = setCompetitionState(competition, newState);
 
+    // update competition in storage
     const metaRepository = dbManager.getMetaRepository();
     metaRepository.updateCompetition(competition);
 
@@ -666,17 +665,19 @@ function updateSetsByTableNumber(tableNumber, sets) {
   const { matchesWithPlayers } = selectedCompetition;
 
   const updatedMatchesWithPlayers = matchesWithPlayers.map(matchWithPlayers => {
-    if (matchWithPlayers.tableNumber === tableNumber) {
-      const { match } = matchWithPlayers;
-      const updatedMatch = { ...match, sets };
-      matchWithPlayers.match = updatedMatch;
+      if (matchWithPlayers.tableNumber === tableNumber) {
 
-      // 4. save match to storage
-      updateMatch(matchWithPlayers);
+        const { match } = matchWithPlayers;
+        const updatedMatch = { ...match, sets };
+        matchWithPlayers.match = updatedMatch;
+
+        // 4. save match to storage
+        updateMatch(matchWithPlayers);
+      }
+
+      return matchWithPlayers;
     }
-
-    return matchWithPlayers;
-  });
+  );
 
   selectedCompetition.matchesWithPlayers = updatedMatchesWithPlayers;
 }
@@ -727,9 +728,9 @@ function mapMatchesWithPlayers(matches, players) {
 
     // create a copy of the match obj and the players and
     // map players and match together
-    const copyMatch = { ...match };
-    copyMatch.player1 = { ...player1 };
-    copyMatch.player2 = { ...player2 };
+    const copyMatch = {...match};
+    copyMatch.player1 = {...player1};
+    copyMatch.player2 = {...player2};
 
     // create new result object
     const matchWithPlayers = {
