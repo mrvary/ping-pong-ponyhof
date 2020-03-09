@@ -28,6 +28,10 @@ function createCompetition(dataFromJSON) {
   };
 }
 
+function setCompetitionCurrentRound(competition, roundNumber) {
+  return { ... competition, currentRound: roundNumber};
+}
+
 function setCompetitionRoundMatches(competition, roundNumber, matches) {
   const round = createRound(roundNumber, matches);
   return { ...competition, rounds: [...competition.rounds, round] };
@@ -41,6 +45,7 @@ module.exports = {
   PLAYMODE,
   COMPETITION_STATE,
   createCompetitionFromJSON,
+  setCompetitionCurrentRound,
   setCompetitionRoundMatches,
   setCompetitionState
 };
