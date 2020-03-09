@@ -217,6 +217,7 @@ function registerIPCMainEvents() {
     const metaRepository = dbManager.getMetaRepository();
     const competitions = metaRepository.getAllCompetitions();
 
+    // create result data
     const resultData = { competitions };
 
     // send competitions to renderer process
@@ -234,6 +235,7 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
+    // check if the current competition is the deleted competition
     if (
       selectedCompetition &&
       selectedCompetition.competition.id === competitionId
@@ -241,8 +243,10 @@ function registerIPCMainEvents() {
       selectedCompetition = null;
     }
 
+    // delete competition from database
     dbManager.deleteCompetitionStorage(competitionId);
 
+    // notify renderer that the competition is deleted
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
     console.log(
       "ipc-main --> ipc-renderer:",
@@ -659,21 +663,22 @@ function updateCompetitionState(competition, newState) {
 }
 
 function updateSetsByTableNumber(tableNumber, sets) {
-  selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-    matchWithPlayers => {
-      if (matchWithPlayers.tableNumber === tableNumber) {
-        // 3. update sets of match
-        const { match } = matchWithPlayers;
-        const updatedMatch = { ...match, sets };
-        matchWithPlayers.match = updatedMatch;
+  const { matchesWithPlayers } = selectedCompetition;
 
-        // 4. save match to storage
-        updateMatch(matchWithPlayers);
-      }
+  const updatedMatchesWithPlayers = matchesWithPlayers.map(matchWithPlayers => {
+    if (matchWithPlayers.tableNumber === tableNumber) {
+      const { match } = matchWithPlayers;
+      const updatedMatch = { ...match, sets };
+      matchWithPlayers.match = updatedMatch;
 
-      return matchWithPlayers;
+      // 4. save match to storage
+      updateMatch(matchWithPlayers);
     }
-  );
+
+    return matchWithPlayers;
+  });
+
+  selectedCompetition.matchesWithPlayers = updatedMatchesWithPlayers;
 }
 
 function updateMatch(matchWithPlayers) {
@@ -710,18 +715,27 @@ function updateRanking() {
 
 function mapMatchesWithPlayers(matches, players) {
   let tableNumber = 1;
-
   let matchesWithPlayers = [];
+
   matches.forEach(match => {
+    // get client connection state from server
     const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
 
-    match.player1 = players.find(player => player.id === match.player1);
-    match.player2 = players.find(player => player.id === match.player2);
+    // find players of match
+    const player1 = players.find(player => player.id === match.player1);
+    const player2 = players.find(player => player.id === match.player2);
 
+    // create a copy of the match obj and the players and
+    // map players and match together
+    const copyMatch = { ...match };
+    copyMatch.player1 = { ...player1 };
+    copyMatch.player2 = { ...player2 };
+
+    // create new result object
     const matchWithPlayers = {
       tableNumber: tableNumber,
       connectedDevice: uuid,
-      match: match
+      match: copyMatch
     };
 
     matchesWithPlayers.push(matchWithPlayers);
