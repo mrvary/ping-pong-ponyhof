@@ -190,6 +190,7 @@ function initHTTPServer() {
     const { tableNumber, sets, finished } = args;
 
     updateSetsByTableNumber(tableNumber, sets);
+    updateRanking();
 
     const responseData = finished
       ? { message: "finished" }
@@ -693,16 +694,10 @@ function updateMatch(matchWithPlayers) {
 }
 
 function updateRanking() {
-  // get current players and matches
-  let matches = [];
-  let players = [];
-  selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
-    const { player1, player2 } = matchWithPlayers.match;
+  const { matchesWithPlayers } = selectedCompetition;
 
-    matches.push(matchWithPlayers.match);
-    players.push(player1);
-    players.push(player2);
-  });
+  // get current players and matches
+  const { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
 
   const rankings = createCurrentRanking(players, matches);
   console.log("update ranking table");
