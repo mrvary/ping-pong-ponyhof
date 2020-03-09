@@ -665,19 +665,17 @@ function updateSetsByTableNumber(tableNumber, sets) {
   const { matchesWithPlayers } = selectedCompetition;
 
   const updatedMatchesWithPlayers = matchesWithPlayers.map(matchWithPlayers => {
-      if (matchWithPlayers.tableNumber === tableNumber) {
+    if (matchWithPlayers.tableNumber === tableNumber) {
+      const { match } = matchWithPlayers;
+      const updatedMatch = { ...match, sets };
+      matchWithPlayers.match = updatedMatch;
 
-        const { match } = matchWithPlayers;
-        const updatedMatch = { ...match, sets };
-        matchWithPlayers.match = updatedMatch;
-
-        // 4. save match to storage
-        updateMatch(matchWithPlayers);
-      }
-
-      return matchWithPlayers;
+      // 4. save match to storage
+      updateMatch(matchWithPlayers);
     }
-  );
+
+    return matchWithPlayers;
+  });
 
   selectedCompetition.matchesWithPlayers = updatedMatchesWithPlayers;
 }
@@ -728,9 +726,9 @@ function mapMatchesWithPlayers(matches, players) {
 
     // create a copy of the match obj and the players and
     // map players and match together
-    const copyMatch = {...match};
-    copyMatch.player1 = {...player1};
-    copyMatch.player2 = {...player2};
+    const copyMatch = { ...match };
+    copyMatch.player1 = { ...player1 };
+    copyMatch.player2 = { ...player2 };
 
     // create new result object
     const matchWithPlayers = {
