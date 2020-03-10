@@ -140,10 +140,18 @@ function emergencyDrawingAlgorithm(players) {
 function createPairingFromArray(players) {
   let pairings = [];
   for (let i = 0; i < players.length; i = i + 2) {
-    pairings.push({
-      player1: players[i].id,
-      player2: players[i + 1].id
-    });
+    //FreeTicket player should be always player2
+    if (players[i].id !== "FreeTicket") {
+      pairings.push({
+        player1: players[i].id,
+        player2: players[i + 1].id
+      });
+    } else {
+      pairings.push({
+        player1: players[i + 1].id,
+        player2: players[i].id
+      });
+    }
   }
   return pairings;
 }

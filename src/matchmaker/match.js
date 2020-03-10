@@ -17,6 +17,8 @@ function createMatches(pairings, lastMatchId) {
 
 // createMatch : {player1: Player, player2: Player} -> Match
 function createMatch({ player1, player2 }, matchId) {
+  const MAXIMUM_SETS = 5;
+
   const match = {
     id: matchId,
     player1: player1,
@@ -24,7 +26,6 @@ function createMatch({ player1, player2 }, matchId) {
     sets: []
   };
 
-  const MAXIMUM_SETS = 5;
   for (let i = 0; i < MAXIMUM_SETS; i++) {
     match.sets.push({
       player1: 0,
@@ -32,6 +33,11 @@ function createMatch({ player1, player2 }, matchId) {
     });
   }
 
+  if (player2 === "FreeTicket") {
+    for (let i = 0; i < Math.ceil(MAXIMUM_SETS / 2); i++) {
+      match.sets[i].player1 = 11;
+    }
+  }
   return match;
 }
 

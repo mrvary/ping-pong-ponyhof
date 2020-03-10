@@ -51,8 +51,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // client
 const { isMatchFinished } = require("../client/src/shared/lib");
 
-// windows actions
-const uiActions = require("./actions/uiActions");
+// windows dialog
+const uiActions = require("./dialog/dialog");
 const { createMenu, registerAction } = require("./menu/main-menu");
 const createWindow = require("./window");
 
@@ -98,8 +98,29 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
-  // TODO: Save current app state into database
-  // TODO: Send disconnect to clients
+  let { competition, matchesWithPlayers } = selectedCompetition;
+
+  // Set current active competition to ready state
+  let newState;
+  if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
+  } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+    newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+  }
+
+  updateCompetitionState(competition, newState);
+
+  // Save current app state into storages
+  const { players, matches } = splitMatchesWithPlayer(matchesWithPlayers);
+
+  const playerRepository = dbManager.getPlayerRepository();
+  playerRepository.updatePlayers(players);
+
+  const matchRepository = dbManager.getMatchRepository();
+  matchRepository.updateMatches(matches);
+
+  // send disconnect to clients
+  server.sendAppDisconnectBroadcast();
 
   server.shutdownServer();
 });
@@ -584,6 +605,11 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
     console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
     updateRanking();
+  });
+
+  ipcMain.on(ipcMessages.GET_IP_ADDRESS_REQUEST, event => {
+    const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+    event.sender.send(ipcMessages.GET_IP_ADDRESS_RESPONSE, { ipAddress: url });
   });
 }
 

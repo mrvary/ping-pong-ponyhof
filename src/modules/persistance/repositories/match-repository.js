@@ -21,11 +21,11 @@ function createMatches(newMatches) {
   console.log("Create matches in storage");
 }
 
-function updateMatch(updatedMatch) {
-  // update match in list
-  /*const foundIndex = matches.findIndex(match => match.id === updatedMatch.id);
-    matches[foundIndex] = updatedMatch;*/
+function updateMatches(matches) {
+  matches.forEach(match => updateMatch(match));
+}
 
+function updateMatch(updatedMatch) {
   // update match in storage
   _storage.updateMatch(updatedMatch);
   console.log("Update match in competition storage");
@@ -40,6 +40,7 @@ module.exports = {
   getAll,
   getMatchesByIds,
   createMatches,
+  updateMatches,
   updateMatch,
   deleteMatches
 };
