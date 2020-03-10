@@ -129,28 +129,8 @@ function main() {
 app.on("ready", main);
 
 app.on("before-quit", () => {
-  let { competition, matchesWithPlayers } = selectedCompetition;
-
-  if (
-    competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-    competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
-  ) {
-    // Set current active competition to ready state
-    const newState =
-      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-        ? COMPETITION_STATE.COMP_READY_ROUND_READY
-        : COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
-    updateCompetitionState(competition, newState);
-
-    // Save current app state into storages
-    const { players, matches } = splitMatchesWithPlayer(matchesWithPlayers);
-
-    const playerRepository = dbManager.getPlayerRepository();
-    playerRepository.updatePlayers(players);
-
-    const matchRepository = dbManager.getMatchRepository();
-    matchRepository.updateMatches(matches);
-  }
+  // save current competition state
+  saveCompetitionState();
 
   // notify clients and after that shutdown server
   server.sendAppDisconnectBroadcast();
@@ -951,4 +931,29 @@ function getMatchesByRound(competition) {
   console.log("Get matches from competition database");
 
   return matches;
+}
+
+function saveCompetitionState() {
+  let { competition, matchesWithPlayers } = selectedCompetition;
+
+  if (
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+  ) {
+    // Set current active competition to ready state
+    const newState =
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+            ? COMPETITION_STATE.COMP_READY_ROUND_READY
+            : COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+    updateCompetitionState(competition, newState);
+
+    // Save current app state into storages
+    const { players, matches } = splitMatchesWithPlayer(matchesWithPlayers);
+
+    const playerRepository = dbManager.getPlayerRepository();
+    playerRepository.updatePlayers(players);
+
+    const matchRepository = dbManager.getMatchRepository();
+    matchRepository.updateMatches(matches);
+  }
 }
