@@ -26,7 +26,6 @@ module.exports = {
   CANCEL_ROUND: "cancel-round",
 
   OPEN_NEW_WINDOW: "open-new-window",
-
   GET_RANKING_REQUEST: "get-ranking-request",
 
   GET_IP_ADDRESS_REQUEST: "get-ip-address-request",

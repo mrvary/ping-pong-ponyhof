@@ -180,6 +180,7 @@ const CompetitionPage = () => {
     if (!checkForFinishedRound(matchesWithPlayers)) {
       setShowPopupEndRound(true);
     } else {
+      ipcRenderer.send(ipcMessages.COMPLETE_COMPETITION);
       setEndGame(true);
     }
   };

@@ -481,6 +481,52 @@ function registerIPCMainEvents() {
     server.sendCancelCompetitionBroadcast();
   });
 
+  ipcMain.on(ipcMessages.COMPLETE_COMPETITION, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.COMPLETE_COMPETITION);
+    let { competition, matchesWithPlayers } = selectedCompetition;
+
+    // check if it's a valid state transition (double check if all games are finished?)
+    if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      console.log("wrong state", competition.state);
+      return;
+    }
+
+    // check if the current round is the last round
+    if (competition.currentRound !== 6) {
+      return;
+    }
+
+    let { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
+
+    // check if matches of current round have finished
+    const matchesAreFinished = currentMatchesAreFinished(matches);
+    if (!matchesAreFinished) {
+      return;
+    }
+
+    // update players data after matches are finished
+    players = updateWinner(players, matches);
+
+    const playerRepository = dbManager.getPlayerRepository();
+    playerRepository.updatePlayers(players);
+
+    // set competition state to finished
+    const newState = COMPETITION_STATE.COMP_COMPLETED;
+    competition = updateCompetitionState(competition, newState);
+
+    // update ranking with winners of last round
+    updateRanking();
+
+    // TODO: send competition completed broadcast to clients
+
+    selectedCompetition = {
+      competition: competition,
+      matchesWithPlayers: matchesWithPlayers
+    };
+
+    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+  });
+
   ipcMain.on(ipcMessages.START_ROUND, () => {
     console.log("ipc-renderer --> ipc-main:", ipcMessages.START_ROUND);
     const { competition } = selectedCompetition;
@@ -512,15 +558,7 @@ function registerIPCMainEvents() {
     let { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
 
     // check if matches of current round have finished
-    let matchesAreFinished = true;
-    for (let i = 0; i < matches.length; i++) {
-      if (!isMatchFinished(matches[i])) {
-        matchesAreFinished = false;
-        break;
-      }
-    }
-
-    // return if a match has not finished
+    const matchesAreFinished = currentMatchesAreFinished(matches);
     if (!matchesAreFinished) {
       return;
     }
@@ -528,25 +566,8 @@ function registerIPCMainEvents() {
     // update players data after matches are finished
     players = updateWinner(players, matches);
 
-    // check if the current round was the last round
-    if (competition.currentRound === 6) {
-      // set competition state to finished
-      const newState = COMPETITION_STATE.COMP_COMPLETED;
-      competition = updateCompetitionState(competition, newState);
-
-      // update ranking with winners of last round
-      updateRanking();
-
-      // TODO: send competition completed broadcast to clients
-
-      selectedCompetition = {
-        competition: competition,
-        matchesWithPlayers: matchesWithPlayers
-      };
-
-      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
-      return;
-    }
+    const playerRepository = dbManager.getPlayerRepository();
+    playerRepository.updatePlayers(players);
 
     // use matchmaker to draw next round
     const drawing = createMatchesWithMatchmaker(players, matches);
@@ -585,9 +606,9 @@ function registerIPCMainEvents() {
       matchesWithPlayers: newMatchesWithPlayers
     };
 
-    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
-
     updateRanking();
+
+    event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
 
     server.sendNextRoundBroadcast({
       matchesWithPlayers: selectedCompetition.matchesWithPlayers
@@ -631,12 +652,14 @@ function registerIPCMainEvents() {
         players
       );
 
-      selectedCompetition.competition = competition;
-      selectedCompetition.matchesWithPlayers = previousMatchesWithPlayers;
+      updateRanking();
+
+      selectedCompetition = {
+        competition: competition,
+        matchesWithPlayers: previousMatchesWithPlayers
+      };
 
       event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
-
-      updateRanking();
     } else {
       console.log("wrong state", competition.state);
     }
@@ -702,6 +725,19 @@ function initCompetition(competitionId) {
   console.log("competition and players and matches are selected");
 
   return { competition, matchesWithPlayers };
+}
+
+function currentMatchesAreFinished(matches) {
+  let matchesAreFinished = true;
+
+  for (let i = 0; i < matches.length; i++) {
+    if (!isMatchFinished(matches[i])) {
+      matchesAreFinished = false;
+      break;
+    }
+  }
+
+  return matchesAreFinished;
 }
 
 // use matchmaker to draw the next round and update players
