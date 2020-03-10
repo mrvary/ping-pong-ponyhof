@@ -13,7 +13,7 @@ require("electron-reload")(__dirname, {
 // configuration
 const config = require("./config");
 
-// xml import
+// xml import / export
 const xmlImporter = require("../modules/import/xml-importer");
 const xmlExporter = require("../modules/export/xml-exporter");
 
@@ -365,7 +365,6 @@ function registerIPCMainEvents() {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITION_MATCHES_REQUEST
     );
-
     const { competitionId } = args;
 
     if (!competitionId) {
@@ -396,10 +395,16 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.UPDATE_SETS, (event, args) => {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
     const { tableNumber, sets } = args;
+    const { competition } = selectedCompetition;
+
+    // check if competition has completed
+    if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      console.log("wrong state", competition.state);
+      return;
+    }
 
     // 2. find match by table number
     updateSetsByTableNumber(tableNumber, sets);
-
     updateRanking();
 
     // 5. send update match
@@ -446,6 +451,8 @@ function registerIPCMainEvents() {
       server.sendStartRoundBroadcast({
         matchesWithPlayers: selectedCompetition.matchesWithPlayers
       });
+    } else {
+      console.log("wrong state", competition.state);
     }
   });
 
@@ -456,14 +463,12 @@ function registerIPCMainEvents() {
     let newState;
     if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
       newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
-      //TODO: Passiert hier noch was?
     } else if (
       competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
     ) {
       newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
-      //TODO: Passiert hier noch was?
     } else {
-      console.log("no new state");
+      console.log("wrong state", competition.state);
       return;
     }
 
@@ -493,10 +498,12 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.NEXT_ROUND);
     let { competition, matchesWithPlayers } = selectedCompetition;
 
     // check if it's a valid state transition (double check if all games are finished?)
     if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+      console.log("wrong state", competition.state);
       return;
     }
 
@@ -532,11 +539,6 @@ function registerIPCMainEvents() {
     const metaRepository = dbManager.getMetaRepository();
     metaRepository.updateCompetition(competition);
 
-    /*const matchesWithoutFreeTickets = selectedCompetition.matchesWithPlayers.filter(
-      ({ match }) =>
-        match.player1.id !== "FreeTicket" && match.player2.id !== "FreeTicket"
-    );*/
-
     // init matches with players
     const newMatchesWithPlayers = mapMatchesWithPlayers(matches, players);
     console.log("competition and players and matches are ready for next round");
@@ -556,26 +558,25 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.CANCEL_ROUND, event => {
+    console.log("ipc-renderer --> ipc-main:", ipcMessages.CANCEL_ROUND);
     let { competition, matchesWithPlayers } = selectedCompetition;
+    const { currentRound } = competition;
 
     // check if it's a valid state transition (double check if all games are finished?)
     if (
       competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
       competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
     ) {
+      if (currentRound === 1) {
+        console.log("The first round can not be deleted");
+        return;
+      }
+
       // update competition state
       competition = setCompetitionState(
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
-
-      // delete current round
-      const { currentRound } = competition;
-
-      if (currentRound === 1) {
-        console.log("The first round can not be deleted");
-        return;
-      }
 
       // send cancel round to clients
       server.sendCancelRoundBroadcast();
@@ -599,6 +600,8 @@ function registerIPCMainEvents() {
       event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
 
       updateRanking();
+    } else {
+      console.log("wrong state", competition.state);
     }
   });
 
@@ -608,6 +611,11 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.GET_IP_ADDRESS_REQUEST, event => {
+    console.log(
+      "ipc-renderer --> ipc-main:",
+      ipcMessages.GET_IP_ADDRESS_REQUEST
+    );
+
     const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
     event.sender.send(ipcMessages.GET_IP_ADDRESS_RESPONSE, { ipAddress: url });
   });
@@ -701,7 +709,6 @@ function updateSetsByTableNumber(tableNumber, sets) {
       const updatedMatch = { ...match, sets };
       matchWithPlayers.match = updatedMatch;
 
-      // 4. save match to storage
       updateMatch(matchWithPlayers);
     }
 
@@ -751,8 +758,8 @@ function mapMatchesWithPlayers(matches, players) {
     const player1 = players.find(player => player.id === match.player1);
     const player2 = players.find(player => player.id === match.player2);
 
-    // create a copy of the match obj and the players and
-    // map players and match together
+    // create a copy of the match object and the player objects
+    // and map players and match together
     const copyMatch = { ...match };
     copyMatch.player1 = { ...player1 };
     copyMatch.player2 = { ...player2 };
@@ -822,7 +829,7 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
   matchRepository.deleteMatches(matchIds);
 
   // update players after cancel round
-  const { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
+  const { players } = splitMatchesWithPlayer(matchesWithPlayers);
 
   players.forEach(player => {
     // remove last matchId
@@ -840,6 +847,7 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
 function getMatchesByRound(competition) {
   const { currentRound, rounds } = competition;
   const { matchIds } = rounds.find(round => round.roundNumber === currentRound);
+
   const matchRepository = dbManager.getMatchRepository();
   const matches = matchRepository.getMatchesByIds(matchIds);
   console.log("Get matches from competition database");
