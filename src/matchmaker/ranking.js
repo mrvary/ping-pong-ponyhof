@@ -15,7 +15,7 @@ function createCurrentRanking(players, matches) {
       id: player.id,
       firstname: player.firstname,
       lastname: player.lastname,
-      gamesWon: player.gamesWon,
+      gamesWon: calculateGamesWon(player, matches),
       gamesLost: calculateGamesLost(player, matches),
       bhz: calculateBHZ(player, players),
       qttr: player.qttr,
@@ -51,9 +51,25 @@ function createCurrentRanking(players, matches) {
   return ranking;
 }
 
+// calculateGamesWon : player, [matches] -> Number
+function calculateGamesWon(player, matches) {
+  let gamesWon = 0;
+
+  matches.forEach(match => {
+    if (player.matchIds.includes(match.id)) {
+      let getWinner = getMatchWinner(match);
+      if (getWinner === player.id) {
+        gamesWon++;
+      }
+    }
+  });
+  return gamesWon;
+}
+
 // calculateGamesLost : player, [matches] -> Number
 function calculateGamesLost(player, matches) {
   let gamesFinished = 0;
+
   matches.forEach(match => {
     if (player.matchIds.includes(match.id)) {
       let getWinner = getMatchWinner(match);
@@ -62,7 +78,7 @@ function calculateGamesLost(player, matches) {
       }
     }
   });
-  return gamesFinished - player.gamesWon;
+  return gamesFinished - calculateGamesWon(player, matches);
 }
 
 // calculateBHZ : player, [matches] -> bhz
@@ -148,7 +164,7 @@ function getMatchWinner(match) {
 
   if (player2SetsWon === 3) return match.player2;
 
-  return "0";
+  return false;
 }
 
 // getMatchesInvolved : [Numbers], [matches] -> [matches]
