@@ -157,8 +157,8 @@ function installExtensions() {
   if (isDev) {
     // Install extensions
     installExtension(REACT_DEVELOPER_TOOLS)
-        .then(name => console.log(`Added Extension:  ${name}`))
-        .catch(err => console.log("An error occurred: ", err));
+      .then(name => console.log(`Added Extension:  ${name}`))
+      .catch(err => console.log("An error occurred: ", err));
   }
 }
 
@@ -937,14 +937,14 @@ function saveCompetitionState() {
   let { competition, matchesWithPlayers } = selectedCompetition;
 
   if (
-      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
-      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+    competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
+    competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
   ) {
     // Set current active competition to ready state
     const newState =
-        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-            ? COMPETITION_STATE.COMP_READY_ROUND_READY
-            : COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+      competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+        ? COMPETITION_STATE.COMP_READY_ROUND_READY
+        : COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
     updateCompetitionState(competition, newState);
 
     // Save current app state into storages

@@ -8,7 +8,10 @@ const path = require("path");
 const config = require("./config");
 
 // resources
-const appIconPath = path.join(__dirname, "../assets/icons/png/app-icon/app-icon_16x16.png");
+const appIconPath = path.join(
+  __dirname,
+  "../assets/icons/png/app-icon/app-icon_16x16.png"
+);
 const preload = path.join(__dirname, "./preload.js");
 
 // windows
