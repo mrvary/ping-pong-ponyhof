@@ -11,42 +11,44 @@ const ipcMessages = require("../../shared/ipc-messages");
 
 const TableHeader = () => {
   return (
-    <div className="containerHeader">
-      <div>Platz</div>
-      <div>Name</div>
-      <div>S:N</div>
-      <div>BHZ</div>
-      <div>QTTR</div>
-      <div>TTR-Diff</div>
+    <div className="statisticTable__table-header">
+      <span>Platz</span>
+      <span>Name</span>
+      <span>S : N</span>
+      <span>BHZ</span>
+      <span>QTTR</span>
+      <span>QTTR-Diff</span>
     </div>
   );
 };
 
 const TableRow = ({ ranking }) => {
   return (
-    <div className="containerBody">
-      <div className="ranking">{ranking.place}</div>
-      <div className="topRow">
-        <div> {ranking.firstname + " " + ranking.lastname} </div>
-        <div> {ranking.gamesWon + " : " + ranking.gamesLost} </div>
-        <div> {ranking.bhz} </div>
-        <div> {ranking.qttr} </div>
-        <div> {ranking.ttr_diff} </div>
-      </div>
+    <div className="statisticTable__seperation-color">
+      <div className="statisticTable__table-body">
+        <span className="statisticTable__ranking">{ranking.place}</span>
+        <span className="statisticTable__name">
+          {" "}
+          {ranking.firstname + " " + ranking.lastname}{" "}
+        </span>
+        <span> {ranking.gamesWon + " : " + ranking.gamesLost} </span>
+        <span> {ranking.bhz} </span>
+        <span> {ranking.qttr} </span>
+        <span> {ranking.ttr_diff} </span>
 
-      <div className="bottomRow">
-        {ranking.matches.map(match => (
-          <div>
-            {" "}
-            {match.opponentFirstname +
-              " " +
-              match.opponentLastname +
-              " " +
-              match.opponentSets +
-              " : " +
-              match.ownSets}{" "}
-          </div>
-        ))}
+        <div className="statisticTable__bottom-row">
+          {ranking.matches.map(match => (
+            <span>
+              {match.opponentFirstname +
+                " " +
+                match.opponentLastname +
+                " " +
+                match.ownSets +
+                " : " +
+                match.opponentSets}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
