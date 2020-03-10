@@ -21,57 +21,7 @@ const {
 const USE_BROWSER = false;
 
 /**
- * Links to IP-adress and opens statistic table
- */
-const IpAdressAndStatisticLink = ({ competitionID, round }) => {
-  const [ipAddress, setIPAddress] = useState("");
-  const [showPopupIP, setShowPopupIP] = useState(false);
-  const handleCloseIP = () => setShowPopupIP(false);
-  const handleShowIP = () => {
-    ipcRenderer.once(ipcMessages.GET_IP_ADDRESS_RESPONSE, (event, args) => {
-      const { ipAddress } = args;
-      setIPAddress(ipAddress);
-      console.log(ipAddress);
-    });
 
-    ipcRenderer.send(ipcMessages.GET_IP_ADDRESS_REQUEST);
-
-    setShowPopupIP(true);
-  };
-
-  const openStatisticWindow = route => {
-    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
-  };
-
-  const statisticID = "/statisticTable/" + competitionID;
-  let roundDisplay = "Runde: " + round;
-  return (
-    <div className="competitionPage__link-alignment">
-      <div
-        className="competitionPage__link-ip-adress-statistic"
-        onClick={handleShowIP}
-      >
-        {" "}
-        IP-Adresse{" "}
-      </div>
-      <Popup
-        show={showPopupIP}
-        handleClose={handleCloseIP}
-        header="Verbinde mit"
-        bodyText={ipAddress}
-        mode="noBtn"
-      ></Popup>
-      <strong className="competitionPage__round">{roundDisplay}</strong>
-      <p
-        onClick={() => openStatisticWindow(statisticID)}
-        className="competitionPage__link-ip-adress-statistic"
-      >
-        Statistik
-      </p>
-    </div>
-  );
-};
-/**
  * The Competition Page contains the Information about the current
  * competition and match, with the ability to control and change it
  */
@@ -79,7 +29,6 @@ const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
   const [competitionData, setCompetitionData] = useState({});
-  const [matchesFinished, setMatchesFinished] = useState(false);
   const [gamesScore, setGamesScore] = useState([]);
 
   /** Updates all states if something changes
@@ -89,15 +38,15 @@ const CompetitionPage = () => {
       event,
       { competition, matchesWithPlayers }
     ) {
-      updateResult(matchesWithPlayers);
+      updateMatchesResults(matchesWithPlayers);
       console.log("IPC-Main-->IPC-Renderer:");
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
+      checkForEndGame(competition);
       setNextRound(
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
-      checkForFinishedRound(matchesWithPlayers);
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
@@ -116,11 +65,18 @@ const CompetitionPage = () => {
     };
   }, []);
 
+  /** checks if game is in last round and changes button if so
+   */
+  const checkForEndGame = competition => {
+    if (competition.currentRound === 6) {
+      setLastRoundDisplay(true);
+    }
+  };
+
   /** checks the current state of the current matches and calculates
    *  the current result of the each match
    *  */
-
-  const updateResult = matchesWithPlayers => {
+  const updateMatchesResults = matchesWithPlayers => {
     let counter = 0;
     matchesWithPlayers.forEach(allMatch => {
       let newGamesScore = gamesScore;
@@ -132,17 +88,19 @@ const CompetitionPage = () => {
       setGamesScore(newGamesScore);
     });
   };
+
   /** checks all matches if finished and if all are done
    *  sets matchesFinished true
    */
   const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
+
     matchesWithPlayers.forEach(allMatch => {
       if (!isMatchFinished(allMatch.match)) {
         matchesFinished = false;
       }
     });
-    setMatchesFinished(matchesFinished);
+    return matchesFinished;
   };
 
   const updateCompetition = () => {
@@ -183,9 +141,6 @@ const CompetitionPage = () => {
     });
   };
 
-  //Spiel zu ende
-  const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
-
   //Runde abbrechen
   const [showPopupReDoRound, setShowPopupReDoRound] = useState(false);
   const handleCloseReDoRound = () => setShowPopupReDoRound(false);
@@ -198,26 +153,38 @@ const CompetitionPage = () => {
   // Spiel starten
   const [showPopupEndRound, setShowPopupEndRound] = useState(false);
   const handleCloseEndRound = () => {
-    console.log("handleCloseRound");
     setShowPopupEndRound(false);
   };
-
   // Nächste Runde
   const [nextRound, setNextRound] = useState(
     competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
   );
+
   const handleShowEndRound = () => {
-    if (!matchesFinished) {
+    if (!checkForFinishedRound(matchesWithPlayers)) {
       setShowPopupEndRound(true);
     } else {
       ipcRenderer.send(ipcMessages.NEXT_ROUND);
       setNextRound(false);
     }
   };
+
   const handleStartRound = () => {
     ipcRenderer.send(ipcMessages.START_ROUND);
     setNextRound(true);
   };
+
+  //Spiel zu ende
+  const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
+  const activateEndGame = () => {
+    if (!checkForFinishedRound(matchesWithPlayers)) {
+      setShowPopupEndRound(true);
+    } else {
+      setEndGame(true);
+    }
+  };
+
+  const [lastRoundDisplay, setLastRoundDisplay] = useState(false);
 
   //Turnier aktivieren / deactivieren
   const [active, setActive] = useState(false);
@@ -241,8 +208,6 @@ const CompetitionPage = () => {
         startDate={competitionData.date}
         linkTitle="zur Übersicht"
         linkDestination={"/"}
-      />
-      <IpAdressAndStatisticLink
         competitionID={competitionID}
         round={competitionData.currentRound}
       />
@@ -256,19 +221,13 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleShowReDoRound}
           primText="Runde abbrechen"
-          secOnClick={() => setEndGame(true)}
-          secText="Turnier beenden"
-          mode={
-            competitionData.currentRound === 5 && matchesFinished
-              ? "secondary"
-              : "primary"
-          }
+          mode="primary"
           disableProp={endGame || !active || competitionData.currentRound === 1}
         ></Button>
         <Popup
           show={showPopupReDoRound}
           handleClose={handleCloseReDoRound}
-          header="Möchtest du die aktuelle Runde abbrechen?"
+          header="Runde wirklich abbrechen?"
           bodyText="Alle bereits gespielten Ergebnisse der Runde gehen dabei verloren!"
           buttonFunk={() => reDoRound()}
           buttonText="Runde abbrechen"
@@ -296,8 +255,8 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleStartRound}
           primText="Runde starten"
-          secOnClick={handleShowEndRound}
-          secText="Nächste Runde"
+          secOnClick={lastRoundDisplay ? activateEndGame : handleShowEndRound}
+          secText={lastRoundDisplay ? "Turnier beenden" : "Nächste Runde"}
           mode={nextRound ? "secondary" : "primary"}
           disableProp={endGame || !active}
         ></Button>

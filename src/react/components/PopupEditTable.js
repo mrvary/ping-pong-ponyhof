@@ -2,6 +2,7 @@ import { Modal } from "react-bootstrap";
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PopupEditTable.css";
+
 import Button from "./Button";
 
 function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {

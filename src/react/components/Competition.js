@@ -23,7 +23,7 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let popupText = "Willst du dieses Spiel wirklich löschen?";
+  let popupText = "Willst du dieses Turnier wirklich löschen?";
   let containerCss = "competition__container";
   if (
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
@@ -35,14 +35,14 @@ function Competition(props) {
 
   return (
     <div className={containerCss}>
-      <PuttingThrough
+      <LinkHandler
         id={id}
         name={name}
         date={date}
         state={state}
         handleShowActiveError={handleShowActiveError}
         hasActiveGame={hasActiveGame}
-      ></PuttingThrough>
+      ></LinkHandler>
       <Popup
         show={showPopupActiveError}
         handleClose={handleCloseActiveError}
@@ -73,7 +73,7 @@ function Competition(props) {
   );
 }
 
-const PuttingThrough = ({
+const LinkHandler = ({
   id,
   name,
   state,
