@@ -1,21 +1,49 @@
-import React from 'react';
-import './CompetitionPageHeader.css';
-import { Link } from 'react-router-dom';
+import React, { useState } from "react";
+import "./CompetitionPageHeader.css";
+import { Link } from "react-router-dom";
+
+import Popup from "./Popup";
+const ipcRenderer = window.electron.ipcRenderer;
+const ipcMessages = require("../../shared/ipc-messages");
 
 function CompetitionPage__Header({
   playmode,
   startDate,
   linkTitle,
-  linkDestination
+  linkDestination,
+  competitionID,
+  round
 }) {
   return (
+    <div>
+      <BackAndGameInfo
+        playmode={playmode}
+        startDate={startDate}
+        linkTitle={linkTitle}
+        linkDestination={linkDestination}
+      ></BackAndGameInfo>
+      <IpAdressAndStatisticLink
+        competitionID={competitionID}
+        round={round}
+      ></IpAdressAndStatisticLink>
+    </div>
+  );
+}
+
+const BackAndGameInfo = ({
+  playmode,
+  startDate,
+  linkTitle,
+  linkDestination
+}) => {
+  return (
     <div className="competitionPage__header-alignment">
-      {' '}
+      {" "}
       <div className="competitionPage__header-logo-alignment">
         <div className="competitionPage__header-logo"></div>
         <Link className="competitionPage__link" to={linkDestination}>
-          {' '}
-          {linkTitle}{' '}
+          {" "}
+          {linkTitle}{" "}
         </Link>
       </div>
       <div className="competitionPage__header-alignment-right">
@@ -26,7 +54,7 @@ function CompetitionPage__Header({
       </div>
     </div>
   );
-}
+};
 /**
  * Links to IP-adress and opens statistic table
  */
@@ -39,16 +67,16 @@ const IpAdressAndStatisticLink = ({ competitionID, round }) => {
     ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
   };
 
-  const statisticID = '/statisticTable/' + competitionID;
-  let roundDisplay = 'Runde: ' + round;
+  const statisticID = "/statisticTable/" + competitionID;
+  let roundDisplay = "Runde: " + round;
   return (
     <div className="competitionPage__link-alignment">
       <div
         className="competitionPage__link-ip-adress-statistic"
         onClick={handleShowIP}
       >
-        {' '}
-        IP-Adresse{' '}
+        {" "}
+        IP-Adresse{" "}
       </div>
       <Popup
         show={showPopupIP}
