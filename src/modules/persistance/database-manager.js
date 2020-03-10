@@ -47,6 +47,10 @@ function deleteCompetitionStorage(competitionId) {
   metaRepository.deleteCompetition(competitionId);
 }
 
+function getImportedJSONObject() {
+  return competitionStorage.getImportedData();
+}
+
 function getMetaRepository() {
   return metaRepository;
 }
@@ -81,10 +85,12 @@ function initMatchRepository() {
 
 module.exports = {
   initMetaRepository,
-  getMetaRepository,
 
   initCompetitionStorage,
   deleteCompetitionStorage,
+
+  getImportedJSONObject,
+  getMetaRepository,
   getPlayerRepository,
   getMatchRepository
 };

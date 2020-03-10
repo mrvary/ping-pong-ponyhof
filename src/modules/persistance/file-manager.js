@@ -3,6 +3,7 @@ const { app } = require("electron");
 const path = require("path");
 const fs = require("fs");
 
+const documentsFolderName = "documents";
 const dataFolderName = "data";
 const metaStorageFilename = "competitions.json";
 
@@ -30,9 +31,12 @@ function getCompetitionFilePath(id) {
   return getFileFromAppDataPath(`${id}.json`);
 }
 
-function saveXMLFile(filename, xmlContent) {
-  const filePath = getFileFromAppDataPath(filename);
+function getDefaultExportFilePath(filename) {
+  const docDir = getApplicationDir(documentsFolderName);
+  return path.join(docDir, filename);
+}
 
+function saveXMLFile(filePath, xmlContent) {
   try {
     fs.writeFileSync(filePath, xmlContent);
     console.log("Save XML:", filePath);
@@ -58,6 +62,7 @@ module.exports = {
   getApplicationDir,
   getMetaStorageDatabasePath,
   getCompetitionFilePath,
+  getDefaultExportFilePath,
 
   saveXMLFile,
   deleteTournamentJSONFile
