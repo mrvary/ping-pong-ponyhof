@@ -55,7 +55,7 @@ function exportXML(players, matches, initJSON) {
 
   var parser = new Parser(defaultOptions);
   var xml = parser.parse(initJSON);
-  //ToDo add to check against .dtd schema
+  //ToDo check against .dtd schema
 
   saveXMLFile("finalesErgebnis.xml", xml);
 }

@@ -2,7 +2,6 @@ const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
 
 // createMatches : [{player1: Player, player2: Player}] -> [Match]
 function createMatches(pairings, lastMatchId) {
-  debugger;
   let remainingPairings = [...pairings];
   let matchId = lastMatchId > 0 ? lastMatchId++ : lastMatchId;
 
