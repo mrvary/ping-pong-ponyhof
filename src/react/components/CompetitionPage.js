@@ -1,65 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import "./CompetitionPage.css";
-import "../Colors.css";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import './CompetitionPage.css';
+import '../Colors.css';
 
 // components
-import Popup from "./Popup";
-import Button from "./Button";
-import CompetitionPageHeader from "./CompetitionPageHeader";
-import CompetitionPageTable from "./CompetitionPageTable";
+import Popup from './Popup';
+import Button from './Button';
+import CompetitionPageHeader from './CompetitionPageHeader';
+import CompetitionPageTable from './CompetitionPageTable';
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require("../../shared/ipc-messages");
-const COMPETITION_STATE = require("../../shared/models/competition-state");
+const ipcMessages = require('../../shared/ipc-messages');
+const COMPETITION_STATE = require('../../shared/models/competition-state');
 const {
   isMatchFinished,
   setsWonPlayer1,
   setsWonPlayer2
-} = require("../../client/src/shared/lib");
+} = require('../../client/src/shared/lib');
 const USE_BROWSER = false;
 
-/**
- * Links to IP-adress and opens statistic table
- */
-const IpAdressAndStatisticLink = ({ competitionID, round }) => {
-  const [showPopupIP, setShowPopupIP] = useState(false);
-  const handleCloseIP = () => setShowPopupIP(false);
-  const handleShowIP = () => setShowPopupIP(true);
-
-  const openStatisticWindow = route => {
-    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
-  };
-
-  const statisticID = "/statisticTable/" + competitionID;
-  let roundDisplay = "Runde: " + round;
-  return (
-    <div className="competitionPage__link-alignment">
-      <div
-        className="competitionPage__link-ip-adress-statistic"
-        onClick={handleShowIP}
-      >
-        {" "}
-        IP-Adresse{" "}
-      </div>
-      <Popup
-        show={showPopupIP}
-        handleClose={handleCloseIP}
-        header="Verbinde mit"
-        bodyText="IP"
-        mode="noBtn"
-      ></Popup>
-      <strong className="competitionPage__round">{roundDisplay}</strong>
-      <p
-        onClick={() => openStatisticWindow(statisticID)}
-        className="competitionPage__link-ip-adress-statistic"
-      >
-        Statistik
-      </p>
-    </div>
-  );
-};
 /**
  * The Competition Page contains the Information about the current
  * competition and match, with the ability to control and change it
@@ -79,7 +39,7 @@ const CompetitionPage = () => {
       { competition, matchesWithPlayers }
     ) {
       updateMatchesResults(matchesWithPlayers);
-      console.log("IPC-Main-->IPC-Renderer:");
+      console.log('IPC-Main-->IPC-Renderer:');
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
@@ -110,7 +70,7 @@ const CompetitionPage = () => {
    */
   const checkForEndGame = competition => {
     if (competition.currentRound === 3) {
-      setLastRoundDisplay(["Turnier beenden", setEndGame(true)]);
+      setLastRoundDisplay(['Turnier beenden', setEndGame(true)]);
     }
   };
 
@@ -140,7 +100,7 @@ const CompetitionPage = () => {
       }
     });
     setMatchesFinished(matchesFinished);
-    console.log("matchesFinished", matchesFinished);
+    console.log('matchesFinished', matchesFinished);
   };
 
   const updateCompetition = () => {
@@ -148,8 +108,8 @@ const CompetitionPage = () => {
       const matches = [
         {
           id: 3,
-          player1: "Samuel Geiger",
-          player2: "Marius Bach",
+          player1: 'Samuel Geiger',
+          player2: 'Marius Bach',
           sets: [
             { player1: 11, player2: 13 },
             { player1: 4, player2: 11 }
@@ -159,8 +119,8 @@ const CompetitionPage = () => {
         },
         {
           id: 4,
-          player1: "Edith Finch",
-          player2: "Finch Assozial",
+          player1: 'Edith Finch',
+          player2: 'Finch Assozial',
           sets: [
             { player1: 13, player2: 15 },
             { player1: 14, player2: 16 }
@@ -200,7 +160,7 @@ const CompetitionPage = () => {
     competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
   );
   const handleShowEndRound = matchesFinished => {
-    console.log("matchesFinishedEnd", matchesFinished);
+    console.log('matchesFinishedEnd', matchesFinished);
 
     if (!matchesFinished) {
       setShowPopupEndRound(true);
@@ -220,7 +180,7 @@ const CompetitionPage = () => {
     handleShowEndRound(matchesFinished);
   };
   const [lastRoundDisplay, setLastRoundDisplay] = useState([
-    "Nächste Runde",
+    'Nächste Runde',
     giveStateToHandleShowEndRound
   ]);
 
@@ -245,7 +205,7 @@ const CompetitionPage = () => {
         playmode={competitionData.playmode}
         startDate={competitionData.date}
         linkTitle="zur Übersicht"
-        linkDestination={"/"}
+        linkDestination={'/'}
       />
       <IpAdressAndStatisticLink
         competitionID={competitionID}
@@ -279,7 +239,7 @@ const CompetitionPage = () => {
           primText="Turnier starten"
           secOnClick={handleShowGoInactive}
           secText="Turnier pausieren"
-          mode={active ? "secondary" : "primary"}
+          mode={active ? 'secondary' : 'primary'}
           disableProp={endGame}
         ></Button>
         <Popup
@@ -297,7 +257,7 @@ const CompetitionPage = () => {
           primText="Runde starten"
           secOnClick={lastRoundDisplay[1]}
           secText={lastRoundDisplay[0]}
-          mode={nextRound ? "secondary" : "primary"}
+          mode={nextRound ? 'secondary' : 'primary'}
           disableProp={endGame || !active}
         ></Button>
         <Popup

@@ -1,6 +1,6 @@
-import React from "react";
-import "./CompetitionPageHeader.css";
-import { Link } from "react-router-dom";
+import React from 'react';
+import './CompetitionPageHeader.css';
+import { Link } from 'react-router-dom';
 
 function CompetitionPage__Header({
   playmode,
@@ -10,12 +10,12 @@ function CompetitionPage__Header({
 }) {
   return (
     <div className="competitionPage__header-alignment">
-      {" "}
+      {' '}
       <div className="competitionPage__header-logo-alignment">
         <div className="competitionPage__header-logo"></div>
         <Link className="competitionPage__link" to={linkDestination}>
-          {" "}
-          {linkTitle}{" "}
+          {' '}
+          {linkTitle}{' '}
         </Link>
       </div>
       <div className="competitionPage__header-alignment-right">
@@ -27,5 +27,45 @@ function CompetitionPage__Header({
     </div>
   );
 }
+/**
+ * Links to IP-adress and opens statistic table
+ */
+const IpAdressAndStatisticLink = ({ competitionID, round }) => {
+  const [showPopupIP, setShowPopupIP] = useState(false);
+  const handleCloseIP = () => setShowPopupIP(false);
+  const handleShowIP = () => setShowPopupIP(true);
+
+  const openStatisticWindow = route => {
+    ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
+  };
+
+  const statisticID = '/statisticTable/' + competitionID;
+  let roundDisplay = 'Runde: ' + round;
+  return (
+    <div className="competitionPage__link-alignment">
+      <div
+        className="competitionPage__link-ip-adress-statistic"
+        onClick={handleShowIP}
+      >
+        {' '}
+        IP-Adresse{' '}
+      </div>
+      <Popup
+        show={showPopupIP}
+        handleClose={handleCloseIP}
+        header="Verbinde mit"
+        bodyText="IP"
+        mode="noBtn"
+      ></Popup>
+      <strong className="competitionPage__round">{roundDisplay}</strong>
+      <p
+        onClick={() => openStatisticWindow(statisticID)}
+        className="competitionPage__link-ip-adress-statistic"
+      >
+        Statistik
+      </p>
+    </div>
+  );
+};
 
 export default CompetitionPage__Header;

@@ -35,14 +35,14 @@ function Competition(props) {
 
   return (
     <div className={containerCss}>
-      <PuttingThrough
+      <LinkHandler
         id={id}
         name={name}
         date={date}
         state={state}
         handleShowActiveError={handleShowActiveError}
         hasActiveGame={hasActiveGame}
-      ></PuttingThrough>
+      ></LinkHandler>
       <Popup
         show={showPopupActiveError}
         handleClose={handleCloseActiveError}
@@ -73,7 +73,7 @@ function Competition(props) {
   );
 }
 
-const PuttingThrough = ({
+const LinkHandler = ({
   id,
   name,
   state,
