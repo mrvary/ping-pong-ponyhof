@@ -3,12 +3,18 @@
  */
 
 const { app, ipcMain, shell } = require("electron");
+const isDev = require("electron-is-dev");
 const path = require("path");
 
 // electron reload
 require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
 });
+
+const {
+  default: installExtension,
+  REACT_DEVELOPER_TOOLS
+} = require("electron-devtools-installer");
 
 // configuration
 const config = require("./config");
@@ -104,13 +110,12 @@ registerIPCMainEvents();
 initHTTPServer();
 
 app.on("ready", () => {
-  initDevTools();
-
   // init competitions storage
   dbManager.initMetaRepository(config.USE_IN_MEMORY_STORAGE);
 
   // init main window
   mainWindow = createWindow();
+  installExtensions();
 
   // init application menu
   menuBuilder.registerAction(MENU_ACTIONS.OPEN_CLIENT, openClient);
@@ -165,19 +170,13 @@ app.on("activate", (event, hasVisibleWindows) => {
   }
 });
 
-/**
- *  init react dev tools for electron
- *  @author Felix Breitenbach
- */
-function initDevTools() {
-  const {
-    default: installExtension,
-    REACT_DEVELOPER_TOOLS
-  } = require("electron-devtools-installer");
-
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then(name => console.log(`Added Extension:  ${name}`))
-    .catch(err => console.log("An error occurred: ", err));
+function installExtensions() {
+  if (isDev) {
+    // Install extensions
+    installExtension(REACT_DEVELOPER_TOOLS)
+        .then(name => console.log(`Added Extension:  ${name}`))
+        .catch(err => console.log("An error occurred: ", err));
+  }
 }
 
 function initHTTPServer() {
