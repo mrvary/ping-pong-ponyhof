@@ -21,6 +21,7 @@ const {
 const USE_BROWSER = false;
 
 /**
+
  * The Competition Page contains the Information about the current
  * competition and match, with the ability to control and change it
  */

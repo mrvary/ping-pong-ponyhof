@@ -20,6 +20,7 @@ const xmlExporter = require("../modules/export/xml-exporter");
 // competition model
 const {
   COMPETITION_STATE,
+  setCompetitionCurrentRound,
   setCompetitionRoundMatches,
   setCompetitionState
 } = require("../shared/models/competition");
@@ -50,8 +51,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // client
 const { isMatchFinished } = require("../client/src/shared/lib");
 
-// windows actions
-const uiActions = require("./actions/uiActions");
+// windows dialog
+const uiActions = require("./dialog/dialog");
 const { createMenu, registerAction } = require("./menu/main-menu");
 const createWindow = require("./window");
 
@@ -97,8 +98,29 @@ app.on("ready", () => {
 });
 
 app.on("before-quit", () => {
-  // TODO: Save current app state into database
-  // TODO: Send disconnect to clients
+  let { competition, matchesWithPlayers } = selectedCompetition;
+
+  // Set current active competition to ready state
+  let newState;
+  if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
+    newState = COMPETITION_STATE.COMP_READY_ROUND_READY;
+  } else if (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
+    newState = COMPETITION_STATE.COMP_READY_ROUND_ACTIVE;
+  }
+
+  updateCompetitionState(competition, newState);
+
+  // Save current app state into storages
+  const { players, matches } = splitMatchesWithPlayer(matchesWithPlayers);
+
+  const playerRepository = dbManager.getPlayerRepository();
+  playerRepository.updatePlayers(players);
+
+  const matchRepository = dbManager.getMatchRepository();
+  matchRepository.updateMatches(matches);
+
+  // send disconnect to clients
+  server.sendAppDisconnectBroadcast();
 
   server.shutdownServer();
 });
@@ -189,6 +211,7 @@ function initHTTPServer() {
     const { tableNumber, sets, finished } = args;
 
     updateSetsByTableNumber(tableNumber, sets);
+    updateRanking();
 
     const responseData = finished
       ? { message: "finished" }
@@ -217,6 +240,7 @@ function registerIPCMainEvents() {
     const metaRepository = dbManager.getMetaRepository();
     const competitions = metaRepository.getAllCompetitions();
 
+    // create result data
     const resultData = { competitions };
 
     // send competitions to renderer process
@@ -234,6 +258,7 @@ function registerIPCMainEvents() {
     );
     const { competitionId } = data;
 
+    // check if the current competition is the deleted competition
     if (
       selectedCompetition &&
       selectedCompetition.competition.id === competitionId
@@ -241,8 +266,10 @@ function registerIPCMainEvents() {
       selectedCompetition = null;
     }
 
+    // delete competition from database
     dbManager.deleteCompetitionStorage(competitionId);
 
+    // notify renderer that the competition is deleted
     event.sender.send(ipcMessages.DELETE_COMPETITION_RESPONSE);
     console.log(
       "ipc-main --> ipc-renderer:",
@@ -466,39 +493,42 @@ function registerIPCMainEvents() {
   });
 
   ipcMain.on(ipcMessages.NEXT_ROUND, event => {
-    // check if it's a valid state transition (double check if all games are finished?)
-    // fire up matchmaker
-    // save things
-
     let { competition, matchesWithPlayers } = selectedCompetition;
 
+    // check if it's a valid state transition (double check if all games are finished?)
     if (competition.state !== COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE) {
       return;
     }
 
-    competition.currentRound++;
-
-    // use matchmaker to draw next round
+    // update players data after matches are finished
     let { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
     players = updateWinner(players, matches);
 
+    // use matchmaker to draw next round
     const drawing = createMatchesWithMatchmaker(players, matches);
     players = drawing.players;
     matches = drawing.matches;
 
-    // update competition in database
+    // set round counter of competition to next round
     let { currentRound } = competition;
+    let nextRound = currentRound + 1;
+    currentRound = nextRound;
+
+    // update current round
+    competition = setCompetitionCurrentRound(competition, nextRound);
+
+    // update rounds of competition
     competition = setCompetitionRoundMatches(
       competition,
       currentRound,
       matches
     );
 
-    competition = setCompetitionState(
-      competition,
-      COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
-    );
+    // update competition state
+    const newState = COMPETITION_STATE.COMP_ACTIVE_ROUND_READY;
+    competition = setCompetitionState(competition, newState);
 
+    // update competition in storage
     const metaRepository = dbManager.getMetaRepository();
     metaRepository.updateCompetition(competition);
 
@@ -518,6 +548,8 @@ function registerIPCMainEvents() {
 
     event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
 
+    updateRanking();
+
     server.sendNextRoundBroadcast({
       matchesWithPlayers: selectedCompetition.matchesWithPlayers
     });
@@ -532,7 +564,7 @@ function registerIPCMainEvents() {
       competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
     ) {
       // update competition state
-      selectedCompetition.competition = setCompetitionState(
+      competition = setCompetitionState(
         competition,
         COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
@@ -565,17 +597,19 @@ function registerIPCMainEvents() {
       selectedCompetition.matchesWithPlayers = previousMatchesWithPlayers;
 
       event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+
+      updateRanking();
     }
   });
 
   ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
     console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
-
-    if (!statisticWindow) {
-      return;
-    }
-
     updateRanking();
+  });
+
+  ipcMain.on(ipcMessages.GET_IP_ADDRESS_REQUEST, event => {
+    const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+    event.sender.send(ipcMessages.GET_IP_ADDRESS_RESPONSE, { ipAddress: url });
   });
 }
 
@@ -659,21 +693,22 @@ function updateCompetitionState(competition, newState) {
 }
 
 function updateSetsByTableNumber(tableNumber, sets) {
-  selectedCompetition.matchesWithPlayers = selectedCompetition.matchesWithPlayers.map(
-    matchWithPlayers => {
-      if (matchWithPlayers.tableNumber === tableNumber) {
-        // 3. update sets of match
-        const { match } = matchWithPlayers;
-        const updatedMatch = { ...match, sets };
-        matchWithPlayers.match = updatedMatch;
+  const { matchesWithPlayers } = selectedCompetition;
 
-        // 4. save match to storage
-        updateMatch(matchWithPlayers);
-      }
+  const updatedMatchesWithPlayers = matchesWithPlayers.map(matchWithPlayers => {
+    if (matchWithPlayers.tableNumber === tableNumber) {
+      const { match } = matchWithPlayers;
+      const updatedMatch = { ...match, sets };
+      matchWithPlayers.match = updatedMatch;
 
-      return matchWithPlayers;
+      // 4. save match to storage
+      updateMatch(matchWithPlayers);
     }
-  );
+
+    return matchWithPlayers;
+  });
+
+  selectedCompetition.matchesWithPlayers = updatedMatchesWithPlayers;
 }
 
 function updateMatch(matchWithPlayers) {
@@ -684,23 +719,19 @@ function updateMatch(matchWithPlayers) {
 }
 
 function updateRanking() {
-  // get current players and matches
-  let matches = [];
-  let players = [];
-  selectedCompetition.matchesWithPlayers.forEach(matchWithPlayers => {
-    const { player1, player2 } = matchWithPlayers.match;
-
-    matches.push(matchWithPlayers.match);
-    players.push(player1);
-    players.push(player2);
-  });
-
-  const rankings = createCurrentRanking(players, matches);
-  console.log("update ranking table");
-
   if (!statisticWindow) {
     return;
   }
+
+  // get current players and matches
+  const playerRepository = dbManager.getPlayerRepository();
+  const players = playerRepository.getAll();
+
+  const matchRepository = dbManager.getMatchRepository();
+  const matches = matchRepository.getAll();
+
+  const rankings = createCurrentRanking(players, matches);
+  console.log("update ranking table");
 
   statisticWindow.webContents.send(ipcMessages.UPDATE_RANKING, {
     competition: selectedCompetition.competition,
@@ -710,18 +741,27 @@ function updateRanking() {
 
 function mapMatchesWithPlayers(matches, players) {
   let tableNumber = 1;
-
   let matchesWithPlayers = [];
+
   matches.forEach(match => {
+    // get client connection state from server
     const uuid = server.getConnectedDeviceByTableNumber(tableNumber);
 
-    match.player1 = players.find(player => player.id === match.player1);
-    match.player2 = players.find(player => player.id === match.player2);
+    // find players of match
+    const player1 = players.find(player => player.id === match.player1);
+    const player2 = players.find(player => player.id === match.player2);
 
+    // create a copy of the match obj and the players and
+    // map players and match together
+    const copyMatch = { ...match };
+    copyMatch.player1 = { ...player1 };
+    copyMatch.player2 = { ...player2 };
+
+    // create new result object
     const matchWithPlayers = {
       tableNumber: tableNumber,
       connectedDevice: uuid,
-      match: match
+      match: copyMatch
     };
 
     matchesWithPlayers.push(matchWithPlayers);
@@ -770,7 +810,7 @@ function deleteCurrentRound(competition, matchesWithPlayers) {
 
   const updatedCompetition = {
     ...competition,
-    rounds: [...competition.rounds, roundsWithoutCurrent],
+    rounds: roundsWithoutCurrent,
     currentRound: currentRound - 1
   };
 
