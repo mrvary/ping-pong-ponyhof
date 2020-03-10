@@ -4,7 +4,7 @@
 
 const { saveXMLFile } = require("../persistance/file-manager");
 
-function exportXML(players, matches, initJSON) {
+function exportXML(filePath, players, matches, initJSON) {
   var Parser = require("fast-xml-parser").j2xParser;
 
   let matchesToAdd = [];
@@ -57,7 +57,7 @@ function exportXML(players, matches, initJSON) {
   var xml = parser.parse(initJSON);
   //ToDo check against .dtd schema
 
-  saveXMLFile("finalesErgebnis.xml", xml);
+  saveXMLFile(filePath, xml);
 }
 
 module.exports = {
