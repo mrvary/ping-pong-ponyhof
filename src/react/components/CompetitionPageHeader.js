@@ -59,9 +59,20 @@ const BackAndGameInfo = ({
  * Links to IP-adress and opens statistic table
  */
 const IpAdressAndStatisticLink = ({ competitionID, round }) => {
+  const [ipAddress, setIPAddress] = useState("");
   const [showPopupIP, setShowPopupIP] = useState(false);
   const handleCloseIP = () => setShowPopupIP(false);
-  const handleShowIP = () => setShowPopupIP(true);
+  const handleShowIP = () => {
+    ipcRenderer.once(ipcMessages.GET_IP_ADDRESS_RESPONSE, (event, args) => {
+      const { ipAddress } = args;
+      setIPAddress(ipAddress);
+      console.log(ipAddress);
+    });
+
+    ipcRenderer.send(ipcMessages.GET_IP_ADDRESS_REQUEST);
+
+    setShowPopupIP(true);
+  };
 
   const openStatisticWindow = route => {
     ipcRenderer.send(ipcMessages.OPEN_NEW_WINDOW, { route: route });
@@ -82,7 +93,7 @@ const IpAdressAndStatisticLink = ({ competitionID, round }) => {
         show={showPopupIP}
         handleClose={handleCloseIP}
         header="Verbinde mit"
-        bodyText="IP"
+        bodyText={ipAddress}
         mode="noBtn"
       ></Popup>
       <strong className="competitionPage__round">{roundDisplay}</strong>
