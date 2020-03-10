@@ -105,12 +105,14 @@ const openRepository = () => {
   shell.openExternal(url);
 };
 
-// init communication
-registerIPCMainEvents();
-initHTTPServer();
+function main() {
+  // init ipc-main events
+  registerIPCMainEvents();
 
-app.on("ready", () => {
-  // init competitions storage
+  // init web server and socket io
+  initHTTPServer();
+
+  // init meta storage
   dbManager.initMetaRepository(config.USE_IN_MEMORY_STORAGE);
 
   // init main window
@@ -121,9 +123,10 @@ app.on("ready", () => {
   menuBuilder.registerAction(MENU_ACTIONS.OPEN_CLIENT, openClient);
   menuBuilder.registerAction(MENU_ACTIONS.EXPORT_XML, exportXML);
   menuBuilder.registerAction(MENU_ACTIONS.SHOW_REPO, openRepository);
-
   menuBuilder.buildMenu(app, mainWindow);
-});
+}
+
+app.on("ready", main);
 
 app.on("before-quit", () => {
   let { competition, matchesWithPlayers } = selectedCompetition;
