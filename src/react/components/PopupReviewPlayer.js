@@ -29,7 +29,7 @@ function PopupReviewPlayer({
             {viewedCompetition.playmode}
           </p>
           <p className="popupReviewPlayer__body-small-text">
-            Folgende Spieler sind im Turnier:
+            Folgende {viewedPlayers.length} Spieler sind im Turnier:
           </p>
           <div className="popupReviewPlayer__player-List">
             {viewedPlayers.map(player => (
