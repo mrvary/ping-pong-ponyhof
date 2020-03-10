@@ -45,7 +45,8 @@ const CompetitionPage = () => {
       setCompetitionData(competition);
       checkForEndGame(competition);
       setNextRound(
-        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
+        competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+          competition.state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
       );
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
@@ -157,7 +158,8 @@ const CompetitionPage = () => {
   };
   // Nächste Runde
   const [nextRound, setNextRound] = useState(
-    competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
+    competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+      competitionData.state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
   );
 
   const handleShowEndRound = () => {
