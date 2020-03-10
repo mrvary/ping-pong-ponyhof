@@ -111,6 +111,22 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     matchDoneCss =
       "competitionPageTable competitionPageTable--values competitionPageTable__matchDone";
   }
+
+  let namePlayer1 =
+    matchWithPlayers.match.player1.firstname +
+    " " +
+    matchWithPlayers.match.player1.lastname;
+  let namePlayer2 =
+    matchWithPlayers.match.player2.firstname +
+    " " +
+    matchWithPlayers.match.player2.lastname;
+  if (matchWithPlayers.match.player1.id === "FreeTicket") {
+    namePlayer1 = matchWithPlayers.match.player1.lastname;
+  }
+  if (matchWithPlayers.match.player2.id === "FreeTicket") {
+    namePlayer2 = matchWithPlayers.match.player2.lastname;
+  }
+
   let score;
   if (singleGameScore === undefined) {
     score = [0, 0];
@@ -128,17 +144,13 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
           </li>
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
-          {matchWithPlayers.match.player1.firstname +
-            " " +
-            matchWithPlayers.match.player1.lastname}
+          {namePlayer1}
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
           :
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
-          {matchWithPlayers.match.player2.firstname +
-            " " +
-            matchWithPlayers.match.player2.lastname}
+          {namePlayer2}
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[0].player1}
