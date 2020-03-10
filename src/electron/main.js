@@ -397,12 +397,9 @@ function registerIPCMainEvents() {
     console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_SETS);
     const { tableNumber, sets } = args;
 
-    // 2. find match by table number
     updateSetsByTableNumber(tableNumber, sets);
-
     updateRanking();
 
-    // 5. send update match
     event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
   });
 
@@ -412,6 +409,9 @@ function registerIPCMainEvents() {
     const isStatisticView = route.includes("statisticTable");
     if (isStatisticView) {
       statisticWindow = createWindow(route);
+      statisticWindow.once("close", () => {
+        statisticWindow = null;
+      });
     }
   });
 
@@ -500,9 +500,44 @@ function registerIPCMainEvents() {
       return;
     }
 
-    // update players data after matches are finished
     let { matches, players } = splitMatchesWithPlayer(matchesWithPlayers);
+
+    // check if matches of current round have finished
+    let matchesAreFinished = true;
+    for (let i = 0; i < matches.length; i++) {
+      if (!isMatchFinished(matches[i])) {
+        matchesAreFinished = false;
+        break;
+      }
+    }
+
+    // return if a match has not finished
+    if (!matchesAreFinished) {
+      return;
+    }
+
+    // update players data after matches are finished
     players = updateWinner(players, matches);
+
+    // check if the current round was the last round
+    if (competition.currentRound === 6) {
+      // set competition state to finished
+      const newState = COMPETITION_STATE.COMP_COMPLETED;
+      competition = updateCompetitionState(competition, newState);
+
+      // update ranking with winners of last round
+      updateRanking();
+
+      // TODO: send competition completed broadcast to clients
+
+      selectedCompetition = {
+        competition: competition,
+        matchesWithPlayers: matchesWithPlayers
+      };
+
+      event.sender.send(ipcMessages.UPDATE_MATCHES, selectedCompetition);
+      return;
+    }
 
     // use matchmaker to draw next round
     const drawing = createMatchesWithMatchmaker(players, matches);
