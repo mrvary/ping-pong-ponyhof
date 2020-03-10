@@ -15,6 +15,7 @@ function createCurrentRanking(players, matches) {
       id: player.id,
       firstname: player.firstname,
       lastname: player.lastname,
+      clubname: player.clubname,
       gamesWon: calculateGamesWon(player, matches),
       gamesLost: calculateGamesLost(player, matches),
       bhz: calculateBHZ(player, players),
