@@ -797,8 +797,7 @@ function updateSets(tableNumber, sets) {
   matchesWithPlayers = matchesWithPlayers.map(matchWithPlayers => {
     if (matchWithPlayers.tableNumber === tableNumber) {
       const { match } = matchWithPlayers;
-      const updatedMatch = { ...match, sets };
-      matchWithPlayers.match = updatedMatch;
+      matchWithPlayers.match = {...match, sets};
 
       updateMatch(matchWithPlayers);
     }
