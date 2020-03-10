@@ -96,6 +96,7 @@ const StatisticTable = () => {
       <CompetitionPageHeader
         playmode={competition.playmode}
         startDate={competition.date}
+        justFirstLine={true}
       />
       <Table rankings={rankings} />
     </div>

@@ -12,7 +12,8 @@ function CompetitionPage__Header({
   linkTitle,
   linkDestination,
   competitionID,
-  round
+  round,
+  justFirstLine
 }) {
   return (
     <div>
@@ -22,10 +23,12 @@ function CompetitionPage__Header({
         linkTitle={linkTitle}
         linkDestination={linkDestination}
       ></BackAndGameInfo>
-      <IpAdressAndStatisticLink
-        competitionID={competitionID}
-        round={round}
-      ></IpAdressAndStatisticLink>
+      {justFirstLine ? null : (
+        <IpAdressAndStatisticLink
+          competitionID={competitionID}
+          round={round}
+        ></IpAdressAndStatisticLink>
+      )}
     </div>
   );
 }
