@@ -14,17 +14,6 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
     matchesWithPlayers => matchesWithPlayers.tableNumber === tableNumber
   );
 
-  if (
-    state === COMPETITION_STATE.COMP_READY_ROUND_READY ||
-    state === COMPETITION_STATE.COMP_CREATED ||
-    state === COMPETITION_STATE.COMP_READY_ROUND_ACTIVE
-  ) {
-    return {
-      roundStarted: false,
-      tableNumber
-    };
-  }
-
   if (state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY) {
     return {
       roundStarted: false,
@@ -40,6 +29,11 @@ function createStateResponseData({ tableNumber, selectedCompetition }) {
       match: match
     };
   }
+
+  return {
+    roundStarted: false,
+    tableNumber
+  };
 }
 
 module.exports = {
