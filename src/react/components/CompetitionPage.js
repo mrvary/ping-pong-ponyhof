@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import "./CompetitionPage.css";
-import "../Colors.css";
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import './CompetitionPage.css';
+import '../Colors.css';
 
 // components
-import Popup from "./Popup";
-import Button from "./Button";
-import CompetitionPageHeader from "./CompetitionPageHeader";
-import CompetitionPageTable from "./CompetitionPageTable";
+import Popup from './Popup';
+import Button from './Button';
+import CompetitionPageHeader from './CompetitionPageHeader';
+import CompetitionPageTable from './CompetitionPageTable';
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require("../../shared/ipc-messages");
-const COMPETITION_STATE = require("../../shared/models/competition-state");
+const ipcMessages = require('../../shared/ipc-messages');
+const COMPETITION_STATE = require('../../shared/models/competition-state');
 const {
   isMatchFinished,
   setsWonPlayer1,
   setsWonPlayer2
-} = require("../../client/src/shared/lib");
+} = require('../../client/src/shared/lib');
 const USE_BROWSER = false;
 
 /**
@@ -28,7 +28,6 @@ const CompetitionPage = () => {
   const { competitionID } = useParams();
   const [matchesWithPlayers, setMatchesWithPlayers] = useState([]);
   const [competitionData, setCompetitionData] = useState({});
-  const [matchesFinished, setMatchesFinished] = useState(false);
   const [gamesScore, setGamesScore] = useState([]);
 
   /** Updates all states if something changes
@@ -39,7 +38,7 @@ const CompetitionPage = () => {
       { competition, matchesWithPlayers }
     ) {
       updateMatchesResults(matchesWithPlayers);
-      console.log("IPC-Main-->IPC-Renderer:");
+      console.log('IPC-Main-->IPC-Renderer:');
       console.log(competition, matchesWithPlayers);
       setMatchesWithPlayers(matchesWithPlayers);
       setCompetitionData(competition);
@@ -47,7 +46,6 @@ const CompetitionPage = () => {
       setNextRound(
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
       );
-      checkForFinishedRound(matchesWithPlayers);
       if (
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
         competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
@@ -69,8 +67,8 @@ const CompetitionPage = () => {
   /** checks if game is in last round and changes button if so
    */
   const checkForEndGame = competition => {
-    if (competition.currentRound === 3) {
-      setLastRoundDisplay(["Turnier beenden", setEndGame(true)]);
+    if (competition.currentRound === 6) {
+      setLastRoundDisplay(true);
     }
   };
 
@@ -89,18 +87,19 @@ const CompetitionPage = () => {
       setGamesScore(newGamesScore);
     });
   };
+
   /** checks all matches if finished and if all are done
    *  sets matchesFinished true
    */
   const checkForFinishedRound = matchesWithPlayers => {
     let matchesFinished = true;
+
     matchesWithPlayers.forEach(allMatch => {
       if (!isMatchFinished(allMatch.match)) {
         matchesFinished = false;
       }
     });
-    setMatchesFinished(matchesFinished);
-    console.log("matchesFinished", matchesFinished);
+    return matchesFinished;
   };
 
   const updateCompetition = () => {
@@ -108,8 +107,8 @@ const CompetitionPage = () => {
       const matches = [
         {
           id: 3,
-          player1: "Samuel Geiger",
-          player2: "Marius Bach",
+          player1: 'Samuel Geiger',
+          player2: 'Marius Bach',
           sets: [
             { player1: 11, player2: 13 },
             { player1: 4, player2: 11 }
@@ -119,8 +118,8 @@ const CompetitionPage = () => {
         },
         {
           id: 4,
-          player1: "Edith Finch",
-          player2: "Finch Assozial",
+          player1: 'Edith Finch',
+          player2: 'Finch Assozial',
           sets: [
             { player1: 13, player2: 15 },
             { player1: 14, player2: 16 }
@@ -159,16 +158,16 @@ const CompetitionPage = () => {
   const [nextRound, setNextRound] = useState(
     competitionData.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY
   );
-  const handleShowEndRound = matchesFinished => {
-    console.log("matchesFinishedEnd", matchesFinished);
 
-    if (!matchesFinished) {
+  const handleShowEndRound = () => {
+    if (!checkForFinishedRound(matchesWithPlayers)) {
       setShowPopupEndRound(true);
     } else {
       ipcRenderer.send(ipcMessages.NEXT_ROUND);
       setNextRound(false);
     }
   };
+
   const handleStartRound = () => {
     ipcRenderer.send(ipcMessages.START_ROUND);
     setNextRound(true);
@@ -176,13 +175,15 @@ const CompetitionPage = () => {
 
   //Spiel zu ende
   const [endGame, setEndGame] = useState(false); //ist am anfang vllt true
-  const giveStateToHandleShowEndRound = () => {
-    handleShowEndRound(matchesFinished);
+  const activateEndGame = () => {
+    if (!checkForFinishedRound(matchesWithPlayers)) {
+      setShowPopupEndRound(true);
+    } else {
+      setEndGame(true);
+    }
   };
-  const [lastRoundDisplay, setLastRoundDisplay] = useState([
-    "Nächste Runde",
-    giveStateToHandleShowEndRound
-  ]);
+
+  const [lastRoundDisplay, setLastRoundDisplay] = useState(false);
 
   //Turnier aktivieren / deactivieren
   const [active, setActive] = useState(false);
@@ -205,7 +206,7 @@ const CompetitionPage = () => {
         playmode={competitionData.playmode}
         startDate={competitionData.date}
         linkTitle="zur Übersicht"
-        linkDestination={"/"}
+        linkDestination={'/'}
         competitionID={competitionID}
         round={competitionData.currentRound}
       />
@@ -237,7 +238,7 @@ const CompetitionPage = () => {
           primText="Turnier starten"
           secOnClick={handleShowGoInactive}
           secText="Turnier pausieren"
-          mode={active ? "secondary" : "primary"}
+          mode={active ? 'secondary' : 'primary'}
           disableProp={endGame}
         ></Button>
         <Popup
@@ -253,9 +254,9 @@ const CompetitionPage = () => {
         <Button
           primOnClick={handleStartRound}
           primText="Runde starten"
-          secOnClick={lastRoundDisplay[1]}
-          secText={lastRoundDisplay[0]}
-          mode={nextRound ? "secondary" : "primary"}
+          secOnClick={lastRoundDisplay ? activateEndGame : handleShowEndRound}
+          secText={lastRoundDisplay ? 'Turnier beenden' : 'Nächste Runde'}
+          mode={nextRound ? 'secondary' : 'primary'}
           disableProp={endGame || !active}
         ></Button>
         <Popup
