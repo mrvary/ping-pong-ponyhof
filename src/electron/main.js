@@ -2,7 +2,7 @@
  * @author Marco Goebel
  */
 
-const { app, ipcMain } = require("electron");
+const { app, ipcMain, shell } = require("electron");
 const path = require("path");
 
 // electron reload
@@ -53,7 +53,8 @@ const { isMatchFinished } = require("../client/src/shared/lib");
 
 // windows dialog
 const uiActions = require("./dialog/dialog");
-const { createMenu, registerAction } = require("./menu/main-menu");
+const menuBuilder = require("./menu/menu-builder");
+const MENU_ACTIONS = require("./menu/menu-actions");
 const createWindow = require("./window");
 
 // electron windows
@@ -63,6 +64,7 @@ let statisticWindow = null;
 // application state variables
 let selectedCompetition = null;
 
+// menu actions
 const exportXML = () => {
   const fileName = "exportTournament.xml";
   const filePath = fileManager.getApplicationDir("documents") + "/" + fileName;
@@ -81,7 +83,17 @@ const exportXML = () => {
   }
 };
 
-// init communication events
+const openClient = () => {
+  const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+  shell.openExternal(url);
+};
+
+const openRepository = () => {
+  const url = "https://github.com/mrvary/ping-pong-ponyhof";
+  shell.openExternal(url);
+};
+
+// init communication
 registerIPCMainEvents();
 initHTTPServer();
 
@@ -93,8 +105,13 @@ app.on("ready", () => {
 
   // init main window
   mainWindow = createWindow();
-  registerAction("export", exportXML);
-  createMenu();
+
+  // init application menu
+  menuBuilder.registerAction(MENU_ACTIONS.OPEN_CLIENT, openClient);
+  menuBuilder.registerAction(MENU_ACTIONS.EXPORT_XML, exportXML);
+  menuBuilder.registerAction(MENU_ACTIONS.SHOW_REPO, openRepository);
+
+  menuBuilder.buildMenu(app, mainWindow);
 });
 
 app.on("before-quit", () => {
