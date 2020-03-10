@@ -1,19 +1,20 @@
 .statisticTable__table-header {
   display: grid;
-  grid-template-columns: 10% 30% 20% 20% 10% 10% 10%;
+  grid-template-columns: 6% 30% 10% 10% 10% 10% 20% 10%;
   grid-auto-rows: minmax(4vh, auto);
   padding: 2vh;
   text-align: center;
   align-items: center;
   background-color: var(--table-header-background-color);
   font-weight: 700;
+  margin-top: 0.5vh;
 }
 
 .statisticTable__table-body {
   display: grid;
-  grid-template-columns: 10% 30% 20% 20% 10% 10% 10%;
+  grid-template-columns: 6% 30% 10% 10% 10% 10% 20% 10%;
   grid-auto-rows: minmax(4vh, auto);
-  padding: 1vh;
+  padding: 0.7vh;
   text-align: center;
   align-items: center;
   border-bottom: 0.1vh solid var(--shadow-color);
@@ -24,13 +25,13 @@
   border-right: 0.1vh solid var(--shadow-color);
   padding: 2vh;
   font-size: 2.5vh;
-  font-weight: 200;
+  font-weight: 300;
 }
 
 .statisticTable__bottom-row {
-  grid-column: 2/7;
+  grid-column: 2/8;
   display: grid;
-  grid-template-columns: repeat(6, 20%);
+  grid-template-columns: repeat(6, 17%);
   border-top: 0.1vh solid var(--shadow-color);
   padding: 1vh;
 }
