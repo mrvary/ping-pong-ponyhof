@@ -15,6 +15,7 @@ const TableHeader = () => {
       <span>Platz</span>
       <span>Name</span>
       <span>S : N</span>
+      <span> </span>
       <span>BHZ</span>
       <span>QTTR</span>
       <span>QTTR-Diff</span>
@@ -32,6 +33,7 @@ const TableRow = ({ ranking }) => {
           {ranking.firstname + " " + ranking.lastname}{" "}
         </span>
         <span> {ranking.gamesWon + " : " + ranking.gamesLost} </span>
+        <span> </span>
         <span> {ranking.bhz} </span>
         <span> {ranking.qttr} </span>
         <span> {ranking.ttr_diff} </span>
@@ -39,8 +41,8 @@ const TableRow = ({ ranking }) => {
         <div className="statisticTable__bottom-row">
           {ranking.matches.map(match => (
             <span>
-              {match.opponentFirstname +
-                " " +
+              {match.opponentFirstname.slice(0, 1) +
+                ". " +
                 match.opponentLastname +
                 " " +
                 match.ownSets +
