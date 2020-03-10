@@ -42,6 +42,7 @@ const { createCurrentRanking } = require("../matchmaker/ranking");
 
 // persistence
 const dbManager = require("../modules/persistance/database-manager");
+const fileManager = require("../modules/persistance/file-manager");
 
 // communication
 const server = require("../modules/server/server");
@@ -66,21 +67,26 @@ let selectedCompetition = null;
 
 // menu actions
 const exportXML = () => {
-  const fileName = "exportTournament.xml";
-  const filePath = fileManager.getApplicationDir("documents") + "/" + fileName;
-
-  if (selectedCompetition) {
-    uiActions.showSaveDialog(filePath).then(filePath => {
-      const { competition, matchesWithPlayers } = selectedCompetition;
-
-      // get players and matches
-      const players = competitionStorage.getAllPlayers();
-      const matches = competitionStorage.getAllMatches();
-      const jsonObject = competitionStorage.getImportedData();
-
-      xmlExporter.exportXML(players, matches, jsonObject);
-    });
+  if (!selectedCompetition) {
+    return;
   }
+
+  // create default file path
+  const fileName = "exportTournament.xml";
+  const defaultFilePath = fileManager.getDefaultExportFilePath(fileName);
+
+  uiActions.showSaveDialog(defaultFilePath).then(filePath => {
+    // get all players, matches and the initialized json object
+    const playerRepository = dbManager.getPlayerRepository();
+    const players = playerRepository.getAll();
+
+    const matchRepository = dbManager.getMatchRepository();
+    const matches = matchRepository.getAll();
+
+    const jsonObject = dbManager.getImportedJSONObject();
+
+    xmlExporter.exportXML(filePath, players, matches, jsonObject);
+  });
 };
 
 const openClient = () => {
