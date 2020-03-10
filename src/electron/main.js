@@ -51,8 +51,8 @@ const ipcMessages = require("../shared/ipc-messages");
 // client
 const { isMatchFinished } = require("../client/src/shared/lib");
 
-// windows actions
-const uiActions = require("./actions/uiActions");
+// windows dialog
+const uiActions = require("./dialog/dialog");
 const { createMenu, registerAction } = require("./menu/main-menu");
 const createWindow = require("./window");
 
@@ -605,6 +605,11 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_RANKING_REQUEST, event => {
     console.log("ipc-renderer --> ipc-main", ipcMessages.GET_RANKING_REQUEST);
     updateRanking();
+  });
+
+  ipcMain.on(ipcMessages.GET_IP_ADDRESS_REQUEST, event => {
+    const url = `http://${config.SERVER_HOST}:${config.SERVER_PORT}`;
+    event.sender.send(ipcMessages.GET_IP_ADDRESS_RESPONSE, { ipAddress: url });
   });
 }
 
