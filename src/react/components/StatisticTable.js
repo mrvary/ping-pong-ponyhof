@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
-import './StatisticTable.css';
-import '../Colors.css';
+import "./StatisticTable.css";
+import "../Colors.css";
 
-import CompetitionPageHeader from './CompetitionPageHeader';
+import CompetitionPageHeader from "./CompetitionPageHeader";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require('../../shared/ipc-messages');
+const ipcMessages = require("../../shared/ipc-messages");
 
 const TableHeader = () => {
   return (
@@ -28,10 +28,10 @@ const TableRow = ({ ranking }) => {
       <div className="statisticTable__table-body">
         <span className="statisticTable__ranking">{ranking.place}</span>
         <span className="statisticTable__name">
-          {' '}
-          {ranking.firstname + ' ' + ranking.lastname}{' '}
+          {" "}
+          {ranking.firstname + " " + ranking.lastname}{" "}
         </span>
-        <span> {ranking.gamesWon + ' : ' + ranking.gamesLost} </span>
+        <span> {ranking.gamesWon + " : " + ranking.gamesLost} </span>
         <span> {ranking.bhz} </span>
         <span> {ranking.qttr} </span>
         <span> {ranking.ttr_diff} </span>
@@ -40,11 +40,11 @@ const TableRow = ({ ranking }) => {
           {ranking.matches.map(match => (
             <span>
               {match.opponentFirstname +
-                ' ' +
+                " " +
                 match.opponentLastname +
-                ' ' +
+                " " +
                 match.ownSets +
-                ' : ' +
+                " : " +
                 match.opponentSets}
             </span>
           ))}
@@ -71,7 +71,7 @@ const StatisticTable = () => {
 
   useEffect(() => {
     function handleRankingStatusChanged(event, { competition, rankings }) {
-      console.log('ipc-main --> ipc-renderer', rankings);
+      console.log("ipc-main --> ipc-renderer", rankings);
       console.log(competition, rankings);
       setCompetition(competition);
       setRankings(rankings);
