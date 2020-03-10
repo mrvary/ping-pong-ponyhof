@@ -54,6 +54,7 @@ const CompetitionPage = () => {
       ) {
         setActive(competition.state);
       }
+      setEndGame(competition.state === COMPETITION_STATE.COMP_COMPLETED);
     }
     ipcRenderer.on(ipcMessages.UPDATE_MATCHES, handleMatchesStatusChanged);
     updateCompetition();
