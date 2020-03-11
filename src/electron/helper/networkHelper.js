@@ -4,6 +4,11 @@
 
 const os = require("os");
 
+/**
+ * Get host ip address of os
+ * @access public
+ * @returns {*}
+ */
 function getIpAddress() {
   let ipAddress = getInterfaceByName("Ethernet") || getInterfaceByName("WLAN");
   if (!ipAddress) {
@@ -13,18 +18,24 @@ function getIpAddress() {
   return ipAddress;
 }
 
+/**
+ * Get host ip address from the network interface driver
+ * @access private
+ * @param name
+ * @returns {null}
+ */
 function getInterfaceByName(name) {
-  const ifaces = os.networkInterfaces();
-  const netInterface = Object.keys(ifaces).filter(dev => dev === name);
+  const iFaces = os.networkInterfaces();
+  const netInterface = Object.keys(iFaces).filter(dev => dev === name);
 
   if (netInterface.length === 0) {
     // Review: Perhaps it is better to throw an exception here
-    return;
+    return null;
   }
 
-  let address;
+  let address = null;
   const adapter = netInterface[0];
-  ifaces[adapter].forEach(details => {
+  iFaces[adapter].forEach(details => {
     if (details.family === "IPv4" && details.internal === false) {
       address = details.address;
     }
