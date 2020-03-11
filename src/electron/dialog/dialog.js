@@ -35,8 +35,8 @@ function showSaveDialog(defaultFilePath) {
     buttonLabel: "Speichern",
     defaultPath: defaultFilePath,
     filters: [
-      {name: "XML", extensions: ["xml"]},
-      {name: 'All Files', extensions: ['*']}
+      { name: "XML", extensions: ["xml"] },
+      { name: "All Files", extensions: ["*"] }
     ]
   };
 
