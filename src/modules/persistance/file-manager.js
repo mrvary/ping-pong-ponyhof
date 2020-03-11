@@ -1,3 +1,8 @@
+/**
+ * Helper that handles the file management with the electron application
+ * @author Marco Goebel
+ */
+
 const { app } = require("electron");
 
 const path = require("path");
@@ -59,7 +64,6 @@ function deleteTournamentJSONFile(id) {
 }
 
 module.exports = {
-  getApplicationDir,
   getMetaStorageDatabasePath,
   getCompetitionFilePath,
   getDefaultExportFilePath,

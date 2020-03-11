@@ -11,6 +11,7 @@ require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
 });
 
+// extensions
 const {
   default: installExtension,
   REACT_DEVELOPER_TOOLS
@@ -41,6 +42,8 @@ const {
 
 // matchmaker
 const matchmaker = require("../matchmaker/drawing");
+
+// ranking
 const { createCurrentRanking } = require("../matchmaker/ranking");
 
 // persistence
@@ -96,6 +99,9 @@ app.on("activate", (event, hasVisibleWindows) => {
   }
 });
 
+/**
+ * Initialize application modules and event listener
+ */
 function main() {
   // init meta storage
   dbManager.initMetaRepository(config.USE_IN_MEMORY_STORAGE);
@@ -104,7 +110,7 @@ function main() {
   server.initHTTPServer(config.SERVER_PORT);
   registerServerEvents();
 
-  // init ipc-main events
+  // init ipc-main event listener
   registerIPCMainEvents();
 
   // init main window
@@ -115,9 +121,13 @@ function main() {
   menuBuilder.registerAction(MENU_ACTIONS.OPEN_CLIENT, openClient);
   menuBuilder.registerAction(MENU_ACTIONS.EXPORT_XML, exportXML);
   menuBuilder.registerAction(MENU_ACTIONS.SHOW_REPO, openRepository);
+
   menuBuilder.buildMenu(app, mainWindow);
 }
 
+/**
+ * Installs the development tools extensions
+ */
 function installExtensions() {
   if (isDev) {
     // Install extensions
@@ -127,22 +137,34 @@ function installExtensions() {
   }
 }
 
+/**
+ * Registers event listeners for client requests
+ */
 function registerServerEvents() {
+  // register event for client login
+  // send current app state to client
   server.ServerMainIOConnection.on(
     serverMessages.STATE_REQUEST,
     handleSendAppStateToClient
   );
+
+  // register event for client login and
+  // set connected device for the current match
   server.ServerMainIOConnection.on(
     serverMessages.UPDATE_CONNECTION_STATUS,
     handleUpdateConnectionStatus
   );
+
+  // register event for client send sets
   server.ServerMainIOConnection.on(
     serverMessages.UPDATE_SETS_REQUEST,
     handleUpdateSetsFromClient
   );
 }
 
-// register ipc main events
+/**
+ * register ipc main event listener
+ */
 function registerIPCMainEvents() {
   // register events for main page
   ipcMain.on(ipcMessages.GET_COMPETITIONS_REQUEST, handleGetCompetitions);
@@ -179,6 +201,10 @@ function registerIPCMainEvents() {
   ipcMain.on(ipcMessages.GET_IP_ADDRESS_REQUEST, handleGetIPAddress);
 }
 
+/**
+ * Opens an web link outside of the electron application
+ * @param url
+ */
 function openExternalLink(url) {
   shell
     .openExternal(url)

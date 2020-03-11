@@ -1,4 +1,6 @@
 /**
+ * Container for the lowDB storage that handles all CRUD-Operations for all competitions in the application
+ * Contains the app state and meta data of each competition which has been imported
  * @author Marco Goebel
  */
 

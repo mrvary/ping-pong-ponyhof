@@ -1,4 +1,5 @@
 /**
+ * HTTP server which handles the client-server communication and delivers the client app to the browsers
  * @author Marco Goebel
  */
 

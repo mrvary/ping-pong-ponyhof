@@ -1,4 +1,5 @@
 /**
+ * Helper that handles the the lowDB initialization and the file management
  * @author Marco Goebel
  */
 
