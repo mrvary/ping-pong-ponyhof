@@ -1,4 +1,5 @@
 /**
+ * Template for the other OS (Windows and Linux)
  * @author Marco Goebel
  */
 

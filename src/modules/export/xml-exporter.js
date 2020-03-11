@@ -6,7 +6,7 @@ const { saveXMLFile } = require("../persistance/file-manager");
 const { createXMLMatch } = require("../../matchmaker/match");
 let Parser = require("fast-xml-parser").j2xParser;
 
-function exportXML(filePath, players, matches, initJSON) {
+function exportXML(filePath, matches, initJSON) {
   let matchesToAdd = [];
   let round = 1;
   let counter = 0;

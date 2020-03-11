@@ -1,4 +1,5 @@
 /**
+ * imports for the react application ignored by webpack
  * @author Marco Goebel
  */
 

@@ -1,4 +1,5 @@
 /**
+ * Template for the darwin menu (MAC)
  * @author Marco Goebel
  */
 

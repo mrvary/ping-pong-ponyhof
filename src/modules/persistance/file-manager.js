@@ -1,4 +1,5 @@
 /**
+ * Helper that handles the file management with the electron application
  * @author Marco Goebel
  */
 
@@ -63,7 +64,6 @@ function deleteTournamentJSONFile(id) {
 }
 
 module.exports = {
-  getApplicationDir,
   getMetaStorageDatabasePath,
   getCompetitionFilePath,
   getDefaultExportFilePath,

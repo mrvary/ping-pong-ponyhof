@@ -1,4 +1,5 @@
 /**
+ * Helper to manage the CRUD-Operations for the competitions
  * @author Marco Goebel
  */
 

@@ -1,4 +1,5 @@
 /**
+ * Constants for the messages exchanged between ipc renderer and ipcMain
  * @author Marco Goebel
  */
 
