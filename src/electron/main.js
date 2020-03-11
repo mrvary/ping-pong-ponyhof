@@ -75,7 +75,9 @@ const exportXML = () => {
   const fileName = "exportTournament.xml";
   const defaultFilePath = fileManager.getDefaultExportFilePath(fileName);
 
-  uiActions.showSaveDialog(defaultFilePath).then(filePath => {
+  uiActions.showSaveDialog(defaultFilePath).then(result => {
+    const filePath = result.filePath;
+
     // get all players, matches and the initialized json object
     const playerRepository = dbManager.getPlayerRepository();
     const players = playerRepository.getAll();

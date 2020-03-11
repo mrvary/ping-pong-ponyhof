@@ -1,3 +1,7 @@
+/**
+ * @author Marco Goebel
+ */
+
 const { app } = require("electron");
 
 const path = require("path");
@@ -36,9 +40,9 @@ function getDefaultExportFilePath(filename) {
   return path.join(docDir, filename);
 }
 
-function saveXMLFile({ filePath }, xmlContent) {
+function saveXMLFile(filePath, xmlContent) {
   try {
-    fs.writeFileSync(filePath + ".xml", xmlContent);
+    fs.writeFileSync(filePath, xmlContent);
     console.log("Save XML:", filePath);
   } catch (err) {
     console.log(err);
