@@ -1,4 +1,5 @@
 /**
+ * represents the client react web application
  * @author Marco Goebel
  */
 

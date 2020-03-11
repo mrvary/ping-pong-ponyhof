@@ -1,4 +1,5 @@
 /**
+ * Constants for the competition state
  * @author Marco Goebel
  */
 

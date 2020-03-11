@@ -27,6 +27,11 @@ const ERROR_MESSAGES = {
   XMLInvalidException: "XML is invalid"
 };
 
+/**
+ * Sets path of file which should imported
+ * @access public
+ * @param filePath
+ */
 function setFilePath(filePath) {
   if (!filePath) {
     return;
@@ -35,35 +40,46 @@ function setFilePath(filePath) {
   xmlFilePath = filePath;
 }
 
+/**
+ * Opens the xml file, validate content and convert it to JSON.
+ * @access public
+ * @returns {{players: [], competition: object}} Returns a preview of the xml competition
+ */
 function createCompetitionPreview() {
   // check if a xml file is selected
   if (!xmlFilePath) {
-    // TODO: Fehler: XML-Datei ist nicht ausgewählt
-    return;
+    console.log("xml file path is undefined");
+    return undefined;
   }
 
-  // 1. load xml file
+  // load xml file
   const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
 
   // TODO: Search for XML-Schema validator
-  // 2. validate xml file against xml-schema --> Fehler: XML-Datei ist nicht valide
+  // validate xml file against xml-schema --> Fehler: XML-Datei ist nicht valide
 
-  // 3. convert xml file to JSON-Object
+  // convert xml file to JSON-Object
   jsonObject = convertXMLToJSON(xmlContent);
 
-  // 4. parse JSON-Object for necessary data
+  // parse JSON-Object for preview data
   competition = createCompetitionFromJSON(jsonObject);
   players = createPlayersFromJSON(jsonObject);
 
   // reset selected xml file
   xmlFilePath = null;
 
+  // return preview object
   return {
     competition,
     players
   };
 }
 
+/**
+ * Imports the xml content into the lowDB database
+ * @access public
+ * @param dbManager
+ */
 function importXMLIntoDatabases(dbManager) {
   if (!competition) {
     const errorMessage = "Competition is not initialized";
@@ -100,6 +116,12 @@ function importXMLIntoDatabases(dbManager) {
   players = null;
 }
 
+/**
+ * Read content of xml file
+ * @access private
+ * @param filePath
+ * @returns {string}
+ */
 function readCompetitionXMLFileFromDisk(filePath) {
   if (!filePath) {
     console.log(ERROR_MESSAGES.FilePathIsNotDefined);
@@ -119,6 +141,12 @@ function readCompetitionXMLFileFromDisk(filePath) {
   return xmlContent;
 }
 
+/**
+ * Convert xml to a json object
+ * @access private
+ * @param xmlContent
+ * @returns {any}
+ */
 function convertXMLToJSON(xmlContent) {
   const options = {
     ignoreAttributes: false,
@@ -140,12 +168,11 @@ function convertXMLToJSON(xmlContent) {
 
 module.exports = {
   ERROR_MESSAGES,
-  // Public
+
   setFilePath,
   createCompetitionPreview,
   importXMLIntoDatabases,
 
-  // Private
   readCompetitionXMLFileFromDisk,
   convertXMLToJSON
 };

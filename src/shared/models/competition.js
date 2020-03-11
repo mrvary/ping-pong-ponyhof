@@ -1,4 +1,5 @@
 /**
+ * Model for a competition
  * @author Marco Goebel
  */
 

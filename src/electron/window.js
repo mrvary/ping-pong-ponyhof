@@ -17,6 +17,11 @@ const preload = path.join(__dirname, "./preload.js");
 // windows
 const windows = new Set();
 
+/**
+ * Creates new electron browser window
+ * @param route - react route which should load in the new browser window
+ * @returns {Electron.BrowserWindow}
+ */
 function createWindow(route) {
   let x, y;
 
