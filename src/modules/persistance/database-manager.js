@@ -66,8 +66,8 @@ function getMatchRepository() {
 
 function initPlayerRepository() {
   if (!competitionStorage.isInitialized()) {
-    // TODO: throw exception
     console.log("The competition storage is not initialized");
+    return;
   }
 
   playerRepository.init(competitionStorage);
@@ -75,8 +75,8 @@ function initPlayerRepository() {
 
 function initMatchRepository() {
   if (!competitionStorage.isInitialized()) {
-    // TODO: throw exception
     console.log("The competition storage is not initialized");
+    return;
   }
 
   matchRepository.init(competitionStorage);

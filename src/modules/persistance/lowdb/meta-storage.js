@@ -10,7 +10,7 @@ const lowDBDao = require("./dao/lowdb-dao");
 const FilePathIsUndefinedException = lowDBDao.FilePathIsUndefinedException;
 const ERROR_MESSAGES = {
   FilePathIsUndefinedException,
-  CompetitionExistsException: "competition already exits"
+  CompetitionExistsException: "Das Turnier wurde bereits importiert."
 };
 
 // Element Paths

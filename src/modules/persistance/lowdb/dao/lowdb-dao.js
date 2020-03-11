@@ -136,7 +136,6 @@ function createElement(storage, elementPath, element, identifier = undefined) {
 
   // check if a element with the identifier exists
   if (identifier && hasElement(storage, elementPath, identifier)) {
-    // TODO: throw error
     return;
   }
 
