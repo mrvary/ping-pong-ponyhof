@@ -1,4 +1,5 @@
 /**
+ * Constants for the onClick-Handler in the menu templates
  * @author Marco Goebel
  */
 
