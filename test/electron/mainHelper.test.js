@@ -23,7 +23,7 @@ const {
 
 let competitions = null;
 const initialTableNumber = 4;
-const matchesWithPlayers = { 4: expectedMatchWithPLayers };
+const matchesWithPlayers = [ expectedMatchWithPLayers ];
 
 beforeAll(() => {
   competitions = [expectedCompetitionWithDefaultValues];
@@ -32,11 +32,7 @@ beforeAll(() => {
 describe("createStateResponseData()", () => {
   test(COMP_CREATED + " returns {roundStarted, tableNumber}", () => {
     // ACT
-    const responseData = createStateResponseData({
-      tableNumber: initialTableNumber,
-      competitions,
-      matchesWithPlayers
-    });
+    const responseData = createStateResponseData(initialTableNumber, competitions[0], matchesWithPlayers);
 
     // ASSERT
     const { roundStarted, tableNumber, match } = responseData;
@@ -46,14 +42,17 @@ describe("createStateResponseData()", () => {
   });
 
   test(COMP_READY_ROUND_READY + " returns {roundStarted, tableNumber}", () => {
+    // ARRANGE
+      competitions = competitions.map(competition => {
+          return { ...competition, state: COMP_READY_ROUND_READY };
+      });
+
     // ACT
-    const responseData = createStateResponseData({
-      tableNumber: initialTableNumber,
-      competitions: competitions.map(competition => {
-        return { ...competition, status: COMP_READY_ROUND_READY };
-      }),
+    const responseData = createStateResponseData(
+      initialTableNumber,
+        competitions[0],
       matchesWithPlayers
-    });
+    );
 
     // ASSERT
     const { roundStarted, tableNumber, match } = responseData;
@@ -65,14 +64,17 @@ describe("createStateResponseData()", () => {
   test(
     COMP_ACTIVE_ROUND_READY + " returns {roundStarted, tableNumber, match}",
     () => {
+        // ARRANGE
+        competitions = competitions.map(competition => {
+            return { ...competition, state: COMP_ACTIVE_ROUND_READY };
+        });
+
       // ACT
-      const responseData = createStateResponseData({
-        tableNumber: initialTableNumber,
-        competitions: competitions.map(competition => {
-          return { ...competition, status: COMP_ACTIVE_ROUND_READY };
-        }),
+      const responseData = createStateResponseData(
+          initialTableNumber,
+          competitions[0],
         matchesWithPlayers
-      });
+      );
 
       // ASSERT
       const { roundStarted, tableNumber, match } = responseData;
@@ -83,16 +85,19 @@ describe("createStateResponseData()", () => {
   );
 
   test(
-    COMP_ACTIVE_ROUND_ACTIVE + "return {roundStarted, tableNumber, match}",
+    COMP_ACTIVE_ROUND_ACTIVE + " return {roundStarted, tableNumber, match}",
     () => {
+        // ARRANGE
+        competitions = competitions.map(competition => {
+            return { ...competition, state: COMP_ACTIVE_ROUND_ACTIVE };
+        });
+
       // ACT
-      const responseData = createStateResponseData({
-        tableNumber: initialTableNumber,
-        competitions: competitions.map(competition => {
-          return { ...competition, status: COMP_ACTIVE_ROUND_ACTIVE };
-        }),
+      const responseData = createStateResponseData(
+        initialTableNumber,
+          competitions[0],
         matchesWithPlayers
-      });
+      );
 
       // ASSERT
       const { roundStarted, tableNumber, match } = responseData;
