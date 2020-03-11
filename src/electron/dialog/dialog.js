@@ -34,7 +34,10 @@ function showSaveDialog(defaultFilePath) {
     title: "Turnier exportieren",
     buttonLabel: "Speichern",
     defaultPath: defaultFilePath,
-    filter: [{ name: "XML", extensions: ["xml"] }]
+    filters: [
+      { name: "XML", extensions: ["xml"] },
+      { name: "All Files", extensions: ["*"] }
+    ]
   };
 
   return dialog.showSaveDialog(null, options);
