@@ -40,7 +40,7 @@ const BackAndGameInfo = ({
   linkDestination
 }) => {
   return (
-    <div className="competitionPage__header-alignment">
+    <div className="competitionPage__header competitionPage__alignment">
       {" "}
       <div className="competitionPage__header-logo-alignment">
         <div className="competitionPage__header-logo"></div>
@@ -84,7 +84,7 @@ const IpAdressAndStatisticLink = ({ competitionID, round }) => {
   const statisticID = "/statisticTable/" + competitionID;
   let roundDisplay = "Runde: " + round;
   return (
-    <div className="competitionPage__link-alignment">
+    <div className="competitionPage__alignment">
       <div
         className="competitionPage__link-ip-adress-statistic"
         onClick={handleShowIP}
@@ -99,7 +99,7 @@ const IpAdressAndStatisticLink = ({ competitionID, round }) => {
         bodyText={ipAddress}
         mode="noBtn"
       ></Popup>
-      <strong className="competitionPage__round">{roundDisplay}</strong>
+      <p className="competitionPage__round">{roundDisplay}</p>
       <p
         onClick={() => openStatisticWindow(statisticID)}
         className="competitionPage__link-ip-adress-statistic"
