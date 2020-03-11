@@ -3,40 +3,18 @@
  */
 
 const { saveXMLFile } = require("../persistance/file-manager");
+const { createXMLMatch } = require("../../matchmaker/match");
+let Parser = require("fast-xml-parser").j2xParser;
 
-function exportXML(filePath, players, matches, initJSON) {
-  var Parser = require("fast-xml-parser").j2xParser;
-
+function exportXML(filePath, matches, initJSON) {
   let matchesToAdd = [];
+  let round = 1;
+  let counter = 0;
   matches.forEach(match => {
-    matchesToAdd.push({
-      //todo add round nr
-      group: "Schweizer System",
-      nr: match.id,
-      "player-a": match.player1,
-      "player-b": match.player2,
-      //todo set other values
-      "matches-a": 0,
-      "matches-b": 0,
-      "sets-a": 0,
-      "sets-a": 0,
-      "sets-a-1": 0,
-      "sets-b-1": 0,
-      "sets-a-2": 0,
-      "sets-b-2": 0,
-      "sets-a-3": 0,
-      "sets-b-3": 0,
-      "sets-a-4": 0,
-      "sets-b-4": 0,
-      "sets-a-5": 0,
-      "sets-b-5": 0,
-      "sets-a-6": 0,
-      "sets-b-6": 0,
-      "sets-a-7": 0,
-      "sets-b-7": 0,
-      "games-a": 0,
-      "games-b": 0
-    });
+    matchesToAdd.push(createXMLMatch(match, round));
+    counter++;
+    //increase round after all matches of a round finished
+    if (counter % (matches.length / 6) === 0) round++;
   });
 
   initJSON.competition.matches = {

@@ -786,17 +786,15 @@ const exportXML = () => {
   const fileName = "exportTournament.xml";
   const defaultFilePath = fileManager.getDefaultExportFilePath(fileName);
 
-  uiActions.showSaveDialog(defaultFilePath).then(filePath => {
-    // get all players, matches and the initialized json object
-    const playerRepository = dbManager.getPlayerRepository();
-    const players = playerRepository.getAll();
+  uiActions.showSaveDialog(defaultFilePath).then(result => {
+    const filePath = result.filePath;
 
     const matchRepository = dbManager.getMatchRepository();
     const matches = matchRepository.getAll();
 
     const jsonObject = dbManager.getImportedJSONObject();
 
-    xmlExporter.exportXML(filePath, players, matches, jsonObject);
+    xmlExporter.exportXML(filePath, matches, jsonObject);
   });
 };
 
