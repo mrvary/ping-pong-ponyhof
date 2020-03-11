@@ -367,9 +367,9 @@ function handleXMLImport(event, args) {
     "ipc-renderer --> ipc-main:",
     ipcMessages.IMPORT_XML_FILE_REQUEST
   );
-  const { competitionId } = args;
 
   let returnData;
+
   try {
     if (currentCompetition) {
       const { state } = currentCompetition;
@@ -390,16 +390,15 @@ function handleXMLImport(event, args) {
 
     // create response message with success message
     returnData = {
-      competitionId: competitionId,
       message: "success"
     };
   } catch (err) {
+    console.log(err.message);
+
     // create result data with the error message
     returnData = {
-      competitionId: "",
       message: err.message
     };
-    console.log(err.message);
   } finally {
     // notify react app about the import status
     event.sender.send(ipcMessages.IMPORT_XML_FILE_RESPONSE, returnData);

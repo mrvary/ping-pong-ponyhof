@@ -17,8 +17,6 @@ const COMPETITION_STATE = require("../shared/models/competition-state");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
-let competitionID = null;
-
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
@@ -98,7 +96,6 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
-        competitionID = competition.id;
 
         setViewedCompetition(competition);
         setViewedPlayers(players);
@@ -114,21 +111,19 @@ const App = () => {
         "ipc-main --> ipc-renderer:",
         ipcMessages.IMPORT_XML_FILE_RESPONSE
       );
-      const { competitionId, message } = args;
+      const { message } = args;
 
-      if (!competitionId) {
+      if (message !== "success") {
         setLinkDisabled(true);
         handleShowError();
         setErrorMessage(message);
         return;
       }
 
-      setCurrentId(competitionId);
+      setCurrentId(viewedCompetition.id);
     });
 
-    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
-      competitionId: competitionID
-    });
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
   };
 
   const deleteCompetition = id => {
