@@ -38,7 +38,7 @@ function getDefaultExportFilePath(filename) {
 
 function saveXMLFile({ filePath }, xmlContent) {
   try {
-    fs.writeFileSync(filePath+".xml", xmlContent);
+    fs.writeFileSync(filePath + ".xml", xmlContent);
     console.log("Save XML:", filePath);
   } catch (err) {
     console.log(err);

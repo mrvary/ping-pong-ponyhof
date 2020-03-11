@@ -133,7 +133,7 @@ function createXMLMatch(match, round) {
 
   //get players sets
   const sets = countSetsPerPlayer(match);
-  
+
   let xmlMatch = {
     group: "Schweizer System (Runde " + round + ")",
     nr: match.id,
