@@ -1,13 +1,17 @@
 /**
  * @author William Kistenberger
  */
-import { Modal } from "react-bootstrap";
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./Popup.css";
+import { Modal } from 'react-bootstrap';
+import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './Popup.css';
 
-import Button from "./Button";
+//Components
+import Button from './Button';
 
+/**
+ * Generic Popup with title, body text, and an optional Button
+ */
 function Popup({
   show,
   handleClose,
@@ -40,8 +44,11 @@ function Popup({
     </Modal>
   );
 }
+/**
+ * inserts a Button if requested
+ */
 const InsertButton = ({ mode, buttonText, buttonFunk }) => {
-  if (mode === "noBtn") {
+  if (mode === 'noBtn') {
     return null;
   }
   return (

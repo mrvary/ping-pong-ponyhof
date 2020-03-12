@@ -2,34 +2,37 @@
  * @author Sophia Dietze
  * @author William Kistenberger
  */
-import React, { useState, useEffect } from "react";
-import "./App.css";
-import "./Colors.css";
+import React, { useState, useEffect } from 'react';
+import './App.css';
+import './Colors.css';
 
 // dummy data
-import dummyCompetitions from "../assets/mock-data/competitions.mock.data";
+import dummyCompetitions from '../assets/mock-data/competitions.mock.data';
 
 // components
-import Footer from "./components/Footer";
-import Competition from "./components/Competition";
-import Header from "./components/Header";
+import Footer from './components/Footer';
+import Competition from './components/Competition';
+import Header from './components/Header';
 
 // electron
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require("../shared/ipc-messages");
-const COMPETITION_STATE = require("../shared/models/competition-state");
+const ipcMessages = require('../shared/ipc-messages');
+const COMPETITION_STATE = require('../shared/models/competition-state');
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
+/**
+ * creates Main View of Applicationn
+ */
 const App = () => {
-  const [currentId, setCurrentId] = useState("");
+  const [currentId, setCurrentId] = useState('');
   const [linkDisabled, setLinkDisabled] = useState(true);
   const [competitions, setCompetitions] = useState([]);
 
   const [viewedCompetition, setViewedCompetition] = useState({});
   const [viewedPlayers, setViewedPlayers] = useState([]);
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
   const [hasActiveGame, setHasActiveGame] = useState(false);
 
   useEffect(() => {
@@ -53,11 +56,13 @@ const App = () => {
     // trigger event to get competitions from ipc-main
     ipcRenderer.send(ipcMessages.GET_COMPETITIONS_REQUEST);
     console.log(
-      "ipc-renderer --> ipc-main:",
+      'ipc-renderer --> ipc-main:',
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
   };
-
+  /**
+   * checks if list of competitions has a active one among them
+   */
   const updateActiveState = competitions => {
     setHasActiveGame(false);
     competitions.map(competition => {
@@ -71,17 +76,20 @@ const App = () => {
     });
   };
 
+  /**
+   * sends request to open file explorer to backend and reacts to input
+   */
   const openXMLDialog = () => {
     ipcRenderer.once(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
       console.log(
-        "ipc-main --> ipc-renderer:",
+        'ipc-main --> ipc-renderer:',
         ipcMessages.OPEN_FILE_DIALOG_RESPONSE
       );
 
       const { message } = args;
-      console.log("message:", message);
+      console.log('message:', message);
 
-      if (message === "success") {
+      if (message === 'success') {
         getCompetition();
 
         setLinkDisabled(false);
@@ -90,13 +98,15 @@ const App = () => {
 
     ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
   };
-
+  /**
+   * gets information for PopupReviewPlayer in Header
+   */
   const getCompetition = () => {
     ipcRenderer.once(
       ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE,
       (event, args) => {
         console.log(
-          "ipc-main --> ipc-renderer",
+          'ipc-main --> ipc-renderer',
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
@@ -108,16 +118,18 @@ const App = () => {
 
     ipcRenderer.send(ipcMessages.GET_COMPETITION_PREVIEW_REQUEST);
   };
-
+  /**
+   * loads xml into backend and triggers redirect to competition view if id set
+   */
   const importXML = handleShowError => {
     ipcRenderer.once(ipcMessages.IMPORT_XML_FILE_RESPONSE, (event, args) => {
       console.log(
-        "ipc-main --> ipc-renderer:",
+        'ipc-main --> ipc-renderer:',
         ipcMessages.IMPORT_XML_FILE_RESPONSE
       );
       const { message } = args;
 
-      if (message !== "success") {
+      if (message !== 'success') {
         setLinkDisabled(true);
         handleShowError();
         setErrorMessage(message);
@@ -160,6 +172,7 @@ const App = () => {
     });
   };
 
+  /** creates a Header, multiple Competitions and a Footer */
   return (
     <div className="app__container">
       <Header

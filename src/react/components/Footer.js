@@ -5,6 +5,9 @@
 import React from 'react';
 import './Footer.css';
 
+/**
+ * credits to the coolest guys and gals ever
+ */
 function Footer({ title }) {
   return (
     <footer>

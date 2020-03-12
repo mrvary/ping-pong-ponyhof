@@ -2,14 +2,17 @@
  * @author William Kistenberger
  * @author Sophia Dietze
  */
-import React, { useState } from "react";
-import "./Header.css";
-import { Redirect } from "react-router-dom";
+import React, { useState } from 'react';
+import './Header.css';
+import { Redirect } from 'react-router-dom';
 
 //Components
-import PopupReviewPlayer from "./PopupReviewPlayer";
-import Popup from "./Popup";
+import PopupReviewPlayer from './PopupReviewPlayer';
+import Popup from './Popup';
 
+/**
+ * Header contains the main background picture, title and the option to upload a new competition
+ */
 function Header({
   openXMLDialog,
   importXML,
@@ -44,7 +47,9 @@ function Header({
     </section>
   );
 }
-
+/**
+ * Upload XML box with Popups
+ */
 const HeaderBox = ({
   openXMLDialog,
   importXML,
@@ -56,7 +61,7 @@ const HeaderBox = ({
   errorMessage,
   hasActiveGame
 }) => {
-  const competition = currentId !== "" ? "/competition/" + currentId : "";
+  const competition = currentId !== '' ? '/competition/' + currentId : '';
   const [showPopupError, setShowPopupError] = useState(false);
   const handleCloseError = () => setShowPopupError(false);
   const handleShowError = () => setShowPopupError(true);
@@ -64,7 +69,7 @@ const HeaderBox = ({
   if (hasActiveGame) {
     eventOnClick = handleShowError;
     errorMessage =
-      "Es kann kein neues Turnier geladen werden, wenn eines bereits läuft";
+      'Es kann kein neues Turnier geladen werden, wenn eines bereits läuft';
   }
   return (
     <div className="header__match-box">
@@ -83,9 +88,9 @@ const HeaderBox = ({
       <Popup
         show={showPopupError}
         handleClose={handleCloseError}
-        header={"Fehler"}
+        header={'Fehler'}
         bodyText={errorMessage}
-        mode={"noBtn"}
+        mode={'noBtn'}
       ></Popup>
       <Redirect to={competition} />
     </div>
@@ -93,12 +98,12 @@ const HeaderBox = ({
 };
 
 const UploadXML = ({ linkDisabled, eventOnClick }) => {
-  let xmlText = "Klicke hier um deine XML Datei hochzuladen!";
-  let xmlUploadedCss = "header__upload-xml-button";
+  let xmlText = 'Klicke hier um deine XML Datei hochzuladen!';
+  let xmlUploadedCss = 'header__upload-xml-button';
 
   if (!linkDisabled) {
-    xmlText = "Upload erfolgreich";
-    xmlUploadedCss = xmlUploadedCss + " header__upload-xml-button--true";
+    xmlText = 'Upload erfolgreich';
+    xmlUploadedCss = xmlUploadedCss + ' header__upload-xml-button--true';
   }
   return (
     <button className={xmlUploadedCss} onClick={eventOnClick}>
