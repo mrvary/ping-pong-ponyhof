@@ -445,6 +445,8 @@ function handleInitCompetition(event, args) {
   // load competition
   const resultData = initCompetition(competitionId);
 
+  handleUpdateRanking();
+
   event.sender.send(ipcMessages.UPDATE_MATCHES, resultData);
   console.log("ipc-main --> ipc-renderer:", ipcMessages.UPDATE_MATCHES);
 }
