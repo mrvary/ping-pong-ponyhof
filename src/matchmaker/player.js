@@ -11,7 +11,8 @@ function createPlayersFromJSON(json) {
     players.push({
       id: "FreeTicket",
       gamesWon: 0,
-      lastname: "FREILOS",
+      firstname: "FREI",
+      lastname: "LOS",
       matchIds: [],
       opponentIds: [],
       qttr: 0
