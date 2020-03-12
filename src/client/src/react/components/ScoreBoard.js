@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import "./ScoreBoard.css";
 
 import MainScore from "./MainScore";
-import Set from "./Set";
 import {
   isMatchFinished,
   setsWonPlayer1,
