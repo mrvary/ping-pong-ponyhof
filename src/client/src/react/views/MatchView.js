@@ -12,7 +12,7 @@ function MatchView({
   addSet
 }) {
   return (
-    <div>
+    <>
       {onlyShowNextPlayers ? (
         <NextPlayers match={match}></NextPlayers>
       ) : (
@@ -23,7 +23,7 @@ function MatchView({
           addSet={addSet}
         />
       )}
-    </div>
+    </>
   );
 }
 
