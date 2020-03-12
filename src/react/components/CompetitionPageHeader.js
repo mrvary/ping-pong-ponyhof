@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState } from "react";
 import "./CompetitionPageHeader.css";
 import { Link } from "react-router-dom";
@@ -6,6 +10,10 @@ import Popup from "./Popup";
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
 
+/**
+ * Creates the Header for the Competition View and Statistic View
+ * In statistic View only first line is returned without the link
+ */
 function CompetitionPage__Header({
   playmode,
   startDate,
@@ -32,7 +40,9 @@ function CompetitionPage__Header({
     </div>
   );
 }
-
+/**
+ * Return Link back to main view and info about game
+ */
 const BackAndGameInfo = ({
   playmode,
   startDate,
@@ -59,7 +69,7 @@ const BackAndGameInfo = ({
   );
 };
 /**
- * Links to IP-adress and opens statistic table
+ * Link to IP-adress and Link opening another window with statistic view
  */
 const IpAdressAndStatisticLink = ({ competitionID, round }) => {
   const [ipAddress, setIPAddress] = useState("");
