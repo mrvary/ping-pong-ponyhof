@@ -1,9 +1,17 @@
+/**
+ * @author William Kistenberger
+ */
 import { Modal } from "react-bootstrap";
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PopupReviewPlayer.css";
+//components
 import Button from "./Button";
 
+/**
+ * creates a Popup with Info from newly uploaded xml
+ * and a Button to approve Competition
+ */
 function PopupReviewPlayer({
   show,
   handleClose,

@@ -1,6 +1,13 @@
+/**
+ * @author William Kistenberger
+ */
+
 import React from "react";
 import "./Button.css";
 
+/**
+ * creates a generic Button with two possible functions, switchable with {mode}
+ */
 function Button({
   primText,
   primOnClick,

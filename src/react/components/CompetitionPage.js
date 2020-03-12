@@ -1,4 +1,9 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState, useEffect } from "react";
+
 import { useParams } from "react-router-dom";
 import "./CompetitionPage.css";
 import "../Colors.css";
@@ -224,6 +229,7 @@ const CompetitionPage = () => {
         gamesScore={gamesScore}
       />
       <div className="competitionPage__Bottom-Buttons">
+        {/**Button cancel and restarts a round */}
         <Button
           primOnClick={handleShowReDoRound}
           primText="Runde abbrechen"
@@ -239,7 +245,7 @@ const CompetitionPage = () => {
           buttonText="Runde abbrechen"
           mode="primary"
         ></Popup>
-
+        {/**Button activates and deactivates the competition*/}
         <Button
           primOnClick={handleActivate}
           primText="Turnier starten"
@@ -257,7 +263,7 @@ const CompetitionPage = () => {
           buttonText="pausieren"
           mode="primary"
         ></Popup>
-
+        {/**Button start and ends rounds + end Competition at the end*/}
         <Button
           primOnClick={handleStartRound}
           primText="Runde starten"

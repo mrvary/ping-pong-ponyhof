@@ -1,3 +1,6 @@
+/**
+ * @author Sophia Dietze
+ */
 import React, { useState, useEffect } from "react";
 
 import "./StatisticTable.css";
