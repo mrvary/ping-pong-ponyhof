@@ -6,37 +6,8 @@ body {
   margin: 2vh 2vh;
 }
 
-.competitionPage__link-ip-adress-statistic {
-  text-decoration: underline;
-  color: var(--grey-out-color);
-  font-size: 2vh;
-  border: none;
-  margin: 2vh;
-  cursor: pointer;
-}
-.competitionPage__link-ip-adress-statistic:hover {
-  color: var(--link-font-hover-color);
-}
-
-.competitionPage__link-alignment {
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
-}
-
 .competitionPage__Bottom-Buttons {
   display: flex;
   justify-content: space-between;
   align-items: space-between;
-}
-
-.competitionPage__link-ip-adress-statistic:focus {
-  outline: 0;
-}
-
-.competitionPage__link-ip-adress-statistic:hover {
-  color: var(--link-font-hover-color);
-}
-
-.competitionPage__round {
 }

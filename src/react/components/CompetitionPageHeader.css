@@ -1,10 +1,7 @@
-.competitionPage__header-alignment {
+.competitionPage__header {
   height: 6vh;
   font-size: 2vh;
   color: var(--tert-out-color);
-  display: flex;
-  justify-content: space-between;
-  flex-direction: row;
 }
 
 .competitionPage__header-alignment-right {
@@ -26,6 +23,35 @@
   color: var(--grey-out-color);
   font-size: 1.5vh;
 }
+.competitionPage__link-ip-adress-statistic {
+  text-decoration: underline;
+  color: var(--grey-out-color);
+  font-size: 2vh;
+  border: none;
+  margin: 2vh;
+  cursor: pointer;
+}
+
+.competitionPage__link-ip-adress-statistic:focus {
+  outline: 0;
+}
+
+.competitionPage__link-ip-adress-statistic:hover {
+  color: var(--link-font-hover-color);
+}
+
+.competitionPage__round {
+  font-size: 2vh;
+  margin: 2vh;
+  font-weight: bold;
+}
+
+.competitionPage__alignment {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
 .competitionPage__link {
   text-decoration: underline;
   font-size: 2vh;
