@@ -377,6 +377,12 @@ function App() {
       dispatch({ type: ACTION_TYPE.COMPETITION_CANCELED });
     });
 
+    connection.on(socketIOMessages.APP_DISCONNECT, () => {
+      console.info("SERVER->CLIENT: APP DISCONNECTED");
+
+      socket = null;
+    });
+
     socket = connection;
   }
 
@@ -437,7 +443,7 @@ function App() {
  * is the one and only.
  */
 function getServerURL() {
-  const url = isDev ? "localhost:4000" : document.location.host;
+  const url = isDev ? "http://localhost:4000" : document.location.host;
   console.info("Requested server: ", url);
   return url;
 }
