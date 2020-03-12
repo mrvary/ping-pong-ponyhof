@@ -2,9 +2,11 @@ const {
   createCurrentRanking,
   calculateBHZ,
   calculateTTRDifference,
+  calculateGamesWon,
+  calculateGamesLost,
   getMatchesInvolved,
   addMatchDetails,
-  createMatchResult,
+  countSetsPerPlayer,
   getParameterByPlayerId,
   ttrCalculation
 } = require("../../src/matchmaker/ranking");
@@ -18,7 +20,6 @@ const {
   matchWithWrongSets,
   twoPlayers,
   matchesToUpdate,
-  dummyMatches,
   playersForRanking,
   matchesForRanking,
   expectedRanking
@@ -63,6 +64,7 @@ describe("calculateTTRDifference()", () => {
     let dummyPlayer = players[0];
     dummyPlayer.opponentIds = ["PLAYER1", "FreeTicket"];
     dummyPlayer.gamesWon = 2;
+    //same result expected because FreeTicket player doesnt give any ttr points
     expect(calculateTTRDifference(dummyPlayer, players)).toBe(5);
   });
 
@@ -96,15 +98,6 @@ describe("ttrCalculation()", () => {
     expect(ttrCalculation(1637, [1449, 1572, 1428, 1484, 1603, 1563], 3)).toBe(
       -31
     );
-  });
-});
-
-describe("getMatchesInvolved()", () => {
-  test("get the correct matches back", () => {
-    twoPlayers.forEach(player => {
-      player.matches = getMatchesInvolved(player.matchIds, dummyMatches);
-      expect(player.matchIds.length).toBe(player.matches.length);
-    });
   });
 });
 
@@ -143,7 +136,9 @@ describe("getParameterByPlayerId()", () => {
     );
     expect(getParameterByPlayerId("PingPong", twoPlayers, "gamesWon")).toBe(1);
     expect(getParameterByPlayerId("PingPong", twoPlayers, "qttr")).toBe(2020);
-    expect(getParameterByPlayerId("PingPong", twoPlayers, "active")).toBe(true);
+    expect(getParameterByPlayerId("PingPong", twoPlayers, "quitInRound")).toBe(
+      0
+    );
 
     expect(getParameterByPlayerId("PLAYER1", twoPlayers, "firstname")).toBe(
       "Gerhard"
@@ -161,12 +156,12 @@ describe("getParameterByPlayerId()", () => {
   });
 });
 
-describe("createMatchResult()", () => {
+describe("countSetsPerPlayer()", () => {
   test("correct match result was created", () => {
-    const matchResult_13 = createMatchResult(matchWithResult_13);
-    const matchResult_12 = createMatchResult(matchWithResult_12);
-    const matchResult_10 = createMatchResult(matchWithResult_10);
-    const matchResult_00 = createMatchResult(matchWithWrongSets);
+    const matchResult_13 = countSetsPerPlayer(matchWithResult_13);
+    const matchResult_12 = countSetsPerPlayer(matchWithResult_12);
+    const matchResult_10 = countSetsPerPlayer(matchWithResult_10);
+    const matchResult_00 = countSetsPerPlayer(matchWithWrongSets);
 
     expect(matchResult_13.player1).toBe(1);
     expect(matchResult_13.player2).toBe(3);
@@ -179,5 +174,37 @@ describe("createMatchResult()", () => {
 
     expect(matchResult_00.player1).toBe(0);
     expect(matchResult_00.player2).toBe(0);
+  });
+});
+
+describe("calculateGamesWon()", () => {
+  test("correct gamesWon calculated", () => {
+    const gamesWonPlayer2 = calculateGamesWon(
+      playersForRanking[2],
+      matchesForRanking
+    );
+    expect(gamesWonPlayer2).toBe(3);
+
+    const gamesWonPlayer13 = calculateGamesWon(
+      playersForRanking[13],
+      matchesForRanking
+    );
+    expect(gamesWonPlayer13).toBe(4);
+  });
+});
+
+describe("calculateGamesLost()", () => {
+  test("correct gamesLost calculated", () => {
+    const gamesLostPlayer2 = calculateGamesLost(
+      playersForRanking[2],
+      matchesForRanking
+    );
+    expect(gamesLostPlayer2).toBe(3);
+
+    const gamesLostPlayer1 = calculateGamesLost(
+      playersForRanking[1],
+      matchesForRanking
+    );
+    expect(gamesLostPlayer1).toBe(4);
   });
 });
