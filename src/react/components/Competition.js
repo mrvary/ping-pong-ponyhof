@@ -2,16 +2,18 @@
  * @author William Kistenberger
  */
 
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-
-import "./Competition.css";
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import './Competition.css';
 
 // components
-import Popup from "./Popup";
+import Popup from './Popup';
 
-const COMPETITION_STATE = require("../../shared/models/competition-state");
+const COMPETITION_STATE = require('../../shared/models/competition-state');
 
+/**
+ * Creates a Competition in the list of Competitions with Link and delete option
+ */
 function Competition(props) {
   const {
     competition: { id, state, name, playmode, date },
@@ -27,14 +29,14 @@ function Competition(props) {
   const handleCloseDelete = () => setShowPopupDelete(false);
   const handleShowDelete = () => setShowPopupDelete(true);
 
-  let popupText = "Willst du dieses Turnier wirklich löschen?";
-  let containerCss = "competition__container";
+  let popupText = 'Willst du dieses Turnier wirklich löschen?';
+  let containerCss = 'competition__container';
   if (
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY ||
     state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE
   ) {
-    popupText = "Das laufende Turnier wird gelöscht!";
-    containerCss = "competition__container competition__container--active";
+    popupText = 'Das laufende Turnier wird gelöscht!';
+    containerCss = 'competition__container competition__container--active';
   }
 
   return (
@@ -76,7 +78,9 @@ function Competition(props) {
     </div>
   );
 }
-
+/**
+ * LinkHandler decides if object returned is a Link to Competition View or a Button that opens a Popup
+ */
 const LinkHandler = ({
   id,
   name,
@@ -85,7 +89,7 @@ const LinkHandler = ({
   handleShowActiveError,
   hasActiveGame
 }) => {
-  const competitionID = "/competition/" + id;
+  const competitionID = '/competition/' + id;
 
   if (
     hasActiveGame &&
