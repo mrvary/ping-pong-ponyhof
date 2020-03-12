@@ -1,6 +1,6 @@
 .statisticTable__table-header {
   display: grid;
-  grid-template-columns: 6% 30% 10% 10% 10% 10% 20% 10%;
+  grid-template-columns: 6% 25% 20% 10% 10% 10% 20% 10%;
   grid-auto-rows: minmax(4vh, auto);
   padding: 2vh;
   text-align: center;
@@ -12,7 +12,7 @@
 
 .statisticTable__table-body {
   display: grid;
-  grid-template-columns: 6% 30% 10% 10% 10% 10% 20% 10%;
+  grid-template-columns: 6% 25% 20% 10% 10% 10% 20% 10%;
   grid-auto-rows: minmax(4vh, auto);
   padding: 0.7vh;
   text-align: center;

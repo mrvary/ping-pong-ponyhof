@@ -14,8 +14,8 @@ const TableHeader = () => {
     <div className="statisticTable__table-header">
       <span>Platz</span>
       <span>Name</span>
+      <span>Verein</span>
       <span>S : N</span>
-      <span> </span>
       <span>BHZ</span>
       <span>QTTR</span>
       <span>QTTR-Diff</span>
@@ -32,8 +32,8 @@ const TableRow = ({ ranking }) => {
           {" "}
           {ranking.firstname + " " + ranking.lastname}{" "}
         </span>
+        <span> {ranking.clubname}</span>
         <span> {ranking.gamesWon + " : " + ranking.gamesLost} </span>
-        <span> </span>
         <span> {ranking.bhz} </span>
         <span> {ranking.qttr} </span>
         <span> {ranking.ttr_diff} </span>
