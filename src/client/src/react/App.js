@@ -11,9 +11,6 @@ import LoginView from "./views/LoginView";
 import WaitingView from "./views/WaitingView";
 import MatchView from "./views/MatchView";
 import ConnectionStatus from "./components/ConnectionStatus";
-import Title from "./components/Title";
-
-const TITLE = "TTRace";
 
 let socket;
 const isDev = true;
