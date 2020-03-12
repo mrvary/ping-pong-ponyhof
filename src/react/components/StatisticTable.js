@@ -5,6 +5,8 @@ import "../Colors.css";
 
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
+const TOGGLE_PLAYERS_INTERVAL = 7000;
+
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
@@ -84,7 +86,7 @@ const StatisticTable = () => {
           return { ...ranking, visible: !ranking.visible };
         })
       );
-    }, 7000);
+    }, TOGGLE_PLAYERS_INTERVAL);
     return () => clearInterval(interval);
   }, [rankings]);
 
