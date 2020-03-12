@@ -82,19 +82,18 @@ function calculateGamesLost(player, matches) {
   return gamesFinished - calculateGamesWon(player, matches);
 }
 
-// calculateBHZ : player, [matches] -> bhz
+// calculateBHZ : player, [matches] -> Number
 function calculateBHZ(playerToCalculate, players) {
   let bhz = 0;
   //bhz = the sum of all games your opponents you have played against have won
   players.forEach(player => {
-    if (playerToCalculate.opponentIds.includes(player.id)) {
+    if (playerToCalculate.opponentIds.includes(player.id))
       bhz += player.gamesWon;
-    }
   });
   return bhz;
 }
 
-// calculateTTRDifference : playerToCalculate, [players] -> Number
+// calculateTTRDifference : player, [players] -> Number
 function calculateTTRDifference(playerToCalculate, players) {
   //1. get all "real" opponents
   const opponents = playerToCalculate.opponentIds.filter(
@@ -125,7 +124,7 @@ function calculateTTRDifference(playerToCalculate, players) {
 }
 
 //for a detailed explanation go to --> https://www.tt-spin.de/ttr-rechner/
-// ttrCalculation : Player, [Numbers], Number -> Number
+// ttrCalculation : player, [Numbers], Number -> Number
 function ttrCalculation(ttrPlayer, ttrOpponnents, gamesWon) {
   let ttrDifference = 0;
   ttrOpponnents.forEach(ttr => {
@@ -302,6 +301,8 @@ module.exports = {
   createCurrentRanking,
   calculateBHZ,
   calculateTTRDifference,
+  calculateGamesWon,
+  calculateGamesLost,
   getMatchesInvolved,
   addMatchDetails,
   logRanking,

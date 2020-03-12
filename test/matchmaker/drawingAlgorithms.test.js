@@ -20,8 +20,6 @@ const {
   pairPlayersRoundOne,
   separateTopFromBottomPlayers,
   groupByGamesWon,
-  sortPlayersBy,
-  shuffle,
   testDrawing,
   basicDrawingAlgorithm,
   advancedDrawingAlgorithm,
@@ -46,6 +44,7 @@ describe("separateTopFromBottomPlayers()", () => {
       }
     });
   });
+
   test("freeTicket player in bottom half", () => {
     const playersWithFreeTicketPlayer = createPlayersFromJSON(
       tournamentJSON15Players
@@ -157,11 +156,12 @@ describe("drawingAlgorithms()", () => {
     let emergencyDrawing;
 
     const roundsToPlay = 6;
+    let matchId = 0;
     //play competitions
     for (let round = 1; round <= roundsToPlay; round++) {
-      //1. create new matches for the round (drawing)
-
-      let currentMatches = drawRound(players);
+      //1. create new matches for the round (drawing) by each drawingAlgorithm
+      let currentMatches = drawRound(players, matchId);
+      matchId += Math.ceil(players.length);
 
       basicDrawing = basicDrawingAlgorithm(players);
       advancedDrawing = advancedDrawingAlgorithm(players);

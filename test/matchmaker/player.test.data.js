@@ -73,7 +73,7 @@ const cleanedUpPlayers = [
     gamesWon: 3,
     matchIds: [],
     qttr: 1415,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER2",
@@ -83,7 +83,7 @@ const cleanedUpPlayers = [
     gamesWon: 5,
     matchIds: [],
     qttr: 1251,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER3",
@@ -93,7 +93,7 @@ const cleanedUpPlayers = [
     gamesWon: 1,
     matchIds: [],
     qttr: 1111,
-    active: true
+    quitInRound: 0
   }
 ];
 
@@ -903,7 +903,7 @@ const EXPECTED_PLAYER = {
   matchIds: [],
   opponentIds: [],
   qttr: 1415,
-  active: true
+  quitInRound: 0
 };
 
 const playersBeforeUpdateDrawing = [
@@ -916,7 +916,7 @@ const playersBeforeUpdateDrawing = [
     matchIds: [0],
     opponentIds: ["PLAYER2"],
     qttr: 1415,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER4",
@@ -927,7 +927,7 @@ const playersBeforeUpdateDrawing = [
     matchIds: [1],
     opponentIds: ["PLAYER3"],
     qttr: 1356,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER2",
@@ -938,7 +938,7 @@ const playersBeforeUpdateDrawing = [
     matchIds: [0],
     opponentIds: ["PLAYER1"],
     qttr: 1251,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER3",
@@ -949,7 +949,7 @@ const playersBeforeUpdateDrawing = [
     matchIds: [1],
     opponentIds: ["PLAYER4"],
     qttr: 1111,
-    active: true
+    quitInRound: 0
   }
 ];
 
@@ -988,7 +988,7 @@ const playersBeforeUpdateWinner = [
     matchIds: [0, 3],
     opponentIds: ["PLAYER2", "PLAYER3"],
     qttr: 1415,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER4",
@@ -999,7 +999,7 @@ const playersBeforeUpdateWinner = [
     matchIds: [1, 2],
     opponentIds: ["PLAYER3", "PLAYER2"],
     qttr: 1356,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER2",
@@ -1010,7 +1010,7 @@ const playersBeforeUpdateWinner = [
     matchIds: [0, 2],
     opponentIds: ["PLAYER1", "PLAYER4"],
     qttr: 1251,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER3",
@@ -1021,7 +1021,7 @@ const playersBeforeUpdateWinner = [
     matchIds: [1, 3],
     opponentIds: ["PLAYER4", "PLAYER1"],
     qttr: 1111,
-    active: true
+    quitInRound: 0
   }
 ];
 
@@ -1076,7 +1076,7 @@ const playersAfterUpdateWinner = [
     matchIds: [0, 3],
     opponentIds: ["PLAYER2", "PLAYER3"],
     qttr: 1415,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER4",
@@ -1087,7 +1087,7 @@ const playersAfterUpdateWinner = [
     matchIds: [1, 2],
     opponentIds: ["PLAYER3", "PLAYER2"],
     qttr: 1356,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER2",
@@ -1098,7 +1098,7 @@ const playersAfterUpdateWinner = [
     matchIds: [0, 2],
     opponentIds: ["PLAYER1", "PLAYER4"],
     qttr: 1251,
-    active: true
+    quitInRound: 0
   },
   {
     id: "PLAYER3",
@@ -1109,7 +1109,7 @@ const playersAfterUpdateWinner = [
     matchIds: [1, 3],
     opponentIds: ["PLAYER4", "PLAYER1"],
     qttr: 1111,
-    active: true
+    quitInRound: 0
   }
 ];
 

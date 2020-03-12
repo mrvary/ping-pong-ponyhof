@@ -1,10 +1,6 @@
-const {
-  createMatchResult,
-  getParameterByPlayerId,
-  countSetsPerPlayer
-} = require("./ranking.js");
+const { countSetsPerPlayer, getParameterByPlayerId } = require("./ranking.js");
 
-// createMatches : [{player1: Player, player2: Player}] -> [Match]
+// createMatches : [pairings] -> [matches]
 function createMatches(pairings, lastMatchId) {
   let remainingPairings = [...pairings];
   let matchId = lastMatchId > 0 ? lastMatchId++ : lastMatchId;
@@ -19,7 +15,7 @@ function createMatches(pairings, lastMatchId) {
   return matches;
 }
 
-// createMatch : {player1: Player, player2: Player} -> Match
+// createMatch : pairing -> match
 function createMatch({ player1, player2 }, matchId) {
   const MAXIMUM_SETS = 5;
 
@@ -30,6 +26,7 @@ function createMatch({ player1, player2 }, matchId) {
     sets: []
   };
 
+  //init each set
   for (let i = 0; i < MAXIMUM_SETS; i++) {
     match.sets.push({
       player1: 0,
@@ -37,6 +34,14 @@ function createMatch({ player1, player2 }, matchId) {
     });
   }
 
+  //player 2 wins automatically
+  if (player1 === "FreeTicket") {
+    for (let i = 0; i < Math.ceil(MAXIMUM_SETS / 2); i++) {
+      match.sets[i].player2 = 11;
+    }
+  }
+
+  //player 1 wins automatically
   if (player2 === "FreeTicket") {
     for (let i = 0; i < Math.ceil(MAXIMUM_SETS / 2); i++) {
       match.sets[i].player1 = 11;
@@ -45,8 +50,8 @@ function createMatch({ player1, player2 }, matchId) {
   return match;
 }
 
-// this function will just be used in our tests
 // simulateMatches : [matches] -> [matches]
+// this function will just be used in our tests
 function simulateMatches(matches) {
   matches.forEach(match => {
     simulateMatch(match);
@@ -56,8 +61,8 @@ function simulateMatches(matches) {
 
 // simulateMatch : match -> match
 function simulateMatch(match) {
-  //create possible results
-  const player1Wins = [
+  //Todo - these results are from the tests -> try to get the require done
+  const matchResultPlayer1Won = [
     {
       player1: 11,
       player2: 1
@@ -69,10 +74,18 @@ function simulateMatch(match) {
     {
       player1: 11,
       player2: 3
+    },
+    {
+      player1: 0,
+      player2: 0
+    },
+    {
+      player1: 0,
+      player2: 0
     }
   ];
 
-  const player2Wins = [
+  const matchResultPlayer2Won = [
     {
       player1: 4,
       player2: 11
@@ -84,18 +97,26 @@ function simulateMatch(match) {
     {
       player1: 6,
       player2: 11
+    },
+    {
+      player1: 0,
+      player2: 0
+    },
+    {
+      player1: 0,
+      player2: 0
     }
   ];
 
   if (match.player1 === "FreeTicket") {
-    match.sets = player2Wins;
+    match.sets = matchResultPlayer2Won;
   } else if (match.player2 === "FreeTicket") {
-    match.sets = player1Wins;
+    match.sets = matchResultPlayer1Won;
   } else {
     //no freeticket player in match -> random player wins
-    match.sets = Math.random() < 0.5 ? player1Wins : player2Wins;
+    match.sets =
+      Math.random() < 0.5 ? matchResultPlayer2Won : matchResultPlayer1Won;
   }
-
   return match;
 }
 
@@ -107,11 +128,11 @@ function getMatchWinner(match) {
 
   match.sets.forEach(set => {
     //player1 has more points
-    if (set.player1 - 1 > set.player2) {
+    if (set.player1 - 1 > set.player2 && set.player1 >= 11) {
       player1SetsWon++;
     }
     //player2 has more points
-    if (set.player1 < set.player2 - 1) {
+    if (set.player1 < set.player2 - 1 && set.player2 >= 11) {
       player2SetsWon++;
     }
   });
@@ -120,18 +141,19 @@ function getMatchWinner(match) {
 
   if (player2SetsWon === 3) return match.player2;
 
-  return "0";
+  return false;
 }
 
 // createXMLMatch : match, round -> match
 function createXMLMatch(match, round) {
+  //get winner to set matches-a/b
   const winner = getMatchWinner(match);
   let matchStateA = 0;
   let matchStateB = 0;
   if (winner === match.player1) matchStateA = 1;
   if (winner === match.player2) matchStateB = 1;
 
-  //get players sets
+  //get players sets for sets-a/b
   const sets = countSetsPerPlayer(match);
 
   let xmlMatch = {
@@ -160,13 +182,12 @@ function createXMLMatch(match, round) {
     "games-a": countPlayersPoints(match, match.player1),
     "games-b": countPlayersPoints(match, match.player2)
   };
-
   return xmlMatch;
 }
+
 // countPlayersPoints : match, id -> Number
 function countPlayersPoints(match, playerId) {
   let counter = 0;
-
   //count player1 points
   if (match.player1 === playerId) {
     match.sets.forEach(set => {
@@ -183,10 +204,11 @@ function countPlayersPoints(match, playerId) {
   return counter;
 }
 
+// logMatches : matches, players -> console.log
 function logMatches(matches, players) {
   let log = "";
   matches.forEach(match => {
-    const res = createMatchResult(match);
+    const res = countSetsPerPlayer(match);
     log +=
       "(" +
       getParameterByPlayerId(match.player1, players, "gamesWon") +
@@ -213,5 +235,6 @@ module.exports = {
   simulateMatch,
   getMatchWinner,
   logMatches,
-  createXMLMatch
+  createXMLMatch,
+  countPlayersPoints
 };
