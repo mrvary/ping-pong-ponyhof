@@ -11,12 +11,6 @@ require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
 });
 
-// extensions
-const {
-  default: installExtension,
-  REACT_DEVELOPER_TOOLS
-} = require("electron-devtools-installer");
-
 // configuration
 const config = require("./config");
 
@@ -115,6 +109,7 @@ function main() {
 
   // init main window
   mainWindow = createWindow();
+
   installExtensions();
 
   // init application menu
@@ -130,6 +125,11 @@ function main() {
  */
 function installExtensions() {
   if (isDev) {
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS
+    } = require("electron-devtools-installer");
+
     // Install extensions
     installExtension(REACT_DEVELOPER_TOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
