@@ -56,13 +56,19 @@ const TableRow = ({ ranking }) => {
   );
 };
 
+const generateTableRows = rankings => {
+  console.log(rankings);
+};
+
 const Table = ({ rankings }) => {
   return (
     <div>
       <TableHeader />
-      {rankings.map(ranking => {
-        return <TableRow key={ranking.id} ranking={ranking} />;
-      })}
+      {rankings
+        .filter(ranking => ranking.visible)
+        .map(ranking => {
+          return <TableRow key={ranking.id} ranking={ranking} />;
+        })}
     </div>
   );
 };
@@ -72,11 +78,26 @@ const StatisticTable = () => {
   const [rankings, setRankings] = useState([]);
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      setRankings(
+        rankings.map(ranking => {
+          return { ...ranking, visible: !ranking.visible };
+        })
+      );
+    }, 7000);
+    return () => clearInterval(interval);
+  }, [rankings]);
+
+  useEffect(() => {
     function handleRankingStatusChanged(event, { competition, rankings }) {
       console.log("ipc-main --> ipc-renderer", rankings);
       console.log(competition, rankings);
       setCompetition(competition);
-      setRankings(rankings);
+
+      const initRankingsWithVisibilityToggle = rankings.map((ranking, i) => {
+        return { ...ranking, visible: i < Math.floor(rankings.length / 2) };
+      });
+      setRankings(initRankingsWithVisibilityToggle);
     }
 
     ipcRenderer.on(ipcMessages.UPDATE_RANKING, handleRankingStatusChanged);
