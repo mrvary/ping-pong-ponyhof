@@ -129,7 +129,7 @@ function installExtensions() {
       default: installExtension,
       REACT_DEVELOPER_TOOLS
     } = require("electron-devtools-installer");
-    
+
     // Install extensions
     installExtension(REACT_DEVELOPER_TOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
