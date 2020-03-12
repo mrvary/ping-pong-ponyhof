@@ -1,80 +1,73 @@
-.login__container {
+.login__form {
+  display: grid;
+  grid-template-columns: 100px auto 100px;
+  grid-template-rows: 100px auto 100px;
+  text-align: center;
+  align-items: center;
+}
+
+.login__circle-container {
+  display: grid;
+  grid-row: 2/3;
+  grid-column: 2/3;
   background-color: #49bcb3;
   border-radius: 100%;
-  height: 75vh;
-  width: 75vh;
-  position: absolute;
-  top: 28%;
 }
 
 @media (min-width: 504px) {
-  .login__container {
-    height: 53vh;
-    width: 53vh;
+  .login__circle-container {
+    height: 60vh;
+    width: 60vh;
   }
+}
+
+.login__content {
+  display: grid;
+  grid-row: 2/3;
+  grid-column: 1/3;
+  padding: 2vh;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 }
 
 .login__text {
   font-style: normal;
   font-weight: bold;
-  font-size: 40px;
-  line-height: 47px;
+  font-size: 5.5vh;
   color: white;
-  position: relative;
-  left: 120px;
-  top: 100px;
-}
-
-@media (min-width: 504px) {
-  .login__text {
-    top: 113px;
-    left: 130px;
-  }
 }
 
 .login__select {
-  position: relative;
-  left: -50px;
-  top: 200px;
+  margin-top: 2vh;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   text-align-last: center;
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   border-radius: 10px;
-  font-size: 40px;
-}
-
-@media (min-width: 504px) {
-  .login__select {
-    left: -40px;
-    top: 23vh;
-  }
+  font-size: 4vh;
 }
 
 .login__button {
-  position: relative;
-  /* left: -20px; */
-  left: -140px;
-  top: 300px;
+  margin-top: 6vh;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  text-align-last: center;
   width: 80px;
   border-radius: 5px;
   font-size: 20px;
   cursor: pointer;
   background-color: black;
   color: white;
-  border: 2px solid black;
+  border: 2vh solid black;
 }
 
 .login__button:hover {
   color: black;
   background-color: white;
-  border: 2px solid black;
+  border: 2vh solid white;
 }
 
 @media (max-width: 350px) {
@@ -90,56 +83,3 @@
     top: 34vh;
   }
 }
-
-/* .login {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
-
-
-
-.login__form {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-flow: row wrap;
-}
-
-.login__select {
-  width: 40px;
-  height: 40px;
-  display: inline-block;
-  border-radius: 5px;
-  text-align: center;
-  margin: 20px;
-}
-
-select,
-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  text-align-last: center;
-}
-
-.login__button {
-  border-radius: 5px;
-  width: 40px;
-  height: 40px;
-}
-
-.login__text {
-  font-size: 32px;
-  display: block;
-  flex-basis: 100%;
-  text-align: center;
-}
-
-break {
-  flex-basis: 100%;
-  width: 0px;
-  height: 0px;
-  overflow: hidden;
-} */
