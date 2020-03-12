@@ -77,6 +77,28 @@ function listenToClientEvent(clientSocket) {
   clientSocket.on(socketIOMessages.UPDATE_SETS_REQUEST, data =>
     updateSets(clientSocket, data)
   );
+
+  // event fired when a client logs out
+  clientSocket.on(socketIOMessages.LOGOUT_REQUEST, () => {
+    clientLogout(clientSocket);
+  });
+}
+
+// -----
+
+function clientLogout(clientSocket) {
+  // delete client from active connections and notify renderer
+  const tableNumber = connectedClients.get(clientSocket.id);
+  connectedClients.delete(clientSocket.id);
+  notifyConnectionStatusToMainIPC(null, tableNumber);
+  console.info(`Client logged out [id=${clientSocket.id}]`);
+
+  const availableTables = getAvailableTables();
+
+  clientSocket.emit(socketIOMessages.LOGOUT_RESPONSE, availableTables);
+
+  // update clients with available tables
+  sendBroadcast(socketIOMessages.AVAILABLE_TABLES, availableTables);
 }
 
 // -----
