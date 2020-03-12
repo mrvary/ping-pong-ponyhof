@@ -435,7 +435,7 @@ function App() {
 }
 
 /**
- * In development the requested server is the webserver from the electron app and 
+ * In development the requested server is the webserver from the electron app and
  * not the development server of the react app. For production the requested server
  * is the one and only.
  */
@@ -444,6 +444,5 @@ function getServerURL() {
   console.info("Requested server: ", url);
   return url;
 }
-
 
 export default App;
