@@ -11,9 +11,6 @@ import LoginView from "./views/LoginView";
 import WaitingView from "./views/WaitingView";
 import MatchView from "./views/MatchView";
 import ConnectionStatus from "./components/ConnectionStatus";
-import Title from "./components/Title";
-
-const TITLE = "TTRace";
 
 let socket;
 const isDev = true;
@@ -211,6 +208,11 @@ function roundStarted(state, action) {
   }
 
   const newState = roundAvailable(state, action);
+
+  if (isMatchFinished(newState.match)) {
+    return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
+  }
+
   return { ...newState, view: VIEW.MATCH };
 }
 
@@ -380,6 +382,12 @@ function App() {
       dispatch({ type: ACTION_TYPE.COMPETITION_CANCELED });
     });
 
+    connection.on(socketIOMessages.APP_DISCONNECT, () => {
+      console.info("SERVER->CLIENT: APP DISCONNECTED");
+
+      socket = null;
+    });
+
     socket = connection;
   }
 
@@ -440,7 +448,7 @@ function App() {
  * is the one and only.
  */
 function getServerURL() {
-  const url = isDev ? "localhost:4000" : document.location.host;
+  const url = isDev ? "http://localhost:4000" : document.location.host;
   console.info("Requested server: ", url);
   return url;
 }
