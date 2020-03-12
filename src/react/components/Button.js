@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ */
+
 import React from "react";
 import "./Button.css";
 

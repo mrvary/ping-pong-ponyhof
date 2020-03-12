@@ -1,4 +1,9 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState, useEffect } from "react";
+
 import { useParams } from "react-router-dom";
 import "./CompetitionPage.css";
 import "../Colors.css";

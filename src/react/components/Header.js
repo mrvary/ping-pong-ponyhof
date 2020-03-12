@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState } from "react";
 import "./Header.css";
 import { Redirect } from "react-router-dom";

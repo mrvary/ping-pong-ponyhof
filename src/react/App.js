@@ -1,3 +1,7 @@
+/**
+ * @author Sophia Dietze
+ * @author William Kistenberger
+ */
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "./Colors.css";

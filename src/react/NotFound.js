@@ -1,3 +1,6 @@
+/**
+ * @author William Kistenberger
+ */
 import React from "react";
 
 const Notfound = () => {

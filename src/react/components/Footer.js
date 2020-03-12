@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React from "react";
 import "./Footer.css";
 

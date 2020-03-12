@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState } from "react";
 import "./CompetitionPageTable.css";
 import PopupEditTable from "./PopupEditTable";

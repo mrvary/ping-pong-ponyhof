@@ -1,3 +1,6 @@
+/**
+ * @author William Kistenberger
+ */
 import { Modal } from "react-bootstrap";
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
