@@ -60,6 +60,7 @@ const initialState = {
  * @returns {State} New state according to the action that happend.
  */
 const reducer = (state, action) => {
+  // ignore server messages when not logged in
   if (isNotLoggedIn(state, action)) {
     return state;
   }
@@ -68,7 +69,7 @@ const reducer = (state, action) => {
     // ----- connection
 
     case ACTION_TYPE.LOGGED_IN:
-      return loggedIn(state, action);
+      return handleLoggedIn(state, action);
 
     case ACTION_TYPE.LOG_OUT_REQUESTED:
       return switchToWaiting(state, "Ausloggen...");
@@ -92,10 +93,10 @@ const reducer = (state, action) => {
       return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
 
     case ACTION_TYPE.ROUND_STARTED:
-      return roundStarted(state, action);
+      return handleRoundStarted(state, action);
 
     case ACTION_TYPE.ROUND_AVAILABLE:
-      return roundAvailable(state, action);
+      return handleRoundAvailable(state, action);
 
     // ----- competition
 
@@ -125,9 +126,10 @@ const reducer = (state, action) => {
   }
 };
 
-function loggedIn(state, action) {
+function handleLoggedIn(state, action) {
   const { match, roundStarted, message, tableNumber } = action.data;
 
+  // if there is a message, an error occured during log in
   if (message) {
     console.error(message);
     return { ...state, message };
@@ -141,6 +143,7 @@ function loggedIn(state, action) {
     confirmedTableNumber: tableNumber
   };
 
+  // if match already finished, show WAITING view
   if (match && isMatchFinished(match)) {
     log("Spiel beendet.");
     return {
@@ -151,6 +154,7 @@ function loggedIn(state, action) {
     };
   }
 
+  // if match available and round is started, show MATCH view
   if (match && roundStarted) {
     log("Runde gestarted.");
     return {
@@ -160,6 +164,7 @@ function loggedIn(state, action) {
     };
   }
 
+  // if match available and round not started, show NEXT_PLAYERS view
   if (match) {
     log("Runde verfügbar");
     return {
@@ -169,6 +174,7 @@ function loggedIn(state, action) {
     };
   }
 
+  // otherwise show WAITING view
   return {
     ...newState,
     message: "Kein laufendes Turnier.",
@@ -209,13 +215,14 @@ function updateSetsResponse(state, action) {
   return { ...state, message: action.message };
 }
 
-function roundStarted(state, action) {
+function handleRoundStarted(state, action) {
   if (!action.matchesWithPlayers) {
     return { ...state, view: VIEW.MATCH };
   }
 
-  const newState = roundAvailable(state, action);
+  const newState = handleRoundAvailable(state, action);
 
+  // don't sow matches, that are already finished
   if (isMatchFinished(newState.match)) {
     return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
   }
@@ -223,7 +230,7 @@ function roundStarted(state, action) {
   return { ...newState, view: VIEW.MATCH };
 }
 
-function roundAvailable(state, action) {
+function handleRoundAvailable(state, action) {
   const matchForTable = action.matchesWithPlayers.find(
     match => match.tableNumber === state.confirmedTableNumber
   );
@@ -244,6 +251,11 @@ function roundAvailable(state, action) {
   return state;
 }
 
+/**
+ * Remove all sets that are unplayed ( ```{player1: 0, player2: 0}``` ) expect one. The server
+ * always stores five sets, but the client does not store excess empty sets.
+ * @param {Match} match
+ */
 function filterAllUnplayedSetsExceptOne(match) {
   const allPlayedSets = match.sets.filter(
     set => set.player1 !== 0 || set.player2 !== 0
@@ -253,6 +265,10 @@ function filterAllUnplayedSetsExceptOne(match) {
   return { ...match, sets: updatedSets };
 }
 
+/**
+ * Add empty sets because the server always stores five sets.
+ * @param {[Sets]} sets
+ */
 function padSetArrayWithEmptySets(sets) {
   const paddedArray = [...sets];
   while (paddedArray.length < 5) {
