@@ -23,19 +23,24 @@ const VIEW = {
 };
 
 const ACTION_TYPE = {
+  // ----- connection
   LOGGED_IN: "logged-in",
+  LOG_OUT_REQUESTED: "log-out-request",
+  LOGGED_OUT: "logged-out",
   TABLES_AVAILABLE: "tables-available",
+
+  // ----- rounds
   ROUND_CANCELED: "round-canceled",
   ROUND_STARTED: "round-started",
   ROUND_AVAILABLE: "round-available",
+
+  // ----- competition
   COMPETITION_CANCELED: "competition-canceled",
-  MATCH_SEND_RESPONSE: "match-send-request",
-  MATCH_FINISHED: "match-finished",
+
+  // ----- sets
   SETS_UPDATED: "sets-updated",
   ADD_SET: "add-set",
-  UPDATE_SETS_RESPONSE: "update-sets-response",
-  LOG_OUT_REQUESTED: "log-out-request",
-  LOGGED_OUT: "logged-out"
+  UPDATE_SETS_RESPONSE: "update-sets-response"
 };
 
 const initialState = {
@@ -47,12 +52,6 @@ const initialState = {
   message: "",
   roundStarted: false
 };
-
-//
-//
-// ----- REDUCER
-//
-//
 
 /**
  * Updates the application state
@@ -66,14 +65,28 @@ const reducer = (state, action) => {
   }
 
   switch (action.type) {
+    // ----- connection
+
     case ACTION_TYPE.LOGGED_IN:
       return loggedIn(state, action);
+
+    case ACTION_TYPE.LOG_OUT_REQUESTED:
+      return switchToWaiting(state, "Ausloggen...");
+
+    case ACTION_TYPE.LOGGED_OUT:
+      return {
+        ...state,
+        view: VIEW.LOGIN,
+        availableTables: action.availableTables
+      };
 
     case ACTION_TYPE.TABLES_AVAILABLE:
       return {
         ...state,
         availableTables: action.availableTables
       };
+
+    // ----- rounds
 
     case ACTION_TYPE.ROUND_CANCELED:
       return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
@@ -84,11 +97,15 @@ const reducer = (state, action) => {
     case ACTION_TYPE.ROUND_AVAILABLE:
       return roundAvailable(state, action);
 
+    // ----- competition
+
     case ACTION_TYPE.COMPETITION_CANCELED:
       return switchToWaiting(
         state,
         "Turnier abgebrochen, kleinen Moment bitte!"
       );
+
+    // ----- sets
 
     case ACTION_TYPE.UPDATE_SETS_RESPONSE:
       return updateSetsResponse(state, action);
@@ -101,16 +118,6 @@ const reducer = (state, action) => {
       return {
         ...state,
         match: { ...state.match, sets: [...state.match.sets, newSet] }
-      };
-
-    case ACTION_TYPE.LOG_OUT_REQUESTED:
-      return switchToWaiting(state, "Ausloggen...");
-
-    case ACTION_TYPE.LOGGED_OUT:
-      return {
-        ...state,
-        view: VIEW.LOGIN,
-        availableTables: action.availableTables
       };
 
     default:
