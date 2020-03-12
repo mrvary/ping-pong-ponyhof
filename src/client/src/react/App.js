@@ -251,33 +251,6 @@ function handleRoundAvailable(state, action) {
   return state;
 }
 
-/**
- * Remove all sets that are unplayed ( ```{player1: 0, player2: 0}``` ) expect one. The server
- * always stores five sets, but the client does not store excess empty sets.
- * @param {Match} match
- */
-function filterAllUnplayedSetsExceptOne(match) {
-  const allPlayedSets = match.sets.filter(
-    set => set.player1 !== 0 || set.player2 !== 0
-  );
-  const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
-
-  return { ...match, sets: updatedSets };
-}
-
-/**
- * Add empty sets because the server always stores five sets.
- * @param {[Sets]} sets
- */
-function padSetArrayWithEmptySets(sets) {
-  const paddedArray = [...sets];
-  while (paddedArray.length < 5) {
-    paddedArray.push({ player1: 0, player2: 0 });
-  }
-
-  return paddedArray;
-}
-
 //
 //
 // ----- APP COMPONENT
@@ -309,7 +282,7 @@ function App() {
   const updateSets = match => player => setIndex => event => {
     const newSets = match.sets.map((set, index) => {
       if (setIndex === index) {
-        set[player] = parseInt(event.target.value, 10);
+        set[player] = Number(event.target.value);
         return set;
       }
       return set;
@@ -463,6 +436,33 @@ function App() {
       {content()}
     </div>
   );
+}
+
+/**
+ * Remove all sets that are unplayed ( ```{player1: 0, player2: 0}``` ) expect one. The server
+ * always stores five sets, but the client does not store excess empty sets.
+ * @param {Match} match
+ */
+function filterAllUnplayedSetsExceptOne(match) {
+  const allPlayedSets = match.sets.filter(
+    set => set.player1 !== 0 || set.player2 !== 0
+  );
+  const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
+
+  return { ...match, sets: updatedSets };
+}
+
+/**
+ * Add empty sets because the server always stores five sets.
+ * @param {[Sets]} sets
+ */
+function padSetArrayWithEmptySets(sets) {
+  const paddedArray = [...sets];
+  while (paddedArray.length < 5) {
+    paddedArray.push({ player1: 0, player2: 0 });
+  }
+
+  return paddedArray;
 }
 
 /**
