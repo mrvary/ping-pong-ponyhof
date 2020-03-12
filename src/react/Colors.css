@@ -2,8 +2,8 @@
   --prim-background-color: #f4f4f4;
   --sec-background-color: white;
 
-  --button-color: rgb(131, 175, 206);
-  --button-hover-color: rgb(153, 186, 209);
+  --button-color: rgb(146, 182, 207);
+  --button-hover-color: rgb(154, 187, 211);
   --button-disabled-color: #f4f4f4;
 
   --grey-out-color: #4d4d4d;
@@ -20,6 +20,8 @@
   --active-match-color: rgba(213, 246, 213, 0.637);
 
   --anti-color: rgb(183, 136, 186);
+  --table-header-background-color: rgb(144, 111, 153);
+  --table-background-color: rgb(225, 205, 226);
   --main-color: #f4f4f4;
 
   --shadow-color: #a1a1a1;

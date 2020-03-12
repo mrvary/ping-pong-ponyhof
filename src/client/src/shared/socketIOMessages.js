@@ -19,5 +19,6 @@ module.exports = {
   LOGIN_RESPONSE: "login-response",
   LOGOUT_RESPONSE: "logout-response",
   START_ROUND: "start-round",
-  UPDATE_SETS_RESPONSE: "send-set-to-server"
+  UPDATE_SETS_RESPONSE: "send-set-to-server",
+  APP_DISCONNECT: "app-disconnect"
 };

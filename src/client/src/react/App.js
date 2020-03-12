@@ -36,7 +36,6 @@ const VIEW = {
 };
 
 const ACTION_TYPE = {
-  // SET_TABLE_NUMBER: "set-table-number",
   LOGGED_IN: "logged-in",
   TABLES_AVAILABLE: "tables-available",
   ROUND_CANCELED: "round-canceled",
@@ -253,7 +252,7 @@ function padSetArrayWithEmptySets(sets) {
     paddedArray.push({ player1: 0, player2: 0 });
   }
 
-  return sets;
+  return paddedArray;
 }
 
 //
@@ -296,7 +295,8 @@ function App() {
     dispatch({ type: ACTION_TYPE.SETS_UPDATED, sets: newSets });
   };
 
-  const addSet = () => {
+  const addSet = event => {
+    sendSets(state.match)(event);
     dispatch({ type: ACTION_TYPE.ADD_SET });
   };
 
@@ -385,10 +385,6 @@ function App() {
     socket = connection;
   }
 
-  // const liink =
-  //   'Ein Turnier wartet auf dich -> <a href="http://192.168.2.182:4000"><a>';
-  // const link = `whatsapp://send?text=${encodeURIComponent(liink)}`;
-
   //
   //
   // ----- VIEW
@@ -436,7 +432,6 @@ function App() {
         />
       )}
       {content()}
-      {/* <a href={link}>LINK</a> */}
     </div>
   );
 }

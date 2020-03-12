@@ -1,11 +1,12 @@
 /**
+ * Helper to manage the CRUD-Operations for the competitions
  * @author Marco Goebel
  */
 
-let metaStorage = require("../lowdb/meta-storage");
+let metaStorage = null;
 
-function init(filePath, useInMemory) {
-  metaStorage.init(filePath, useInMemory);
+function init(storage) {
+  metaStorage = storage;
 }
 
 function getAllCompetitions() {

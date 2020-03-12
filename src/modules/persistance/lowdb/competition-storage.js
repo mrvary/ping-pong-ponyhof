@@ -1,4 +1,6 @@
 /**
+ * Container for the lowDB storage that handles all CRUD-Operations for a single competition.
+ * Contains the app state of a single competition
  * @author Marco Goebel
  */
 
@@ -36,6 +38,10 @@ function init(filePath, useInMemory = true) {
   internalUseInMemory = useInMemory;
 
   storage = lowDBDao.open(filePath, useInMemory);
+}
+
+function isInitialized() {
+  return !!storage;
 }
 
 function initStateWithDefaults(jsonObject) {
@@ -127,7 +133,13 @@ function updatePlayer(player) {
 }
 
 function getAllPlayers() {
-  return lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
+  const players = lowDBDao.getAllElements(storage, ELEMENT_PATHS.PLAYERS);
+  console.log(`Get ${players.length} players from storage`);
+  return players;
+}
+
+function getPlayer(id) {
+  return lowDBDao.getElement(storage, ELEMENT_PATHS.PLAYERS, { id: id });
 }
 
 function getImportedData() {
@@ -140,6 +152,7 @@ module.exports = {
   getImportedData,
 
   init,
+  isInitialized,
   initStateWithDefaults,
   getState,
   close,
@@ -153,5 +166,7 @@ module.exports = {
 
   createPlayers,
   updatePlayers,
-  getAllPlayers
+  updatePlayer,
+  getAllPlayers,
+  getPlayer
 };

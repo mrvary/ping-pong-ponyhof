@@ -1,4 +1,5 @@
 /**
+ * HTTP server which handles the client-server communication and delivers the client app to the browsers
  * @author Marco Goebel
  */
 
@@ -181,6 +182,10 @@ function notifyConnectionStatusToMainIPC(connectedDevice, tableNumber) {
 
 // SERVER -> CLIENT COMMUNICATION
 
+function sendAppDisconnectBroadcast() {
+  sendBroadcast(socketIOMessages.APP_DISCONNECT);
+}
+
 function sendNextRoundBroadcast(data) {
   sendBroadcast(socketIOMessages.NEXT_ROUND, data);
 }
@@ -233,5 +238,7 @@ module.exports = {
   sendNextRoundBroadcast,
   sendCancelRoundBroadcast,
 
-  sendCancelCompetitionBroadcast
+  sendCancelCompetitionBroadcast,
+
+  sendAppDisconnectBroadcast
 };

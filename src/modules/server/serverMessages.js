@@ -1,4 +1,5 @@
 /**
+ * Constants for the messages exchanged between server and ipcMain
  * @author Marco Goebel
  */
 

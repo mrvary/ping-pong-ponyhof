@@ -15,7 +15,7 @@
   background: var(--button-color);
 }
 .button:hover {
-  color: var(--grey-out-color);
+  background: var(--button-hover-color);
 }
 .button:focus {
   outline: 0;
@@ -24,4 +24,7 @@
   background: var(--button-disabled-color);
   border: 0.1vh solid var(--grey-out-color);
   color: var(--grey-out-color);
+}
+.button--disabled:hover {
+  background: var(--button-disabled-color);
 }

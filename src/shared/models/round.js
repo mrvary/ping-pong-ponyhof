@@ -1,4 +1,5 @@
 /**
+ * Model for a round
  * @author Marco Goebel
  */
 

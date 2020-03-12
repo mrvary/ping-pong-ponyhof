@@ -4,7 +4,11 @@
 
 const { dialog } = require("electron");
 
-// open file dialog looking for xml
+/**
+ * Open file dialog of OS to select an xml file
+ * @access public
+ * @returns {Promise<string>}
+ */
 function openXMLFile() {
   return dialog
     .showOpenDialog({
@@ -19,6 +23,12 @@ function openXMLFile() {
     });
 }
 
+/**
+ * Open save dialog of OS to save an xml file
+ * @access public
+ * @param {string} defaultFilePath
+ * @returns {Promise<Electron.SaveDialogReturnValue>}
+ */
 function showSaveDialog(defaultFilePath) {
   const options = {
     title: "Turnier exportieren",
@@ -27,13 +37,18 @@ function showSaveDialog(defaultFilePath) {
     filter: [{ name: "XML", extensions: ["xml"] }]
   };
 
-  return dialog.showSaveDialog(null, options, path => {
-    console.log(path);
-  });
+  return dialog.showSaveDialog(null, options);
 }
 
+/**
+ * Show a simple dialog box of OS
+ * @access public
+ * @param title
+ * @param message
+ * @returns {Promise<Electron.MessageBoxReturnValue>}
+ */
 function showInfoBox(title, message) {
-  dialog.showMessageBox({
+  return dialog.showMessageBox({
     type: "info",
     title: title,
     message: message

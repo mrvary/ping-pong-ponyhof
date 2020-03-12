@@ -1,4 +1,5 @@
 /**
+ * Constants for the playmodes
  * @author Marco Goebel
  */
 

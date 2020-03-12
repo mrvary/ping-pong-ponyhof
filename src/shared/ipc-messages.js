@@ -1,4 +1,5 @@
 /**
+ * Constants for the messages exchanged between ipc renderer and ipcMain
  * @author Marco Goebel
  */
 
@@ -26,8 +27,9 @@ module.exports = {
   CANCEL_ROUND: "cancel-round",
 
   OPEN_NEW_WINDOW: "open-new-window",
-
   GET_RANKING_REQUEST: "get-ranking-request",
+
+  GET_IP_ADDRESS_REQUEST: "get-ip-address-request",
 
   // ********************************
   // ipc-main -> ipc-renderer
@@ -40,5 +42,7 @@ module.exports = {
   IMPORT_XML_FILE_RESPONSE: "import-xml-file_response",
 
   UPDATE_MATCHES: "update-matches",
-  UPDATE_RANKING: "update-ranking"
+  UPDATE_RANKING: "update-ranking",
+
+  GET_IP_ADDRESS_RESPONSE: "get-ip-address-response"
 };

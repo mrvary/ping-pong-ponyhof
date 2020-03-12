@@ -17,8 +17,6 @@ const COMPETITION_STATE = require("../shared/models/competition-state");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
-let competitionID = null;
-
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
@@ -45,6 +43,7 @@ const App = () => {
     ipcRenderer.once(ipcMessages.GET_COMPETITIONS_RESPONSE, (event, args) => {
       const { competitions } = args;
       setCompetitions(competitions);
+      updateActiveState(competitions);
     });
 
     // trigger event to get competitions from ipc-main
@@ -53,8 +52,9 @@ const App = () => {
       "ipc-renderer --> ipc-main:",
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
+  };
 
-    //check for active game
+  const updateActiveState = competitions => {
     setHasActiveGame(false);
     competitions.map(competition => {
       if (
@@ -96,7 +96,6 @@ const App = () => {
           ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE
         );
         const { competition, players } = args;
-        competitionID = competition.id;
 
         setViewedCompetition(competition);
         setViewedPlayers(players);
@@ -112,21 +111,19 @@ const App = () => {
         "ipc-main --> ipc-renderer:",
         ipcMessages.IMPORT_XML_FILE_RESPONSE
       );
-      const { competitionId, message } = args;
+      const { message } = args;
 
-      if (!competitionId) {
+      if (message !== "success") {
         setLinkDisabled(true);
         handleShowError();
         setErrorMessage(message);
         return;
       }
 
-      setCurrentId(competitionId);
+      setCurrentId(viewedCompetition.id);
     });
 
-    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST, {
-      competitionId: competitionID
-    });
+    ipcRenderer.send(ipcMessages.IMPORT_XML_FILE_REQUEST);
   };
 
   const deleteCompetition = id => {
@@ -147,6 +144,16 @@ const App = () => {
     ipcRenderer.send(ipcMessages.DELETE_COMPETITION_REQUEST, {
       competitionId: id
     });
+    // set hasActivGame false if deleted competition was activ
+    competitions.forEach(competition => {
+      if (
+        competition.id === id &&
+        (competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_ACTIVE ||
+          competition.state === COMPETITION_STATE.COMP_ACTIVE_ROUND_READY)
+      ) {
+        setHasActiveGame(false);
+      }
+    });
   };
 
   return (
@@ -161,6 +168,7 @@ const App = () => {
         viewedPlayers={viewedPlayers}
         viewedCompetition={viewedCompetition}
         errorMessage={errorMessage}
+        hasActiveGame={hasActiveGame}
       />
       {competitions.map(competition => (
         <Competition

@@ -9,8 +9,16 @@ const Memory = require("lowdb/adapters/Memory");
 
 const FilePathIsUndefinedException = "file path is undefined";
 
-// STATE OPERATIONS
+// ---------------------------------
+// Initialization operations
+// ---------------------------------
 
+/**
+ * Open new lowDB connection
+ * @access public
+ * @param filePath
+ * @param useInMemory
+ */
 function open(filePath, useInMemory = true) {
   // check the parameter
   if (!useInMemory && !filePath) {
@@ -22,33 +30,65 @@ function open(filePath, useInMemory = true) {
   return low(adapter);
 }
 
+/**
+ * Override the current lowDB state with a new state
+ * @access public
+ * @param storage
+ * @param object
+ */
 function clear(storage, object) {
   storage.setState(object).write();
 }
 
+/**
+ * Initialize lowDB state with a default values
+ * @access public
+ * @param storage
+ * @param object
+ */
 function initStateWithDefaults(storage, object) {
-  //storage.setState(object).write();
   storage.defaults(object).write();
 }
 
+/**
+ * Return the current lowDB state
+ * @access public
+ * @param storage
+ * @returns {"progressing" | "completed" | "cancelled" | "interrupted" | MatcherState | Promise<NavigationPreloadState>}
+ */
 function getState(storage) {
   return storage.getState();
 }
 
+// ---------------------------------
 // CRUD FUNCTIONALITY
+// ---------------------------------
 
+/**
+ * Returns all elements of an object path
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @returns {*}
+ */
 function getAllElements(storage, elementPath) {
   if (!hasElementPath(storage, elementPath)) {
-    // TODO: throw error
     return;
   }
 
   return storage.get(elementPath).value();
 }
 
+/**
+ * Return one single element of an object path
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @param identifier
+ * @returns {*}
+ */
 function getElement(storage, elementPath, identifier) {
   if (!hasElementPath(storage, elementPath)) {
-    // TODO: throw error
     return;
   }
 
@@ -58,8 +98,13 @@ function getElement(storage, elementPath, identifier) {
     .value();
 }
 
-// TODO: Create Object if Necessary
-
+/**
+ * Adds new elements into an object path
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @param elements
+ */
 function createElements(storage, elementPath, elements) {
   if (!hasElementPath(storage, elementPath)) {
     // create new collection with data
@@ -70,11 +115,18 @@ function createElements(storage, elementPath, elements) {
   // add matches to collection
   const collection = storage.get(elementPath);
   elements.forEach(element => {
-    // TODO: Prüfen, ob es das Element mit dem identifier schon gibt?
     collection.push(element).write();
   });
 }
 
+/**
+ * Adds a new element into an object path.
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @param element
+ * @param identifier
+ */
 function createElement(storage, elementPath, element, identifier = undefined) {
   if (!hasElementPath(storage, elementPath)) {
     // create new collection with data
@@ -84,7 +136,6 @@ function createElement(storage, elementPath, element, identifier = undefined) {
 
   // check if a element with the identifier exists
   if (identifier && hasElement(storage, elementPath, identifier)) {
-    // TODO: throw error
     return;
   }
 
@@ -94,6 +145,15 @@ function createElement(storage, elementPath, element, identifier = undefined) {
     .write();
 }
 
+/**
+ * Update single element in object path.
+ * If the element does not exists it would be created.
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @param element
+ * @param identifier
+ */
 function updateElement(storage, elementPath, element, identifier) {
   if (!hasElementPath(storage, elementPath)) {
     // create new collection with data
@@ -108,6 +168,13 @@ function updateElement(storage, elementPath, element, identifier) {
     .write();
 }
 
+/**
+ * Delete element in object path
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @param identifier
+ */
 function deleteElement(storage, elementPath, identifier) {
   if (!hasElement(storage, elementPath, identifier)) {
     return;
@@ -119,11 +186,26 @@ function deleteElement(storage, elementPath, identifier) {
     .write();
 }
 
+/**
+ * Checks if an object exists under the element path
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @param identifier
+ * @returns {boolean}
+ */
 function hasElement(storage, elementPath, identifier) {
   const element = getElement(storage, elementPath, identifier);
   return !!element;
 }
 
+/**
+ * Checks if an element path in the lowDB database exists
+ * @access public
+ * @param storage
+ * @param elementPath
+ * @returns {*}
+ */
 function hasElementPath(storage, elementPath) {
   return storage.has(elementPath).value();
 }

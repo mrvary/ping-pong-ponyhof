@@ -15,7 +15,8 @@ function Header({
   setLinkDisabled,
   viewedPlayers,
   viewedCompetition,
-  errorMessage
+  errorMessage,
+  hasActiveGame
 }) {
   return (
     <section className="header__picture">
@@ -29,6 +30,7 @@ function Header({
           viewedPlayers={viewedPlayers}
           viewedCompetition={viewedCompetition}
           errorMessage={errorMessage}
+          hasActiveGame={hasActiveGame}
         />
         <div className="header__alignment-logo-title">
           <div className="header__logo"></div>
@@ -47,20 +49,26 @@ const HeaderBox = ({
   setLinkDisabled,
   viewedPlayers,
   viewedCompetition,
-  errorMessage
+  errorMessage,
+  hasActiveGame
 }) => {
   const competition = currentId !== "" ? "/competition/" + currentId : "";
   const [showPopupError, setShowPopupError] = useState(false);
   const handleCloseError = () => setShowPopupError(false);
   const handleShowError = () => setShowPopupError(true);
-
+  let eventOnClick = openXMLDialog;
+  if (hasActiveGame) {
+    eventOnClick = handleShowError;
+    errorMessage =
+      "Es kann kein neues Turnier geladen werden, wenn eines bereits läuft";
+  }
   return (
     <div className="header__match-box">
       <div className="header__match-box--alignment-title">
         <div className="header__match-box--icon"></div>
         <div className="header__match-box--title">Neues Turnier anlegen</div>
       </div>
-      <UploadXML openXMLDialog={openXMLDialog} linkDisabled={linkDisabled} />
+      <UploadXML linkDisabled={linkDisabled} eventOnClick={eventOnClick} />
       <PopupReviewPlayer
         show={!linkDisabled}
         handleClose={setLinkDisabled}
@@ -80,7 +88,7 @@ const HeaderBox = ({
   );
 };
 
-const UploadXML = ({ openXMLDialog, linkDisabled }) => {
+const UploadXML = ({ linkDisabled, eventOnClick }) => {
   let xmlText = "Klicke hier um deine XML Datei hochzuladen!";
   let xmlUploadedCss = "header__upload-xml-button";
 
@@ -89,7 +97,7 @@ const UploadXML = ({ openXMLDialog, linkDisabled }) => {
     xmlUploadedCss = xmlUploadedCss + " header__upload-xml-button--true";
   }
   return (
-    <button className={xmlUploadedCss} onClick={openXMLDialog}>
+    <button className={xmlUploadedCss} onClick={eventOnClick}>
       {xmlText}
     </button>
   );

@@ -1,4 +1,6 @@
 /**
+ * Container for the lowDB storage that handles all CRUD-Operations for all competitions in the application
+ * Contains the app state and meta data of each competition which has been imported
  * @author Marco Goebel
  */
 
@@ -8,7 +10,7 @@ const lowDBDao = require("./dao/lowdb-dao");
 const FilePathIsUndefinedException = lowDBDao.FilePathIsUndefinedException;
 const ERROR_MESSAGES = {
   FilePathIsUndefinedException,
-  CompetitionExistsException: "competition already exits"
+  CompetitionExistsException: "Das Turnier wurde bereits importiert."
 };
 
 // Element Paths
@@ -30,8 +32,6 @@ function init(filePath, useInMemory = true) {
   }
 
   storage = lowDBDao.open(filePath, useInMemory);
-
-  initStateWithDefaults({ competitions: [] });
 }
 
 function initStateWithDefaults(jsonObject) {
