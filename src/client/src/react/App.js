@@ -23,19 +23,24 @@ const VIEW = {
 };
 
 const ACTION_TYPE = {
+  // ----- connection
   LOGGED_IN: "logged-in",
+  LOG_OUT_REQUESTED: "log-out-request",
+  LOGGED_OUT: "logged-out",
   TABLES_AVAILABLE: "tables-available",
+
+  // ----- rounds
   ROUND_CANCELED: "round-canceled",
   ROUND_STARTED: "round-started",
   ROUND_AVAILABLE: "round-available",
+
+  // ----- competition
   COMPETITION_CANCELED: "competition-canceled",
-  MATCH_SEND_RESPONSE: "match-send-request",
-  MATCH_FINISHED: "match-finished",
+
+  // ----- sets
   SETS_UPDATED: "sets-updated",
   ADD_SET: "add-set",
-  UPDATE_SETS_RESPONSE: "update-sets-response",
-  LOG_OUT_REQUESTED: "log-out-request",
-  LOGGED_OUT: "logged-out"
+  UPDATE_SETS_RESPONSE: "update-sets-response"
 };
 
 const initialState = {
@@ -48,12 +53,6 @@ const initialState = {
   roundStarted: false
 };
 
-//
-//
-// ----- REDUCER
-//
-//
-
 /**
  * Updates the application state
  * @param {State} state The previous state
@@ -61,13 +60,26 @@ const initialState = {
  * @returns {State} New state according to the action that happend.
  */
 const reducer = (state, action) => {
+  // ignore server messages when not logged in
   if (isNotLoggedIn(state, action)) {
     return state;
   }
 
   switch (action.type) {
+    // ----- connection
+
     case ACTION_TYPE.LOGGED_IN:
-      return loggedIn(state, action);
+      return handleLoggedIn(state, action);
+
+    case ACTION_TYPE.LOG_OUT_REQUESTED:
+      return switchToWaiting(state, "Ausloggen...");
+
+    case ACTION_TYPE.LOGGED_OUT:
+      return {
+        ...state,
+        view: VIEW.LOGIN,
+        availableTables: action.availableTables
+      };
 
     case ACTION_TYPE.TABLES_AVAILABLE:
       return {
@@ -75,20 +87,26 @@ const reducer = (state, action) => {
         availableTables: action.availableTables
       };
 
+    // ----- rounds
+
     case ACTION_TYPE.ROUND_CANCELED:
       return switchToWaiting(state, "Runde abgebrochen, kleinen Moment bitte!");
 
     case ACTION_TYPE.ROUND_STARTED:
-      return roundStarted(state, action);
+      return handleRoundStarted(state, action);
 
     case ACTION_TYPE.ROUND_AVAILABLE:
-      return roundAvailable(state, action);
+      return handleRoundAvailable(state, action);
+
+    // ----- competition
 
     case ACTION_TYPE.COMPETITION_CANCELED:
       return switchToWaiting(
         state,
         "Turnier abgebrochen, kleinen Moment bitte!"
       );
+
+    // ----- sets
 
     case ACTION_TYPE.UPDATE_SETS_RESPONSE:
       return updateSetsResponse(state, action);
@@ -103,24 +121,15 @@ const reducer = (state, action) => {
         match: { ...state.match, sets: [...state.match.sets, newSet] }
       };
 
-    case ACTION_TYPE.LOG_OUT_REQUESTED:
-      return switchToWaiting(state, "Ausloggen...");
-
-    case ACTION_TYPE.LOGGED_OUT:
-      return {
-        ...state,
-        view: VIEW.LOGIN,
-        availableTables: action.availableTables
-      };
-
     default:
       return state;
   }
 };
 
-function loggedIn(state, action) {
+function handleLoggedIn(state, action) {
   const { match, roundStarted, message, tableNumber } = action.data;
 
+  // if there is a message, an error occured during log in
   if (message) {
     console.error(message);
     return { ...state, message };
@@ -134,8 +143,9 @@ function loggedIn(state, action) {
     confirmedTableNumber: tableNumber
   };
 
+  // if match already finished, show WAITING view
   if (match && isMatchFinished(match)) {
-    console.info("Spiel beendet.");
+    log("Spiel beendet.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -144,8 +154,9 @@ function loggedIn(state, action) {
     };
   }
 
+  // if match available and round is started, show MATCH view
   if (match && roundStarted) {
-    console.info("Runde gestarted.");
+    log("Runde gestarted.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -153,8 +164,9 @@ function loggedIn(state, action) {
     };
   }
 
+  // if match available and round not started, show NEXT_PLAYERS view
   if (match) {
-    console.info("Runde verfügbar");
+    log("Runde verfügbar");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -162,6 +174,7 @@ function loggedIn(state, action) {
     };
   }
 
+  // otherwise show WAITING view
   return {
     ...newState,
     message: "Kein laufendes Turnier.",
@@ -189,26 +202,27 @@ function isNotLoggedIn(state, action) {
 
 function updateSetsResponse(state, action) {
   if (action.message === "success") {
-    console.info("Sets successfully sent");
+    log("Sets successfully sent");
     return state;
   }
 
   if (action.message === "finished") {
-    console.info("Sets successfully sent. Match is finished.");
+    log("Sets successfully sent. Match is finished.");
     return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
   }
 
-  console.info("Could not send sets");
+  log("Could not send sets");
   return { ...state, message: action.message };
 }
 
-function roundStarted(state, action) {
+function handleRoundStarted(state, action) {
   if (!action.matchesWithPlayers) {
     return { ...state, view: VIEW.MATCH };
   }
 
-  const newState = roundAvailable(state, action);
+  const newState = handleRoundAvailable(state, action);
 
+  // don't sow matches, that are already finished
   if (isMatchFinished(newState.match)) {
     return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
   }
@@ -216,7 +230,7 @@ function roundStarted(state, action) {
   return { ...newState, view: VIEW.MATCH };
 }
 
-function roundAvailable(state, action) {
+function handleRoundAvailable(state, action) {
   const matchForTable = action.matchesWithPlayers.find(
     match => match.tableNumber === state.confirmedTableNumber
   );
@@ -237,24 +251,6 @@ function roundAvailable(state, action) {
   return state;
 }
 
-function filterAllUnplayedSetsExceptOne(match) {
-  const allPlayedSets = match.sets.filter(
-    set => set.player1 !== 0 || set.player2 !== 0
-  );
-  const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
-
-  return { ...match, sets: updatedSets };
-}
-
-function padSetArrayWithEmptySets(sets) {
-  const paddedArray = [...sets];
-  while (paddedArray.length < 5) {
-    paddedArray.push({ player1: 0, player2: 0 });
-  }
-
-  return paddedArray;
-}
-
 //
 //
 // ----- APP COMPONENT
@@ -266,7 +262,7 @@ function App() {
 
   const sendTableNumber = tableNumber => event => {
     event.preventDefault();
-    console.info("CLIENT->SERVER: LOGIN_REQUEST");
+    log("CLIENT->SERVER: LOGIN_REQUEST");
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
   };
 
@@ -279,14 +275,14 @@ function App() {
       tableNumber: state.confirmedTableNumber
     };
 
-    console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+    log("CLIENT->SERVER: UPDATE_SETS_REQUEST");
     socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, requestData);
   };
 
   const updateSets = match => player => setIndex => event => {
     const newSets = match.sets.map((set, index) => {
       if (setIndex === index) {
-        set[player] = parseInt(event.target.value, 10);
+        set[player] = Number(event.target.value);
         return set;
       }
       return set;
@@ -303,7 +299,7 @@ function App() {
   const logOut = event => {
     event.preventDefault();
 
-    console.info("CLIENT->SERVER: LOGOUT_REQUEST");
+    log("CLIENT->SERVER: LOGOUT_REQUEST");
     socket.emit(socketIOMessages.LOGOUT_REQUEST);
     dispatch({ type: ACTION_TYPE.LOG_OUT_REQUESTED });
   };
@@ -320,25 +316,25 @@ function App() {
     const connection = io(base_url);
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
-      console.info("SERVER->CLIENT: AVAILABLE_TABLES");
+      log("SERVER->CLIENT: AVAILABLE_TABLES");
 
       dispatch({ type: ACTION_TYPE.TABLES_AVAILABLE, availableTables: tables });
     });
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
-      console.info("SERVER->CLIENT: LOGIN_RESPONSE");
+      log("SERVER->CLIENT: LOGIN_RESPONSE");
 
       dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
     });
 
     connection.on(socketIOMessages.LOGOUT_RESPONSE, tables => {
-      console.info("SERVER->CLIENT: LOGOUT_RESPONSE");
+      log("SERVER->CLIENT: LOGOUT_RESPONSE");
 
       dispatch({ type: ACTION_TYPE.LOGGED_OUT, availableTables: tables });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
-      console.info("SERVER->CLIENT: NEXT_ROUND");
+      log("SERVER->CLIENT: NEXT_ROUND");
 
       dispatch({
         type: ACTION_TYPE.ROUND_AVAILABLE,
@@ -347,7 +343,7 @@ function App() {
     });
 
     connection.on(socketIOMessages.START_ROUND, data => {
-      console.info("SERVER->CLIENT: START_ROUND");
+      log("SERVER->CLIENT: START_ROUND");
 
       data
         ? dispatch({
@@ -358,13 +354,13 @@ function App() {
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
-      console.info("SERVER->CLIENT: CANCEL_ROUND");
+      log("SERVER->CLIENT: CANCEL_ROUND");
 
       dispatch({ type: ACTION_TYPE.ROUND_CANCELED });
     });
 
     connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, data => {
-      console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
+      log("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
 
       if (!data) {
         console.error("No data in UPDATE_SETS_RESPONSE");
@@ -377,13 +373,13 @@ function App() {
     });
 
     connection.on(socketIOMessages.CANCEL_COMPETITION, () => {
-      console.info("SERVER->CLIENT: COMPETITION_CANCELED");
+      log("SERVER->CLIENT: COMPETITION_CANCELED");
 
       dispatch({ type: ACTION_TYPE.COMPETITION_CANCELED });
     });
 
     connection.on(socketIOMessages.APP_DISCONNECT, () => {
-      console.info("SERVER->CLIENT: APP DISCONNECTED");
+      log("SERVER->CLIENT: APP DISCONNECTED");
 
       socket = null;
     });
@@ -443,13 +439,50 @@ function App() {
 }
 
 /**
+ * Remove all sets that are unplayed ( ```{player1: 0, player2: 0}``` ) expect one. The server
+ * always stores five sets, but the client does not store excess empty sets.
+ * @param {Match} match
+ */
+function filterAllUnplayedSetsExceptOne(match) {
+  const allPlayedSets = match.sets.filter(
+    set => set.player1 !== 0 || set.player2 !== 0
+  );
+  const updatedSets = [...allPlayedSets, { player1: 0, player2: 0 }];
+
+  return { ...match, sets: updatedSets };
+}
+
+/**
+ * Add empty sets because the server always stores five sets.
+ * @param {[Sets]} sets
+ */
+function padSetArrayWithEmptySets(sets) {
+  const paddedArray = [...sets];
+  while (paddedArray.length < 5) {
+    paddedArray.push({ player1: 0, player2: 0 });
+  }
+
+  return paddedArray;
+}
+
+/**
+ * Log messages when in development mode.
+ * @param {String} message
+ */
+function log(message) {
+  if (isDev) {
+    console.info(message);
+  }
+}
+
+/**
  * In development the requested server is the webserver from the electron app and
  * not the development server of the react app. For production the requested server
  * is the one and only.
  */
 function getServerURL() {
   const url = isDev ? "http://localhost:4000" : document.location.host;
-  console.info("Requested server: ", url);
+  log("Requested server: ", url);
   return url;
 }
 

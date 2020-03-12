@@ -11,7 +11,7 @@ import {
 const MAX_INPUT = 50;
 
 function ScoreBoard({ match, sendSets, updateSets, addSet }) {
-  const generateOptions = () => {
+  const generateSelectOptions = () => {
     const numberArray = [...Array(MAX_INPUT).keys()];
     const options = numberArray.map(number => (
       <option key={number} value={number}>
@@ -37,7 +37,7 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
                 value={set.player1}
                 onChange={updateSets(match)("player1")(index)}
               >
-                {generateOptions()}
+                {generateSelectOptions()}
               </select>
               <span className="score-board__set-delimiter">:</span>
               <select
@@ -48,7 +48,7 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
                 value={set.player2}
                 onChange={updateSets(match)("player2")(index)}
               >
-                {generateOptions()}
+                {generateSelectOptions()}
               </select>
             </div>
           );
@@ -68,6 +68,10 @@ function ScoreBoard({ match, sendSets, updateSets, addSet }) {
   );
 }
 
+/**
+ * Determine if all sets are valid by adding up respective sets won by either player
+ * @param {Match} match
+ */
 function everySetIsValid(match) {
   return setsWonPlayer1(match) + setsWonPlayer2(match) === match.sets.length;
 }
