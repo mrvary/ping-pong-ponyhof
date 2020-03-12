@@ -202,7 +202,7 @@ function getNextBetterOpponent(player, remainingPlayers) {
   return false;
 }
 
-// isRematch : [players] -> [boolean]
+// isRematch : [players] -> boolean
 function isRematch(player1, player2) {
   //find a match where player1 and player2 were involved
   const duplicates = player1.matchIds.filter(matchId => {
