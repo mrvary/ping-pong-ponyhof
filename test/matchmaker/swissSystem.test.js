@@ -12,10 +12,6 @@ const {
   logRanking
 } = require("../../src/matchmaker/ranking");
 
-const { exportXML } = require("../../src/modules/export/xml-exporter");
-
-const { testXMLasJSON } = require("./tournament.test.data");
-
 const {
   createPlayersFromJSON,
   updatePlayersAfterDrawing,
@@ -35,31 +31,29 @@ describe("playCompetition", () => {
     //1. create new matches for the round (drawing)
     currentMatches = drawRound(players, matchId);
     matchId += 8;
+
     //2. update the players with the created matches
     players = updatePlayersAfterDrawing(players, currentMatches);
 
-    //3.1 simulate matches
+    //3 simulate matches
     currentMatches = simulateMatches(currentMatches);
 
-    //3.2 add currentMatches to all matches
+    //4 add currentMatches to all matches
     currentMatches.forEach(currentMatch => {
       matches.push(currentMatch);
     });
 
-    //3.3 log matches
+    //4.1 log matches
     logMatches(currentMatches, players);
 
-    //4. update winner
+    //5. update winner
     players = updateWinner(players, currentMatches);
 
-    //5. create ranking
+    //6. create ranking
     ranking = createCurrentRanking(players, matches);
 
-    //5.5 log ranking
+    //6.1 log ranking
     logRanking(ranking);
-
-    //6. export final XML
-    //if (round === 6) exportXML(players, matches, testXMLasJSON);
   }
 
   test("match length of the last round", () => {
@@ -74,8 +68,7 @@ describe("playCompetition", () => {
     expect(sumGamesWon).toBe((roundsToPlay * players.length) / 2);
   });
 
-  //TODO check if the sum of all players must be 0?
-  //sometimes the result is 1 or 2
+  //TODO check if the sum of all players must be 0? (I dont think so) --> sometimes the result is 1 or 2
   test("ttr difference of all players together  ", () => {
     let ttrDiff = 0;
     ranking.forEach(player => {
