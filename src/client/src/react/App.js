@@ -148,7 +148,7 @@ function loggedIn(state, action) {
   }
 
   if (match && roundStarted) {
-    console.info("round is started");
+    console.info("Runde gestarted.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -157,7 +157,7 @@ function loggedIn(state, action) {
   }
 
   if (match) {
-    console.info("round is available");
+    console.info("Runde verfügbar");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
