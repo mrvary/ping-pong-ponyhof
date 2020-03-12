@@ -47,7 +47,8 @@ const ACTION_TYPE = {
   SETS_UPDATED: "sets-updated",
   ADD_SET: "add-set",
   UPDATE_SETS_RESPONSE: "update-sets-response",
-  LOG_OUT: "log-out"
+  LOG_OUT_REQUESTED: "log-out-request",
+  LOGGED_OUT: "logged-out"
 };
 
 const initialState = {
@@ -74,9 +75,6 @@ const reducer = (state, action) => {
   switch (action.type) {
     case ACTION_TYPE.LOGGED_IN:
       return loggedIn(state, action);
-
-    case ACTION_TYPE.LOGGED_OUT:
-      return { ...initialState, availableTables: action.availableTables };
 
     case ACTION_TYPE.TABLES_AVAILABLE:
       return {
@@ -112,11 +110,11 @@ const reducer = (state, action) => {
         match: { ...state.match, sets: [...state.match.sets, newSet] }
       };
 
-    case ACTION_TYPE.LOG_OUT:
-      return {
-        ...initialState,
-        availableTables: state.availableTables
-      };
+    case ACTION_TYPE.LOG_OUT_REQUESTED:
+      return switchToWaiting(state, "Ausloggen...");
+
+    case ACTION_TYPE.LOGGED_OUT:
+      return { ...state, availableTables: action.availableTables };
 
     default:
       return state;
@@ -140,7 +138,7 @@ function loggedIn(state, action) {
   };
 
   if (match && isMatchFinished(match)) {
-    console.info("match is finished");
+    console.info("Spiel beendet.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -305,7 +303,7 @@ function App() {
 
     console.info("CLIENT->SERVER: LOGOUT_REQUEST");
     socket.emit(socketIOMessages.LOGOUT_REQUEST);
-    dispatch({ type: ACTION_TYPE.LOG_OUT });
+    dispatch({ type: ACTION_TYPE.LOG_OUT_REQUESTED });
   };
 
   //
