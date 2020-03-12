@@ -2,13 +2,13 @@
  * @author William Kistenberger
  * @author Sophia Dietze
  */
-import React, { useState } from 'react';
-import './CompetitionPageTable.css';
-import PopupEditTable from './PopupEditTable';
+import React, { useState } from "react";
+import "./CompetitionPageTable.css";
+import PopupEditTable from "./PopupEditTable";
 
 const ipcRenderer = window.electron.ipcRenderer;
-const ipcMessages = require('../../shared/ipc-messages');
-const { isMatchFinished } = require('../../client/src/shared/lib');
+const ipcMessages = require("../../shared/ipc-messages");
+const { isMatchFinished } = require("../../client/src/shared/lib");
 
 /**
  * Competition Table covers the entire table of the currently played round
@@ -20,7 +20,7 @@ function CompetitionPageTable({
   nextRound
 }) {
   let tableCss =
-    'competitionPageTable' + (active ? '--barrierGreen' : '--barrierRed');
+    "competitionPageTable" + (active ? "--barrierGreen" : "--barrierRed");
   let counter = 0;
   return (
     <div className="competitionPageTable--height">
@@ -100,34 +100,34 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
     handleCloseEditMatch();
   };
 
-  let tischCss = 'competitionPageTable__liRed';
+  let tischCss = "competitionPageTable__liRed";
   if (matchWithPlayers.connectedDevice) {
-    tischCss = 'competitionPageTable__liGreen';
+    tischCss = "competitionPageTable__liGreen";
   }
-  let activeButtonCss = 'competitionPageTable__bearbeiten-btn';
+  let activeButtonCss = "competitionPageTable__bearbeiten-btn";
 
   if (!active || !nextRound) {
     activeButtonCss =
-      'competitionPageTable__bearbeiten-btn competitionPageTable__bearbeiten-btn--notActive';
+      "competitionPageTable__bearbeiten-btn competitionPageTable__bearbeiten-btn--notActive";
   }
-  let matchDoneCss = 'competitionPageTable competitionPageTable--values';
+  let matchDoneCss = "competitionPageTable competitionPageTable--values";
   if (isMatchFinished(matchWithPlayers.match)) {
     matchDoneCss =
-      'competitionPageTable competitionPageTable--values competitionPageTable__matchDone';
+      "competitionPageTable competitionPageTable--values competitionPageTable__matchDone";
   }
 
   let namePlayer1 =
     matchWithPlayers.match.player1.firstname +
-    ' ' +
+    " " +
     matchWithPlayers.match.player1.lastname;
   let namePlayer2 =
     matchWithPlayers.match.player2.firstname +
-    ' ' +
+    " " +
     matchWithPlayers.match.player2.lastname;
-  if (matchWithPlayers.match.player1.id === 'FreeTicket') {
+  if (matchWithPlayers.match.player1.id === "FreeTicket") {
     namePlayer1 = matchWithPlayers.match.player1.lastname;
   }
-  if (matchWithPlayers.match.player2.id === 'FreeTicket') {
+  if (matchWithPlayers.match.player2.id === "FreeTicket") {
     namePlayer2 = matchWithPlayers.match.player2.lastname;
   }
 
@@ -161,33 +161,33 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
         {/**Sets 1-5*/}
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[0].player1}
-          {' : '}
+          {" : "}
           {matchWithPlayers.match.sets[0].player2}
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[1].player1}
-          {' : '}
+          {" : "}
           {matchWithPlayers.match.sets[1].player2}
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[2].player1}
-          {' : '}
+          {" : "}
           {matchWithPlayers.match.sets[2].player2}
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[3].player1}
-          {' : '}
+          {" : "}
           {matchWithPlayers.match.sets[3].player2}
         </div>
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[4].player1}
-          {' : '}
+          {" : "}
           {matchWithPlayers.match.sets[4].player2}
         </div>
         {/**Total score of match*/}
         <div className="competitionPageTable--elements competitionPageTable--centered competitionPageTable__score">
           {score[0]}
-          {' : '}
+          {" : "}
           {score[1]}
         </div>
         {/**Edit match Button and Popup */}

@@ -2,8 +2,8 @@
  * @author William Kistenberger
  * @author Sophia Dietze
  */
-import React from 'react';
-import './Footer.css';
+import React from "react";
+import "./Footer.css";
 
 /**
  * credits to the coolest guys and gals ever

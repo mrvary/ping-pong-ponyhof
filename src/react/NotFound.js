@@ -1,7 +1,7 @@
 /**
  * @author William Kistenberger
  */
-import React from 'react';
+import React from "react";
 /**
  * error page, only open if something goes wrong
  */

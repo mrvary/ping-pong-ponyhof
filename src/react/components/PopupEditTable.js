@@ -1,13 +1,13 @@
 /**
  * @author William Kistenberger
  */
-import { Modal } from 'react-bootstrap';
-import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './PopupEditTable.css';
+import { Modal } from "react-bootstrap";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./PopupEditTable.css";
 
 //components
-import Button from './Button';
+import Button from "./Button";
 
 /**
  * Popup that with the option to change the sets of a match
@@ -181,7 +181,7 @@ const DisplaySet = ({
         toSecondMode(parseInt(event.target.value), parseInt(player2Set))
       );
       setInputChanged(true);
-      setCss('');
+      setCss("");
       let newSets = currentSets;
       newSets[index - 1] = {
         player1: parseInt(event.target.value),
@@ -191,7 +191,7 @@ const DisplaySet = ({
     } else {
       setInputChanged(false);
       setDifferenz(0);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
   /**
@@ -211,7 +211,7 @@ const DisplaySet = ({
         toSecondMode(parseInt(player1Set), parseInt(event.target.value))
       );
       setInputChanged(true);
-      setCss('');
+      setCss("");
       let newSets = currentSets;
       newSets[index - 1] = {
         player1: parseInt(player1Set),
@@ -221,7 +221,7 @@ const DisplaySet = ({
     } else {
       setInputChanged(false);
       setDifferenz(0);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
   /**
@@ -238,7 +238,7 @@ const DisplaySet = ({
       checkLegitTotalInput(player1, player2)
     ) {
       setInputChanged(true);
-      setCss('');
+      setCss("");
       let newSets = currentSets;
       newSets[index - 1] = {
         player1: parseInt(player1),
@@ -247,7 +247,7 @@ const DisplaySet = ({
       changeCurrentSets(newSets);
     } else {
       setInputChanged(false);
-      setCss('popupEditTable--input');
+      setCss("popupEditTable--input");
     }
   };
 
@@ -256,11 +256,11 @@ const DisplaySet = ({
   const [differenz, setDifferenz] = useState(
     toSecondMode(parseInt(set.player1), parseInt(set.player2))
   );
-  let [css, setCss] = useState('');
+  let [css, setCss] = useState("");
 
   return (
     <div className="popupEditTable--rows">
-      <div>{'Satz ' + index + '  '}</div>
+      <div>{"Satz " + index + "  "}</div>
       <input
         className={css}
         type="number"
@@ -270,7 +270,7 @@ const DisplaySet = ({
         onChange={checkInput1}
         name="player1Set"
       ></input>
-      <div> {' : '} </div>
+      <div> {" : "} </div>
       <input
         className={css}
         type="number"

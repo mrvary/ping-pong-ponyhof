@@ -2,8 +2,8 @@
  * @author William Kistenberger
  */
 
-import React from 'react';
-import './Button.css';
+import React from "react";
+import "./Button.css";
 
 /**
  * creates a generic Button with two possible functions, switchable with {mode}
@@ -16,21 +16,21 @@ function Button({
   mode,
   disableProp
 }) {
-  let css = 'button ';
+  let css = "button ";
   let text;
   let onClick;
 
-  if (mode === 'primary') {
-    css = css + 'button--primary';
+  if (mode === "primary") {
+    css = css + "button--primary";
     text = primText;
     onClick = primOnClick;
   } else {
-    css = css + 'button--secondary';
+    css = css + "button--secondary";
     text = secText;
     onClick = secOnClick;
   }
   if (disableProp) {
-    css = css + ' button--disabled';
+    css = css + " button--disabled";
   }
   return (
     <button className={css} onClick={onClick} disabled={disableProp}>
