@@ -1,15 +1,15 @@
-import React, { useState } from "react";
-import "./ConnectionStatus.css";
+import React, { useState } from 'react';
+import './ConnectionStatus.css';
 
 function ConnectionStatus({ isConnected, tableNumber, logOut }) {
   const iconCss = isConnected
-    ? "connection-icon connection-icon__connected"
-    : "connection-icon connection-icon__disconnected";
+    ? 'connection-icon connection-icon__connected'
+    : 'connection-icon connection-icon__disconnected';
 
   const [number, setNumber] = useState(tableNumber);
 
   const toggleToX = () => {
-    setNumber("X");
+    setNumber('X');
   };
 
   const toggleToNumber = () => {
