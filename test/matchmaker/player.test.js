@@ -24,7 +24,17 @@ const {
   playersAfterUpdateWinner
 } = require("./player.test.data");
 
-const { testMatches } = require("./match.test.data");
+describe("createPlayersFromJSON()", () => {
+  test("players where cerated", () => {
+    const players = createPlayersFromJSON(tournamentJSON16Players);
+    const playersWithFreeticket = createPlayersFromJSON(
+      tournamentJSON15Players
+    );
+
+    expect(players.length).toBe(16);
+    expect(playersWithFreeticket.length).toBe(16);
+  });
+});
 
 describe("createPlayer()", () => {
   test("returns the correct object", () => {
@@ -32,9 +42,6 @@ describe("createPlayer()", () => {
 
     expect(createdPlayer).toEqual(EXPECTED_PLAYER);
   });
-});
-
-describe("createPlayers()", () => {
   const players = createPlayersFromJSON(tournamentJSON16Players);
   test("returns a list of players", () => {
     expect(players).toHaveLength(16);

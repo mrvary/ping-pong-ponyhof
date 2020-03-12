@@ -21,7 +21,7 @@ function createPlayersFromJSON(json) {
   return players;
 }
 
-// createPlayer : playerFromJSON -> Player
+// createPlayer : JSON -> player
 function createPlayer(dataFromJSON) {
   const { id, person } = dataFromJSON;
   const { firstname, lastname, ttr } = person;
@@ -36,8 +36,7 @@ function createPlayer(dataFromJSON) {
     matchIds: [],
     opponentIds: [],
     qttr: parseInt(ttr, 10),
-    //ToDo change to quitInRound : x
-    active: true
+    quitInRound: 0
   };
 }
 
@@ -103,7 +102,7 @@ function updateWinner(players, matches) {
   return players;
 }
 
-// isFreeticketPlayerInMatch : [match] -> [boolean]
+// isFreeticketPlayerInMatch : match -> boolean
 function isFreeticketPlayerInMatch(match) {
   if (match.player1 === "FreeTicket" || match.player2 === "FreeTicket")
     return true;
