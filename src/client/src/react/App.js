@@ -231,7 +231,7 @@ function roundAvailable(state, action) {
   }
 
   console.error(
-    `Couldn't start round. No match for table ${state.tableNumber}`
+    `Runde konnte nicht gestartet werden: kein Spiel für Tisch mit der Nummber ${state.tableNumber}`
   );
 
   return state;
