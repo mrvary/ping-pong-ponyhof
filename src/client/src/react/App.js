@@ -114,7 +114,11 @@ const reducer = (state, action) => {
       return switchToWaiting(state, "Ausloggen...");
 
     case ACTION_TYPE.LOGGED_OUT:
-      return { ...state, availableTables: action.availableTables };
+      return {
+        ...state,
+        view: VIEW.LOGIN,
+        availableTables: action.availableTables
+      };
 
     default:
       return state;
