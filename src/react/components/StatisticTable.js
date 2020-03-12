@@ -1,8 +1,12 @@
+/**
+ * @author Sophia Dietze
+ */
 import React, { useState, useEffect } from "react";
 
 import "./StatisticTable.css";
 import "../Colors.css";
 
+// components
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
 const TOGGLE_PLAYERS_INTERVAL = 7000;
@@ -11,13 +15,14 @@ const TOGGLE_PLAYERS_INTERVAL = 7000;
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
 
+//Declares the column names of the table
 const TableHeader = () => {
   return (
     <div className="statisticTable__table-header">
       <span>Platz</span>
       <span>Name</span>
+      <span>Verein</span>
       <span>S : N</span>
-      <span> </span>
       <span>BHZ</span>
       <span>QTTR</span>
       <span>QTTR-Diff</span>
@@ -25,6 +30,7 @@ const TableHeader = () => {
   );
 };
 
+//Declares and fills the table rows with data
 const TableRow = ({ ranking }) => {
   return (
     <div className="statisticTable__seperation-color">
@@ -34,8 +40,8 @@ const TableRow = ({ ranking }) => {
           {" "}
           {ranking.firstname + " " + ranking.lastname}{" "}
         </span>
+        <span> {ranking.clubname}</span>
         <span> {ranking.gamesWon + " : " + ranking.gamesLost} </span>
-        <span> </span>
         <span> {ranking.bhz} </span>
         <span> {ranking.qttr} </span>
         <span> {ranking.ttr_diff} </span>
@@ -58,10 +64,7 @@ const TableRow = ({ ranking }) => {
   );
 };
 
-const generateTableRows = rankings => {
-  console.log(rankings);
-};
-
+//Combines table header with the table rows
 const Table = ({ rankings }) => {
   return (
     <div>
@@ -75,10 +78,15 @@ const Table = ({ rankings }) => {
   );
 };
 
+/**
+ * The Statistic Table contains the Information about the current
+ * competition and rankings
+ */
 const StatisticTable = () => {
   const [competition, setCompetition] = useState({});
   const [rankings, setRankings] = useState([]);
 
+  // Updates all states if something changes
   useEffect(() => {
     const interval = setInterval(() => {
       setRankings(

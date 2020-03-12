@@ -1,4 +1,8 @@
-const { createMatchResult, getParameterByPlayerId } = require("./ranking.js");
+const {
+  createMatchResult,
+  getParameterByPlayerId,
+  countSetsPerPlayer
+} = require("./ranking.js");
 
 // createMatches : [{player1: Player, player2: Player}] -> [Match]
 function createMatches(pairings, lastMatchId) {
@@ -119,6 +123,66 @@ function getMatchWinner(match) {
   return "0";
 }
 
+// createXMLMatch : match, round -> match
+function createXMLMatch(match, round) {
+  const winner = getMatchWinner(match);
+  let matchStateA = 0;
+  let matchStateB = 0;
+  if (winner === match.player1) matchStateA = 1;
+  if (winner === match.player2) matchStateB = 1;
+
+  //get players sets
+  const sets = countSetsPerPlayer(match);
+
+  let xmlMatch = {
+    group: "Schweizer System (Runde " + round + ")",
+    nr: match.id,
+    "player-a": match.player1,
+    "player-b": match.player2,
+    "matches-a": matchStateA,
+    "matches-b": matchStateB,
+    "sets-a": sets.player1,
+    "sets-b": sets.player2,
+    "sets-a-1": match.sets[0].player1,
+    "sets-b-1": match.sets[0].player2,
+    "sets-a-2": match.sets[1].player1,
+    "sets-b-2": match.sets[1].player2,
+    "sets-a-3": match.sets[2].player1,
+    "sets-b-3": match.sets[2].player2,
+    "sets-a-4": match.sets[3].player1,
+    "sets-b-4": match.sets[3].player2,
+    "sets-a-5": match.sets[4].player1,
+    "sets-b-5": match.sets[4].player2,
+    "sets-a-6": 0,
+    "sets-b-6": 0,
+    "sets-a-7": 0,
+    "sets-b-7": 0,
+    "games-a": countPlayersPoints(match, match.player1),
+    "games-b": countPlayersPoints(match, match.player2)
+  };
+
+  return xmlMatch;
+}
+// countPlayersPoints : match, id -> Number
+function countPlayersPoints(match, playerId) {
+  let counter = 0;
+
+  //count player1 points
+  if (match.player1 === playerId) {
+    match.sets.forEach(set => {
+      counter += set.player1;
+    });
+  }
+  //count player2 points
+  if (match.player2 === playerId) {
+    match.sets.forEach(set => {
+      counter += set.player2;
+    });
+  }
+
+  return counter;
+}
+
 function logMatches(matches, players) {
   let log = "";
   matches.forEach(match => {
@@ -148,5 +212,6 @@ module.exports = {
   simulateMatches,
   simulateMatch,
   getMatchWinner,
-  logMatches
+  logMatches,
+  createXMLMatch
 };

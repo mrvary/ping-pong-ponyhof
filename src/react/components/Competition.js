@@ -1,6 +1,9 @@
+/**
+ * @author William Kistenberger
+ */
+
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
 import "./Competition.css";
 
 // components
@@ -8,6 +11,9 @@ import Popup from "./Popup";
 
 const COMPETITION_STATE = require("../../shared/models/competition-state");
 
+/**
+ * Creates a Competition in the list of Competitions with Link and delete option
+ */
 function Competition(props) {
   const {
     competition: { id, state, name, playmode, date },
@@ -72,7 +78,9 @@ function Competition(props) {
     </div>
   );
 }
-
+/**
+ * LinkHandler decides if object returned is a Link to Competition View or a Button that opens a Popup
+ */
 const LinkHandler = ({
   id,
   name,

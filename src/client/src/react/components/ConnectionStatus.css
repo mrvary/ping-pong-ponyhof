@@ -23,8 +23,8 @@
   }
   .connection__table-number {
     position: relative;
-    left: -65px;
-    top: -30px;
+    left: -55px;
+    top: -20px;
   }
 }
 
@@ -38,7 +38,7 @@
 }
 
 .connection-icon__connected {
-  background: olive;
+  background: rgb(46, 170, 8);
 }
 
 .connection-icon__disconnected {

@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState } from "react";
 import "./CompetitionPageTable.css";
 import PopupEditTable from "./PopupEditTable";
@@ -136,6 +140,7 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
   return (
     <div className="competitionPageTable--centered">
       <div className={matchDoneCss}>
+        {/**table number and connection state */}
         <div className="competitionPageTable--elements competitionPageTable--centered">
           <li id={tischCss} className="competitionPageTable--centered">
             <span>&#xa0;</span>
@@ -143,6 +148,7 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
             <span>{matchWithPlayers.tableNumber}</span>
           </li>
         </div>
+        {/**player names*/}
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {namePlayer1}
         </div>
@@ -152,6 +158,7 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {namePlayer2}
         </div>
+        {/**Sets 1-5*/}
         <div className="competitionPageTable--elements competitionPageTable--centered">
           {matchWithPlayers.match.sets[0].player1}
           {" : "}
@@ -177,11 +184,13 @@ const TableRow = ({ matchWithPlayers, active, nextRound, singleGameScore }) => {
           {" : "}
           {matchWithPlayers.match.sets[4].player2}
         </div>
+        {/**Total score of match*/}
         <div className="competitionPageTable--elements competitionPageTable--centered competitionPageTable__score">
           {score[0]}
           {" : "}
           {score[1]}
         </div>
+        {/**Edit match Button and Popup */}
         <button
           onClick={handleShowEditMatch}
           className={activeButtonCss}

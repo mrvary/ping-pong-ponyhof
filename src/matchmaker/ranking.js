@@ -203,6 +203,25 @@ function getMatchesInvolved(player, matches) {
   return mactchesInvolved;
 }
 
+// countSetsPerPlayer : match -> JSON
+function countSetsPerPlayer(match) {
+  let player1SetsWon = 0;
+  let player2SetsWon = 0;
+
+  match.sets.forEach(set => {
+    //player1 has more points
+    if (set.player1 - 1 > set.player2) {
+      player1SetsWon++;
+    }
+    //player2 has more points
+    if (set.player1 < set.player2 - 1) {
+      player2SetsWon++;
+    }
+  });
+
+  return { player1: player1SetsWon, player2: player2SetsWon };
+}
+
 // addMatchDetails : [players], [matches] -> [matches]
 function addMatchDetails(players, matches) {
   matches.forEach(match => {
@@ -226,7 +245,7 @@ function addMatchDetails(players, matches) {
       players,
       "lastname"
     );
-    match.result = createMatchResult(match);
+    match.result = countSetsPerPlayer(match);
   });
 }
 
@@ -239,25 +258,6 @@ function getParameterByPlayerId(playerId, players, parameter) {
     }
   });
   return value;
-}
-
-// createMatchResult : match -> JSON
-function createMatchResult(match) {
-  let player1SetsWon = 0;
-  let player2SetsWon = 0;
-
-  match.sets.forEach(set => {
-    //player1 has more points
-    if (set.player1 - 1 > set.player2) {
-      player1SetsWon++;
-    }
-    //player2 has more points
-    if (set.player1 < set.player2 - 1) {
-      player2SetsWon++;
-    }
-  });
-
-  return { player1: player1SetsWon, player2: player2SetsWon };
 }
 
 // logRanking : [ranking] -> console.log(ranking)
@@ -305,7 +305,7 @@ module.exports = {
   getMatchesInvolved,
   addMatchDetails,
   logRanking,
-  createMatchResult,
   getParameterByPlayerId,
-  ttrCalculation
+  ttrCalculation,
+  countSetsPerPlayer
 };

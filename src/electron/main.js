@@ -11,12 +11,6 @@ require("electron-reload")(__dirname, {
   electron: path.join(__dirname, "../node_modules/.bin/electron")
 });
 
-// extensions
-const {
-  default: installExtension,
-  REACT_DEVELOPER_TOOLS
-} = require("electron-devtools-installer");
-
 // configuration
 const config = require("./config");
 
@@ -115,6 +109,7 @@ function main() {
 
   // init main window
   mainWindow = createWindow();
+
   installExtensions();
 
   // init application menu
@@ -130,6 +125,11 @@ function main() {
  */
 function installExtensions() {
   if (isDev) {
+    const {
+      default: installExtension,
+      REACT_DEVELOPER_TOOLS
+    } = require("electron-devtools-installer");
+
     // Install extensions
     installExtension(REACT_DEVELOPER_TOOLS)
       .then(name => console.log(`Added Extension:  ${name}`))
@@ -786,17 +786,15 @@ const exportXML = () => {
   const fileName = "exportTournament.xml";
   const defaultFilePath = fileManager.getDefaultExportFilePath(fileName);
 
-  uiActions.showSaveDialog(defaultFilePath).then(filePath => {
-    // get all players, matches and the initialized json object
-    const playerRepository = dbManager.getPlayerRepository();
-    const players = playerRepository.getAll();
+  uiActions.showSaveDialog(defaultFilePath).then(result => {
+    const filePath = result.filePath;
 
     const matchRepository = dbManager.getMatchRepository();
     const matches = matchRepository.getAll();
 
     const jsonObject = dbManager.getImportedJSONObject();
 
-    xmlExporter.exportXML(filePath, players, matches, jsonObject);
+    xmlExporter.exportXML(filePath, matches, jsonObject);
   });
 };
 
