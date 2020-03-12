@@ -208,6 +208,11 @@ function roundStarted(state, action) {
   }
 
   const newState = roundAvailable(state, action);
+
+  if (isMatchFinished(newState.match)) {
+    return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
+  }
+
   return { ...newState, view: VIEW.MATCH };
 }
 
