@@ -11,8 +11,6 @@ import {
 const MAX_INPUT = 50;
 
 function ScoreBoard({ match, sendSets, updateSets, addSet }) {
-  // const showSets = () =>
-  //   match.sets.map((set, index) => <Set key={index} index={index} set={set} />);
   const generateOptions = () => {
     const numberArray = [...Array(MAX_INPUT).keys()];
     const options = numberArray.map(number => (
