@@ -55,9 +55,6 @@ function createCompetitionPreview() {
   // load xml file
   const xmlContent = readCompetitionXMLFileFromDisk(xmlFilePath);
 
-  // TODO: Search for XML-Schema validator
-  // validate xml file against xml-schema --> Fehler: XML-Datei ist nicht valide
-
   // convert xml file to JSON-Object
   jsonObject = convertXMLToJSON(xmlContent);
 

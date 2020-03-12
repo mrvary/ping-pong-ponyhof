@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 .header__container {
   display: flex;
   justify-content: space-around;
@@ -82,19 +86,6 @@
 
 .header__upload-xml-button:focus {
   outline: 0;
-}
-
-/* benutzen wir das? */
-.header__loslegen-link {
-  width: 27vh;
-  height: 6.5vh;
-  color: green;
-  font-size: 2vh;
-  border: none;
-  border-radius: 2vh;
-  margin: 1.5vh 0vh;
-  background: var(--button-color);
-  cursor: pointer;
 }
 
 .header__link {

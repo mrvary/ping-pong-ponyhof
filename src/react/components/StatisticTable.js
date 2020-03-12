@@ -1,14 +1,19 @@
+/**
+ * @author Sophia Dietze
+ */
 import React, { useState, useEffect } from "react";
 
 import "./StatisticTable.css";
 import "../Colors.css";
 
+// components
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
 
+//Declares the column names of the table
 const TableHeader = () => {
   return (
     <div className="statisticTable__table-header">
@@ -23,6 +28,7 @@ const TableHeader = () => {
   );
 };
 
+//Declares and fills the table rows with data
 const TableRow = ({ ranking }) => {
   return (
     <div className="statisticTable__seperation-color">
@@ -56,6 +62,7 @@ const TableRow = ({ ranking }) => {
   );
 };
 
+//Combines table header with the table rows
 const Table = ({ rankings }) => {
   return (
     <div>
@@ -67,10 +74,15 @@ const Table = ({ rankings }) => {
   );
 };
 
+/**
+ * The Statistic Table contains the Information about the current
+ * competition and rankings
+ */
 const StatisticTable = () => {
   const [competition, setCompetition] = useState({});
   const [rankings, setRankings] = useState([]);
 
+  // Updates all states if something changes
   useEffect(() => {
     function handleRankingStatusChanged(event, { competition, rankings }) {
       console.log("ipc-main --> ipc-renderer", rankings);

@@ -18,16 +18,6 @@ const TITLE = "TTRace";
 let socket;
 const isDev = true;
 
-const getServerURL = () => {
-  // for development: the requested server is the webserver
-  //                  from the electron app and not the
-  //                  development server of the react app
-  // for production:  the requested server is the one and only
-  const url = isDev ? "localhost:4000" : document.location.host;
-  console.info("Requested server: ", url);
-  return url;
-};
-
 const VIEW = {
   LOGIN: "login",
   WAITING: "waiting",
@@ -47,7 +37,8 @@ const ACTION_TYPE = {
   SETS_UPDATED: "sets-updated",
   ADD_SET: "add-set",
   UPDATE_SETS_RESPONSE: "update-sets-response",
-  LOG_OUT: "log-out"
+  LOG_OUT_REQUESTED: "log-out-request",
+  LOGGED_OUT: "logged-out"
 };
 
 const initialState = {
@@ -66,6 +57,12 @@ const initialState = {
 //
 //
 
+/**
+ * Updates the application state
+ * @param {State} state The previous state
+ * @param {ActionType} action Action that was triggered
+ * @returns {State} New state according to the action that happend.
+ */
 const reducer = (state, action) => {
   if (isNotLoggedIn(state, action)) {
     return state;
@@ -109,10 +106,14 @@ const reducer = (state, action) => {
         match: { ...state.match, sets: [...state.match.sets, newSet] }
       };
 
-    case ACTION_TYPE.LOG_OUT:
+    case ACTION_TYPE.LOG_OUT_REQUESTED:
+      return switchToWaiting(state, "Ausloggen...");
+
+    case ACTION_TYPE.LOGGED_OUT:
       return {
-        ...initialState,
-        availableTables: state.availableTables
+        ...state,
+        view: VIEW.LOGIN,
+        availableTables: action.availableTables
       };
 
     default:
@@ -137,7 +138,7 @@ function loggedIn(state, action) {
   };
 
   if (match && isMatchFinished(match)) {
-    console.info("match is finished");
+    console.info("Spiel beendet.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -147,7 +148,7 @@ function loggedIn(state, action) {
   }
 
   if (match && roundStarted) {
-    console.info("round is started");
+    console.info("Runde gestarted.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -156,7 +157,7 @@ function loggedIn(state, action) {
   }
 
   if (match) {
-    console.info("round is available");
+    console.info("Runde verfügbar");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -228,7 +229,7 @@ function roundAvailable(state, action) {
   }
 
   console.error(
-    `Couldn't start round. No match for table ${state.tableNumber}`
+    `Runde konnte nicht gestartet werden: kein Spiel für Tisch mit der Nummber ${state.tableNumber}`
   );
 
   return state;
@@ -299,7 +300,10 @@ function App() {
 
   const logOut = event => {
     event.preventDefault();
-    dispatch({ type: ACTION_TYPE.LOG_OUT });
+
+    console.info("CLIENT->SERVER: LOGOUT_REQUEST");
+    socket.emit(socketIOMessages.LOGOUT_REQUEST);
+    dispatch({ type: ACTION_TYPE.LOG_OUT_REQUESTED });
   };
 
   //
@@ -323,6 +327,12 @@ function App() {
       console.info("SERVER->CLIENT: LOGIN_RESPONSE");
 
       dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
+    });
+
+    connection.on(socketIOMessages.LOGOUT_RESPONSE, tables => {
+      console.info("SERVER->CLIENT: LOGOUT_RESPONSE");
+
+      dispatch({ type: ACTION_TYPE.LOGGED_OUT, availableTables: tables });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
@@ -422,6 +432,17 @@ function App() {
       {content()}
     </div>
   );
+}
+
+/**
+ * In development the requested server is the webserver from the electron app and
+ * not the development server of the react app. For production the requested server
+ * is the one and only.
+ */
+function getServerURL() {
+  const url = isDev ? "localhost:4000" : document.location.host;
+  console.info("Requested server: ", url);
+  return url;
 }
 
 export default App;

@@ -1,3 +1,7 @@
+/**
+ * @author William Kistenberger
+ * @author Sophia Dietze
+ */
 import React, { useState } from "react";
 import "./Header.css";
 import { Redirect } from "react-router-dom";
@@ -6,6 +10,9 @@ import { Redirect } from "react-router-dom";
 import PopupReviewPlayer from "./PopupReviewPlayer";
 import Popup from "./Popup";
 
+/**
+ * Header contains the main background picture, title and the option to upload a new competition
+ */
 function Header({
   openXMLDialog,
   importXML,
@@ -40,7 +47,9 @@ function Header({
     </section>
   );
 }
-
+/**
+ * Upload XML box with Popups
+ */
 const HeaderBox = ({
   openXMLDialog,
   importXML,

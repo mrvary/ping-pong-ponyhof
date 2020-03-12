@@ -1,3 +1,6 @@
+/**
+ * @author Sophia Dietze
+ */
 .statisticTable__table-header {
   display: grid;
   grid-template-columns: 6% 25% 20% 10% 10% 10% 20% 10%;

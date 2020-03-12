@@ -1,3 +1,7 @@
+/**
+ * @author Sophia Dietze
+ * @author William Kistenberger
+ */
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "./Colors.css";
@@ -17,6 +21,9 @@ const COMPETITION_STATE = require("../shared/models/competition-state");
 // set to true for fake backend data and skip IPC calls
 const USE_BROWSER = false;
 
+/**
+ * creates Main View of Applicationn
+ */
 const App = () => {
   const [currentId, setCurrentId] = useState("");
   const [linkDisabled, setLinkDisabled] = useState(true);
@@ -53,7 +60,9 @@ const App = () => {
       ipcMessages.GET_COMPETITIONS_REQUEST
     );
   };
-
+  /**
+   * checks if list of competitions has a active one among them
+   */
   const updateActiveState = competitions => {
     setHasActiveGame(false);
     competitions.map(competition => {
@@ -67,6 +76,9 @@ const App = () => {
     });
   };
 
+  /**
+   * sends request to open file explorer to backend and reacts to input
+   */
   const openXMLDialog = () => {
     ipcRenderer.once(ipcMessages.OPEN_FILE_DIALOG_RESPONSE, (event, args) => {
       console.log(
@@ -86,7 +98,9 @@ const App = () => {
 
     ipcRenderer.send(ipcMessages.OPEN_FILE_DIALOG_REQUEST);
   };
-
+  /**
+   * gets information for PopupReviewPlayer in Header
+   */
   const getCompetition = () => {
     ipcRenderer.once(
       ipcMessages.GET_COMPETITION_PREVIEW_RESPONSE,
@@ -104,7 +118,9 @@ const App = () => {
 
     ipcRenderer.send(ipcMessages.GET_COMPETITION_PREVIEW_REQUEST);
   };
-
+  /**
+   * loads xml into backend and triggers redirect to competition view if id set
+   */
   const importXML = handleShowError => {
     ipcRenderer.once(ipcMessages.IMPORT_XML_FILE_RESPONSE, (event, args) => {
       console.log(
@@ -156,6 +172,7 @@ const App = () => {
     });
   };
 
+  /** creates a Header, multiple Competitions and a Footer */
   return (
     <div className="app__container">
       <Header

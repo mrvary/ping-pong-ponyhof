@@ -1,10 +1,18 @@
+/**
+ * @author William Kistenberger
+ */
 import { Modal } from "react-bootstrap";
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./PopupEditTable.css";
 
+//components
 import Button from "./Button";
 
+/**
+ * Popup that with the option to change the sets of a match
+ * and save with a Button
+ */
 function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
   const [inputChanged, setInputChanged] = useState(false);
   const [currentSets, changeCurrentSets] = useState([...sets]);
@@ -43,7 +51,9 @@ function PopupEditTable({ show, handleClose, sets, saveChanges, tableNumber }) {
     </Modal>
   );
 }
-
+/**
+ * Displays List of sets
+ */
 const DisplaySetHandler = ({
   setInputChanged,
   changeCurrentSets,
@@ -76,7 +86,9 @@ const DisplaySet = ({
   changeCurrentSets,
   currentSets
 }) => {
-  //only checks if values create a valid set
+  /**
+   * only checks if values create a valid set
+   */
   const checkValuesLegitimacy = (inputPlayer1, inputPlayer2) => {
     return (
       (inputPlayer1 === 11 && inputPlayer2 < 10 && inputPlayer2 >= 0) ||
@@ -86,8 +98,9 @@ const DisplaySet = ({
       (inputPlayer1 === 0 && inputPlayer2 === 0)
     );
   };
-
-  //only checks if values create a valid match
+  /**
+   * only checks if values create a valid match
+   */
   const checkLegitTotalInput = (inputPlayer1, inputPlayer2) => {
     let newSets = currentSets;
     newSets[index - 1] = {
@@ -123,8 +136,9 @@ const DisplaySet = ({
     }
     return legitInput;
   };
-
-  //converts traditional input to quick input
+  /**
+   * converts traditional input to quick input
+   */
   const toSecondMode = (inputPlayer1, inputPlayer2) => {
     if (inputPlayer1 > inputPlayer2) {
       return inputPlayer2;
@@ -132,8 +146,9 @@ const DisplaySet = ({
       return -inputPlayer1;
     }
   };
-
-  //converts quick input to traditional input
+  /**
+   * converts quick input to traditional input
+   */
   const toFirstMode = differenz => {
     if (differenz > 0) {
       if (differenz > 9) {
@@ -149,8 +164,9 @@ const DisplaySet = ({
       }
     }
   };
-
-  //check if input of first input window is allowed and reacts
+  /**
+   * check if input of first input window is allowed and reacts
+   */
   const checkInput1 = event => {
     setPlayer1Set(event.target.value);
 
@@ -178,8 +194,9 @@ const DisplaySet = ({
       setCss("popupEditTable--input");
     }
   };
-
-  //check if input of second input window is allowed and reacts
+  /**
+   * check if input of second input window is allowed and reacts
+   */
   const checkInput2 = event => {
     setPlayer2Set(event.target.value);
 
@@ -207,8 +224,9 @@ const DisplaySet = ({
       setCss("popupEditTable--input");
     }
   };
-
-  //check if input of third input window is allowed and reacts
+  /**
+   * check if input of third input window is allowed and reacts
+   */
   const checkInput3 = event => {
     const [player1, player2] = toFirstMode(parseInt(event.target.value));
     setPlayer1Set(player1);
@@ -242,7 +260,7 @@ const DisplaySet = ({
 
   return (
     <div className="popupEditTable--rows">
-      <div>{"Set " + index + "  "}</div>
+      <div>{"Satz " + index + "  "}</div>
       <input
         className={css}
         type="number"
