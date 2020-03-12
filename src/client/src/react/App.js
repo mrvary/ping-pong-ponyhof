@@ -135,7 +135,7 @@ function loggedIn(state, action) {
   };
 
   if (match && isMatchFinished(match)) {
-    console.info("Spiel beendet.");
+    log("Spiel beendet.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -145,7 +145,7 @@ function loggedIn(state, action) {
   }
 
   if (match && roundStarted) {
-    console.info("Runde gestarted.");
+    log("Runde gestarted.");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -154,7 +154,7 @@ function loggedIn(state, action) {
   }
 
   if (match) {
-    console.info("Runde verfügbar");
+    log("Runde verfügbar");
     return {
       ...newState,
       match: filterAllUnplayedSetsExceptOne(match),
@@ -189,16 +189,16 @@ function isNotLoggedIn(state, action) {
 
 function updateSetsResponse(state, action) {
   if (action.message === "success") {
-    console.info("Sets successfully sent");
+    log("Sets successfully sent");
     return state;
   }
 
   if (action.message === "finished") {
-    console.info("Sets successfully sent. Match is finished.");
+    log("Sets successfully sent. Match is finished.");
     return switchToWaiting(state, "Spiel beendet. Demnächst geht es weiter.");
   }
 
-  console.info("Could not send sets");
+  log("Could not send sets");
   return { ...state, message: action.message };
 }
 
@@ -266,7 +266,7 @@ function App() {
 
   const sendTableNumber = tableNumber => event => {
     event.preventDefault();
-    console.info("CLIENT->SERVER: LOGIN_REQUEST");
+    log("CLIENT->SERVER: LOGIN_REQUEST");
     socket.emit(socketIOMessages.LOGIN_REQUEST, { tableNumber });
   };
 
@@ -279,7 +279,7 @@ function App() {
       tableNumber: state.confirmedTableNumber
     };
 
-    console.info("CLIENT->SERVER: UPDATE_SETS_REQUEST");
+    log("CLIENT->SERVER: UPDATE_SETS_REQUEST");
     socket.emit(socketIOMessages.UPDATE_SETS_REQUEST, requestData);
   };
 
@@ -303,7 +303,7 @@ function App() {
   const logOut = event => {
     event.preventDefault();
 
-    console.info("CLIENT->SERVER: LOGOUT_REQUEST");
+    log("CLIENT->SERVER: LOGOUT_REQUEST");
     socket.emit(socketIOMessages.LOGOUT_REQUEST);
     dispatch({ type: ACTION_TYPE.LOG_OUT_REQUESTED });
   };
@@ -320,25 +320,25 @@ function App() {
     const connection = io(base_url);
 
     connection.on(socketIOMessages.AVAILABLE_TABLES, tables => {
-      console.info("SERVER->CLIENT: AVAILABLE_TABLES");
+      log("SERVER->CLIENT: AVAILABLE_TABLES");
 
       dispatch({ type: ACTION_TYPE.TABLES_AVAILABLE, availableTables: tables });
     });
 
     connection.on(socketIOMessages.LOGIN_RESPONSE, data => {
-      console.info("SERVER->CLIENT: LOGIN_RESPONSE");
+      log("SERVER->CLIENT: LOGIN_RESPONSE");
 
       dispatch({ type: ACTION_TYPE.LOGGED_IN, data });
     });
 
     connection.on(socketIOMessages.LOGOUT_RESPONSE, tables => {
-      console.info("SERVER->CLIENT: LOGOUT_RESPONSE");
+      log("SERVER->CLIENT: LOGOUT_RESPONSE");
 
       dispatch({ type: ACTION_TYPE.LOGGED_OUT, availableTables: tables });
     });
 
     connection.on(socketIOMessages.NEXT_ROUND, data => {
-      console.info("SERVER->CLIENT: NEXT_ROUND");
+      log("SERVER->CLIENT: NEXT_ROUND");
 
       dispatch({
         type: ACTION_TYPE.ROUND_AVAILABLE,
@@ -347,7 +347,7 @@ function App() {
     });
 
     connection.on(socketIOMessages.START_ROUND, data => {
-      console.info("SERVER->CLIENT: START_ROUND");
+      log("SERVER->CLIENT: START_ROUND");
 
       data
         ? dispatch({
@@ -358,13 +358,13 @@ function App() {
     });
 
     connection.on(socketIOMessages.CANCEL_ROUND, () => {
-      console.info("SERVER->CLIENT: CANCEL_ROUND");
+      log("SERVER->CLIENT: CANCEL_ROUND");
 
       dispatch({ type: ACTION_TYPE.ROUND_CANCELED });
     });
 
     connection.on(socketIOMessages.UPDATE_SETS_RESPONSE, data => {
-      console.info("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
+      log("SERVER->CLIENT: UPDATE_SETS_RESPONSE");
 
       if (!data) {
         console.error("No data in UPDATE_SETS_RESPONSE");
@@ -377,13 +377,13 @@ function App() {
     });
 
     connection.on(socketIOMessages.CANCEL_COMPETITION, () => {
-      console.info("SERVER->CLIENT: COMPETITION_CANCELED");
+      log("SERVER->CLIENT: COMPETITION_CANCELED");
 
       dispatch({ type: ACTION_TYPE.COMPETITION_CANCELED });
     });
 
     connection.on(socketIOMessages.APP_DISCONNECT, () => {
-      console.info("SERVER->CLIENT: APP DISCONNECTED");
+      log("SERVER->CLIENT: APP DISCONNECTED");
 
       socket = null;
     });
@@ -443,13 +443,23 @@ function App() {
 }
 
 /**
+ * Log messages when in development mode.
+ * @param {String} message
+ */
+function log(message) {
+  if (isDev) {
+    console.info(message);
+  }
+}
+
+/**
  * In development the requested server is the webserver from the electron app and
  * not the development server of the react app. For production the requested server
  * is the one and only.
  */
 function getServerURL() {
   const url = isDev ? "http://localhost:4000" : document.location.host;
-  console.info("Requested server: ", url);
+  log("Requested server: ", url);
   return url;
 }
 
