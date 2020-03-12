@@ -9,6 +9,8 @@ import "../Colors.css";
 // components
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
+const TOGGLE_PLAYERS_INTERVAL = 7000;
+
 // ipc communication
 const ipcRenderer = window.electron.ipcRenderer;
 const ipcMessages = require("../../shared/ipc-messages");
@@ -67,9 +69,11 @@ const Table = ({ rankings }) => {
   return (
     <div>
       <TableHeader />
-      {rankings.map(ranking => {
-        return <TableRow key={ranking.id} ranking={ranking} />;
-      })}
+      {rankings
+        .filter(ranking => ranking.visible)
+        .map(ranking => {
+          return <TableRow key={ranking.id} ranking={ranking} />;
+        })}
     </div>
   );
 };
@@ -84,11 +88,26 @@ const StatisticTable = () => {
 
   // Updates all states if something changes
   useEffect(() => {
+    const interval = setInterval(() => {
+      setRankings(
+        rankings.map(ranking => {
+          return { ...ranking, visible: !ranking.visible };
+        })
+      );
+    }, TOGGLE_PLAYERS_INTERVAL);
+    return () => clearInterval(interval);
+  }, [rankings]);
+
+  useEffect(() => {
     function handleRankingStatusChanged(event, { competition, rankings }) {
       console.log("ipc-main --> ipc-renderer", rankings);
       console.log(competition, rankings);
       setCompetition(competition);
-      setRankings(rankings);
+
+      const initRankingsWithVisibilityToggle = rankings.map((ranking, i) => {
+        return { ...ranking, visible: i < Math.floor(rankings.length / 2) };
+      });
+      setRankings(initRankingsWithVisibilityToggle);
     }
 
     ipcRenderer.on(ipcMessages.UPDATE_RANKING, handleRankingStatusChanged);
