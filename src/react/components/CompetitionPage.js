@@ -254,7 +254,7 @@ const CompetitionPage = () => {
           header="Bist du dir sicher?"
           bodyText="Verbindungen zu Nutzergeräten werden beim Pausieren unterbrochen"
           buttonFunk={() => handleDisactivate()}
-          buttonText="pausieren"
+          buttonText="Pausieren"
           mode="primary"
         ></Popup>
 
