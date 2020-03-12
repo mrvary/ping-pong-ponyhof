@@ -18,16 +18,6 @@ const TITLE = "TTRace";
 let socket;
 const isDev = true;
 
-const getServerURL = () => {
-  // for development: the requested server is the webserver
-  //                  from the electron app and not the
-  //                  development server of the react app
-  // for production:  the requested server is the one and only
-  const url = isDev ? "localhost:4000" : document.location.host;
-  console.info("Requested server: ", url);
-  return url;
-};
-
 const VIEW = {
   LOGIN: "login",
   WAITING: "waiting",
@@ -67,6 +57,12 @@ const initialState = {
 //
 //
 
+/**
+ * Updates the application state
+ * @param {State} state The previous state
+ * @param {ActionType} action Action that was triggered
+ * @returns {State} New state according to the action that happend.
+ */
 const reducer = (state, action) => {
   if (isNotLoggedIn(state, action)) {
     return state;
@@ -437,5 +433,17 @@ function App() {
     </div>
   );
 }
+
+/**
+ * In development the requested server is the webserver from the electron app and 
+ * not the development server of the react app. For production the requested server
+ * is the one and only.
+ */
+function getServerURL() {
+  const url = isDev ? "localhost:4000" : document.location.host;
+  console.info("Requested server: ", url);
+  return url;
+}
+
 
 export default App;
