@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 //Algorithms for drawing first round
 // pairPlayers : { top: [players], bottom: [players]} -> [{ player1: player, player2: player}]
 function pairPlayersRoundOne({ top, bottom }) {

@@ -1,3 +1,8 @@
+/**
+ * @author Daniel Niemczyk
+ * @author Felix Breitenbach
+ */
+
 const {
   createPlayer,
   sortPlayersBy,

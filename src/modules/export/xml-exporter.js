@@ -4,7 +4,6 @@
 
 const { saveXMLFile } = require("../persistance/file-manager");
 const { createXMLMatch } = require("../../matchmaker/match");
-let Parser = require("fast-xml-parser").j2xParser;
 
 function exportXML(filePath, matches, initJSON) {
   let matchesToAdd = [];
@@ -31,6 +30,7 @@ function exportXML(filePath, matches, initJSON) {
     supressEmptyNode: false
   };
 
+  let Parser = require("fast-xml-parser").j2xParser;
   var parser = new Parser(defaultOptions);
   var xml = parser.parse(initJSON);
   //ToDo check against .dtd schema
