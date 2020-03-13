@@ -1,3 +1,6 @@
+/**
+ * @author Felix Breitenbach
+ */
 import React from "react";
 
 function Title({ text }) {

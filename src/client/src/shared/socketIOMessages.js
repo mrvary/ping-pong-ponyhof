@@ -1,3 +1,8 @@
+/**
+ * @author Felix Breitenbach
+ * @author Marco Goebel
+ */
+
 // message for the client-server communication used by socket io
 module.exports = {
   // ********************************

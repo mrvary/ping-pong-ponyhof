@@ -1,3 +1,6 @@
+/**
+ * @author Felix Breitenbach
+ */
 import React, { useState } from "react";
 import "./ConnectionStatus.css";
 

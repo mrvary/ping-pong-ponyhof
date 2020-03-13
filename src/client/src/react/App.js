@@ -1,3 +1,6 @@
+/**
+ * @author Felix Breitenbach
+ */
 import React, { useReducer } from "react";
 import "./App.css";
 import { isMatchFinished } from "../shared/lib";
