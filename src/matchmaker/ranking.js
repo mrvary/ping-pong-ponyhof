@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 // createCurrentRanking : [players], [matches] -> [ranking]
 function createCurrentRanking(players, matches) {
   let ranking = [];
