@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 // createCurrentRanking : [players], [matches] -> [ranking]
 function createCurrentRanking(players, matches) {
   let ranking = [];
@@ -9,7 +13,7 @@ function createCurrentRanking(players, matches) {
   addMatchDetails(players, dummyMatches);
 
   players.forEach(player => {
-    const ttrDifference = calculateTTRDifference(player, players);
+    const ttrDifference = calculateTTRDifference(player, players, dummyMatches);
     ranking.push({
       place: 0,
       id: player.id,
@@ -18,7 +22,7 @@ function createCurrentRanking(players, matches) {
       clubname: player.clubname,
       gamesWon: calculateGamesWon(player, matches),
       gamesLost: calculateGamesLost(player, matches),
-      bhz: calculateBHZ(player, players),
+      bhz: calculateBHZ(player, players, dummyMatches),
       qttr: player.qttr,
       // ttr_beginn: player.qttr,
       ttr_now: player.qttr + ttrDifference,
@@ -82,42 +86,72 @@ function calculateGamesLost(player, matches) {
   return gamesFinished - calculateGamesWon(player, matches);
 }
 
-// calculateBHZ : player, [matches] -> Number
-function calculateBHZ(playerToCalculate, players) {
+// calculateBHZ : player, [players] -> Number
+function calculateBHZ(playerToCalculate, players, matches) {
   let bhz = 0;
   //bhz = the sum of all games your opponents you have played against have won
   players.forEach(player => {
     if (playerToCalculate.opponentIds.includes(player.id))
-      bhz += player.gamesWon;
+      bhz += calculateGamesWon(player, matches);
   });
   return bhz;
 }
 
 // calculateTTRDifference : player, [players] -> Number
-function calculateTTRDifference(playerToCalculate, players) {
+function calculateTTRDifference(playerToCalculate, players, matches) {
   //1. get all "real" opponents
-  const opponents = playerToCalculate.opponentIds.filter(
+  let realOpponents = playerToCalculate.opponentIds.filter(
     opponentId => opponentId !== "FreeTicket"
   );
 
-  //2. get of all opponents their ttr value
+  const mactchesInvolved = matches.filter(
+    match =>
+      match.player1 === playerToCalculate.id ||
+      match.player2 === playerToCalculate.id
+  );
+
+  let lastMatch;
+  if (mactchesInvolved.length >= 1) {
+    lastMatch = mactchesInvolved[mactchesInvolved.length - 1];
+  }
+
+  if (lastMatch !== null) {
+    console.log("rrrrr " + realOpponents.length);
+    let winner = getMatchWinner(lastMatch);
+    console.log("win " + winner);
+
+    if (winner === false && realOpponents.length >= 1) {
+      console.log("aaaaaaaaaaa");
+
+      realOpponents = realOpponents.pop();
+    }
+  }
+  console.log("after slice " + realOpponents.length);
+
+  //2. get of all realOpponents their ttr value
   let opponentTTR = [];
   players.forEach(player => {
-    if (opponents.includes(player.id)) {
+    if (realOpponents.includes(player.id)) {
       //ToDo in future use player.ttr
       opponentTTR.push(player.qttr);
     }
   });
 
+  console.log(
+    playerToCalculate.lastname,
+    opponentTTR,
+    calculateGamesWon(playerToCalculate, matches)
+  );
+
   //3. calculate ttrDifference
   let ttrDifference = ttrCalculation(
     playerToCalculate.qttr,
     opponentTTR,
-    playerToCalculate.gamesWon
+    calculateGamesWon(playerToCalculate, matches)
   );
 
   //5. check for Freeticket games
-  if (opponents.length !== playerToCalculate.opponentIds.length)
+  if (realOpponents.length !== playerToCalculate.opponentIds.length)
     ttrDifference -= 16;
 
   return ttrDifference;

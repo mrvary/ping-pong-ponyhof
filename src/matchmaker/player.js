@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 const { getMatchWinner } = require("./match.js");
 
 // createPlayersFromJSON : JSON -> [players]

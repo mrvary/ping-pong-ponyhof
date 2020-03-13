@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 const {
   createCurrentRanking,
   calculateBHZ,

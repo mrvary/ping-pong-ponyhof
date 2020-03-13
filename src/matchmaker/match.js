@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 const { countSetsPerPlayer, getParameterByPlayerId } = require("./ranking.js");
 
 // createMatches : [pairings] -> [matches]

@@ -1,3 +1,7 @@
+/**
+ * @author Daniel Niemczyk
+ */
+
 const { drawFirstRound, drawRound } = require("../../src/matchmaker/drawing");
 
 const {
