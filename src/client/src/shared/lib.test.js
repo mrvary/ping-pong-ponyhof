@@ -1,3 +1,6 @@
+/**
+ * @author Felix Breitenbach
+ */
 const { setsWonPlayer1, setsWonPlayer2, isMatchFinished } = require("./lib.js");
 
 describe("Testing setsWon()", () => {
