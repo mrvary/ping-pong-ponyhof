@@ -10,6 +10,7 @@ import socketIOMessages from "../shared/socketIOMessages";
 import LoginView from "./views/LoginView";
 import WaitingView from "./views/WaitingView";
 import MatchView from "./views/MatchView";
+import NextPlayersView from "./views/NextPlayersView";
 import ConnectionStatus from "./components/ConnectionStatus";
 
 let socket;
@@ -403,10 +404,13 @@ function App() {
       );
     }
 
-    if (state.view === VIEW.NEXT_PLAYERS || state.view === VIEW.MATCH) {
+    if (state.view === VIEW.NEXT_PLAYERS) {
+      return <NextPlayersView match={state.match} />;
+    }
+
+    if (state.view === VIEW.MATCH) {
       return (
         <MatchView
-          onlyShowNextPlayers={state.view === VIEW.NEXT_PLAYERS}
           match={state.match}
           sendSets={sendSets}
           updateSets={updateSets}
