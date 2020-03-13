@@ -9,6 +9,7 @@ import "../Colors.css";
 // components
 import CompetitionPageHeader from "./CompetitionPageHeader";
 
+//time intervall
 const TOGGLE_PLAYERS_INTERVAL = 7000;
 
 // ipc communication
@@ -80,13 +81,13 @@ const Table = ({ rankings }) => {
 
 /**
  * The Statistic Table contains the Information about the current
- * competition and rankings
+ * competition and rankings and is able to update it
  */
 const StatisticTable = () => {
   const [competition, setCompetition] = useState({});
   const [rankings, setRankings] = useState([]);
 
-  // Updates all states if something changes
+  //set intervall to change visible and invisible
   useEffect(() => {
     const interval = setInterval(() => {
       setRankings(
@@ -103,7 +104,7 @@ const StatisticTable = () => {
       console.log("ipc-main --> ipc-renderer", rankings);
       console.log(competition, rankings);
       setCompetition(competition);
-
+      //max 16 players / 2
       const initRankingsWithVisibilityToggle = rankings.map((ranking, i) => {
         return { ...ranking, visible: i < Math.floor(rankings.length / 2) };
       });
